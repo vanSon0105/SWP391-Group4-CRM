@@ -329,7 +329,7 @@ SELECT 1, id FROM permissions;
 -- Technical Manager
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6),
-(2, 12), (2, 13), (2, 13), (2, 14), (2, 15),
+(2, 12), (2, 13), (2, 14), (2, 15),
 (2, 19), (2, 20), (2, 21), (2, 22),
 (2, 23), (2, 24), (2, 25), (2, 26),
 (2, 28),
@@ -339,7 +339,8 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 
 -- Technical Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(3, 2), (3, 3),
+(3, 2), 
+(3, 3),
 (3, 14),
 (3, 16), 
 (3, 36)
