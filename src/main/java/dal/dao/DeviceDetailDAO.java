@@ -1,9 +1,11 @@
-package dao;
+package dal.dao;
 import model.DeviceDetail;
 import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import dal.DBContext;
 public class DeviceDetailDAO extends DBContext {
 	 public int addDeviceDetail(DeviceDetail d) {
 	        int n = 0;

@@ -35,6 +35,7 @@ CREATE TABLE devices (
   unit varchar(50),
   image_url varchar(255),
   type enum('spare part','device'),
+  created_at timestamp default current_timestamp,
   foreign key (category_id) references categories(id)
 );
 

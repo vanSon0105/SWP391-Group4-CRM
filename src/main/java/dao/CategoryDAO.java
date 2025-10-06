@@ -3,7 +3,7 @@ import java.sql.*;
 import java.util.*;
 import model.Category;
 
-public class CategoryDAO extends DBContext {
+public class CategoryDAO extends dal.DBContext {
 	
 	public List<Category> getAllCategories() {
 		List<Category> list = new ArrayList<>();
