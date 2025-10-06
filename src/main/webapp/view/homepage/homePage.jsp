@@ -12,7 +12,34 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="home-page">
-	<jsp:include page="../common/header.jsp"></jsp:include>
+    <header class="header">
+        <h1 class="header-title">NovaCare</h1>
+        <div class="header-center">
+            <div class="category-menu" data-category-menu>
+                <button type="button" data-category-toggle>
+                    <span>Danh mục</span>
+                    <span aria-hidden="true">☰</span>
+                </button>
+                <div class="category-panel" data-category-panel>
+                    <a href="device-catalog.html">Thiết bị</a>
+                    <a href="device-detail.html">Thông tin thiết bị</a>
+                    <a href="checkout.html">Thanh toán</a>
+                    <a href="order-tracking.html">Đơn hàng</a>
+                    <a href="customer-portal.html">Lịch sử</a>
+                </div>
+            </div>
+            <form class="search-bar" action="#" method="get">
+                <label for="search" class="sr-only"></label>
+                <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ...">
+                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
+        </div>
+        <div class="header-bottom">
+            <a href="login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
+            <a href="cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
+        </div>
+    </header>
+
     <main>
         <section class="mega-banner" aria-labelledby="banner-title">
             <div class="mega-banner-content">
