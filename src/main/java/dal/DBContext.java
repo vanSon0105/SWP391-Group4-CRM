@@ -1,4 +1,4 @@
-package dao;
+package dal;
 
 import java.io.File;
 import java.io.FileReader;
@@ -33,10 +33,10 @@ public class DBContext {
         try {
             url = "jdbc:mysql://127.0.0.1:3306/swp391?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8";
             user = "root";
-            password = ""; //password in local mysql
-            DriverManager.registerDriver(new com.mysql.jdbc.Driver());
-            connection = (Connection) DriverManager.getConnection(url, user, password);
-        } catch (SQLException ex) {
+            password = "vanson010825"; //password in local mysql
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection(url, user, password);
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (connection);

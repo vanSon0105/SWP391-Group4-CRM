@@ -1,17 +1,23 @@
 package model;
 
+import java.math.BigDecimal;
+import java.sql.Timestamp;
+
 public class Device {
 	private int id;
 	private int categoryId;
 	private String name;
-	private Double price;
+	private BigDecimal price;
 	private String unit;
 	private String imageUrl;
 	private String type;
-	
+	private int total_sold;
+	private String desc;
+	private Timestamp created_at;
+
 	public Device() {}
 
-	public Device(int id, int categoryId, String name, Double price, String unit, String imageUrl, String type) {
+	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String type, String desc, Timestamp created_at) {
 		super();
 		this.id = id;
 		this.categoryId = categoryId;
@@ -20,6 +26,32 @@ public class Device {
 		this.unit = unit;
 		this.imageUrl = imageUrl;
 		this.type = type;
+		this.desc = desc;
+		this.created_at = created_at;
+	}
+	
+	public int getTotal_sold() {
+		return total_sold;
+	}
+
+	public void setTotal_sold(int total_sold) {
+		this.total_sold = total_sold;
+	}
+
+	public Timestamp getCreated_at() {
+		return created_at;
+	}
+
+	public void setCreated_at(Timestamp created_at) {
+		this.created_at = created_at;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 	public int getId() {
@@ -46,11 +78,11 @@ public class Device {
 		this.name = name;
 	}
 
-	public Double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 

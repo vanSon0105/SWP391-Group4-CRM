@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 	<%@ page isELIgnored="false" %>
+	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -42,9 +43,8 @@
     <main>
         <section class="mega-banner" aria-labelledby="banner-title">
             <div class="mega-banner-content">
-                <h2 id="banner-title">Mua sam dien may thang hoa - uu dai den 20% cho toan bo he sinh thai</h2>
-                <p>Tu laptop, smartphone den dich vu sua chua tai nha. Chi mot lan cham la ban duoc cham soc tron ven
-                    cung doi ky thuat NovaCare.</p>
+                <h2 id="banner-title">Mua sắm điện máy thăng hoa - Ưu đãi đến 20% cho toàn bộ thiết bị</h2>
+                <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của Shop88</p>
                 <div class="banner-btn">
                     <a href="device-catalog.html">Kham pha san pham</a>
                     <a class="secondary" href="order-tracking.html">Theo doi don &amp; bao hanh</a>
@@ -94,21 +94,21 @@
             </a>
             <a class="shortcut-card" href="device-catalog.html#mobile">
                 <span class="shortcut-icon">📱</span>
-                <span class="shortcut-label">Dien thoai</span>
+                <span class="shortcut-label">Điện Thoại</span>
             </a>
             <a class="shortcut-card" href="device-catalog.html#accessories">
                 <span class="shortcut-icon">🔧</span>
-                <span class="shortcut-label">Linh kien</span>
+                <span class="shortcut-label">Linh Kiện</span>
             </a>
             <a class="shortcut-card" href="order-tracking.html">
                 <span class="shortcut-icon">🛠️</span>
-                <span class="shortcut-label">Theo doi sua chua</span>
+                <span class="shortcut-label">Theo Dõi Sửa Chữa</span>
             </a>
         </section>
 
         <section class="featured-devices">
             <div class="section-header">
-                <h2 id="featured-title">San pham noi bat</h2>
+                <h2 id="featured-title">Thiết Bị Nổi Bật</h2>
                 <div class="slider-controls">
                     <button class="slider-btn" type="button" disabled>
                         &#10094;
@@ -121,46 +121,13 @@
             <div class="device-slider">
                 <div class="device-window">
                     <div class="device-track">
+              	<c:forEach items="${list}" var="s">
                         <article class="device-card">
-                            <h4>Laptop NovaCore X15</h4>
-                            <p>CPU Intel Gen13, RAM 16GB, SSD 1TB. Tang kem bao tri onsite 12 thang.</p>
-                            <span>Gia: 32.990.000d</span>
+                            <h4>${s.getName()}</h4>
+                            <p>${s.getDesc()}</p>
+                            <span>Giá: ${s.getPrice()}Đ</span>
                         </article>
-                        <article class="device-card">
-                            <h4>Smartphone NovaCare S9</h4>
-                            <p>Man AMOLED 120Hz, camera AI 108MP, sac nhanh 80W.</p>
-                            <span>Gia: 18.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Bo linh kien sua chua TV</h4>
-                            <p>Board nguon, bo tu va cap man hinh chinh hang cho dong TV 2023.</p>
-                            <span>Gia: 2.850.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Goi bao hanh Premium</h4>
-                            <p>Bao hanh mo rong 36 thang cho thiet bi gia dinh, ho tro ky thuat 24/7.</p>
-                            <span>Gia: 3.200.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>May loc khong khi NovaPure</h4>
-                            <p>Loc HEPA 4 lop, cam bien bui min, ket noi ung dung thong minh.</p>
-                            <span>Gia: 7.990.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Combo ve sinh dieu hoa</h4>
-                            <p>Dich vu ve sinh sau, nap gas va kiem tra ro ri tai nha.</p>
-                            <span>Gia: 1.190.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Loa soundbar NovaSound 500</h4>
-                            <p>Cong suat 320W, Dolby Atmos, ket noi Bluetooth 5.2.</p>
-                            <span>Gia: 9.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Robot hut bui NovaBot X</h4>
-                            <p>Dieu huong Lidar, tu do rac, ho tro giong noi tieng Viet.</p>
-                            <span>Gia: 12.500.000d</span>
-                        </article>
+                </c:forEach>
                     </div>
                 </div>
             </div>
@@ -168,32 +135,19 @@
 
         <section class="device-list new-devices">
             <div class="section-heading">
-                <h2 id="new-devices-title">San pham moi ve</h2>
+                <h2 id="new-devices-title">Thiết Bị Mới Về</h2>
                 <p>Nhung san pham vua cap ben showroom va san sang giao ngay.</p>
             </div>
             <div class="device-pages" data-paginated="new-devices">
                 <div class="device-page is-active">
                     <div class="device-grid">
+                    <c:forEach items="${listNew}" var="s"> 
                         <article class="device-card">
-                            <h4>May anh NovaShot Z6</h4>
-                            <p>Cam bien full-frame 30MP, quay 6K, chong rung 5 truc.</p>
-                            <span>Gia: 28.900.000d</span>
+                            <h4>${s.getName()}</h4>
+                            <p>${s.getDesc()}</p>
+                            <span>Gia: ${s.getPrice()}Đ</span>
                         </article>
-                        <article class="device-card">
-                            <h4>May giat NovaWash Pro</h4>
-                            <p>Khoi luong 12kg, cong nghe hoi nuoc TrueSteam, Inverter.</p>
-                            <span>Gia: 16.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Bo phat Wi-Fi Mesh NovaAir</h4>
-                            <p>Chuan Wi-Fi 7, dien phu 450m2, quan tri qua ung dung.</p>
-                            <span>Gia: 6.590.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Man hinh cong NovaView 34"</h4>
-                            <p>Do phan giai QHD, 165Hz, ho tro HDR600.</p>
-                            <span>Gia: 12.990.000d</span>
-                        </article>
+                    </c:forEach>
                     </div>
                 </div>
                 <div class="device-page">
@@ -229,7 +183,7 @@
 
         <section class="device-list best-sellers" aria-labelledby="best-sellers-title">
             <div class="section-heading">
-                <h2 id="best-sellers-title">San pham ban chay</h2>
+                <h2 id="best-sellers-title">Thiết Bị Bán Chạy</h2>
                 <p>Duoc khach hang lua chon va danh gia cao nhat trong thang.</p>
             </div>
             <div class="device-pages" data-paginated="best-sellers">
@@ -332,184 +286,8 @@
             </div>
         </section>
     </main>
-    <footer class="footer">
-        <div class="container">
-            <div class="footer__body">
-                <section class="footer__logo">
-                    <!-- Logo -->
-                    <a href="#">
-                        <div class="logo">
-                            <span class="logo__circle"></span>
-                            <span class="logo__text">
-                                <span class="logo__brand">shine</span>
-                                <span class="logo__brand logo__brand--small">smile</span>
-                            </span>
-                        </div>
-                    </a>
-                    <p class="section-desc footer__desc">Exceptional dental care for all ages. Your great smile begins
-                        with a great dentist.</p>
-                </section>
-
-                <section class="footer__support">
-                    <h4 class="footer__title">Support</h4>
-                    <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                        <li>
-                            <a href="#!">Account information</a>
-                        </li>
-                        <li>
-                            <a href="#!">About</a>
-                        </li>
-                        <li>
-                            <a href="#!">Contact us</a>
-                        </li>
-                    </ul>
-
-                    <h4 class="footer__title">Support</h4>
-                    <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                        <li>
-                            <a href="#!">Account information</a>
-                        </li>
-                    </ul>
-
-                </section>
-
-                <section class="footer__support">
-                    <h4 class="footer__title">Support</h4>
-                    <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                        <li>
-                            <a href="#!">Account information</a>
-                        </li>
-                    </ul>
-
-                    <h4 class="footer__title">Support</h4>
-                    <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                    </ul>
-                </section>
-
-                <section class="footer__contact">
-                    <!-- <h4 class="footer__title">Stay In Touch</h4>
-
-                    <div class="footer__society">
-                        <a href="#!"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#!"><i class="fa-brands fa-square-x-twitter"></i></a>
-                        <a href="#!"><img src="./assets/img/linked.svg" alt="Linked"></a>
-                    </div> -->
-
-                    <h4 class="footer__title">Subscribe</h4>
-                    <p class="footer__sub">Subscribe our newsletter for the latest update of Dental care</p>
-
-                    <label for="">
-                        <input type="email" name="email" class="footer__input" placeholder="Enter your email...">
-                        <a href="#!" class="btn footer-sub__btn">Subscribe</a>
-                    </label>
-                </section>
-
-            </div>
-            <strong class="footer__copyright">2021 GDN. Copyright and All rights reserved.</strong>
-        </div>
-    </footer>
-
-    <script>
-        // Banner promos
-        (function () {
-            var slider = document.querySelector('[data-hero-slider]');
-            if (!slider) return;
-
-            var track = slider.querySelector('.banner-promos-track');
-            var cards = Array.from(track.children);
-            if (!cards.length) return;
-
-            var prevBtn = slider.querySelector('[data-hero-direction="prev"]');
-            var nextBtn = slider.querySelector('[data-hero-direction="next"]');
-            var dots = [];
-            var currentIndex = 0;
-            var gap = parseFloat(getComputedStyle(track).gap) || 0;
-            var timer = null;
-            var delay = 5000;
-
-            function getVisibleCount() {
-                return window.innerWidth >= 1100 ? 2 : 1;
-            }
-
-            function maxIndex() {
-                return Math.max(cards.length - getVisibleCount(), 0);
-            }
-
-            function clamp(index) {
-                var max = maxIndex();
-                if (index < 0) return max;
-                if (index > max) return 0;
-                return index;
-            }
-
-            function updateDots() {
-                if (!dots.length) return;
-                dots.forEach(function (dot, i) {
-                    dot.classList.toggle('active', i === currentIndex);
-                    dot.disabled = i === currentIndex;
-                });
-            }
-
-            function updateSlider() {
-                var cardWidth = cards[0].getBoundingClientRect().width;
-                var offset = currentIndex * (cardWidth + gap);
-                track.style.transform = 'translateX(-' + offset + 'px)';
-                updateDots();
-            }
-
-            function stop() {
-                if (timer) {
-                    clearInterval(timer);
-                    timer = null;
-                }
-            }
-
-            function start() {
-                stop();
-                if (maxIndex() <= 0) return;
-                timer = setInterval(function () {
-                    currentIndex = clamp(currentIndex + 1);
-                    updateSlider();
-                }, delay);
-            }
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function () {
-                    currentIndex = clamp(currentIndex - 1);
-                    updateSlider();
-                    start();
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function () {
-                    currentIndex = clamp(currentIndex + 1);
-                    updateSlider();
-                    start();
-                });
-            }
-
-            slider.addEventListener('mouseenter', stop);
-            slider.addEventListener('mouseleave', start);
-
-            updateSlider();
-        })();
-
-
-
-    </script>
+	<jsp:include page="../common/footer.jsp"></jsp:include>
+    <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 
 </html>

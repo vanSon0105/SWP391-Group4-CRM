@@ -12,6 +12,7 @@ html {
 }
 
 body {
+	caret-color: transparent;
     font-size: 1.8rem;
 }
 
@@ -447,6 +448,7 @@ ul {
     box-shadow: 0 18px 38px rgba(249, 115, 22, 0.22);
     display: grid;
     gap: 10px;
+    flex: 0 0 calc((100% - 72px) / 4);
 }
 
 .home-page .device-card h4 {
@@ -528,18 +530,10 @@ ul {
     position: relative;
 }
 
-.home-page .device-window {
-    overflow: hidden;
-}
-
 .home-page .device-track {
     display: flex;
     gap: 24px;
     transition: transform 0.4s ease;
-}
-
-.home-page .device-track .device-card {
-    flex: 0 0 calc((100% - 72px) / 4);
 }
 
 /* featured device */
