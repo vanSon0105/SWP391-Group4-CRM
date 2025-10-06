@@ -12,7 +12,7 @@
 </head>
 <body class="home-page">
     <header class="header">
-        <h1 class="header-title">Shop88</h1>
+        <h1 class="header-title">NovaCare</h1>
         <div class="header-center">
             <div class="category-menu" data-category-menu>
                 <button type="button" data-category-toggle>
@@ -34,8 +34,8 @@
             </form>
         </div>
         <div class="header-bottom">
-            <a href="login.html" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
-            <a href="cart.html" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
+            <a href="login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
+            <a href="cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
         </div>
     </header>
 
