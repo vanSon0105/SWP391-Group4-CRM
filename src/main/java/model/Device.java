@@ -12,7 +12,6 @@ public class Device {
 	public Device() {}
 
 	public Device(int id, int categoryId, String name, Double price, String unit, String imageUrl, String type) {
-		super();
 		this.id = id;
 		this.categoryId = categoryId;
 		this.name = name;

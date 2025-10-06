@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+	pageEncoding="UTF-8"%> 
 <%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 
 <!DOCTYPE html>
@@ -11,7 +11,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>NovaCare Shop - Danh mục sản phẩm</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/shop.css">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/shop.css">
 
 	
 	<!-- Font Awesome -->
@@ -92,8 +92,21 @@
 		</section>
 		
 		<section class="product-grid">
+			<c:forEach var="device" items="${listDevice}">
+				<article class="product-card">
+					<h3>${device.name}</h3>
+					<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
+					<div class="tags">
+						<span>Laptop</span><span>NovaCare</span><span>Intel</span>
+					</div>
+					<strong>
+						<fmt:formatNumber value="${device.price + 0}" type="number"/>
+					</strong> 
+					<a href="device-detail.html">Xem chi tiết</a>
+				</article>
+			</c:forEach>
 		
-			<article class="product-card">
+<!-- 			<article class="product-card">
 				<h3>NovaCore X15</h3>
 				<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
 				<div class="tags">
@@ -147,7 +160,7 @@
 				</div>
 				<strong>1.190.000đ</strong> <a href="device-detail.html">Xem chi
 					tiết</a>
-			</article>
+			</article> -->
 			<!-- pagination -->
 
 		</section>
