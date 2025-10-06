@@ -4,13 +4,13 @@ import java.sql.*;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-public class DeviceDetailDAO extends DBConnect {
+public class DeviceDetailDAO extends DBContext {
 	 public int addDeviceDetail(DeviceDetail d) {
 	        int n = 0;
 	        String sql = "INSERT INTO DeviceDetail(inventoryId, deviceId, description, serialNo, status) "
 	                   + "VALUES(?,?,?,?,?)";
 	        try {
-	            PreparedStatement pre = conn.prepareStatement(sql);
+	            PreparedStatement pre = connection.prepareStatement(sql);
 	            pre.setInt(1, d.getInventoryId());
 	            pre.setInt(2, d.getDeviceId());
 	            pre.setString(3, d.getDescription());
@@ -28,7 +28,7 @@ public class DeviceDetailDAO extends DBConnect {
 	        int n = 0;
 	        String sql = "UPDATE DeviceDetail SET inventoryId=?, deviceId=?, description=?, serialNo=?, status=? WHERE id=?";
 	        try {
-	            PreparedStatement pre = conn.prepareStatement(sql);
+	            PreparedStatement pre = connection.prepareStatement(sql);
 	            pre.setInt(1, d.getInventoryId());
 	            pre.setInt(2, d.getDeviceId());
 	            pre.setString(3, d.getDescription());
@@ -47,7 +47,7 @@ public class DeviceDetailDAO extends DBConnect {
 	        int n = 0;
 	        String sql = "DELETE FROM DeviceDetail WHERE id=" + id;
 	        try {
-	            Statement st = conn.createStatement();
+	            Statement st = connection.createStatement();
 	            n = st.executeUpdate(sql);
 	        } catch (SQLException ex) {
 	            Logger.getLogger(DeviceDetailDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -59,7 +59,7 @@ public class DeviceDetailDAO extends DBConnect {
 	    public Vector<DeviceDetail> getDeviceDetail(String sql) {
 	        Vector<DeviceDetail> vector = new Vector<>();
 	        try {
-	            Statement state = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+	            Statement state = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 	            ResultSet rs = state.executeQuery(sql);
 	            while (rs.next()) {
 	                int id = rs.getInt("id");
