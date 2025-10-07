@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NovaCare Shop - Thanh toán</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/shop.css">
+    <link rel="stylesheet" href="css/shop.css">
 </head>
 <body class="shop-page checkout-page">
 
