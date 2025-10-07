@@ -10,14 +10,14 @@ import model.Device;
 import java.io.IOException;
 import java.util.List;
 
-import dal.dao.HomePageDAO;
+import dal.dao.DeviceDAO;
 
 /**
  * Servlet implementation class HomePageController
  */
 @WebServlet("/home")
 public class HomePageController extends HttpServlet {
-	public HomePageDAO hpd = new HomePageDAO();
+	public DeviceDAO hpd = new DeviceDAO();
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		List<Device> listFeaturedDevices = hpd.listFeaturedDevices();
@@ -28,7 +28,7 @@ public class HomePageController extends HttpServlet {
 	}
 	
 	public static void main(String[] args) {
-		HomePageDAO hpd1 = new HomePageDAO();
+		DeviceDAO hpd1 = new DeviceDAO();
 		List<Device> listFeaturedDevices = hpd1.listFeaturedDevices();
 		for (Device device : listFeaturedDevices) {
 			System.out.println(device.getDesc());

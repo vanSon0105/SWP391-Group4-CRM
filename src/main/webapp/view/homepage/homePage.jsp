@@ -7,39 +7,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop88</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
-	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="home-page">
-    <header class="header">
-        <h1 class="header-title">NovaCare</h1>
-        <div class="header-center">
-            <div class="category-menu" data-category-menu>
-                <button type="button" data-category-toggle>
-                    <span>Danh mục</span>
-                    <span aria-hidden="true">☰</span>
-                </button>
-                <div class="category-panel" data-category-panel>
-                    <a href="device-catalog.html">Thiết bị</a>
-                    <a href="device-detail.html">Thông tin thiết bị</a>
-                    <a href="checkout.html">Thanh toán</a>
-                    <a href="order-tracking.html">Đơn hàng</a>
-                    <a href="customer-portal.html">Lịch sử</a>
-                </div>
-            </div>
-            <form class="search-bar" action="#" method="get">
-                <label for="search" class="sr-only"></label>
-                <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ...">
-                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </form>
-        </div>
-        <div class="header-bottom">
-            <a href="login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
-            <a href="cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
-        </div>
-    </header>
-
+	<jsp:include page="../common/header.jsp"></jsp:include>
     <main>
         <section class="mega-banner" aria-labelledby="banner-title">
             <div class="mega-banner-content">
@@ -136,7 +106,7 @@
         <section class="device-list new-devices">
             <div class="section-heading">
                 <h2 id="new-devices-title">Thiết Bị Mới Về</h2>
-                <p>Nhung san pham vua cap ben showroom va san sang giao ngay.</p>
+                <p>Những sản phầm vừa mới về Shop88 và sẵn sàng bấm ngay</p>
             </div>
             <div class="device-pages" data-paginated="new-devices">
                 <div class="device-page is-active">
@@ -145,7 +115,7 @@
                         <article class="device-card">
                             <h4>${s.getName()}</h4>
                             <p>${s.getDesc()}</p>
-                            <span>Gia: ${s.getPrice()}Đ</span>
+                            <span>Giá: ${s.getPrice()}Đ</span>
                         </article>
                     </c:forEach>
                     </div>

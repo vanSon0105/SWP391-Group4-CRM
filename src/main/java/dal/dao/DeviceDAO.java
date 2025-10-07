@@ -13,7 +13,7 @@ import dal.DBContext;
 import model.Device;
 import model.DeviceDetail;
 
-public class HomePageDAO extends DBContext{
+public class DeviceDAO extends DBContext{
 	public List<Device> listFeaturedDevices() {
 		List<Device> list = new ArrayList<>();
         String sql = "SELECT \r\n"

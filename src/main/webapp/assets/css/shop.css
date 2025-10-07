@@ -504,6 +504,7 @@ ul {
 .home-page .featured-devices .slider-btn {
     width: 38px;
     height: 38px;
+    padding: 0;
     border-radius: 50%;
     border: none;
     background: linear-gradient(135deg, rgba(14, 165, 233, 0.85), rgba(59, 130, 246, 0.85));
@@ -709,6 +710,7 @@ ul {
 .home-page .pagination-pills button {
     width: 44px;
     height: 44px;
+    padding: 0;
     border-radius: 16px;
     border: 1px solid rgba(15, 23, 42, 0.15);
     background: rgba(255, 255, 255, 0.9);
@@ -1882,129 +1884,6 @@ body.shop-page.forgot-page a {
     text-align: center;
 }
 
-/*  ========================= error-404.html, error-403.html, error-502.html */
-body.shop-page.error-404-page,
-body.shop-page.error-403-page,
-body.shop-page.error-502-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px;
-}
-
-body.shop-page.error-404-page {
-    background: linear-gradient(135deg, #fee2e2, #fef9c3, #cffafe);
-    color: #0f172a;
-}
-
-body.shop-page.error-403-page {
-    background: linear-gradient(135deg, #ede9fe, #c7d2fe, #bae6fd);
-    color: #1f2937;
-}
-
-body.shop-page.error-502-page {
-    background: linear-gradient(135deg, #fef3c7, #fef9c3, #e0f2fe);
-    color: #92400e;
-}
-
-body.shop-page.error-404-page .card,
-body.shop-page.error-403-page .card,
-body.shop-page.error-502-page .card {
-    width: min(520px, 100%);
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 32px;
-    padding: 40px;
-    display: grid;
-    gap: 16px;
-    text-align: center;
-}
-
-body.shop-page.error-404-page .card {
-    border: 1px solid rgba(248, 113, 113, 0.35);
-    box-shadow: 0 30px 60px rgba(248, 113, 113, 0.25);
-}
-
-body.shop-page.error-403-page .card {
-    border: 1px solid rgba(99, 102, 241, 0.32);
-    box-shadow: 0 30px 60px rgba(99, 102, 241, 0.24);
-}
-
-body.shop-page.error-502-page .card {
-    border: 1px solid rgba(251, 191, 36, 0.35);
-    box-shadow: 0 30px 60px rgba(251, 191, 36, 0.25);
-}
-
-body.shop-page.error-404-page h1 {
-    font-size: 48px;
-    color: #ef4444;
-}
-
-body.shop-page.error-403-page h1 {
-    font-size: 48px;
-    color: #4c1d95;
-}
-
-body.shop-page.error-502-page h1 {
-    font-size: 48px;
-    color: #d97706;
-}
-
-body.shop-page.error-404-page a,
-body.shop-page.error-403-page a,
-body.shop-page.error-502-page a {
-    justify-self: center;
-    padding: 12px 26px;
-    border-radius: 999px;
-    font-weight: 600;
-    text-decoration: none;
-}
-
-body.shop-page.error-404-page a {
-    background: linear-gradient(90deg, #f97316, #ef4444);
-    color: #f8fafc;
-    box-shadow: 0 16px 32px rgba(239, 68, 68, 0.28);
-}
-
-body.shop-page.error-403-page a {
-    background: linear-gradient(90deg, #6366f1, #22d3ee);
-    color: #f8fafc;
-    box-shadow: 0 16px 32px rgba(79, 70, 229, 0.28);
-}
-
-body.shop-page.error-502-page a {
-    background: linear-gradient(90deg, #f97316, #fde047);
-    color: #7c2d12;
-    box-shadow: 0 16px 32px rgba(234, 179, 8, 0.28);
-}
-
-
-/* =========================== index.html */
-@media (max-width: 768px) {
-
-    body.shop-page.home-page header,
-    body.shop-page.catalog-page header,
-    body.shop-page.detail-page header,
-    body.shop-page.cart-page header,
-    body.shop-page.checkout-page header,
-    body.shop-page.tracking-page header,
-    body.shop-page.customer-portal-page header {
-        padding: 32px;
-    }
-
-    body.shop-page.home-page main,
-    body.shop-page.catalog-page main,
-    body.shop-page.detail-page main,
-    body.shop-page.cart-page main,
-    body.shop-page.checkout-page main,
-    body.shop-page.tracking-page main,
-    body.shop-page.customer-portal-page main {
-        padding: 32px;
-    }
-}
-
-
-
 body.shop-page.home-page .slider-dots {
     display: flex;
     justify-content: center;
@@ -2389,19 +2268,4 @@ body.shop-page.account-page {
     align-items: center;
     border-top: 1px solid rgba(148, 163, 184, 0.25);
     background: rgba(248, 250, 252, 0.75);
-}
-
-@media (max-width: 1100px) {
-    .account-layout {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .account-header {
-        padding: 32px 24px;
-    }
-    .account-layout {
-        padding: 32px 24px 64px;
-    }
 }
