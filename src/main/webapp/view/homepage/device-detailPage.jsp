@@ -71,17 +71,17 @@
 
 			<!-- CTA Buttons -->
 			<div class="cta" style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-				<a href="cart.html" class="order-btn" style="background:#22c55e; color:#fff;">
+				<a href="cart.jsp" class="order-btn" style="background:#22c55e; color:#fff;">
 					<i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ hàng
 				</a>
-				<a href="checkout.html" class="order-btn" style="background:#e11d48; color:#fff;">
+				<a href="checkout.jsp" class="order-btn" style="background:#e11d48; color:#fff;">
 					<i class="fa-solid fa-bolt"></i> Mua ngay
 				</a>
-				<a href="order-tracking.html" class="order-btn" 
+				<a href="order-tracking.jsp" class="order-btn" 
 					style="background:linear-gradient(90deg,#22d3ee,#0ea5e9); color:#fff;">
 					<i class="fa-solid fa-truck"></i> Theo dõi bảo hành
 				</a>
-				<a href="shop.jsp" class="order-btn" style="background:#f1f5f9; color:#312e81;">
+				<a href="homePage.jsp" class="order-btn" style="background:#f1f5f9; color:#312e81;">
 					← Quay lại danh mục
 				</a>
 			</div>
