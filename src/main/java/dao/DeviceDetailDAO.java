@@ -1,4 +1,4 @@
-package dal.dao;
+package dao;
 import model.DeviceDetail;
 import java.sql.*;
 import java.util.Vector;
