@@ -106,61 +106,7 @@
 				</article>
 			</c:forEach>
 		
-<!-- 			<article class="product-card">
-				<h3>NovaCore X15</h3>
-				<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
-				<div class="tags">
-					<span>Laptop</span><span>NovaCare</span><span>Intel</span>
-				</div>
-				<strong>32.990.000đ</strong> 
-				<a href="device-detail.html">Xem chi tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>NovaCare S9</h3>
-				<p>Smartphone flagship, camera AI, chống nước IP68.</p>
-				<div class="tags">
-					<span>Điện thoại</span><span>5G</span><span>120Hz</span>
-				</div>
-				<strong>18.490.000đ</strong> <a href="device-detail.html">Xem
-					chi tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>Kit sửa TV 55"</h3>
-				<p>Board nguồn, cáp tín hiệu, hướng dẫn lắp đặt.</p>
-				<div class="tags">
-					<span>Linh kiện</span><span>Bảo hành</span>
-				</div>
-				<strong>2.850.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>Gói bảo hành Premium</h3>
-				<p>Bảo hành nâng cao 36 tháng, hotline kỹ thuật 24/7.</p>
-				<div class="tags">
-					<span>Dịch vụ</span><span>Gia dụng</span>
-				</div>
-				<strong>3.200.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-					
-			</article>
-			<article class="product-card">
-				<h3>Máy lọc không khí NovaPure</h3>
-				<p>Lọc HEPA 4 lớp, cảm biến bụi mịn, kết nối app.</p>
-				<div class="tags">
-					<span>Gia dụng</span><span>Smart home</span>
-				</div>
-				<strong>7.990.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>Combo vệ sinh điều hòa</h3>
-				<p>Dịch vụ vệ sinh sâu, nạp gas, kiểm tra rò rỉ.</p>
-				<div class="tags">
-					<span>Dịch vụ</span><span>Điều hòa</span>
-				</div>
-				<strong>1.190.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-			</article> -->
+
 			<!-- pagination -->
 
 		</section>

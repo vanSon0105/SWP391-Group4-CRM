@@ -2,9 +2,11 @@ package dao;
 
 import java.sql.*;
 import java.util.*;
+
+import dal.DBContext;
 import model.Device;
 
-public class DeviceDAO extends dal.DBContext {
+public class DeviceDAO extends DBContext {
 
     public List<Device> getAllDevices() {
         List<Device> list = new ArrayList<>();

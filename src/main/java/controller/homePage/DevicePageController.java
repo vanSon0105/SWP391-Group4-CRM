@@ -15,7 +15,7 @@ import dao.CategoryDAO;
 @WebServlet("/device-page")
 public class DevicePageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    public static final int DEVICE_PER_PAGE = 12;
+    public static final int DEVICE_PER_PAGE = 6;
     DeviceDAO deviceDao = new DeviceDAO();
     CategoryDAO categoryDao = new CategoryDAO();
 	/**
