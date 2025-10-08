@@ -16,8 +16,8 @@
                 <h2 id="banner-title">Mua sắm điện máy thăng hoa - Ưu đãi đến 20% cho toàn bộ thiết bị</h2>
                 <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của Shop88</p>
                 <div class="banner-btn">
-                    <a href="device-catalog.html">Kham pha san pham</a>
-                    <a class="secondary" href="order-tracking.html">Theo doi don &amp; bao hanh</a>
+                    <a href="device-catalog.html">Khám phá sản phẩm</a>
+                    <a class="secondary" href="order-tracking.html">Theo dõi đơn hàng &amp; bảo hành</a>
                 </div>
             </div>
             <div class="banner-promos" data-hero-slider>
@@ -76,78 +76,91 @@
             </a>
         </section>
 
-        <section class="featured-devices">
+        <section class="featured-devices" id= "featured-devices">
             <div class="section-header">
                 <h2 id="featured-title">Thiết Bị Nổi Bật</h2>
                 <div class="slider-controls">
-                    <button class="slider-btn" type="button" disabled>
-                        &#10094;
-                    </button>
-                    <button class="slider-btn" type="button">
-                        &#10095;
-                    </button>
+                    <c:choose>
+				        <c:when test="${currentFeaturedPage > 1}">
+				            <a href="home?fpage=${currentFeaturedPage - 1}&npage=${currentNewPage}#featured-devices">&#10094;</a>
+				        </c:when>
+				        <c:otherwise>
+				            <a class="disabled">&#10094;</a>
+				        </c:otherwise>
+				    </c:choose>
+	        		
+            		 <c:choose>
+		                <c:when test="${currentFeaturedPage < totalFeaturedPages}">
+		                	<a href = "home?fpage=${currentFeaturedPage + 1}&npage=${currentNewPage}#featured-devices">&#10095;</a>            	
+		            	</c:when>
+		            	<c:otherwise>
+				            <a class="disabled">&#10095;</a>
+				        </c:otherwise>
+		            </c:choose>
                 </div>
             </div>
             <div class="device-slider">
                 <div class="device-window">
                     <div class="device-track">
-              	<c:forEach items="${list}" var="s">
-                        <article class="device-card">
+              	<c:forEach items="${listFeatured}" var="s">
+                        <div class="device-card">
+                        	<div class="device-thumb">
+                        		<img alt="" src="${pageContext.request.contextPath}/assets/img/device-placeholder.svg">
+                        	</div>
                             <h4>${s.getName()}</h4>
                             <p>${s.getDesc()}</p>
                             <span>Giá: ${s.getPrice()}Đ</span>
-                        </article>
+                        </div>
                 </c:forEach>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="device-list new-devices">
+        <section class="device-list new-devices" id="new-devices">
             <div class="section-heading">
                 <h2 id="new-devices-title">Thiết Bị Mới Về</h2>
                 <p>Những sản phầm vừa mới về Shop88 và sẵn sàng bấm ngay</p>
             </div>
-            <div class="device-pages" data-paginated="new-devices">
-                <div class="device-page is-active">
-                    <div class="device-grid">
-                    <c:forEach items="${listNew}" var="s"> 
-                        <article class="device-card">
-                            <h4>${s.getName()}</h4>
-                            <p>${s.getDesc()}</p>
-                            <span>Giá: ${s.getPrice()}Đ</span>
-                        </article>
-                    </c:forEach>
+            
+            <div class="device-page is-active">
+                <div class="device-grid">
+                <c:forEach items="${listNew}" var="s"> 
+                    <div class="device-card">
+                    	<div class="device-thumb">
+                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+                       	</div>
+                        <h4>${s.getName()}</h4>
+                        <p>${s.getDesc()}</p>
+                        <span>Giá: ${s.getPrice()}Đ</span>
                     </div>
-                </div>
-                <div class="device-page">
-                    <div class="device-grid">
-                        <article class="device-card">
-                            <h4>Tai nghe NovaTone Air</h4>
-                            <p>Driver graphene, chong on ANC, pin 42 gio kem hop sac.</p>
-                            <span>Gia: 3.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Lo vi song NovaHeat Glass</h4>
-                            <p>Cua kinh phan xa, 25L, 12 che do nau tu dong.</p>
-                            <span>Gia: 4.290.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>May loc nuoc NovaPure Flow</h4>
-                            <p>RO 6 cap, UV-C, ket noi app theo doi chat luong nuoc.</p>
-                            <span>Gia: 9.850.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Tablet NovaTab Note</h4>
-                            <p>Man 11 inch 120Hz, but stylus, da tac vu chia doi man hinh.</p>
-                            <span>Gia: 11.490.000d</span>
-                        </article>
-                    </div>
+                </c:forEach>
                 </div>
             </div>
-            <div class="pagination-pills" data-pagination="new-devices">
-                <button type="button" data-page="0" class="active">1</button>
-                <button type="button" data-page="1">2</button>
+                
+            <div class="pagination-pills">
+            	<c:choose>
+			        <c:when test="${currentNewPage > 1}">
+			            <a href="home?npage=${currentNewPage - 1}&fpage=${currentFeaturedPage}#new-devices">&#10094;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+            	
+            	<c:forEach var="i" begin="1" end="${totalNewPages}">
+            		<a href="home?npage=${i}&fpage=${currentFeaturedPage}#new-devices"
+               		class="${i == currentNewPage ? 'active' : ''}">${i}</a>
+        		</c:forEach>           	
+            	
+            	<c:choose>
+	                <c:when test="${currentNewPage < totalNewPages}">
+	                	<a href = "home?npage=${currentNewPage + 1}&fpage=${currentFeaturedPage}#new-devices">&#10095;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
             </div>
         </section>
 
@@ -156,53 +169,45 @@
                 <h2 id="best-sellers-title">Thiết Bị Bán Chạy</h2>
                 <p>Duoc khach hang lua chon va danh gia cao nhat trong thang.</p>
             </div>
-            <div class="device-pages" data-paginated="best-sellers">
-                <div class="device-page is-active">
+            <div class="device-pages">
+                <div class="device-page">
                     <div class="device-grid">
-                        <article class="device-card">
+                        <div class="device-card">
+                        	<div class="device-thumb">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       	</div>
                             <h4>May lanh NovaCool 2HP</h4>
                             <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
                             <span>Gia: 13.290.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Robot lau nha NovaClean Duo</h4>
-                            <p>Lau hut dong thoi, ban do 3D, tu nang khan khi len tham.</p>
-                            <span>Gia: 10.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Tai nghe NovaPods Max</h4>
-                            <p>Chong on chu dong, Spatial Audio, pin 28 gio.</p>
-                            <span>Gia: 6.990.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Bep tu NovaHeat Duo</h4>
-                            <p>Hai vung nau tu + hong ngoai, bang dieu khien cam ung.</p>
-                            <span>Gia: 8.890.000d</span>
-                        </article>
-                    </div>
-                </div>
-                <div class="device-page">
-                    <div class="device-grid">
-                        <article class="device-card">
-                            <h4>May hut mui NovaBreeze</h4>
-                            <p>Cong suat 1100m3/h, bo loc than hoat tinh, dieu khien cam ung.</p>
-                            <span>Gia: 7.450.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>May say quan ao NovaDry S</h4>
-                            <p>Cong nghe HeatPump, 14 chuong trinh say thong minh.</p>
-                            <span>Gia: 15.900.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Combo loa NovaBeat Party</h4>
-                            <p>Am thanh 360 do, microphone bluetooth, pin 16 gio.</p>
-                            <span>Gia: 5.790.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Camera an ninh NovaGuard 360</h4>
-                            <p>Quan sat 4K, AI phat hien nguoi, luu tru cloud.</p>
-                            <span>Gia: 3.650.000d</span>
-                        </article>
+                        </div>
+                        
+                        <div class="device-card">
+                        	<div class="device-thumb">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       	</div>
+                            <h4>May lanh NovaCool 2HP</h4>
+                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
+                            <span>Gia: 13.290.000d</span>
+                        </div>
+                        
+                        <div class="device-card">
+                        	<div class="device-thumb">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       	</div>
+                            <h4>May lanh NovaCool 2HP</h4>
+                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
+                            <span>Gia: 13.290.000d</span>
+                        </div>
+                        
+                        <div class="device-card">
+                        	<div class="device-thumb">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       	</div>
+                            <h4>May lanh NovaCool 2HP</h4>
+                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
+                            <span>Gia: 13.290.000d</span>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

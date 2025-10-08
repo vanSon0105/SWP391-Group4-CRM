@@ -10,15 +10,15 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  username varchar(50),
+  username varchar(50) UNIQUE,
   password varchar(255),
-  email varchar(100),
+  email varchar(100) UNIQUE,
   image_url varchar(255),
   full_name varchar(100),
   phone varchar(20),
   role_id int,
   status enum('active','inactive') DEFAULT 'active',
-  date timestamp default current_timestamp,
+  created_at timestamp default current_timestamp,
   foreign key (role_id) references roles(id)
 );
 
@@ -34,27 +34,9 @@ CREATE TABLE devices (
   price DECIMAL(10,2) NOT NULL,
   unit varchar(50),
   image_url varchar(255),
-  type enum('spare part','device'),
+  description text,
   created_at timestamp default current_timestamp,
   foreign key (category_id) references categories(id)
-);
-
-CREATE TABLE suppliers (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(100) NOT NULL,
-  phone VARCHAR(20),
-  email VARCHAR(100),
-  address VARCHAR(255)
-);
-
-CREATE TABLE supplier_details (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  supplier_id INT NOT NULL,
-  device_id INT NOT NULL,
-  date timestamp default current_timestamp,
-  price DECIMAL(10,2) NOT NULL,
-  foreign key (supplier_id) references suppliers(id),
-  foreign key (device_id) references devices(id)
 );
 
 CREATE TABLE inventories (
@@ -62,19 +44,9 @@ CREATE TABLE inventories (
   storekeeper_id INT NOT NULL,
   device_id INT NOT NULL,
   quantity INT NOT NULL,
-  foreign key (storekeeper_id) references users(id)
+  foreign key (storekeeper_id) references users(id),
+  foreign key (device_id) references devices(id)
 );
-
-CREATE TABLE device_details (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  inventory_id INT NOT NULL,
-  device_id INT NOT NULL,
-  description text,
-  serial_no varchar(100),
-  status ENUM('in_stock','out_stock','sold'),
-  foreign key (inventory_id) references inventories(id)
-);
-
 
 CREATE TABLE orders (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -85,6 +57,16 @@ CREATE TABLE orders (
   foreign key (customer_id) references users(id)
 );
 
+CREATE TABLE warranty_cards(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    device_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    start_at TIMESTAMP ,
+    end_at TIMESTAMP,
+    foreign key (device_id) references devices(id),
+    foreign key (customer_id) references users(id)
+);
+
 CREATE TABLE order_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
   order_id INT NOT NULL,
@@ -92,10 +74,12 @@ CREATE TABLE order_details (
   quantity INT NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   discount DECIMAL(5,2),
-  warranty_date timestamp,
+  warranty_card_id INT NOT NULL UNIQUE,
   foreign key (order_id) references orders(id),
-  foreign key (device_id) references devices(id)
+  foreign key (device_id) references devices(id),
+  foreign key (warranty_card_id) references warranty_cards(id)
 );
+
 
 CREATE TABLE payments (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -129,10 +113,14 @@ CREATE TABLE task_details (
 CREATE TABLE customer_issues (
   id INT PRIMARY KEY AUTO_INCREMENT,
   customer_id INT NOT NULL,
+  issue_code VARCHAR(50) UNIQUE,
   title VARCHAR(100) NOT NULL,
   description TEXT,
+  device_id INT,
+  warranty_card_id INT,
   created_at TIMESTAMP default current_timestamp,
-  foreign key (customer_id) references users(id)
+  foreign key (customer_id) references users(id),
+  foreign key (warranty_card_id) references warranty_cards(id)
 );
 
 CREATE TABLE customer_issue_details (
@@ -146,16 +134,43 @@ CREATE TABLE customer_issue_details (
   foreign key (staff_id) references users(id)
 );
 
+CREATE TABLE suppliers (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(100) NOT NULL,
+  phone VARCHAR(20),
+  email VARCHAR(100),
+  address VARCHAR(255)
+);
+
+CREATE TABLE supplier_details (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  supplier_id INT NOT NULL,
+  device_id INT NOT NULL,
+  date timestamp default current_timestamp,
+  price DECIMAL(10,2) NOT NULL,
+  foreign key (supplier_id) references suppliers(id),
+  foreign key (device_id) references devices(id)
+);
+
 CREATE TABLE transactions (
   id INT PRIMARY KEY AUTO_INCREMENT,
   storekeeper_id INT NOT NULL,
-  technical_staff_id INT NOT NULL,
+  user_id INT,
+  supplier_id INT,
   date timestamp default current_timestamp,
   type ENUM('export','import') NOT NULL,
   status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
   foreign key (storekeeper_id) references users(id),
-  foreign key (technical_staff_id) references users(id)
+  foreign key (user_id) references users(id),
+  foreign key (supplier_id) references suppliers(id)
 );
+
+ALTER TABLE transactions
+  ADD CONSTRAINT chk_type_refs
+  CHECK (
+    (type = 'import' AND supplier_id IS NOT NULL AND user_id IS NULL) OR
+    (type = 'export' AND user_id IS NOT NULL AND supplier_id IS NULL)
+  );
 
 CREATE TABLE transaction_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -204,7 +219,12 @@ INSERT INTO users (username, password, email, image_url, full_name, phone, role_
 ('spstaff01', '123456', 'spstaff01@example.com', NULL, 'Xuan Bac', '0904567890', 4, 'active'),
 ('storekeeper01', '123456', 'storekeeper@example.com', NULL, 'Hai Dang', '0905678901', 5, 'active'),
 ('customer01', '123456', 'customer01@example.com', NULL, 'Hieu Pham', '0906789012', 6, 'active'),
-('customer02', '123456', 'customer02@example.com', NULL, 'Customer', '0907890123', 6, 'active');
+('customer02', '123456', 'customer02@example.com', NULL, 'Customer', '0907890123', 6, 'active'),
+('customer03', '123456', 'customer03@example.com', NULL, 'Nguyen An',  '0908000003', 6, 'active'),
+('customer04', '123456', 'customer04@example.com', NULL, 'Tran Binh',  '0908000004', 6, 'active'),
+('customer05', '123456', 'customer05@example.com', NULL, 'Le Chi',     '0908000005', 6, 'active'),
+('customer06', '123456', 'customer06@example.com', NULL, 'Pham Duong', '0908000006', 6, 'active'),
+('customer07', '123456', 'customer07@example.com', NULL, 'Hoai Giang', '0908000007', 6, 'active');
 
 INSERT INTO categories (category_name) VALUES
 ('Laptop'),
@@ -212,69 +232,219 @@ INSERT INTO categories (category_name) VALUES
 ('Printer'),
 ('Spare Parts');
 
-INSERT INTO devices (category_id, name, price, unit, image_url, type) VALUES
-(1, 'Dell XPS 13', 1200.00, 'pcs', NULL, 'device'),
-(1, 'MacBook Pro 14', 2200.00, 'pcs', NULL, 'device'),
-(2, 'iPhone 15', 999.00, 'pcs', NULL, 'device'),
-(2, 'Samsung Galaxy S24', 899.00, 'pcs', NULL, 'device'),
-(4, 'Laptop Charger 65W', 45.00, 'pcs', NULL, 'spare part'),
-(4, 'iPhone Case', 20.00, 'pcs', NULL, 'spare part');
+INSERT INTO devices (category_id, name, price, unit, image_url, description) VALUES
+(1, 'Dell XPS 13',                 1200.00, 'pcs', NULL, '13" ultrabook, Intel Core, 16GB RAM, 512GB SSD, ~1.2kg; phù hợp di động/doanh nhân.'),
+(1, 'MacBook Pro 14',              2200.00, 'pcs', NULL, '14" laptop Apple Silicon, màn Liquid Retina XDR, thời lượng pin dài; máy trạm sáng tạo.'),
+(2, 'iPhone 15',                    999.00, 'pcs', NULL, 'Smartphone 6.1", chip A16, camera cải thiện, sạc USB-C; flagship cân bằng hiệu năng.'),
+(2, 'Samsung Galaxy S24',           899.00, 'pcs', NULL, 'Flagship 6.2", màn AMOLED 120Hz, Exynos/Snapdragon, AI features; chụp ảnh mạnh.'),
+(4, 'Laptop Charger 65W',            45.00, 'pcs', NULL, 'Sạc laptop 65W (DC/USB-C tuỳ mẫu), bảo vệ quá dòng/quá nhiệt; phù hợp đa số ultrabook.'),
+(4, 'iPhone Case',                   20.00, 'pcs', NULL, 'Ốp bảo vệ silicon/TPU, chống trầy xước, bám tay tốt; viền nhô bảo vệ camera/màn hình.'),
+(3, 'HP LaserJet Pro M404',         320.00, 'pcs', NULL, 'Máy in laser đơn sắc A4, ~38 ppm, kết nối USB/Ethernet; in văn phòng bền bỉ.'), 
+(3, 'Canon Pixma G3020',            250.00, 'pcs', NULL, 'Máy in phun bình mực liên tục (G-Series), in màu, Wi-Fi, copy/scan; chi phí trang thấp.'), 
+(1, 'Lenovo ThinkPad X1 Carbon',   1850.00, 'pcs', NULL, '14" business ultralight, khung carbon, bàn phím ThinkPad, nhiều cổng; bền đạt chuẩn MIL-STD.'), 
+(1, 'ASUS ROG Zephyrus G14',       1900.00, 'pcs', NULL, '14" gaming mỏng nhẹ, Ryzen + GeForce RTX, màn 120–165Hz; cân bằng game/đồ hoạ.'), 
+(2, 'Samsung Galaxy Tab S9',        799.00, 'pcs', NULL, 'Tablet AMOLED ~11", S Pen kèm, DeX, IP68; ghi chú và giải trí tốt.'),  
+(2, 'iPad Air (5th Gen)',           599.00, 'pcs', NULL, 'Tablet 10.9" chip M1, Apple Pencil/Keyboard, màn Liquid Retina; tối ưu học tập/sáng tạo.'), 
+(4, 'Printer Toner Cartridge',       35.00, 'pcs', NULL, 'Hộp mực laser tương thích M404, năng suất ~3.000 trang; dễ thay thế, mực đều.'),
+(4, 'USB-C Cable 1m',                 9.00, 'pcs', NULL, 'Cáp USB-C to C 1m, sạc đến 60W/3A, truyền dữ liệu; lõi bền, đầu nối chắc.');
 
 INSERT INTO suppliers (name, phone, email, address) VALUES
 ('TechSupplier Ltd.', '0901111222', 'sales@techsupplier.com', '123, Thach Hoa, Thach That, Ha Noi'),
 ('MobileWorld Co.', '0902222333', 'contact@mobileworld.com', '456, Thach Hoa, Thach That, Ha Noi');
 
 INSERT INTO supplier_details (supplier_id, device_id, price) VALUES
-(1, 1, 1150.00),
-(1, 5, 40.00),
-(2, 3, 950.00),
-(2, 6, 18.00);
+(1, 7, 290.00),
+(1, 9, 1750.00),
+(1, 13, 30.00),
+(2, 8, 230.00),
+(2, 10, 1820.00),
+(2, 11, 760.00),
+(2, 12, 560.00),
+(2, 14, 7.50);
 
 INSERT INTO inventories (storekeeper_id, device_id, quantity) VALUES
-(5, 1, 10),
-(5, 2, 5),
-(5, 3, 20),
-(5, 4, 15),
-(5, 5, 50),
-(5, 6, 100);
+(5, 7, 12),
+(5, 8, 10),
+(5, 9, 6),
+(5, 10, 5),
+(5, 11, 15),
+(5, 12, 18),
+(5, 13, 80),
+(5, 14, 200);
 
-INSERT INTO device_details (inventory_id, device_id, description, serial_no, status) VALUES
-(1, 1, 'Dell XPS 13 2024 Model', 'SNXPS001', 'in_stock'),
-(2, 2, 'MacBook Pro 14 M2', 'SNMBP002', 'in_stock'),
-(3, 3, 'iPhone 15 Black', 'SNIP015', 'in_stock'),
-(4, 4, 'Samsung Galaxy S24 White', 'SNSAM024', 'in_stock');
+INSERT INTO orders (id, customer_id, total_amount, status, date) VALUES
+(1, 6, 999.00, 'confirmed', '2025-09-15 14:30:00'),
+(2, 7, 2200.00, 'pending', '2025-09-15 14:30:00'),
+(3,  8,  899.00,  'confirmed', '2025-09-12 10:00:00'),
+(4,  9, 2220.00,  'confirmed', '2025-09-15 14:30:00'),
+(5, 10, 1245.00,  'confirmed', '2025-09-18 09:15:00'),
+(6, 11,  320.00,  'confirmed', '2025-09-20 11:45:00'),
+(7, 12, 1850.00,  'pending',   '2025-09-22 16:00:00'),
+(8,  6,  599.00,  'confirmed', '2025-09-24 18:10:00'),
+(9,  7,  999.00,  'confirmed', '2025-09-25 08:20:00'),
+(10, 8,  829.00,  'confirmed', '2025-09-26 13:05:00'),
+(11, 9, 1935.00,  'confirmed', '2025-09-27 15:40:00'), 
+(12,10,  355.00,  'confirmed', '2025-09-28 17:55:00'), 
+(13,11, 2799.00,  'confirmed', '2025-09-29 10:22:00'), 
+(14,12, 1218.00,  'pending',   '2025-09-30 19:45:00'),
+(15, 6,  250.00,  'confirmed', '2025-10-01 09:02:00'), 
+(16, 7,  320.00,  'cancelled', '2025-10-02 11:11:00'), 
+(17, 8,  829.00,  'confirmed', '2025-10-03 12:34:00'),
+(18, 9, 3099.00,  'confirmed', '2025-10-04 08:08:00'),  
+(19,10,  899.00,  'confirmed', '2025-10-05 20:20:00'),
+(20,11,  629.00,  'confirmed', '2025-10-06 07:07:00'); 
 
-INSERT INTO orders (customer_id, total_amount, status) VALUES
-(6, 999.00, 'confirmed'),
-(7, 2200.00, 'pending');
+INSERT INTO warranty_cards (id, device_id, customer_id, start_at, end_at) VALUES
+(1, 3, 6, '2025-09-28 00:00:00', '2026-09-28 00:00:00'),  
+(2, 2, 7, '2025-09-28 00:00:00', '2027-09-28 00:00:00');
+INSERT INTO warranty_cards (id, device_id, customer_id, start_at, end_at) VALUES
+(3,  4,  8, '2025-09-12 10:00:00', '2027-09-12 10:00:00'), 
+(4,  2,  9, '2025-09-15 14:30:00', '2027-09-15 14:30:00'), 
+(5,  6,  9, '2025-09-15 14:30:00', '2026-03-15 14:30:00'), 
+(6,  1, 10, '2025-09-18 09:15:00', '2027-09-18 09:15:00'), 
+(7,  5, 10, '2025-09-18 09:15:00', '2026-03-18 09:15:00'), 
+(8,  7, 11, '2025-09-20 11:45:00', '2027-09-20 11:45:00'), 
+(9,  9, 12, '2025-09-22 16:00:00', '2027-09-22 16:00:00'), 
+(10,12, 6, '2025-09-24 18:10:00', '2027-09-24 18:10:00'), 
+(11, 3,  7, '2025-09-25 08:20:00', '2027-09-25 08:20:00'), 
+(12,11, 8, '2025-09-26 13:05:00', '2027-09-26 13:05:00'), 
+(13,14, 8, '2025-09-26 13:05:00', '2026-03-26 13:05:00'), 
+(14,10, 9, '2025-09-27 15:40:00', '2027-09-27 15:40:00'), 
+(15,14, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'), 
+(16,13, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'), 
+(17,13,10, '2025-09-28 17:55:00', '2026-03-28 17:55:00'),
+(18, 7, 10, '2025-09-28 17:55:00', '2027-09-28 17:55:00'), 
+(19, 3, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'), 
+(20, 2, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'),
+(21, 1, 12, '2025-09-30 19:45:00', '2027-09-30 19:45:00'), 
+(22, 6, 12, '2025-09-30 19:45:00', '2026-03-30 19:45:00'), 
+(23, 8,  6, '2025-10-01 09:02:00', '2027-10-01 09:02:00'), 
+(24, 7,  7, '2025-10-02 11:11:00', '2027-10-02 11:11:00'), 
+(25,11, 8, '2025-10-03 12:34:00', '2027-10-03 12:34:00'), 
+(26,14, 8, '2025-10-03 12:34:00', '2026-04-03 12:34:00'), 
+(27, 9,  9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'), 
+(28, 3,  9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'), 
+(29, 5,  9, '2025-10-04 08:08:00', '2026-04-04 08:08:00'), 
+(30, 4, 10, '2025-10-05 20:20:00', '2027-10-05 20:20:00'), 
+(31,12,11, '2025-10-06 07:07:00', '2027-10-06 07:07:00'); 
 
-INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_date) VALUES
-(1, 3, 1, 999.00, 0.00, '2026-09-28 00:00:00'),
-(2, 2, 1, 2200.00, 0.00, '2027-09-28 00:00:00');
+INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_card_id) VALUES
+(1, 3, 1,  999.00, 0.00, 1),
+(2, 2, 1, 2200.00, 0.00, 2);
 
-INSERT INTO payments (order_id, payment_url, status) VALUES
-(1, Null, 'success'),
-(2, Null, 'pending');
+INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_card_id) VALUES
+(3,  4, 1,  899.00,  0.00,  3),
+(4,  2, 1, 2200.00,  0.00,  4),
+(4,  6, 1,   20.00,  0.00,  5),
+(5,  1, 1, 1200.00,  0.00,  6),
+(5,  5, 1,   45.00,  0.00,  7),
+(6,  7, 1,  320.00,  0.00,  8),
+(7,  9, 1, 1850.00,  0.00,  9),
+(8, 12, 1,  599.00,  0.00, 10),
+(9,  3, 1,  999.00,  0.00, 11),
+(10,11, 1,  799.00,  0.00, 12),
+(10,14, 1,    9.00,  0.00, 13),
+(11,10, 1, 1900.00,  0.00, 14),
+(11,14, 1,    9.00,  0.00, 15),
+(11,13, 1,   26.00,  9.00, 16), 
+(12,13, 1,   35.00,  0.00, 17),
+(12, 7, 1,  320.00,  0.00, 18),
+(13, 3, 1,  999.00,  0.00, 19),
+(13, 2, 1, 2200.00,  0.00, 20),
+(14, 1, 1, 1200.00,  0.00, 21),
+(14, 6, 1,   18.00,  2.00, 22), 
+(15, 8, 1,  250.00,  0.00, 23),
+(16, 7, 1,  320.00,  0.00, 24), 
+(17,11, 1,  799.00,  0.00, 25),
+(17,14, 1,    9.00,  0.00, 26),
+(18, 9, 1, 1850.00,  0.00, 27),
+(18, 3, 1,  999.00,  0.00, 28),
+(18, 5, 1,   35.00,  0.00, 29),
+(19, 4, 1,  899.00,  0.00, 30),
+(20,12, 1,  599.00, 30.00, 31); 
 
-INSERT INTO tasks (title, description, manager_id) VALUES
-('Setup new laptops', 'Prepare laptops for new staff', 2),
-('Fix printer issue', 'Resolve error E05 in printer', 2);
+INSERT INTO warranty_cards (id, device_id, customer_id, start_at, end_at) VALUES
+(32, 6, 11, '2025-10-06 07:07:00', '2026-04-06 07:07:00');
+INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_card_id) VALUES
+(20, 6, 1,   60.00, 30.00, 32);
 
-INSERT INTO task_details (task_id, technical_staff_id, deadline, status) VALUES
-(1, 3, '2025-10-05 00:00:00', 'in_progress'),
-(2, 4, '2025-10-10 00:00:00', 'pending');
+INSERT INTO payments (order_id, payment_url, status, created_at, updated_at) VALUES
+(3,  NULL, 'success',  '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
+(4,  NULL, 'success',  '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(5,  NULL, 'success',  '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
+(6,  NULL, 'success',  '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
+(7,  NULL, 'pending',  '2025-09-22 16:05:00', NULL),
+(8,  NULL, 'success',  '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
+(9,  NULL, 'success',  '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
+(10, NULL, 'success',  '2025-09-26 13:10:00', '2025-09-26 13:10:00'),
+(11, NULL, 'success',  '2025-09-27 15:45:00', '2025-09-27 15:45:00'),
+(12, NULL, 'success',  '2025-09-28 18:00:00', '2025-09-28 18:00:00'),
+(13, NULL, 'success',  '2025-09-29 10:25:00', '2025-09-29 10:25:00'),
+(14, NULL, 'pending',  '2025-09-30 19:50:00', NULL),
+(15, NULL, 'success',  '2025-10-01 09:05:00', '2025-10-01 09:05:00'),
+(16, NULL, 'failed',   '2025-10-02 11:15:00', '2025-10-02 11:20:00'),
+(17, NULL, 'success',  '2025-10-03 12:40:00', '2025-10-03 12:40:00'),
+(18, NULL, 'success',  '2025-10-04 08:12:00', '2025-10-04 08:12:00'),
+(19, NULL, 'success',  '2025-10-05 20:25:00', '2025-10-05 20:25:00'),
+(20, NULL, 'success',  '2025-10-06 07:10:00', '2025-10-06 07:10:00');
 
-INSERT INTO customer_issues (customer_id, title, description) VALUES
-(6, 'Laptop overheating', 'Laptop gets very hot after 30 minutes'),
-(7, 'Phone battery issue', 'Battery drains too fast on Galaxy S24');
-
-INSERT INTO transactions (storekeeper_id, technical_staff_id, type, status) VALUES
-(5, 3, 'export', 'confirmed'),
-(5, 4, 'import', 'pending');
+INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES
+(1, 5, 6,  NULL, '2025-09-28 00:10:00', 'export', 'confirmed'),  
+(2, 5, 7,  NULL, '2025-09-28 00:15:00', 'export', 'pending'),
+(3, 5, 8,  NULL, '2025-09-12 10:06:00', 'export', 'confirmed'),
+(4, 5, 9,  NULL, '2025-09-15 14:36:00', 'export', 'confirmed'),
+(5, 5, 10, NULL, '2025-09-18 09:21:00', 'export', 'confirmed'),
+(6, 5, 11, NULL, '2025-09-20 11:51:00', 'export', 'confirmed'),
+(7, 5, 12, NULL, '2025-09-22 16:06:00', 'export', 'pending'),   
+(8, 5, 6,  NULL, '2025-09-24 18:16:00', 'export', 'confirmed'),
+(9, 5, 7,  NULL, '2025-09-25 08:26:00', 'export', 'confirmed'),
+(10,5, 8,  NULL, '2025-09-26 13:11:00', 'export', 'confirmed'),
+(11,5, 9,  NULL, '2025-09-27 15:46:00', 'export', 'confirmed'),
+(12,5,10,  NULL, '2025-09-28 18:01:00', 'export', 'confirmed'),
+(13,5,11,  NULL, '2025-09-29 10:26:00', 'export', 'confirmed'),
+(14,5,12,  NULL, '2025-09-30 19:51:00', 'export', 'pending'),  
+(15,5, 6,  NULL, '2025-10-01 09:06:00', 'export', 'confirmed'),
+(16,5, 7,  NULL, '2025-10-02 11:16:00', 'export', 'cancelled'),  
+(17,5, 8,  NULL, '2025-10-03 12:41:00', 'export', 'confirmed'),
+(18,5, 9,  NULL, '2025-10-04 08:13:00', 'export', 'confirmed'),
+(19,5,10,  NULL, '2025-10-05 20:26:00', 'export', 'confirmed'),
+(20,5,11,  NULL, '2025-10-06 07:11:00', 'export', 'confirmed');
 
 INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
-(1, 1, 2),
-(2, 5, 10);
+(1, 3, 1),
+(2, 2, 1),
+(3, 4, 1),
+(4, 2, 1), (4, 6, 1),
+(5, 1, 1), (5, 5, 1),
+(6, 7, 1),
+(7, 9, 1),
+(8,12, 1),
+(9, 3, 1),
+(10,11, 1), (10,14, 1),
+(11,10, 1), (11,14, 1), (11,13, 1),
+(12,13, 1), (12,7, 1),
+(13, 3, 1), (13,2, 1),
+(14, 1, 1), (14,6, 1),
+(15, 8, 1),
+(16, 7, 1),
+(17,11, 1), (17,14, 1),
+(18, 9, 1), (18,3, 1), (18,5, 1),
+(19, 4, 1),
+(20,12, 1), (20,6, 1);
+
+INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES
+(101, 5, NULL, 1, '2025-09-10 09:00:00', 'import', 'confirmed'),
+(102, 5, NULL, 2, '2025-09-16 09:00:00', 'import', 'confirmed');
+INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
+(101, 1, 5),  (101, 3, 10), (101, 13, 50),
+(102, 2, 3),  (102, 11, 10), (102, 14, 100);
+
+INSERT INTO customer_issues (customer_id, issue_code, title, description, device_id, warranty_card_id, created_at) VALUES
+(6, 'ISS-0001', 'Máy nóng',     'iPhone 15 nóng khi sạc',           3,  1, '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu',      'iPhone 15 tụt pin nhanh',           3, 11, '2025-10-02 11:00:00'),
+(9, 'ISS-0003', 'Kẹt giấy',     'HP LaserJet kẹt giấy thường xuyên', 7, 18, '2025-10-03 09:30:00'),
+(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc',              12, 31, '2025-10-04 16:45:00');
+
 
 INSERT INTO permissions (id, permission_name) VALUES
 (1, 'CREATE_TASK'),
