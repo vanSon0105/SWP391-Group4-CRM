@@ -26,5 +26,14 @@ public class SupplierDAO extends dal.DBContext {
 		} catch (SQLException e) {
 			System.out.print("Connection error");
 		}
+		return list;
+	}
+	
+	public static void main(String[] args) {
+	    SupplierDAO dao = new SupplierDAO();
+	    List<Supplier> suppliers = dao.getAllSuppliers();
+	    for (Supplier s : suppliers) {
+	        System.out.println(s.getName() + " - " + s.getPhone());
+	    }
 	}
 }

@@ -1,25 +1,53 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%> 
-<%@ page isELIgnored="false" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+	pageEncoding="UTF-8"%>
+<%@ page isELIgnored="false"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
 
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>NovaCare Shop - Danh mục sản phẩm</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/shop.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaCare Shop - Danh mục sản phẩm</title>
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/assets/css/shop.css">
 
-	
-	<!-- Font Awesome -->
-	<link rel="stylesheet"
+
+<!-- Font Awesome -->
+<link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
+<style>
+.sorts button:hover {
+	background: linear-gradient(90deg, #38bdf8, #22d3ee) !important;
+}
+
+body.shop-page.catalog-page .product-grid {
+	margin-top: 20px;
+}
+
+a {
+	color: #1e1b4b;
+	text-decoration: none;
+}
+
+a:hover {
+	color: #2563eb;
+}
+
+a:visited {
+	color: #1e1b4b;
+}
+
+.category-link.active {
+	color: #33C2F6;
+}
+</style>
 
 <body class="shop-page catalog-page">
 	<header class="header-toolbar">
@@ -43,42 +71,32 @@
 	</header>
 	<h1 style="text-align: center; color: #312e81; margin-top: 10px">Danh
 		Mục Sản Phẩm</h1>
-	
+
 	<main>
-	
+
 		<section class="toolbar">
+			
+			<form action="device-page" method="get" id="filter-form">
 			<div class="filters">
-				<div style="display:flex; flex-direction:column; gap:5px">
-					<label for="category">Danh mục</label> 
-					<!-- <select id="category">
-						<option>Tất cả</option>
-						<option>Laptop</option>
-						<option>Điện thoại</option>
-						<option>Linh kiện bảo hành</option>
-						<option>Dịch vụ sửa chữa</option>
-					</select> -->
-					<span><input type="checkbox" style="margin-right:5px;"/>Tất cả</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Laptop</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Điện thoại</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Linh kiện bảo hành</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Dịch vụ sửa chữa</span>	
+				<div style="display: flex; flex-direction: column; gap: 5px">
+					<label for="category">Danh mục</label> <a href="device-page"
+						class="category-link ${empty param.category ? 'active' : ''}"> Tất cả </a>
+					<c:forEach var="category" items="${listCategory}">
+						<a href="device-page?category=${category.id}"
+							class="category-link ${param.category == category.id ? 'active' : ''}">
+							${category.categoryName} </a>
+					</c:forEach>
 				</div>
-				<div style="display:flex; flex-direction:column; gap:5px">
-					<label for="brand">Thương hiệu</label>
-					 <!-- <select id="brand">
-						<option>Tất cả</option>
-						<option>NovaCare</option>
-						<option>Samsung</option>
-						<option>Sony</option>
-						<option>LG</option>
-						<option>Daikin</option>
-					</select> -->
-					<span><input type="checkbox" style="margin-right:5px;"/>Tất cả</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>NovaCare</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>Samsung</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>Sony</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>LG</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>Daikin</span>
+
+
+				<div style="display: flex; flex-direction: column; gap: 5px">
+					<label for="supplier">Thương hiệu</label> <span><input
+						type="checkbox" name="supplier" value="all"
+						style="margin-right: 5px;" />Tất cả</span>
+					<c:forEach var="supplier" items="${listSupplier}">
+						<span><input type="checkbox" name="supplier"
+							value="${supplier.id}" style="margin-right: 5px;" />${supplier.name}</span>
+					</c:forEach>
 				</div>
 				<div>
 					<label for="price">Mức giá</label> <select id="price">
@@ -88,28 +106,42 @@
 						<option>Trên 30 triệu</option>
 					</select>
 				</div>
-			</div>
-		</section>
+				</div>
+			</form>
 		
-		<section class="product-grid">
-			<c:forEach var="device" items="${listDevice}">
-				<article class="product-card">
-					<h3>${device.name}</h3>
-					<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
-					<div class="tags">
-						<span>Laptop</span><span>NovaCare</span><span>Intel</span>
-					</div>
-					<strong>
-						<fmt:formatNumber value="${device.price + 0}" type="number"/>
-					</strong> 
-					<a href="device-detail.html">Xem chi tiết</a>
-				</article>
-			</c:forEach>
-		
-
-			<!-- pagination -->
-
 		</section>
+		<section class="main-content">
+			<section class="sorts">
+				<label for="sort">Sắp xếp theo:</label> <select id="sort"
+					style="margin-left: 10px">
+					<option><span>Giá: thấp đến cao</span></option>
+					<option><span>Giá: cao đến thấp</span></option>
+				</select>
+				<button id="sort" type="submit"
+					style="padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.35); background: rgba(255, 255, 255, 0.96); font-size: 15px; color: #1e1b4b; margin-left: 10px">
+					<span>Phổ biến</span>
+				</button>
+			</section>
+			<section class="product-grid">
+				<c:forEach var="device" items="${listDevice}">
+					<article class="product-card">
+						<h3>${device.name}</h3>
+						<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
+						<div class="tags">
+							<span>Laptop</span><span>NovaCare</span><span>Intel</span>
+						</div>
+						<strong> <fmt:formatNumber value="${device.price + 0}"
+								type="number" />
+						</strong> <a href="device-detail.html">Xem chi tiết</a>
+					</article>
+				</c:forEach>
+
+
+				<!-- pagination -->
+
+			</section>
+		</section>
+
 
 
 	</main>

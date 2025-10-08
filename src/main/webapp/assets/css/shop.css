@@ -991,6 +991,15 @@ body.shop-page.catalog-page .product-grid {
     flex-wrap:wrap;
     gap: 20px;
 }
+body.shop-page.catalog-page .sorts {
+    display: flex;
+    flex-wrap:wrap;
+    gap: 20px;
+}
+
+ body.shop-page.catalog-page .sorts button:hover {
+	background-color:blue;	
+} 
 
 body.shop-page.catalog-page .product-card {
     border-radius: 22px;
@@ -1041,6 +1050,7 @@ body.shop-page.catalog-page .product-card a {
     font-weight: 600;
     box-shadow: 0 12px 24px rgba(34, 211, 238, 0.28);
 }
+
 
 body.shop-page.catalog-page .summary {
     background: rgba(255, 255, 255, 0.94);
