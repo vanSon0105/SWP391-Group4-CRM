@@ -14,23 +14,18 @@ import model.Device;
 import model.DeviceDetail;
 
 public class DeviceDAO extends DBContext{
-	public List<Device> listFeaturedDevices() {
-		List<Device> list = new ArrayList<>();
-        String sql = "SELECT \r\n"
-        		+ "    d.id,\r\n"
-        		+ "    d.name,\r\n"
-        		+ "    d.price,\r\n"
-        		+ "    dd.description,\r\n"
-        		+ "    SUM(od.quantity) AS total_sold\r\n"
-        		+ "FROM order_details od\r\n"
+	public List<Device> getFeaturedDevicesList(int offset, int recordsEachPage) {
+		List<Device> list = new ArrayList<>();   
+        String sql = "SELECT d.id, d.name,d.price, d.description, SUM(od.quantity) AS total_sold FROM order_details od\r\n"
         		+ "JOIN devices d ON od.device_id = d.id\r\n"
-        		+ "JOIN device_details dd ON dd.device_id = d.id \r\n"
-        		+ "GROUP BY d.id, d.name, d.price, dd.description\r\n"
+        		+ "GROUP BY d.id, d.name, d.price, d.description\r\n"
         		+ "ORDER BY total_sold DESC\r\n"
-        		+ "LIMIT 10;";
+        		+ "LIMIT ?, ?;";
         try {
         	connection = DBContext.getConnection();
             PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setInt(1, offset);
+            pre.setInt(2, recordsEachPage);
             ResultSet rs = pre.executeQuery();
             while(rs.next()) {
             	Device d = new Device();
@@ -49,17 +44,34 @@ public class DeviceDAO extends DBContext{
         return list;
     }
 	
-	public List<Device> listNewDevices() {
+	
+	public int getTotalFeaturedDevices() {
+	    int count = 0;
+	    String sql = "SELECT COUNT(DISTINCT d.id) " +
+	                 "FROM order_details od " +
+	                 "JOIN devices d ON od.device_id = d.id ";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        if (rs.next()) count = rs.getInt(1);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return count;
+	}
+	
+	public List<Device> getNewDevicesList(int offset, int recordsEachPage) {
 		List<Device> list = new ArrayList<>();
-        String sql = "SELECT d.id, d.name, d.image_url, d.price, d.created_at, dd.description FROM devices d\r\n"
-        		+ "JOIN device_details dd ON d.id = dd.device_id\r\n"
+		String sql = "SELECT id, name, image_url, price, created_at, description FROM devices\r\n"
         		+ "WHERE created_at >= NOW() - INTERVAL 7 DAY \r\n"
-        		+ "GROUP BY d.id, d.name, d.image_url, d.price, d.created_at, dd.description\r\n"
-        		+ "ORDER BY created_at DESC;\r\n"
-        		+ "";
+        		+ "ORDER BY created_at DESC\r\n"
+        		+ "LIMIT ?, ?;";
+       
         try {
         	connection = DBContext.getConnection();
             PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setInt(1, offset);
+            pre.setInt(2, recordsEachPage);
             ResultSet rs = pre.executeQuery();
             while(rs.next()) {
             	Device d = new Device();
@@ -78,4 +90,19 @@ public class DeviceDAO extends DBContext{
         }
         return list;
     }
+	
+	public int getTotalNewDevices() {
+	    int count = 0;
+	    String sql = "SELECT COUNT(DISTINCT id) FROM devices\r\n"
+	    		+ "WHERE created_at >= NOW() - INTERVAL 7 DAY;";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        if (rs.next()) count = rs.getInt(1);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return count;
+	}
+	
 }
