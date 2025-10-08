@@ -9,8 +9,11 @@ import java.io.IOException;
 import java.util.*;
 import model.Device;
 import model.Category;
+import model.Supplier;
 import dao.DeviceDAO;
 import dao.CategoryDAO;
+import dao.SupplierDAO;
+
 
 @WebServlet("/device-page")
 public class DevicePageController extends HttpServlet {
@@ -18,6 +21,7 @@ public class DevicePageController extends HttpServlet {
     public static final int DEVICE_PER_PAGE = 6;
     DeviceDAO deviceDao = new DeviceDAO();
     CategoryDAO categoryDao = new CategoryDAO();
+    SupplierDAO supplierDao = new SupplierDAO();
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -25,7 +29,9 @@ public class DevicePageController extends HttpServlet {
 		// TODO Auto-generated method stub
 		List<Device> listDevice = deviceDao.getAllDevices();
 		List<Category> listCategory = categoryDao.getAllCategories();
+		List<Supplier> listSupplier = supplierDao.getAllSuppliers();
 		
+		request.setAttribute("listSupplier", listSupplier)
 		request.setAttribute("listDevice", listDevice);
 		request.setAttribute("listCategory", listCategory);
 		
