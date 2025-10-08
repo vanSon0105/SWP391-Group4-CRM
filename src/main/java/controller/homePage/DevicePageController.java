@@ -31,7 +31,7 @@ public class DevicePageController extends HttpServlet {
 		List<Category> listCategory = categoryDao.getAllCategories();
 		List<Supplier> listSupplier = supplierDao.getAllSuppliers();
 		
-		request.setAttribute("listSupplier", listSupplier)
+		request.setAttribute("listSupplier", listSupplier);
 		request.setAttribute("listDevice", listDevice);
 		request.setAttribute("listCategory", listCategory);
 		
