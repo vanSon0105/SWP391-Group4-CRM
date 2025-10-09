@@ -58,19 +58,19 @@
         </section>
 
         <section class="featured-categories">
-            <a class="shortcut-card" href="device-catalog.html#laptop">
+            <a class="shortcut-card" href="device-catalog.jsp#laptop">
                 <span class="shortcut-icon">💻</span>
                 <span class="shortcut-label">Laptop &amp; PC</span>
             </a>
-            <a class="shortcut-card" href="device-catalog.html#mobile">
+            <a class="shortcut-card" href="device-catalog.jsp#mobile">
                 <span class="shortcut-icon">📱</span>
                 <span class="shortcut-label">Điện Thoại</span>
             </a>
-            <a class="shortcut-card" href="device-catalog.html#accessories">
+            <a class="shortcut-card" href="device-catalog.jsp#accessories">
                 <span class="shortcut-icon">🔧</span>
                 <span class="shortcut-label">Linh Kiện</span>
             </a>
-            <a class="shortcut-card" href="order-tracking.html">
+            <a class="shortcut-card" href="order-tracking.jsp">
                 <span class="shortcut-icon">🛠️</span>
                 <span class="shortcut-label">Theo Dõi Sửa Chữa</span>
             </a>

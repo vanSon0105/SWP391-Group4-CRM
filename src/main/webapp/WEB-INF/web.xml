@@ -11,6 +11,18 @@
   	<description></description>
   	<servlet-class>controller.Cart.CartServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>RegisterController</servlet-name>
+  	<display-name>RegisterController</display-name>
+  	<description></description>
+  	<servlet-class>controller.homePage.RegisterController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>RegisterServlet</servlet-name>
+  	<display-name>RegisterServlet</display-name>
+  	<description></description>
+  	<servlet-class>controller.homePage.RegisterServlet</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>CartServlet</servlet-name>
   	<url-pattern>/cart</url-pattern>
