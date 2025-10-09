@@ -23,10 +23,12 @@
   	<description></description>
   	<servlet-class>controller.homePage.RegisterServlet</servlet-class>
   </servlet>
+  
   <servlet-mapping>
   	<servlet-name>CartServlet</servlet-name>
   	<url-pattern>/cart</url-pattern>
   </servlet-mapping>
+  
   
   <welcome-file-list>
     <welcome-file>home</welcome-file>
