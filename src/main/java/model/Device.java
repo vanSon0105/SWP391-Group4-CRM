@@ -28,6 +28,19 @@ public class Device {
 		this.created_at = created_at;
 	}
 	
+	
+	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String type) {
+		super();
+		this.id = id;
+		this.categoryId = categoryId;
+		this.name = name;
+		this.price = price;
+		this.unit = unit;
+		this.imageUrl = imageUrl;
+		this.type = type;
+	}
+
+
 	public int getTotal_sold() {
 		return total_sold;
 	}

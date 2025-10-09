@@ -22,11 +22,11 @@
                     <span aria-hidden="true">☰</span>
                 </button>
                 <div class="category-panel" data-category-panel>
-                    <a href="device-catalog.html">Thiết bị</a>
-                    <a href="device-detail.html">Thông tin thiết bị</a>
-                    <a href="checkout.html">Thanh toán</a>
-                    <a href="order-tracking.html">Đơn hàng</a>
-                    <a href="customer-portal.html">Lịch sử</a>
+                    <a href="device-catalog.jsp">Thiết bị</a>
+                    <a href="device-detail.jsp">Thông tin thiết bị</a>
+                    <a href="checkout.jsp">Thanh toán</a>
+                    <a href="order-tracking.jsp">Đơn hàng</a>
+                    <a href="customer-portal.jsp">Lịch sử</a>
                 </div>
             </div>
             <form class="search-bar" action="search" method="get">
@@ -36,8 +36,8 @@
             </form>
         </div>
         <div class="header-bottom">
-            <a href="login.html" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
-            <a href="cart.html" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
+            <a href="../authentication/login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
+            <a href="../homepage/cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
         </div>
     </header>
 </body>
