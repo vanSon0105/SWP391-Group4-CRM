@@ -34,10 +34,11 @@ public class DevicePageController extends HttpServlet {
 			List<Category> listCategory = categoryDao.getAllCategories();
 			List<Supplier> listSupplier = supplierDao.getAllSuppliers();
 
-			String search = request.getParameter("search") == null ? null : request.getParameter("search");
+			String search = request.getParameter("search");
 			String category = request.getParameter("category");
 			String supplier = request.getParameter("supplier");
 			String price = request.getParameter("price");
+			String sortPrice = request.getParameter("sortPrice");
 			
 			Integer categoryId = null;
 			Integer supplierId = null;
@@ -59,7 +60,7 @@ public class DevicePageController extends HttpServlet {
 			}
 
 			
-			List<Device> listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price);
+			List<Device> listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price, sortPrice);
 			
 			request.setAttribute("listDevice", listDevice);
 			request.setAttribute("listSupplier", listSupplier);
