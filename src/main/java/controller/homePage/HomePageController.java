@@ -24,7 +24,7 @@ public class HomePageController extends HttpServlet {
 		List<Device> listNewDevices = hpd.listNewDevices();
 		req.setAttribute("list", listFeaturedDevices);
 		req.setAttribute("listNew", listNewDevices);
-		req.getRequestDispatcher("view/homepage/homePage.jsp").forward(req, resp);
+		req.getRequestDispatcher("/view/homepage/homePage.jsp").forward(req, resp);
 	}
 	
 	public static void main(String[] args) {
