@@ -1,6 +1,7 @@
 package dal.dao;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,7 +12,6 @@ import java.util.logging.Logger;
 
 import dal.DBContext;
 import model.Device;
-import model.DeviceDetail;
 
 public class DeviceDAO extends DBContext{
 	public List<Device> getFeaturedDevicesList(int offset, int recordsEachPage) {

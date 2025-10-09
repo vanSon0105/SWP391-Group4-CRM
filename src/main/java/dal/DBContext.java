@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 import model.Cart;
 import model.CartItem;
-import model.DeviceDetail;
+import model.Device;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -53,11 +53,11 @@ public class DBContext {
     //Test main CSDL
     public static void main(String[] args) {
         Connection c = getConnection();
-        List<DeviceDetail> list = new ArrayList<>();
+        List<Device> list = new ArrayList<>();
         if (c == null) {
             System.out.println("something wrong");
         } else {
-            String query = "SELECT * from device_details";
+            String query = "SELECT * from devices";
             try {
                 PreparedStatement ps = connection.prepareStatement(query);
                 ResultSet rs = ps.executeQuery();
@@ -68,7 +68,6 @@ public class DBContext {
                     String description = rs.getString("description");
                     String serialNo = rs.getString("serial_no");
                     String status = rs.getString("status");
-                    list.add(new DeviceDetail(id, inventoryId, deviceId, description, serialNo, status));
                 }
             } catch (SQLException e) {
                 System.out.println(e);
@@ -76,7 +75,7 @@ public class DBContext {
         }
         
         if(list != null) {
-        	for (DeviceDetail deviceDetail : list) {
+        	for (Device deviceDetail : list) {
 				System.out.println(list.toString());
 			}
         }
