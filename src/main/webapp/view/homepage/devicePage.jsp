@@ -75,40 +75,58 @@ a:visited {
 	<main>
 
 		<section class="toolbar">
-			
+
 			<form action="device-page" method="get" id="filter-form">
-			<div class="filters">
-				<div style="display: flex; flex-direction: column; gap: 5px">
-					<label for="category">Danh mục</label> <a href="device-page"
-						class="category-link ${empty param.category ? 'active' : ''}"> Tất cả </a>
-					<c:forEach var="category" items="${listCategory}">
-						<a href="device-page?category=${category.id}"
-							class="category-link ${param.category == category.id ? 'active' : ''}">
-							${category.categoryName} </a>
-					</c:forEach>
-				</div>
+				<div class="filters">
+					<div style="display: flex; flex-direction: column; gap: 5px">
+						<label for="category">Danh mục</label> 
+						<span><input type="radio"
+							name="category" value="" onchange="this.form.submit()"
+							style="margin-right: 5px;"
+							<c:if test="${empty param.category}">checked</c:if>> Tất cả </input>
+						</span>
+						<c:forEach var="category" items="${listCategory}">
+						<span>
+							<input type="radio" name="category" value="${category.id}"
+								onchange="this.form.submit()" style="margin-right: 5px;"
+								<c:if test="${param.category == category.id}">checked</c:if>>
+							${category.categoryName} </input>
+						</span>
+							
+						</c:forEach>
+					</div>
 
 
-				<div style="display: flex; flex-direction: column; gap: 5px">
-					<label for="supplier">Thương hiệu</label> <span><input
-						type="checkbox" name="supplier" value="all"
-						style="margin-right: 5px;" />Tất cả</span>
-					<c:forEach var="supplier" items="${listSupplier}">
-						<span><input type="checkbox" name="supplier"
-							value="${supplier.id}" style="margin-right: 5px;" />${supplier.name}</span>
-					</c:forEach>
-				</div>
-				<div>
-					<label for="price">Mức giá</label> <select id="price">
-						<option>Dưới 5 triệu</option>
-						<option>5 - 15 triệu</option>
-						<option>15 - 30 triệu</option>
-						<option>Trên 30 triệu</option>
-					</select>
-				</div>
+					<div style="display: flex; flex-direction: column; gap: 5px">
+						<label for="supplier">Thương hiệu</label> <span><input
+							type="radio" name="supplier" value=""
+							onchange="this.form.submit()" style="margin-right: 5px;"
+							<c:if test="${empty param.supplier}">checked</c:if> />Tất
+							cả</span>
+						<c:forEach var="supplier" items="${listSupplier}">
+							<span><input type="radio" name="supplier"
+								onchange="this.form.submit()" value="${supplier.id}"
+								style="margin-right: 5px;"
+								<c:if test="${param.supplier == supplier.id}">checked</c:if> />${supplier.name}</span>
+						</c:forEach>
+					</div>
+					<div>
+						<label for="price">Mức giá</label> <select id="price"
+							onchange="this.form.submit()" name="price">
+							<option value="" ${empty param.price ? 'selected' : ''}>Mọi mức giá</option>
+							<option value="under5"
+								<c:if test="${param.price == 'under5'}">selected</c:if>>Dưới 5 triệu</option>
+							<option value="5to15"
+								<c:if test="${param.price == '5to15'}">selected</c:if>>5 - 15 triệu</option>
+							<option value="15to30"
+								<c:if test="${param.price == '15to30'}">selected</c:if>>15 - 30 triệu</option>
+							<option value="over30"
+								<c:if test="${param.price == 'over30'}">selected</c:if>>Trên 30 triệu</option>
+						</select>
+					</div>
 				</div>
 			</form>
-		
+
 		</section>
 		<section class="main-content">
 			<section class="sorts">
