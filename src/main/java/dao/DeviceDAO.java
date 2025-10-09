@@ -31,7 +31,7 @@ public class DeviceDAO extends DBContext {
 		return list;
 	}
 
-	public List<Device> getFilteredDevices(Integer categoryId, Integer supplierId, String priceRange) {
+	public List<Device> getFilteredDevices(Integer categoryId, Integer supplierId, String priceRange, String sortPrice) {
 		List<Device> list = new ArrayList<>();
 		String sql = "select distinct d.* from devices d "
 				+ "left join supplier_details sd on d.id = sd.device_id where 1 = 1 ";
@@ -62,6 +62,19 @@ public class DeviceDAO extends DBContext {
 			default:
 				break;
 			
+			}
+		}
+		
+		if(sortPrice != null) {
+			switch (sortPrice) {
+			case "asc":
+				sql += " order by d.price asc ";
+				break;
+			case "desc":
+				sql += " order by d.price desc ";
+				break;
+			default:
+				break;
 			}
 		}
 		
