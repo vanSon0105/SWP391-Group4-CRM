@@ -19,6 +19,7 @@ CREATE TABLE users (
   role_id int,
   status enum('active','inactive') DEFAULT 'active',
   created_at timestamp default current_timestamp,
+  last_login_at timestamp,
   foreign key (role_id) references roles(id)
 );
 
@@ -37,6 +38,15 @@ CREATE TABLE devices (
   description text,
   created_at timestamp default current_timestamp,
   foreign key (category_id) references categories(id)
+);
+
+create table device_serials(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  device_id INT NOT NULL,
+  serial_no VARCHAR(100) UNIQUE,
+  status ENUM('in_stock', 'sold', 'in_repair', 'out_stock') DEFAULT 'in_stock',
+  import_date TIMESTAMP,
+  foreign key (device_id) references devices(id)
 );
 
 CREATE TABLE inventories (
@@ -59,11 +69,11 @@ CREATE TABLE orders (
 
 CREATE TABLE warranty_cards(
 	id INT PRIMARY KEY AUTO_INCREMENT,
-    device_id INT NOT NULL,
+    device_serial_id INT NOT NULL UNIQUE,
     customer_id INT NOT NULL,
     start_at TIMESTAMP ,
     end_at TIMESTAMP,
-    foreign key (device_id) references devices(id),
+    foreign key (device_serial_id) references device_serials(id),
     foreign key (customer_id) references users(id)
 );
 
@@ -71,13 +81,15 @@ CREATE TABLE order_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
   order_id INT NOT NULL,
   device_id INT NOT NULL,
+  device_serial_id INT NOT NULL UNIQUE,
   quantity INT NOT NULL,
   price DECIMAL(10,2) NOT NULL,
   discount DECIMAL(5,2),
   warranty_card_id INT NOT NULL UNIQUE,
   foreign key (order_id) references orders(id),
   foreign key (device_id) references devices(id),
-  foreign key (warranty_card_id) references warranty_cards(id)
+  foreign key (warranty_card_id) references warranty_cards(id),
+  foreign key (device_serial_id) references device_serials(id)
 );
 
 
@@ -87,8 +99,20 @@ CREATE TABLE payments (
   payment_url varchar(255),
   status ENUM('pending','success','failed') DEFAULT 'pending',
   created_at timestamp default current_timestamp,
-  updated_at timestamp,
+  paid_at timestamp,
   foreign key (order_id) references orders(id)
+);
+
+CREATE TABLE customer_issues (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  customer_id INT NOT NULL,
+  issue_code VARCHAR(50) UNIQUE,
+  title VARCHAR(100) NOT NULL,
+  description TEXT,
+  warranty_card_id INT,
+  created_at TIMESTAMP default current_timestamp,
+  foreign key (customer_id) references users(id),
+  foreign key (warranty_card_id) references warranty_cards(id)
 );
 
 CREATE TABLE tasks (
@@ -96,7 +120,9 @@ CREATE TABLE tasks (
   title VARCHAR(100) NOT NULL,
   description TEXT,
   manager_id INT NOT NULL,
-  foreign key (manager_id) references users(id)
+  customer_issue_id INT not null,
+  foreign key (manager_id) references users(id),
+  foreign key (customer_issue_id) references customer_issues(id)
 );
 
 CREATE TABLE task_details (
@@ -108,19 +134,6 @@ CREATE TABLE task_details (
   status ENUM('pending','in_progress','completed','cancelled') DEFAULT 'pending',
   foreign key (task_id) references tasks(id),
   foreign key (technical_staff_id) references users(id)
-);
-
-CREATE TABLE customer_issues (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  customer_id INT NOT NULL,
-  issue_code VARCHAR(50) UNIQUE,
-  title VARCHAR(100) NOT NULL,
-  description TEXT,
-  device_id INT,
-  warranty_card_id INT,
-  created_at TIMESTAMP default current_timestamp,
-  foreign key (customer_id) references users(id),
-  foreign key (warranty_card_id) references warranty_cards(id)
 );
 
 CREATE TABLE customer_issue_details (
@@ -248,6 +261,40 @@ INSERT INTO devices (category_id, name, price, unit, image_url, description) VAL
 (4, 'Printer Toner Cartridge',       35.00, 'pcs', NULL, 'Hộp mực laser tương thích M404, năng suất ~3.000 trang; dễ thay thế, mực đều.'),
 (4, 'USB-C Cable 1m',                 9.00, 'pcs', NULL, 'Cáp USB-C to C 1m, sạc đến 60W/3A, truyền dữ liệu; lõi bền, đầu nối chắc.');
 
+INSERT INTO device_serials (id, device_id, serial_no, status, import_date) VALUES
+(1, 3, 'IP15-SN0001', 'sold', '2025-09-01 00:00:00'),
+(2, 2, 'MBP14-SN0001', 'sold', '2025-09-01 00:00:00'),
+(3, 4, 'S24-SN0001', 'sold', '2025-09-01 00:00:00'),
+(4, 2, 'MBP14-SN0002', 'sold', '2025-09-01 00:00:00'),
+(5, 6, 'CASE-SN0001', 'sold', '2025-09-01 00:00:00'),
+(6, 1, 'XPS13-SN0001', 'sold', '2025-09-01 00:00:00'),
+(7, 5, 'CHARGER-SN0001', 'sold', '2025-09-01 00:00:00'),
+(8, 7, 'HP404-SN0001', 'sold', '2025-09-01 00:00:00'),
+(9, 9, 'TPX1-SN0001', 'sold', '2025-09-01 00:00:00'),
+(10, 12, 'IPAD-AIR-SN0001', 'sold', '2025-09-01 00:00:00'),
+(11, 3, 'IP15-SN0002', 'sold', '2025-09-01 00:00:00'),
+(12, 11, 'TABS9-SN0001', 'sold', '2025-09-01 00:00:00'),
+(13, 14, 'USBC-SN0001', 'sold', '2025-09-01 00:00:00'),
+(14, 10, 'ROG-G14-SN0001', 'sold', '2025-09-01 00:00:00'),
+(15, 14, 'USBC-SN0002', 'sold', '2025-09-01 00:00:00'),
+(16, 13, 'TONER-SN0001', 'sold', '2025-09-01 00:00:00'),
+(17, 13, 'TONER-SN0002', 'sold', '2025-09-01 00:00:00'),
+(18, 7, 'HP404-SN0002', 'sold', '2025-09-01 00:00:00'),
+(19, 3, 'IP15-SN0003', 'sold', '2025-09-01 00:00:00'),
+(20, 2, 'MBP14-SN0003', 'sold', '2025-09-01 00:00:00'),
+(21, 1, 'XPS13-SN0002', 'sold', '2025-09-01 00:00:00'),
+(22, 6, 'CASE-SN0002', 'sold', '2025-09-01 00:00:00'),
+(23, 8, 'CANON-G3020-SN0001', 'sold', '2025-09-01 00:00:00'),
+(24, 7, 'HP404-SN0003', 'in_stock', '2025-09-01 00:00:00'), -- Order cancelled
+(25, 11, 'TABS9-SN0002', 'sold', '2025-09-01 00:00:00'),
+(26, 14, 'USBC-SN0003', 'sold', '2025-09-01 00:00:00'),
+(27, 9, 'TPX1-SN0002', 'sold', '2025-09-01 00:00:00'),
+(28, 3, 'IP15-SN0004', 'sold', '2025-09-01 00:00:00'),
+(29, 5, 'CHARGER-SN0002', 'sold', '2025-09-01 00:00:00'),
+(30, 4, 'S24-SN0002', 'sold', '2025-09-01 00:00:00'),
+(31, 12, 'IPAD-AIR-SN0002', 'sold', '2025-09-01 00:00:00'),
+(32, 6, 'CASE-SN0003', 'sold', '2025-09-01 00:00:00');
+
 INSERT INTO suppliers (name, phone, email, address) VALUES
 ('TechSupplier Ltd.', '0901111222', 'sales@techsupplier.com', '123, Thach Hoa, Thach That, Ha Noi'),
 ('MobileWorld Co.', '0902222333', 'contact@mobileworld.com', '456, Thach Hoa, Thach That, Ha Noi');
@@ -294,81 +341,75 @@ INSERT INTO orders (id, customer_id, total_amount, status, date) VALUES
 (19,10,  899.00,  'confirmed', '2025-10-05 20:20:00'),
 (20,11,  629.00,  'confirmed', '2025-10-06 07:07:00'); 
 
-INSERT INTO warranty_cards (id, device_id, customer_id, start_at, end_at) VALUES
-(1, 3, 6, '2025-09-28 00:00:00', '2026-09-28 00:00:00'),  
-(2, 2, 7, '2025-09-28 00:00:00', '2027-09-28 00:00:00');
-INSERT INTO warranty_cards (id, device_id, customer_id, start_at, end_at) VALUES
-(3,  4,  8, '2025-09-12 10:00:00', '2027-09-12 10:00:00'), 
-(4,  2,  9, '2025-09-15 14:30:00', '2027-09-15 14:30:00'), 
-(5,  6,  9, '2025-09-15 14:30:00', '2026-03-15 14:30:00'), 
-(6,  1, 10, '2025-09-18 09:15:00', '2027-09-18 09:15:00'), 
-(7,  5, 10, '2025-09-18 09:15:00', '2026-03-18 09:15:00'), 
-(8,  7, 11, '2025-09-20 11:45:00', '2027-09-20 11:45:00'), 
-(9,  9, 12, '2025-09-22 16:00:00', '2027-09-22 16:00:00'), 
-(10,12, 6, '2025-09-24 18:10:00', '2027-09-24 18:10:00'), 
-(11, 3,  7, '2025-09-25 08:20:00', '2027-09-25 08:20:00'), 
-(12,11, 8, '2025-09-26 13:05:00', '2027-09-26 13:05:00'), 
-(13,14, 8, '2025-09-26 13:05:00', '2026-03-26 13:05:00'), 
-(14,10, 9, '2025-09-27 15:40:00', '2027-09-27 15:40:00'), 
-(15,14, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'), 
-(16,13, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'), 
-(17,13,10, '2025-09-28 17:55:00', '2026-03-28 17:55:00'),
-(18, 7, 10, '2025-09-28 17:55:00', '2027-09-28 17:55:00'), 
-(19, 3, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'), 
-(20, 2, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'),
-(21, 1, 12, '2025-09-30 19:45:00', '2027-09-30 19:45:00'), 
-(22, 6, 12, '2025-09-30 19:45:00', '2026-03-30 19:45:00'), 
-(23, 8,  6, '2025-10-01 09:02:00', '2027-10-01 09:02:00'), 
-(24, 7,  7, '2025-10-02 11:11:00', '2027-10-02 11:11:00'), 
-(25,11, 8, '2025-10-03 12:34:00', '2027-10-03 12:34:00'), 
-(26,14, 8, '2025-10-03 12:34:00', '2026-04-03 12:34:00'), 
-(27, 9,  9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'), 
-(28, 3,  9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'), 
-(29, 5,  9, '2025-10-04 08:08:00', '2026-04-04 08:08:00'), 
-(30, 4, 10, '2025-10-05 20:20:00', '2027-10-05 20:20:00'), 
-(31,12,11, '2025-10-06 07:07:00', '2027-10-06 07:07:00'); 
+INSERT INTO warranty_cards (id, device_serial_id, customer_id, start_at, end_at) VALUES
+(1, 1, 6, '2025-09-28 00:00:00', '2026-09-28 00:00:00'),
+(2, 2, 7, '2025-09-28 00:00:00', '2027-09-28 00:00:00'),
+(3, 3, 8, '2025-09-12 10:00:00', '2027-09-12 10:00:00'),
+(4, 4, 9, '2025-09-15 14:30:00', '2027-09-15 14:30:00'),
+(5, 5, 9, '2025-09-15 14:30:00', '2026-03-15 14:30:00'),
+(6, 6, 10, '2025-09-18 09:15:00', '2027-09-18 09:15:00'),
+(7, 7, 10, '2025-09-18 09:15:00', '2026-03-18 09:15:00'),
+(8, 8, 11, '2025-09-20 11:45:00', '2027-09-20 11:45:00'),
+(9, 9, 12, '2025-09-22 16:00:00', '2027-09-22 16:00:00'),
+(10, 10, 6, '2025-09-24 18:10:00', '2027-09-24 18:10:00'),
+(11, 11, 7, '2025-09-25 08:20:00', '2027-09-25 08:20:00'),
+(12, 12, 8, '2025-09-26 13:05:00', '2027-09-26 13:05:00'),
+(13, 13, 8, '2025-09-26 13:05:00', '2026-03-26 13:05:00'),
+(14, 14, 9, '2025-09-27 15:40:00', '2027-09-27 15:40:00'),
+(15, 15, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'),
+(16, 16, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'),
+(17, 17, 10, '2025-09-28 17:55:00', '2026-03-28 17:55:00'),
+(18, 18, 10, '2025-09-28 17:55:00', '2027-09-28 17:55:00'),
+(19, 19, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'),
+(20, 20, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'),
+(21, 21, 12, '2025-09-30 19:45:00', '2027-09-30 19:45:00'),
+(22, 22, 12, '2025-09-30 19:45:00', '2026-03-30 19:45:00'),
+(23, 23, 6, '2025-10-01 09:02:00', '2027-10-01 09:02:00'),
+(24, 24, 7, '2025-10-02 11:11:00', '2027-10-02 11:11:00'),
+(25, 25, 8, '2025-10-03 12:34:00', '2027-10-03 12:34:00'),
+(26, 26, 8, '2025-10-03 12:34:00', '2026-04-03 12:34:00'),
+(27, 27, 9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'),
+(28, 28, 9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'),
+(29, 29, 9, '2025-10-04 08:08:00', '2026-04-04 08:08:00'),
+(30, 30, 10, '2025-10-05 20:20:00', '2027-10-05 20:20:00'),
+(31, 31, 11, '2025-10-06 07:07:00', '2027-10-06 07:07:00'),
+(32, 32, 11, '2025-10-06 07:07:00', '2026-04-06 07:07:00');
 
-INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_card_id) VALUES
-(1, 3, 1,  999.00, 0.00, 1),
-(2, 2, 1, 2200.00, 0.00, 2);
+INSERT INTO order_details (order_id, device_id, device_serial_id, quantity, price, discount, warranty_card_id) VALUES
+(1, 3, 1, 1, 999.00, 0.00, 1),
+(2, 2, 2, 1, 2200.00, 0.00, 2),
+(3, 4, 3, 1, 899.00, 0.00, 3),
+(4, 2, 4, 1, 2200.00, 0.00, 4),
+(4, 6, 5, 1, 20.00, 0.00, 5),
+(5, 1, 6, 1, 1200.00, 0.00, 6),
+(5, 5, 7, 1, 45.00, 0.00, 7),
+(6, 7, 8, 1, 320.00, 0.00, 8),
+(7, 9, 9, 1, 1850.00, 0.00, 9),
+(8, 12, 10, 1, 599.00, 0.00, 10),
+(9, 3, 11, 1, 999.00, 0.00, 11),
+(10, 11, 12, 1, 799.00, 0.00, 12),
+(10, 14, 13, 1, 9.00, 0.00, 13),
+(11, 10, 14, 1, 1900.00, 0.00, 14),
+(11, 14, 15, 1, 9.00, 0.00, 15),
+(11, 13, 16, 1, 26.00, 9.00, 16),
+(12, 13, 17, 1, 35.00, 0.00, 17),
+(12, 7, 18, 1, 320.00, 0.00, 18),
+(13, 3, 19, 1, 999.00, 0.00, 19),
+(13, 2, 20, 1, 2200.00, 0.00, 20),
+(14, 1, 21, 1, 1200.00, 0.00, 21),
+(14, 6, 22, 1, 18.00, 2.00, 22),
+(15, 8, 23, 1, 250.00, 0.00, 23),
+(16, 7, 24, 1, 320.00, 0.00, 24),
+(17, 11, 25, 1, 799.00, 0.00, 25),
+(17, 14, 26, 1, 9.00, 0.00, 26),
+(18, 9, 27, 1, 1850.00, 0.00, 27),
+(18, 3, 28, 1, 999.00, 0.00, 28),
+(18, 5, 29, 1, 35.00, 0.00, 29),
+(19, 4, 30, 1, 899.00, 0.00, 30),
+(20, 12, 31, 1, 599.00, 30.00, 31),
+(20, 6, 32, 1, 30.00, 30.00, 32);
 
-INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_card_id) VALUES
-(3,  4, 1,  899.00,  0.00,  3),
-(4,  2, 1, 2200.00,  0.00,  4),
-(4,  6, 1,   20.00,  0.00,  5),
-(5,  1, 1, 1200.00,  0.00,  6),
-(5,  5, 1,   45.00,  0.00,  7),
-(6,  7, 1,  320.00,  0.00,  8),
-(7,  9, 1, 1850.00,  0.00,  9),
-(8, 12, 1,  599.00,  0.00, 10),
-(9,  3, 1,  999.00,  0.00, 11),
-(10,11, 1,  799.00,  0.00, 12),
-(10,14, 1,    9.00,  0.00, 13),
-(11,10, 1, 1900.00,  0.00, 14),
-(11,14, 1,    9.00,  0.00, 15),
-(11,13, 1,   26.00,  9.00, 16), 
-(12,13, 1,   35.00,  0.00, 17),
-(12, 7, 1,  320.00,  0.00, 18),
-(13, 3, 1,  999.00,  0.00, 19),
-(13, 2, 1, 2200.00,  0.00, 20),
-(14, 1, 1, 1200.00,  0.00, 21),
-(14, 6, 1,   18.00,  2.00, 22), 
-(15, 8, 1,  250.00,  0.00, 23),
-(16, 7, 1,  320.00,  0.00, 24), 
-(17,11, 1,  799.00,  0.00, 25),
-(17,14, 1,    9.00,  0.00, 26),
-(18, 9, 1, 1850.00,  0.00, 27),
-(18, 3, 1,  999.00,  0.00, 28),
-(18, 5, 1,   35.00,  0.00, 29),
-(19, 4, 1,  899.00,  0.00, 30),
-(20,12, 1,  599.00, 30.00, 31); 
-
-INSERT INTO warranty_cards (id, device_id, customer_id, start_at, end_at) VALUES
-(32, 6, 11, '2025-10-06 07:07:00', '2026-04-06 07:07:00');
-INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_card_id) VALUES
-(20, 6, 1,   60.00, 30.00, 32);
-
-INSERT INTO payments (order_id, payment_url, status, created_at, updated_at) VALUES
+INSERT INTO payments (order_id, payment_url, status, created_at, paid_at) VALUES
 (3,  NULL, 'success',  '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
 (4,  NULL, 'success',  '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
 (5,  NULL, 'success',  '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
@@ -439,12 +480,22 @@ INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
 (101, 1, 5),  (101, 3, 10), (101, 13, 50),
 (102, 2, 3),  (102, 11, 10), (102, 14, 100);
 
-INSERT INTO customer_issues (customer_id, issue_code, title, description, device_id, warranty_card_id, created_at) VALUES
-(6, 'ISS-0001', 'Máy nóng',     'iPhone 15 nóng khi sạc',           3,  1, '2025-10-01 10:00:00'),
-(7, 'ISS-0002', 'Pin yếu',      'iPhone 15 tụt pin nhanh',           3, 11, '2025-10-02 11:00:00'),
-(9, 'ISS-0003', 'Kẹt giấy',     'HP LaserJet kẹt giấy thường xuyên', 7, 18, '2025-10-03 09:30:00'),
-(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc',              12, 31, '2025-10-04 16:45:00');
+INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, created_at) VALUES
+(6, 'ISS-0001', 'Máy nóng',     'iPhone 15 nóng khi sạc',           1, '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu',      'iPhone 15 tụt pin nhanh',           11, '2025-10-02 11:00:00'),
+(10,'ISS-0003', 'Kẹt giấy',     'HP LaserJet kẹt giấy thường xuyên', 18, '2025-10-03 09:30:00'),
+(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc',              31, '2025-10-04 16:45:00');
 
+INSERT INTO tasks (id, title, description, manager_id, customer_issue_id) VALUES
+(1, 'Kiểm tra iPhone 15 nóng', 'Khách hàng Hieu Pham (ID 6) báo máy nóng khi sạc.', 2, 1),
+(2, 'Kiểm tra pin iPhone 15', 'Khách hàng Customer (ID 7) báo máy tụt pin nhanh.', 2, 2),
+(3, 'Sửa lỗi kẹt giấy máy in', 'Khách hàng Le Chi (ID 10) báo máy in HP kẹt giấy.', 2, 3),
+(4, 'Kiểm tra màn hình iPad', 'Khách hàng Pham Duong (ID 11) báo màn hình sọc.', 2, 4);
+
+INSERT INTO task_details (task_id, technical_staff_id, deadline, status) VALUES
+(1, 3, '2025-10-08 17:00:00', 'in_progress'),
+(2, 3, '2025-10-09 17:00:00', 'pending'),
+(3, 3, '2025-10-10 17:00:00', 'pending');
 
 INSERT INTO permissions (id, permission_name) VALUES
 (1, 'CREATE_TASK'),
@@ -453,42 +504,34 @@ INSERT INTO permissions (id, permission_name) VALUES
 (4, 'DELETE_TASK'),
 (5, 'ASSIGN_TASK'),
 (6, 'UNASSIGN_TASK'),
-
 (7, 'CREATE_ACCOUNT'),
 (8, 'VIEW_ACCOUNT'),
 (9, 'UPDATE_ACCOUNT'),
 (10, 'ACTIVE_ACCOUNT'),
 (11, 'DEACTIVE_ACCOUNT'),
-
 (12, 'CATEGORY_MANAGEMENT'),
 (13, 'PRODUCT_CATALOG_MANAGEMENT'),
 (14, 'PRODUCT_OVERVIEW'),
 (15, 'PRICING_MANAGEMENT'),
-
 (16, 'CREATE_IMPORT_EXPORT_ORDER'),
 (17, 'QUANTITY_CHECK'),
 (18, 'IMPORT_EXPORT_REPORTS'),
-
 (19, 'CRUD_SUPPLIER'),
 (20, 'PRODUCT_SUPPLY_MANAGEMENT'),
 (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
 (22, 'SUPPLIER_INFO_INTEGRATION'),
-
 (23, 'ORDER_VALIDATION'),
 (24, 'CRUD_ORDER'),
 (25, 'ORDER_TRACKING'),
 (26, 'ORDER_REPORTS'),
-
 (27, 'INTEGRATION_PAYOS'),
 (28, 'PAYMENT_REPORTS'),
 (29, 'PAYMENT_CONFIRMATION'),
 (30, 'PAYMENT_REQUEST_CREATION'),
-
 (31, 'REVENUE_PROFIT_ANALYSIS'),
 (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'),
 (34, 'INVENTORY_REPORTS'),
-
 (35, 'CUSTOMER_ISSUES_RESPONDING'),
 (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
 (37, 'CUSTOMER_ISSUES');
@@ -505,8 +548,7 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 (2, 23), (2, 24), (2, 25), (2, 26),
 (2, 28),
 (2, 31), (2, 32), (2, 33), (2, 34),
-(2, 36)
-;
+(2, 36);
 
 -- Technical Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES
@@ -514,15 +556,13 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 (3, 3),
 (3, 14),
 (3, 16), 
-(3, 36)
-;
+(3, 36);
 
 -- Customer Support Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (4, 14),
 (4, 23), (4, 25), (4, 26),
-(4, 35), (4, 36)
-;
+(4, 35), (4, 36);
 
 -- Storekeeper
 INSERT INTO role_permission (role_id, permission_id) VALUES
@@ -530,14 +570,11 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 (5, 16), (5, 17), (5, 18), 
 (5, 23), (5, 24), (5, 25), (5, 26),
 (5, 28),
-(5, 31), (5, 32), (5, 33), (5, 34)
-;
+(5, 31), (5, 32), (5, 33), (5, 34);
 
 -- Customer
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (6, 14), 
 (6, 24), (6, 25), (6, 26),
 (6, 27), (6, 30),
-(6, 37)
-;
-
+(6, 37);

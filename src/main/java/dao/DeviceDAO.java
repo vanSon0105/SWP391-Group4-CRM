@@ -2,6 +2,8 @@ package dao;
 
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.mysql.cj.x.protobuf.MysqlxPrepare.Execute;
 
@@ -9,6 +11,87 @@ import dal.DBContext;
 import model.Device;
 
 public class DeviceDAO extends DBContext {
+	
+	public boolean addDevice(Device d) {
+        String sql = "INSERT INTO devices (category_id, name, price, unit, image_url, description, created_at) \"\r\n"
+        		+ "                   + \"VALUES (?, ?, ?, ?, ?, ?, NOW()";
+        try {
+            PreparedStatement prs = connection.prepareStatement(sql);
+            prs.setInt(1, d.getCategoryId());
+            prs.setString(2, d.getName());
+            prs.setBigDecimal(3, d.getPrice());
+            prs.setString(4, d.getUnit());
+            prs.setString(5, d.getImageUrl());
+            prs.setString(6, d.getDesc());
+            int n = prs.executeUpdate();
+            return n > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public boolean updateDeviceDetail(Device d) {
+        String sql = "UPDATE devices\r\n"
+        		+ "SET category_id = ?, name = ?, price = ?, unit = ?, image_url = ?, description = ?, updated_at = NOW()\r\n"
+        		+ "WHERE id = ?;";
+        try {
+            PreparedStatement prs = connection.prepareStatement(sql);
+            prs.setInt(1, d.getCategoryId());
+            prs.setString(2, d.getName());
+            prs.setBigDecimal(3, d.getPrice());
+            prs.setString(4, d.getUnit());
+            prs.setString(5, d.getImageUrl());
+            prs.setString(6, d.getDesc());
+            prs.setInt(8, d.getId());
+            int n = prs.executeUpdate();
+            return n > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public boolean removeDeviceDetail(int id) {
+        String sql = "DELETE FROM devices WHERE id= ?";
+        try {
+            Statement st = connection.createStatement();
+            PreparedStatement prs = connection.prepareStatement(sql);
+            prs.setInt(1, id);
+            int n = st.executeUpdate(sql);
+            return n > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+	public Device getDeviceById(int id) {
+	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at FROM devices WHERE id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql)) {
+	        pre.setInt(1, id);
+	        try (ResultSet rs = pre.executeQuery()) {
+	            if (rs.next()) {
+	                return new Device(
+	                    rs.getInt("id"),
+	                    rs.getInt("category_id"),
+	                    rs.getString("name"),
+	                    rs.getBigDecimal("price"),
+	                    rs.getString("unit"),
+	                    rs.getString("image_url"),
+	                    rs.getString("description"),
+	                    rs.getTimestamp("created_at")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();  
+	    }
+	    return null;  
+	}
 
 	public List<Device> getAllDevices() {
 		List<Device> list = new ArrayList<>();
