@@ -29,7 +29,7 @@ public class Device {
 	}
 	
 	
-	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String type) {
+	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl) {
 		super();
 		this.id = id;
 		this.categoryId = categoryId;
@@ -37,7 +37,6 @@ public class Device {
 		this.price = price;
 		this.unit = unit;
 		this.imageUrl = imageUrl;
-		this.type = type;
 	}
 
 
