@@ -13,13 +13,12 @@ import java.util.List;
 
 import dal.dao.DeviceDAO;
 
-/**
- * Servlet implementation class HomePageController
- */
+
 @WebServlet(name="HomePageController", urlPatterns = {"/home", "/search"})
 public class HomePageController extends HttpServlet {
 	public DeviceDAO dao = new DeviceDAO();
 	private final int recordsEachPage = 4;
+	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String path = req.getServletPath();
@@ -27,8 +26,9 @@ public class HomePageController extends HttpServlet {
             case "/search":
                 searchDevices(req, resp);
                 break;
-            default:
+            case "/home":
             	listDevices(req, resp);
+            	break;
 
         }
 	}
