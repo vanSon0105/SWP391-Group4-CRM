@@ -95,7 +95,8 @@ public class DeviceDAO extends DBContext{
 	    int count = 0;
 	    String sql = "SELECT COUNT(DISTINCT id) FROM devices\r\n"
 	    		+ "WHERE created_at >= NOW() - INTERVAL 7 DAY;";
-	    try (Connection conn = DBContext.getConnection();
+	    try (
+	    	 Connection conn = DBContext.getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
 	        if (rs.next()) count = rs.getInt(1);
@@ -103,6 +104,35 @@ public class DeviceDAO extends DBContext{
 	        e.printStackTrace();
 	    }
 	    return count;
+	} 
+	
+	public List<Device> searchDevice(String key){
+		List<Device> list = new ArrayList<>();
+		String sql = "SELECT * FROM devices\r\n"
+				+ "WHERE name LIKE ? OR description LIKE ?";
+		try {
+			Connection conn = DBContext.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, "%" + key + "%");
+			ps.setString(2, "%" + key + "%");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				Device d = new Device();
+				d.setId(rs.getInt("id"));
+				d.setCategoryId(rs.getInt("category_id"));
+	            d.setName(rs.getString("name"));
+	            d.setPrice(rs.getBigDecimal("price"));
+	            d.setName(rs.getString("name"));
+	            d.setImageUrl(rs.getString("image_url"));
+	            d.setDesc(rs.getString("description"));
+	            d.setCreated_at(rs.getTimestamp("created_at"));
+	            list.add(d);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	
 }
