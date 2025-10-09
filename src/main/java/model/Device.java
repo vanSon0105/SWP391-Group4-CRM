@@ -10,15 +10,13 @@ public class Device {
 	private BigDecimal price;
 	private String unit;
 	private String imageUrl;
-	private String type;
 	private int total_sold;
 	private String desc;
 	private Timestamp created_at;
 
 	public Device() {}
 
-
-	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String type, String desc, Timestamp created_at) {
+	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String desc, Timestamp created_at) {
 		super();
 		this.id = id;
 		this.categoryId = categoryId;
@@ -26,7 +24,6 @@ public class Device {
 		this.price = price;
 		this.unit = unit;
 		this.imageUrl = imageUrl;
-		this.type = type;
 		this.desc = desc;
 		this.created_at = created_at;
 	}
@@ -116,18 +113,11 @@ public class Device {
 		this.imageUrl = imageUrl;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 
 	@Override
 	public String toString() {
 		return "Device [id=" + id + ", categoryId=" + categoryId + ", name=" + name + ", price=" + price + ", unit="
-				+ unit + ", imageUrl=" + imageUrl + ", type=" + type + "]";
+				+ unit + ", imageUrl=" + imageUrl;
 	}
 	
 	
