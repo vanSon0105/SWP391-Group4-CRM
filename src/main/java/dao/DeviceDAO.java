@@ -9,6 +9,30 @@ import dal.DBContext;
 import model.Device;
 
 public class DeviceDAO extends DBContext {
+	public Device getDeviceById(int id) {
+	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at FROM devices WHERE id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql)) {
+	        pre.setInt(1, id);
+	        try (ResultSet rs = pre.executeQuery()) {
+	            if (rs.next()) {
+	                return new Device(
+	                    rs.getInt("id"),
+	                    rs.getInt("category_id"),
+	                    rs.getString("name"),
+	                    rs.getBigDecimal("price"),
+	                    rs.getString("unit"),
+	                    rs.getString("image_url"),
+	                    rs.getString("description"),
+	                    rs.getTimestamp("created_at")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();  
+	    }
+	    return null;  
+	}
 
 	public List<Device> getAllDevices() {
 		List<Device> list = new ArrayList<>();

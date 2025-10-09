@@ -33,7 +33,7 @@ public class DBContext {
         try {
             url = "jdbc:mysql://127.0.0.1:3306/swp391?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8&allowPublicKeyRetrieval=true";
             user = "root";
-            password = "vanson010825"; //password in local mysql
+            password = "123456789"; //password in local mysql
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException ex) {
