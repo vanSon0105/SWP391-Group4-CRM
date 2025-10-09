@@ -149,13 +149,10 @@ a:visited {
 						<article class="product-card" style="min-width: 350px">
 							<h3>${device.name}</h3>
 							<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
-							<%-- <div class="tags">
-								<span>${device.type}</span>
-							</div>
-							--%>
 							<strong> <fmt:formatNumber value="${device.price + 0}"
 									type="number" />
-							</strong> <a href="device-detail.html">Xem chi tiết</a>
+							</strong> 
+							<a href="device-detail?id=${device.id}">Xem chi tiết</a>
 						</article>
 					</c:forEach>
 
