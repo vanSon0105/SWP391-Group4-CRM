@@ -14,7 +14,6 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-/* Header Menu - giống Device Page */
 header.header-toolbar {
     display: flex;
     justify-content: space-between;
@@ -69,7 +68,6 @@ header .header-bottom a.order-btn:hover {
     background: #1d4ed8;
 }
 
-/* Footer - giống Device Page */
 footer {
     text-align: center;
     padding: 15px 0;
@@ -78,7 +76,6 @@ footer {
     margin-top: 20px;
 }
 
-/* Device Detail Layout */
 main {
     max-width: 1000px;
     margin: 20px auto;
@@ -117,7 +114,6 @@ main {
     opacity: 0.9;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .product-detail {
         grid-template-columns: 1fr;
@@ -136,9 +132,8 @@ main {
 </head>
 
 <body class="shop-page detail-page">
-<!-- Header -->
 <header class="header-toolbar">
-    <h1>Shop88</h1>
+    <h1>TechShop</h1>
     <div class="header-center">
         <form class="search-bar" action="device-page" method="get">
             <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ...">
@@ -157,7 +152,6 @@ main {
     <c:choose>
         <c:when test="${not empty device}">
             <section class="product-detail">
-                <!-- Ảnh sản phẩm -->
                 <article class="product-image">
                     <c:choose>
                         <c:when test="${not empty device.imageUrl}">
@@ -168,8 +162,6 @@ main {
                         </c:otherwise>
                     </c:choose>
                 </article>
-
-                <!-- Thông tin cơ bản -->
                 <article class="hero-card">
                     <h2>${device.name}</h2>
                     <p>Loại: <c:choose>
