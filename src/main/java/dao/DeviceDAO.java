@@ -83,7 +83,8 @@ public class DeviceDAO extends DBContext {
 	                    rs.getString("unit"),
 	                    rs.getString("image_url"),
 	                    rs.getString("description"),
-	                    rs.getTimestamp("created_at")
+	                    rs.getTimestamp("created_at"),
+	                    rs.getBoolean("is_featured")
 	                );
 	            }
 	        }
@@ -103,7 +104,7 @@ public class DeviceDAO extends DBContext {
 
 			while (rs.next()) {
 				list.add(new Device(rs.getInt("id"), rs.getInt("category_id"), rs.getString("name"),
-						rs.getBigDecimal("price"), rs.getString("unit"), rs.getString("image_url")));
+						rs.getBigDecimal("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("desciption"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 
 		} catch (SQLException e) {
@@ -165,26 +166,181 @@ public class DeviceDAO extends DBContext {
 				ResultSet rs = pre.executeQuery()){
 			while(rs.next()) {
 				list.add(new Device(rs.getInt("id"), rs.getInt("category_id"), rs.getString("name"),
-						rs.getBigDecimal("price"), rs.getString("unit"), rs.getString("image_url")));
+						rs.getBigDecimal("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
-
 		return list;
 	}
-
-	public static void main(String[] args) {
-		DeviceDAO dao = new DeviceDAO();
-		List<Device> devices = dao.getAllDevices();
-
-		if (devices.isEmpty()) {
-			System.out.println("Connection error");
-		} else {
-			for (Device d : devices) {
-				System.out.println("ID: " + d.getId() + ", Name: " + d.getName() + ", Price: " + d.getPrice());
-			}
-		}
+	
+	public List<Device> getBestSellingDevicesList(int offset, int recordsEachPage) {
+		List<Device> list = new ArrayList<>();   
+        String sql = "SELECT d.id, d.name,d.price, d.description, d.image_url, SUM(od.quantity) AS total_sold FROM order_details od\r\n"
+        		+ "JOIN devices d ON od.device_id = d.id\r\n"
+        		+ "GROUP BY d.id, d.name, d.price, d.description\r\n"
+        		+ "ORDER BY total_sold DESC\r\n"
+        		+ "LIMIT ?, ?;";
+        try {
+        	connection = DBContext.getConnection();
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setInt(1, offset);
+            pre.setInt(2, recordsEachPage);
+            ResultSet rs = pre.executeQuery();
+            while(rs.next()) {
+            	Device d = new Device();
+                d.setId(rs.getInt("id"));
+                d.setName(rs.getString("name"));
+                d.setPrice(rs.getBigDecimal("price"));
+                d.setDesc(rs.getString("description"));
+                d.setImageUrl(rs.getString("image_url"));
+                d.setTotal_sold(rs.getInt("total_sold"));
+                list.add(d);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();;
+        }finally {
+        	closeConnection();
+        }
+        return list;
+    }
+	
+	
+	public int getTotalBestSellingDevices() {
+	    int count = 0;
+	    String sql = "SELECT COUNT(DISTINCT d.id) " +
+	                 "FROM order_details od " +
+	                 "JOIN devices d ON od.device_id = d.id ";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        if (rs.next()) count = rs.getInt(1);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return count;
 	}
+	
+	public List<Device> getNewDevicesList(int offset, int recordsEachPage) {
+		List<Device> list = new ArrayList<>();
+		String sql = "SELECT id, name, image_url, price, created_at, description FROM devices\r\n"
+        		+ "WHERE created_at >= NOW() - INTERVAL 7 DAY \r\n"
+        		+ "ORDER BY created_at DESC\r\n"
+        		+ "LIMIT ?, ?;";
+       
+        try {
+        	connection = DBContext.getConnection();
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setInt(1, offset);
+            pre.setInt(2, recordsEachPage);
+            ResultSet rs = pre.executeQuery();
+            while(rs.next()) {
+            	Device d = new Device();
+                d.setId(rs.getInt("id"));
+                d.setName(rs.getString("name"));
+                d.setImageUrl(rs.getString("image_url"));
+                d.setPrice(rs.getBigDecimal("price"));
+                d.setCreated_at(rs.getTimestamp("created_at"));
+                d.setDesc(rs.getString("description"));
+                list.add(d);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();;
+        }finally {
+        	closeConnection();
+        }
+        return list;
+    }
+	
+	public int getTotalNewDevices() {
+	    int count = 0;
+	    String sql = "SELECT COUNT(id) FROM devices\r\n"
+	    		+ "WHERE created_at >= NOW() - INTERVAL 7 DAY;";
+	    try (
+	    	 Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        if (rs.next()) count = rs.getInt(1);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return count;
+	} 
+	
+	public List<Device> searchDevice(String key){
+		List<Device> list = new ArrayList<>();
+		String sql = "SELECT * FROM devices\r\n"
+				+ "WHERE name LIKE ? OR description LIKE ?";
+		try {
+			Connection conn = DBContext.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, "%" + key + "%");
+			ps.setString(2, "%" + key + "%");
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				Device d = new Device();
+				d.setId(rs.getInt("id"));
+				d.setCategoryId(rs.getInt("category_id"));
+	            d.setName(rs.getString("name"));
+	            d.setPrice(rs.getBigDecimal("price"));
+	            d.setName(rs.getString("name"));
+	            d.setImageUrl(rs.getString("image_url"));
+	            d.setDesc(rs.getString("description"));
+	            d.setCreated_at(rs.getTimestamp("created_at"));
+	            list.add(d);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	public List<Device> getFeaturedDevicesList(int offset, int recordsEachPage) {
+		List<Device> list = new ArrayList<>();   
+        String sql = "SELECT id, name, price, image_url, description\r\n"
+        		+ "FROM devices\r\n"
+        		+ "WHERE is_featured = ?\r\n"
+        		+ "LIMIT ?, ?;";
+        try {
+        	connection = DBContext.getConnection();
+            PreparedStatement pre = connection.prepareStatement(sql);
+            pre.setBoolean(1, true);
+            pre.setInt(2, offset);
+            pre.setInt(3, recordsEachPage);
+            ResultSet rs = pre.executeQuery();
+            while(rs.next()) {
+            	Device d = new Device();
+                d.setId(rs.getInt("id"));
+                d.setName(rs.getString("name"));
+                d.setPrice(rs.getBigDecimal("price"));
+                d.setDesc(rs.getString("image_url"));
+                d.setDesc(rs.getString("description"));
+                list.add(d);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();;
+        }finally {
+        	closeConnection();
+        }
+        return list;
+    }
+	
+	
+	public int getTotalFeaturedDevices() {
+	    int count = 0;
+	    String sql = "SELECT COUNT(id)\r\n"
+	    		+ "FROM devices\r\n"
+	    		+ "WHERE is_featured = TRUE;";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        if (rs.next()) count = rs.getInt(1);
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return count;
+	}
+
 }

@@ -14,15 +14,17 @@
 </head>
 <body class="home-page">
 	<header class="header">
-        <h1 class="header-title">Shop88</h1>
+        <h1 class="header-title">
+        	<a href="home" style="color: #fff;">TechShop</a>
+        </h1>
         <div class="header-center">
             <div class="category-menu" data-category-menu>
-                <button type="button" data-category-toggle>
+                <button class="search-bar-btn" type="button" data-category-toggle>
                     <span>Danh mục</span>
                     <span aria-hidden="true">☰</span>
                 </button>
                 <div class="category-panel" data-category-panel>
-                    <a href="device-catalog.jsp">Thiết bị</a>
+                    <a href="device-page">Thiết bị</a>
                     <a href="device-detail.jsp">Thông tin thiết bị</a>
                     <a href="checkout.jsp">Thanh toán</a>
                     <a href="order-tracking.jsp">Đơn hàng</a>
@@ -37,8 +39,9 @@
         </div>
         <div class="header-bottom">
             <a href="../authentication/login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
-            <a href="../homepage/cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
+            <a href="cart" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
         </div>
     </header>
+    <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 </html>

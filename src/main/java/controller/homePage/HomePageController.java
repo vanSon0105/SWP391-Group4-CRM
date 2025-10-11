@@ -11,7 +11,7 @@ import model.Device;
 import java.io.IOException;
 import java.util.List;
 
-import dal.dao.DeviceDAO;
+import dao.DeviceDAO;
 
 
 @WebServlet(name="HomePageController", urlPatterns = {"/home", "/search"})
@@ -34,29 +34,46 @@ public class HomePageController extends HttpServlet {
 	}
 	
 	private void listDevices(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String featuredPageString = req.getParameter("fpage");
-		int featuredPage = (featuredPageString != null) ? Integer.parseInt(featuredPageString) : 1;
-		int featuredOffset = (featuredPage - 1) * recordsEachPage;
+		//Best Selling Device
+		String bestSellingPagetring = req.getParameter("bpage");
+		int currentBestSellingPage = (bestSellingPagetring != null) ? Integer.parseInt(bestSellingPagetring) : 1;
+		int bestSellingOffset = (currentBestSellingPage - 1) * recordsEachPage;
 		
+		//New Device
 		String newPageString = req.getParameter("npage");
-		int newPage = (newPageString != null) ? Integer.parseInt(newPageString) : 1;
-		int newOffset = (newPage - 1) * recordsEachPage;
+		int currentNewPage = (newPageString != null) ? Integer.parseInt(newPageString) : 1;
+		int newOffset = (currentNewPage - 1) * recordsEachPage;
 		
-		List<Device> getFeaturedDevicesList = dao.getFeaturedDevicesList(featuredOffset, recordsEachPage);
-		int totalFeatured = dao.getTotalFeaturedDevices();
-		int totalFeaturedPages = (int) Math.ceil((double) totalFeatured / recordsEachPage);
+		//Best Selling Device
+		String featuredPageString = req.getParameter("fpage");
+		int currentFeaturedPage = (featuredPageString != null) ? Integer.parseInt(featuredPageString) : 1;
+		int featuredOffset = (currentFeaturedPage - 1) * recordsEachPage;
+		
+		
+		List<Device> getBestSellingDevicesList = dao.getBestSellingDevicesList(bestSellingOffset, recordsEachPage);
+		int totalBestSelling = dao.getTotalBestSellingDevices();
+		int totalBestSellingPages = (int) Math.ceil((double) totalBestSelling / recordsEachPage);
 		
 		List<Device> getNewDevicesList = dao.getNewDevicesList(newOffset, recordsEachPage);
 		int totalNew = dao.getTotalNewDevices();
 		int totalNewPages = (int) Math.ceil((double) totalNew / recordsEachPage);
 		
+		List<Device> getFeaturedDevicesList = dao.getFeaturedDevicesList(featuredOffset, recordsEachPage);
+		int totalFeaturedDevices = dao.getTotalFeaturedDevices();
+		int totalFeaturedDevicesPages = (int) Math.ceil((double) totalFeaturedDevices / recordsEachPage);
+		
 		req.setAttribute("listFeatured", getFeaturedDevicesList);
-		req.setAttribute("currentFeaturedPage", featuredPage);
-        req.setAttribute("totalFeaturedPages", totalFeaturedPages);
+		req.setAttribute("currentFeaturedPage", currentFeaturedPage);
+        req.setAttribute("totalFeaturedPages", totalFeaturedDevicesPages);
         
 		req.setAttribute("listNew", getNewDevicesList);
-		req.setAttribute("currentNewPage", newPage);
+		req.setAttribute("currentNewPage", currentNewPage);
         req.setAttribute("totalNewPages", totalNewPages);
+        
+        req.setAttribute("listBestSellingDevices", getBestSellingDevicesList);
+		req.setAttribute("currentBestSellingPage", currentBestSellingPage);
+        req.setAttribute("totalBestSellingPages", totalBestSellingPages);
+        
 		req.getRequestDispatcher("view/homepage/homePage.jsp").forward(req, resp);
 	}
 	
@@ -74,7 +91,7 @@ public class HomePageController extends HttpServlet {
 	
 	public static void main(String[] args) {
 		DeviceDAO hpd1 = new DeviceDAO();
-		List<Device> getFeaturedDevicesList = hpd1.getFeaturedDevicesList(1,5);
+		List<Device> getFeaturedDevicesList = hpd1.getFeaturedDevicesList(1,10);
 		for (Device device : getFeaturedDevicesList) {
 			System.out.println(device.toString());
 		}
