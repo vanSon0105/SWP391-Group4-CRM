@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop88</title>
+    <title>TechShop</title>
 </head>
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
@@ -82,7 +82,7 @@
                 <div class="slider-controls">
                     <c:choose>
 				        <c:when test="${currentFeaturedPage > 1}">
-				            <a href="home?fpage=${currentFeaturedPage - 1}&npage=${currentNewPage}#featured-devices">&#10094;</a>
+				            <a href="home?fpage=${currentFeaturedPage - 1}&npage=${currentNewPage}&bpage=${currentBestSellingPage}#featured-devices">&#10094;</a>
 				        </c:when>
 				        <c:otherwise>
 				            <a class="disabled">&#10094;</a>
@@ -91,7 +91,7 @@
 	        		
             		 <c:choose>
 		                <c:when test="${currentFeaturedPage < totalFeaturedPages}">
-		                	<a href = "home?fpage=${currentFeaturedPage + 1}&npage=${currentNewPage}#featured-devices">&#10095;</a>            	
+		                	<a href = "home?fpage=${currentFeaturedPage + 1}&npage=${currentNewPage}&bpage=${currentBestSellingPage}#featured-devices">&#10095;</a>            	
 		            	</c:when>
 		            	<c:otherwise>
 				            <a class="disabled">&#10095;</a>
@@ -102,20 +102,31 @@
             <div class="device-slider">
                 <div class="device-window">
                     <div class="device-track">
-              	<c:forEach items="${listFeatured}" var="s">
-                        <div class="device-card">
-                        	<div class="device-thumb">
-                        		<img alt="" src="${pageContext.request.contextPath}/assets/img/device-placeholder.svg">
-                        	</div>
-                            <h4>${s.getName()}</h4>
-                            <p>${s.getDesc()}</p>
-                            <span>Giá: ${s.getPrice()}Đ</span>
-                        </div>
-                </c:forEach>
+              		<c:forEach items="${listFeatured}" var="s">
+              			<a href="device-detail?id=${s.id}">
+	              			<div class="device-card">
+	                        	<div class="device-thumb">
+	                        		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                        	</div>
+	                            <h4>${s.getName()}</h4>
+	                            <p>${s.getDesc()}</p>
+	                            <span>Giá: ${s.getPrice()}Đ</span>
+	                        </div>
+                        </a>
+                    </c:forEach>
                     </div>
                 </div>
-            </div>
+           </div>
         </section>
+
+		<div class="img-gallery-6">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+        </div>
 
         <section class="device-list new-devices" id="new-devices">
             <div class="section-heading">
@@ -123,17 +134,19 @@
                 <p>Những sản phầm vừa mới về Shop88 và sẵn sàng bấm ngay</p>
             </div>
             
-            <div class="device-page is-active">
+            <div class="device-page">
                 <div class="device-grid">
                 <c:forEach items="${listNew}" var="s"> 
-                    <div class="device-card">
-                    	<div class="device-thumb">
-                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
-                       	</div>
-                        <h4>${s.getName()}</h4>
-                        <p>${s.getDesc()}</p>
-                        <span>Giá: ${s.getPrice()}Đ</span>
-                    </div>
+	                <a href="device-detail?id=${s.id}">
+	                    <div class="device-card">
+	                    	<div class="device-thumb">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       	</div>
+	                        <h4>${s.getName()}</h4>
+	                        <p>${s.getDesc()}</p>
+	                        <span>Giá: ${s.getPrice()}Đ</span>
+	                    </div>
+                    </a>
                 </c:forEach>
                 </div>
             </div>
@@ -141,21 +154,53 @@
             <div class="pagination-pills">
             	<c:choose>
 			        <c:when test="${currentNewPage > 1}">
-			            <a href="home?npage=${currentNewPage - 1}&fpage=${currentFeaturedPage}#new-devices">&#10094;</a>
+			            <a href="home?npage=${currentNewPage - 1}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices">&#10094;</a>
 			        </c:when>
 			        <c:otherwise>
 			            <a class="disabled">&#10094;</a>
 			        </c:otherwise>
 			    </c:choose>
+			    
+			    <c:if test="${totalNewPages >= 10}">
+				  <c:set var="start" value="${currentNewPage - 1}" />
+				  <c:set var="end" value="${currentNewPage + 1}" />
+				
+				  <c:if test="${start < 1}">
+				    <c:set var="start" value="1" />
+				  </c:if>
+				  
+				  <c:if test="${end > totalNewPages}">
+				    <c:set var="end" value="${totalNewPages}" />
+				  </c:if>
+				
+				  <c:if test="${start > 1}">
+				    <a href="home?npage=1&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers">1</a>
+				    <span>…</span>
+				  </c:if>
+				
+				  <c:forEach var="i" begin="${start}" end="${end}">
+				    <a href="home?npage=${i}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers"
+				       class="${i == currentNewPage ? 'active' : ''}">${i}</a>
+				  </c:forEach>
+				
+				  <c:if test="${end < totalNewPages}">
+				    <span>…</span>
+				    <a href="home?npage=${totalNewPages}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers">
+				      ${totalNewPages}
+				    </a>
+				  </c:if>
+				</c:if>
             	
-            	<c:forEach var="i" begin="1" end="${totalNewPages}">
-            		<a href="home?npage=${i}&fpage=${currentFeaturedPage}#new-devices"
-               		class="${i == currentNewPage ? 'active' : ''}">${i}</a>
-        		</c:forEach>           	
+            	<c:if test="${totalNewPages < 10}">
+	            	<c:forEach var="i" begin="1" end="${totalNewPages}">
+	            		<a href="home?npage=${i}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices"
+	               		class="${i == currentNewPage ? 'active' : ''}">${i}</a>
+	        		</c:forEach>           	
+            	</c:if>
             	
             	<c:choose>
 	                <c:when test="${currentNewPage < totalNewPages}">
-	                	<a href = "home?npage=${currentNewPage + 1}&fpage=${currentFeaturedPage}#new-devices">&#10095;</a>            	
+	                	<a href = "home?npage=${currentNewPage + 1}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices">&#10095;</a>            	
 	            	</c:when>
 	            	<c:otherwise>
 			            <a class="disabled">&#10095;</a>
@@ -163,8 +208,15 @@
 	            </c:choose>
             </div>
         </section>
+        
+        <div class="img-gallery-4">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+        </div>
 
-        <section class="device-list best-sellers" aria-labelledby="best-sellers-title">
+        <section class="device-list best-sellers" id="best-sellers">
             <div class="section-heading">
                 <h2 id="best-sellers-title">Thiết Bị Bán Chạy</h2>
                 <p>Duoc khach hang lua chon va danh gia cao nhat trong thang.</p>
@@ -172,48 +224,76 @@
             <div class="device-pages">
                 <div class="device-page">
                     <div class="device-grid">
-                        <div class="device-card">
-                        	<div class="device-thumb">
-	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
-	                       	</div>
-                            <h4>May lanh NovaCool 2HP</h4>
-                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
-                            <span>Gia: 13.290.000d</span>
-                        </div>
-                        
-                        <div class="device-card">
-                        	<div class="device-thumb">
-	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
-	                       	</div>
-                            <h4>May lanh NovaCool 2HP</h4>
-                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
-                            <span>Gia: 13.290.000d</span>
-                        </div>
-                        
-                        <div class="device-card">
-                        	<div class="device-thumb">
-	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
-	                       	</div>
-                            <h4>May lanh NovaCool 2HP</h4>
-                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
-                            <span>Gia: 13.290.000d</span>
-                        </div>
-                        
-                        <div class="device-card">
-                        	<div class="device-thumb">
-	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
-	                       	</div>
-                            <h4>May lanh NovaCool 2HP</h4>
-                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
-                            <span>Gia: 13.290.000d</span>
-                        </div>
-                        
+                    <c:forEach items="${listBestSellingDevices}" var="s"> 
+	                    <a href="device-detail?id=${s.id}">
+	                        <div class="device-card">
+	                        	<div class="device-thumb">
+		                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+		                       	</div>
+	                            <h4>${s.getName()}</h4>
+	                        	<p>${s.getDesc()}</p>
+	                        	<span>Giá: ${s.getPrice()}Đ</span>
+	                        </div>
+                        </a>
+                    </c:forEach>
                     </div>
                 </div>
             </div>
-            <div class="pagination-pills" data-pagination="best-sellers">
-                <button type="button" data-page="0" class="active">1</button>
-                <button type="button" data-page="1">2</button>
+            <div class="pagination-pills" data-pagination="best-sellers">          
+                <c:choose>
+			        <c:when test="${currentBestSellingPage > 1}">
+			            <a href="home?bpage=${currentBestSellingPage - 1}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">&#10094;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+            	
+            	<c:if test="${totalBestSellingPages >= 10}">
+				  <c:set var="start" value="${currentBestSellingPage - 1}" />
+				  <c:set var="end" value="${currentBestSellingPage + 1}" />
+				
+				  <c:if test="${start < 1}">
+				    <c:set var="start" value="1" />
+				  </c:if>
+				  
+				  <c:if test="${end > totalBestSellingPages}">
+				    <c:set var="end" value="${totalBestSellingPages}" />
+				  </c:if>
+				
+				  <c:if test="${start > 1}">
+				    <a href="home?bpage=1&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">1</a>
+				    <span>…</span>
+				  </c:if>
+				
+				  <c:forEach var="i" begin="${start}" end="${end}">
+				    <a href="home?bpage=${i}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers"
+				       class="${i == currentBestSellingPage ? 'active' : ''}">${i}</a>
+				  </c:forEach>
+				
+				  <c:if test="${end < totalBestSellingPages}">
+				    <span>…</span>
+				    <a href="home?bpage=${totalBestSellingPages}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">
+				      ${totalBestSellingPages}
+				    </a>
+				  </c:if>
+				</c:if>
+            	
+            	<c:if test="${totalBestSellingPages < 10}">
+	            	<c:forEach var="i" begin="1" end="${totalBestSellingPages}">
+	            		<a href="home?bpage=${i}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers"
+	               		class="${i == currentBestSellingPage ? 'active' : ''}">${i}</a>
+	        		</c:forEach>           	
+        		</c:if>
+            	
+            	<c:choose>
+	                <c:when test="${currentBestSellingPage < totalBestSellingPages}">
+	                	<a href = "home?bpage=${currentBestSellingPage + 1}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">&#10095;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
             </div>
         </section>
 
@@ -262,7 +342,6 @@
         </section>
     </main>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
-    <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 
 </html>

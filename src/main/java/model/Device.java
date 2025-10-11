@@ -13,10 +13,11 @@ public class Device {
 	private int total_sold;
 	private String desc;
 	private Timestamp created_at;
+	private boolean is_featured;
 
 	public Device() {}
 
-	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String desc, Timestamp created_at) {
+	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String desc, Timestamp created_at, boolean is_featured) {
 		super();
 		this.id = id;
 		this.categoryId = categoryId;
@@ -26,17 +27,23 @@ public class Device {
 		this.imageUrl = imageUrl;
 		this.desc = desc;
 		this.created_at = created_at;
+		this.is_featured = is_featured;
+	}
+	
+	public Device(int id, String name, BigDecimal price, String imageUrl) {
+		this.id = id;
+		this.name = name;
+		this.price = price;
+		this.imageUrl = imageUrl;
 	}
 	
 	
-	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl) {
-		super();
-		this.id = id;
-		this.categoryId = categoryId;
-		this.name = name;
-		this.price = price;
-		this.unit = unit;
-		this.imageUrl = imageUrl;
+	public boolean isIs_featured() {
+		return is_featured;
+	}
+
+	public void setIs_featured(boolean is_featured) {
+		this.is_featured = is_featured;
 	}
 
 

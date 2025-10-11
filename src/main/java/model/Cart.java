@@ -1,60 +1,42 @@
 package model;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-
 public class Cart {
-    private Map<Integer, CartItem> items;
+	private int id;
+	private int sum;
+	private int user_id;
+	
+	public Cart() {}
 
-    public Cart() {
-        items = new HashMap<>();
-    }
+	public Cart(int id, int sum, int user_id) {
+		super();
+		this.id = id;
+		this.sum = sum;
+		this.user_id = user_id;
+	}
 
-    // Thêm sản phẩm
-    public void addItem(CartItem item) {
-        if (items.containsKey(item.getDeviceId())) {
-            CartItem existing = items.get(item.getDeviceId());
-            existing.setQuantity(existing.getQuantity() + item.getQuantity());
-        } else {
-            items.put(item.getDeviceId(), item);
-        }
-    }
+	public int getId() {
+		return id;
+	}
 
-    // Xóa sản phẩm
-    public void removeItem(int deviceId) {
-        items.remove(deviceId);
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    // Cập nhật số lượng
-    public void updateQuantity(int deviceId, int quantity) {
-        if (items.containsKey(deviceId)) {
-            items.get(deviceId).setQuantity(quantity);
-        }
-    }
+	public int getSum() {
+		return sum;
+	}
 
-    // Tính tổng tiền
-    public BigDecimal getTotal() {
-        BigDecimal total = BigDecimal.ZERO;
-        for (CartItem item : items.values()) {
-            total = total.add(item.getSubtotal());
-        }
-        return total;
-    }
+	public void setSum(int sum) {
+		this.sum = sum;
+	}
 
-    public Map<Integer, CartItem> getItems() {
-        return items;
-    }
+	public int getUser_id() {
+		return user_id;
+	}
 
-    public int getTotalQuantity() {
-        int count = 0;
-        for (CartItem item : items.values()) {
-            count += item.getQuantity();
-        }
-        return count;
-    }
-
-    public void clear() {
-        items.clear();
-    }
+	public void setUser_id(int user_id) {
+		this.user_id = user_id;
+	}
+	
+	
 }

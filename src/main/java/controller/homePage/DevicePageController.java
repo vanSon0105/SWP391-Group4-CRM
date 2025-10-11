@@ -73,5 +73,17 @@ public class DevicePageController extends HttpServlet {
 		}
 
 	}
+	
+	public static void main(String[] args) {
+		DeviceDAO deviceDao = new DeviceDAO();
+		Integer categoryId = null;
+		Integer supplierId = null;
+		String price = null;
+		String sortPrice = null;
+		List<Device> listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price, sortPrice);
+		for (Device device : listDevice) {
+			System.out.println(device.toString());
+		}
+	}
 
 }
