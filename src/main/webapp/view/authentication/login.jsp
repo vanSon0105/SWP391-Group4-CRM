@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	<%@ page isELIgnored="false" %>
+<%@ page isELIgnored="false" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -15,19 +15,30 @@
     <section class="card">
         <h1>Đăng nhập NovaCare</h1>
         <p>Truy cập đơn hàng, bảo hành, lịch sửa chữa và ưu đãi dành riêng cho bạn.</p>
-        <div style="display:grid; gap:10px; text-align:left;">
-            <label for="email">Email</label>
-            <input id="email" type="text" placeholder="email@novacare.vn">
-        </div>
-        <div style="display:grid; gap:10px; text-align:left;">
-            <label for="password">Mật khẩu</label>
-            <input id="password" type="password" placeholder="Nhập mật khẩu">
-        </div>
-        <div class="links">
-            <a href="forgot-password.jsp">Quên mật khẩu?</a>
-            <a href="register.jsp">Đăng ký tài khoản</a>
-        </div>
-        <button type="button">Đăng nhập</button>
+        
+        <form action="${pageContext.request.contextPath}/login" method="post">
+            <div style="display:grid; gap:10px; text-align:left;">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="text" placeholder="email@novacare.vn" required>
+            </div>
+
+            <div style="display:grid; gap:10px; text-align:left;">
+                <label for="password">Mật khẩu</label>
+                <input id="password" name="password" type="password" placeholder="Nhập mật khẩu" required>
+            </div>
+
+            <div class="links">
+                <a href="forgot-password.jsp">Quên mật khẩu?</a>
+                <a href="register.jsp">Đăng ký tài khoản</a>
+            </div>
+
+            <button type="submit">Đăng nhập</button>
+        </form>
+
+        <% if (request.getAttribute("error") != null) { %>
+            <p style="color:red;"><%= request.getAttribute("error") %></p>
+        <% } %>
+
         <p class="register">Chưa có tài khoản? <a href="register.jsp">Tạo tài khoản ngay</a></p>
     </section>
 </body>

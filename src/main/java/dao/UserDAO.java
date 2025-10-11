@@ -2,6 +2,7 @@ package dao;
 
 import model.User;
 import java.sql.*;
+import dal.DBContext;
 
 public class UserDAO {
     private Connection conn;
@@ -50,4 +51,29 @@ public class UserDAO {
         }
         return false;
     }
+    
+    public User getUserByLogin(String email, String password) {
+        String sql = "SELECT * FROM Users WHERE email = ? AND password = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            ps.setString(2, password);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt("id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setEmail(rs.getString("email"));             
+                u.setPhone(rs.getString("phone"));
+                u.setStatus(rs.getString("status"));
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    
 }

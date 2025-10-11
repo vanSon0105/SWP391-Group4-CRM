@@ -54,7 +54,7 @@ public class RegisterController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
         } else {
             request.setAttribute("error", "Tên đăng nhập hoặc email đã tồn tại!");
-            request.getRequestDispatcher("/view/homepage/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/authentication/register.jsp").forward(request, response);
         }
     }
 }
