@@ -31,44 +31,10 @@ body.shop-page.catalog-page .product-grid {
 	margin-top: 20px;
 }
 
-a {
-	color: #1e1b4b;
-	text-decoration: none;
-}
-
-a:hover {
-	color: #2563eb;
-}
-
-a:visited {
-	color: #1e1b4b;
-}
-
-.category-link.active {
-	color: #33C2F6;
-}
 </style>
 
 <body class="shop-page catalog-page">
-	<header class="header-toolbar">
-		<h1>Shop88</h1>
-		<div class="header-center">
-
-			<form class="search-bar" action="#" method="get">
-				<label for="search" class="sr-only"></label> <input id="search"
-					name="search" type="search"
-					placeholder="Tìm thiết bị, linh kiện, ...">
-				<button type="submit">
-					<i class="fa-solid fa-magnifying-glass"></i>
-				</button>
-			</form>
-		</div>
-		<div class="header-bottom">
-			<a href="login.html" class="order-btn login-btn"><i
-				class="fa-solid fa-user"></i></a> <a href="cart.html" class="order-btn"><i
-				class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
-		</div>
-	</header>
+	<jsp:include page="../common/header.jsp"></jsp:include>
 	<h1 style="text-align: center; color: #312e81; margin-top: 10px">Danh
 		Mục Sản Phẩm</h1>
 	<form action="device-page" method="get" id="filter-form">
@@ -168,8 +134,7 @@ a:visited {
 		<button style="padding: 8px; border-radius: 8px">1</button>
 		<button style="padding: 8px; border-radius: 8px">2</button>
 	</nav>
-	<footer> NovaCare Shop · Mua sắm an tâm với bảo hành chuẩn
-		quốc tế. </footer>
+	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 
 </html>
