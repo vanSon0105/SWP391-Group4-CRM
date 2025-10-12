@@ -17,12 +17,17 @@
   	<description></description>
   	<servlet-class>controller.homePage.RegisterServlet</servlet-class>
   </servlet>
-
+  <servlet>
+  	<servlet-name>TaskDetailController</servlet-name>
+  	<display-name>TaskDetailController</display-name>
+  	<description></description>
+  	<servlet-class>controller.technicalmanager.TaskDetailController</servlet-class>
+  </servlet>
   <servlet-mapping>
-  	<servlet-name>CartServlet</servlet-name>
-  	<url-pattern>/cart</url-pattern>
+  	<servlet-name>TaskDetailController</servlet-name>
+  	<url-pattern>/TaskDetailController</url-pattern>
   </servlet-mapping>
-  
+
   
   <welcome-file-list>
     <welcome-file>home</welcome-file>

@@ -46,14 +46,40 @@ body {
 	width: 80%;
 }
 
+
 .main-content {
 	width: 85%;
 	height: 100vh;
 }
 
-table th,
-table td {
-	text-align:center;
+
+.main-content a { 
+	padding: 4px 6px;
+	border-radius:6px ;
+	background-color: #0d6efd;
+	color: white;
+	font-size:16px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 18px;
+}
+
+th, td {
+	padding: 10px;
+	border: 1px solid #999;
+	text-align: center;
+}
+
+thead {
+	background: linear-gradient(90deg, #38bdf8, #f97316);
+    color: #f8fafc;
+}
+
+table th, table td {
+	text-align: center;
 }
 </style>
 
@@ -66,7 +92,7 @@ table td {
 
 		<div
 			style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border-top: thin solid grey; align-items: center">
-			<a>Task List</a> <a>Staff List</a> <a>Device List</a> <a>Report</a>
+			<a href="task-list-page">Task List</a> <a>Staff List</a> <a>Device List</a> <a>Report</a>
 		</div>
 
 	</section>
@@ -75,83 +101,54 @@ table td {
 		<h1 style="font-weight: 500; margin-left: 30px">Task List</h1>
 		<form action="task-list" method="get">
 			<div class="filters">
-			<select id="status" name="status">
-				<option value="">All status</option>
-				<option value="">Pending</option>
-				<option value="">In progress</option>
-				<option value="">Completed</option>
-				<option value="">Cancelled</option>
-			</select>
-			
-			<input type="search" name="search" placeholder="Enter keywords to search..."/> <button type="submit">Search</button>
-			<a href="add-task">Add Task</a>
-		</div>
+				<select id="status" name="status">
+					<option value="">All status</option>
+					<option value="">Pending</option>
+					<option value="">In progress</option>
+					<option value="">Completed</option>
+					<option value="">Cancelled</option>
+				</select> <input type="search" name="search"
+					placeholder="Enter keywords to search..." />
+				<button type="submit">Search</button>
+				<a href="add-task">Add Task</a>
+			</div>
 		</form>
 
-		<table border="1" style="margin-left:10%; width: 80%;">
+		<table style="margin-left: 5%; width: 90%">
 			<thead>
 				<tr>
 					<th>ID</th>
 					<th>Title</th>
 					<th>Description</th>
-					<th>Assigned Staff</th>
-					<th>Status</th>
-					<th>Deadline</th>
+					<th>Manager ID</th>
+					<th>Customer Issue ID</th>
+					<!-- <th>Status</th> -->
 					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>1</td>
-					<td>Sửa máy</td>
-					<td>Đi sửa máy tại địa chỉ này</td>
-					<td>NamNV</td>
-					<td>Pending</td>
-					<td>2025-10-15</td>
-					<td>
-						<button>Xem</button>
-						<button>Chỉnh sửa</button>
-					</td>
-				</tr>
-				<tr>
-					<td>2</td>
-					<td>Sửa máy</td>
-					<td>Đi sửa máy tại địa chỉ này</td>
-					<td>NamNV</td>
-					<td>Pending</td>
-					<td>2025-10-15</td>
-					<td>
-						<button>Xem</button>
-						<button>Chỉnh sửa</button>
-					</td>
-				</tr>
-				<tr>
-					<td>3</td>
-					<td>Sửa máy</td>
-					<td>Đi sửa máy tại địa chỉ này</td>
-					<td>NamNV</td>
-					<td>Pending</td>
-					<td>2025-10-15</td>
-					<td>
-						<button>Xem</button>
-						<button>Chỉnh sửa</button>
-					</td>
-				</tr>
-				<tr>
-					<td>4</td>
-					<td>Sửa máy</td>
-					<td>Đi sửa máy tại địa chỉ này</td>
-					<td>NamNV</td>
-					<td>Pending</td>
-					<td>2025-10-15</td>
-					<td>
-						<button>Xem</button>
-						<button>Chỉnh sửa</button>
-					</td>
-				</tr>
+				<c:forEach var="task" items="${listTask}">
+					<tr>
+						<td>${task.id}</td>
+						<td>${task.title}</td>
+						<td>${task.description}</td>
+						<td>${task.managerId}</td>
+						<td>${task.customerIssueId}</td>
+						<%-- <td>${task.status}</td> --%>
+						<td>
+						<div style="display: flex; gap: 6px;">
+							<a href="task-detail?id=${task.id}">Xem</a>
+							<a href="update-task?id=${task.id}">Chỉnh sửa</a>
+						</div>
+							
+						</td>
+					</tr>
+				</c:forEach>
+
 			</tbody>
 		</table>
-		<div class="pagination" style="display:flex; justify-content:center; position: relative; top: 10%">
+		<div class="pagination"
+			style="display: flex; justify-content: center; position: relative; top: 10%">
 			<button style="padding: 6px">1</button>
 			<button style="padding: 6px">2</button>
 		</div>
