@@ -1,13 +1,12 @@
 package model;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 public class Device {
 	private int id;
 	private int categoryId;
 	private String name;
-	private BigDecimal price;
+	private double price;
 	private String unit;
 	private String imageUrl;
 	private int total_sold;
@@ -17,7 +16,7 @@ public class Device {
 
 	public Device() {}
 
-	public Device(int id, int categoryId, String name, BigDecimal price, String unit, String imageUrl, String desc, Timestamp created_at, boolean is_featured) {
+	public Device(int id, int categoryId, String name, double price, String unit, String imageUrl, String desc, Timestamp created_at, boolean is_featured) {
 		super();
 		this.id = id;
 		this.categoryId = categoryId;
@@ -30,7 +29,7 @@ public class Device {
 		this.is_featured = is_featured;
 	}
 	
-	public Device(int id, String name, BigDecimal price, String imageUrl) {
+	public Device(int id, String name, double price, String imageUrl) {
 		this.id = id;
 		this.name = name;
 		this.price = price;
@@ -95,11 +94,11 @@ public class Device {
 		this.name = name;
 	}
 
-	public BigDecimal getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 

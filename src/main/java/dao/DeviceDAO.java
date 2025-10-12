@@ -19,7 +19,7 @@ public class DeviceDAO extends DBContext {
             PreparedStatement prs = connection.prepareStatement(sql);
             prs.setInt(1, d.getCategoryId());
             prs.setString(2, d.getName());
-            prs.setBigDecimal(3, d.getPrice());
+            prs.setDouble(3, d.getPrice());
             prs.setString(4, d.getUnit());
             prs.setString(5, d.getImageUrl());
             prs.setString(6, d.getDesc());
@@ -40,7 +40,7 @@ public class DeviceDAO extends DBContext {
             PreparedStatement prs = connection.prepareStatement(sql);
             prs.setInt(1, d.getCategoryId());
             prs.setString(2, d.getName());
-            prs.setBigDecimal(3, d.getPrice());
+            prs.setDouble(3, d.getPrice());
             prs.setString(4, d.getUnit());
             prs.setString(5, d.getImageUrl());
             prs.setString(6, d.getDesc());
@@ -69,7 +69,7 @@ public class DeviceDAO extends DBContext {
     }
 
 	public Device getDeviceById(int id) {
-	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at FROM devices WHERE id = ?";
+	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured FROM devices WHERE id = ?;";
 	    try (Connection conn = getConnection();
 	         PreparedStatement pre = conn.prepareStatement(sql)) {
 	        pre.setInt(1, id);
@@ -79,7 +79,7 @@ public class DeviceDAO extends DBContext {
 	                    rs.getInt("id"),
 	                    rs.getInt("category_id"),
 	                    rs.getString("name"),
-	                    rs.getBigDecimal("price"),
+	                    rs.getDouble("price"),
 	                    rs.getString("unit"),
 	                    rs.getString("image_url"),
 	                    rs.getString("description"),
@@ -104,7 +104,7 @@ public class DeviceDAO extends DBContext {
 
 			while (rs.next()) {
 				list.add(new Device(rs.getInt("id"), rs.getInt("category_id"), rs.getString("name"),
-						rs.getBigDecimal("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("desciption"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
+						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("desciption"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 
 		} catch (SQLException e) {
@@ -166,7 +166,7 @@ public class DeviceDAO extends DBContext {
 				ResultSet rs = pre.executeQuery()){
 			while(rs.next()) {
 				list.add(new Device(rs.getInt("id"), rs.getInt("category_id"), rs.getString("name"),
-						rs.getBigDecimal("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
+						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 			
 		} catch (Exception e) {
@@ -192,7 +192,7 @@ public class DeviceDAO extends DBContext {
             	Device d = new Device();
                 d.setId(rs.getInt("id"));
                 d.setName(rs.getString("name"));
-                d.setPrice(rs.getBigDecimal("price"));
+                d.setPrice(rs.getDouble("price"));
                 d.setDesc(rs.getString("description"));
                 d.setImageUrl(rs.getString("image_url"));
                 d.setTotal_sold(rs.getInt("total_sold"));
@@ -240,7 +240,7 @@ public class DeviceDAO extends DBContext {
                 d.setId(rs.getInt("id"));
                 d.setName(rs.getString("name"));
                 d.setImageUrl(rs.getString("image_url"));
-                d.setPrice(rs.getBigDecimal("price"));
+                d.setPrice(rs.getDouble("price"));
                 d.setCreated_at(rs.getTimestamp("created_at"));
                 d.setDesc(rs.getString("description"));
                 list.add(d);
@@ -283,7 +283,7 @@ public class DeviceDAO extends DBContext {
 				d.setId(rs.getInt("id"));
 				d.setCategoryId(rs.getInt("category_id"));
 	            d.setName(rs.getString("name"));
-	            d.setPrice(rs.getBigDecimal("price"));
+	            d.setPrice(rs.getDouble("price"));
 	            d.setName(rs.getString("name"));
 	            d.setImageUrl(rs.getString("image_url"));
 	            d.setDesc(rs.getString("description"));
@@ -314,7 +314,7 @@ public class DeviceDAO extends DBContext {
             	Device d = new Device();
                 d.setId(rs.getInt("id"));
                 d.setName(rs.getString("name"));
-                d.setPrice(rs.getBigDecimal("price"));
+                d.setPrice(rs.getDouble("price"));
                 d.setDesc(rs.getString("image_url"));
                 d.setDesc(rs.getString("description"));
                 list.add(d);

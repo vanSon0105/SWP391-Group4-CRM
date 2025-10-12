@@ -6,10 +6,10 @@ public class OrderDetail {
     private int deviceId;       
     private int quantity;        
     private double price;        
-    private double discount;      
+    private int discount;      
     private Timestamp warrantyDate; 
     
-    public OrderDetail(int orderId, int deviceId, int quantity, double price, double discount, Timestamp warrantyDate) {
+    public OrderDetail(int orderId, int deviceId, int quantity, double price, int discount, Timestamp warrantyDate) {
         this.orderId = orderId;
         this.deviceId = deviceId;
         this.quantity = quantity;
@@ -62,7 +62,7 @@ public class OrderDetail {
         return discount;
     }
 
-    public void setDiscount(double discount) {
+    public void setDiscount(int discount) {
         this.discount = discount;
     }
 

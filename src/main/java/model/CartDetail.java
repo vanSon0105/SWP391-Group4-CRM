@@ -1,18 +1,17 @@
 package model;
 
-import java.math.BigDecimal;
 
 public class CartDetail {
 	private int id;
-	private BigDecimal price;
+	private double price;
 	private int quantity;
 	private Device device;
     private int cart_id;
-    private BigDecimal totalPrice;
+    private double totalPrice;
     
     public CartDetail() {}
 
-	public CartDetail(int id, BigDecimal price, int quantity, Device device, int cart_id, BigDecimal totalPrice) {
+	public CartDetail(int id, double price, int quantity, Device device, int cart_id, double totalPrice) {
 		this.id = id;
 		this.price = price;
 		this.quantity = quantity;
@@ -21,11 +20,11 @@ public class CartDetail {
 		this.totalPrice = totalPrice;
 	}
 
-	public BigDecimal getTotalPrice() {
+	public double getTotalPrice() {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(BigDecimal totalPrice) {
+	public void setTotalPrice(double totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
@@ -37,11 +36,11 @@ public class CartDetail {
 		this.id = id;
 	}
 
-	public BigDecimal getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 
