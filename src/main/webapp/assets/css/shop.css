@@ -1348,10 +1348,10 @@ body.shop-page.detail-page footer {
 
 .cart-page .price-col,
 .cart-page .total-col {
-    white-space: nowrap;         /* Không xuống dòng */
-    text-align: right;           /* Căn phải giá */
-    min-width: 120px;            /* Đảm bảo đủ chỗ hiển thị */
-    vertical-align: middle;      /* Căn giữa theo hàng */
+    white-space: nowrap;
+    text-align: right;
+    min-width: 120px;
+    vertical-align: middle;
 }
 
 
@@ -1384,6 +1384,64 @@ body.shop-page.detail-page footer {
 
 .cart-page .remove-btn:hover {
     background: rgba(239, 68, 68, 0.08);
+}
+
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(2, 6, 23, 0.45);
+    z-index: 1000;
+}
+
+.confirm-overlay.show {
+    display: flex;
+}
+
+.confirm-card {
+    background: #fff;
+    padding: 20px;
+    width: 92%;
+    max-width: 420px;
+    border-radius: 12px;
+    box-shadow: 0 24px 48px rgba(2, 6, 23, 0.28);
+    color: #0f172a;
+}
+
+.confirm-card h3 {
+    margin-bottom: 8px;
+    font-size: 1.8rem;
+}
+
+.confirm-card p {
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.confirm-btn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.confirm-yes {
+    background: #ef4444;
+    color: #fff;
+}
+
+.confirm-no {
+    background: #f3f4f6;
+    color: #0f172a;
 }
 
 

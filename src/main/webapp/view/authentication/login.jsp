@@ -19,7 +19,7 @@
         <form action="${pageContext.request.contextPath}/login" method="post">
             <div style="display:grid; gap:10px; text-align:left;">
                 <label for="email">Email</label>
-                <input id="email" name="email" type="text" placeholder="email@novacare.vn" required>
+                <input id="email" name="email" type="text" placeholder="Nhập email" required>
             </div>
 
             <div style="display:grid; gap:10px; text-align:left;">

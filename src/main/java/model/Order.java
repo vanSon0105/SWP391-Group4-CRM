@@ -8,13 +8,13 @@ import model.EnumModel.OrderEnum;
 public class Order {
 	private int id;
 	private Customer customer_id;
-	private BigDecimal total_amount;
+	private double total_amount;
 	private OrderEnum status;
 	private Timestamp date;
 	
 	public Order() {}
 
-	public Order(int id, Customer customer_id, BigDecimal total_amount, OrderEnum status, Timestamp date) {
+	public Order(int id, Customer customer_id, double total_amount, OrderEnum status, Timestamp date) {
 		super();
 		this.id = id;
 		this.customer_id = customer_id;
@@ -39,11 +39,11 @@ public class Order {
 		this.customer_id = customer_id;
 	}
 
-	public BigDecimal getTotal_amount() {
+	public double getTotal_amount() {
 		return total_amount;
 	}
 
-	public void setTotal_amount(BigDecimal total_amount) {
+	public void setTotal_amount(double total_amount) {
 		this.total_amount = total_amount;
 	}
 

@@ -38,7 +38,11 @@
             </form>
         </div>
         <div class="header-bottom">
-            <a href="../authentication/login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
+            <form action="login" method="post" style="display:inline;">
+			    <button type="submit" class="order-btn login-btn">
+			        <i class="fa-solid fa-user"></i>
+			    </button>
+			</form>
             <a href="cart" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
         </div>
     </header>
