@@ -355,7 +355,7 @@ ul {
 }
 
 .home-page .hero-nav {
-    padding: 0;
+	background: linear-gradient(90deg, #0ea5e9, #38bdf8);
     display: inline-flex;
     justify-content: center;
     align-items: center;
