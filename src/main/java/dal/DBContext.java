@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import model.Cart;
-import model.CartItem;
 import model.Device;
 
 import java.sql.ResultSet;

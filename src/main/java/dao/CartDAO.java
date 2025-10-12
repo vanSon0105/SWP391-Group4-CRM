@@ -50,17 +50,17 @@ public class CartDAO extends DBContext {
 				Device d = new Device();
                 d.setId(rs.getInt("device_id"));
                 d.setName(rs.getString("name"));
-                d.setPrice(rs.getBigDecimal("device_price"));
+                d.setPrice(rs.getDouble("device_price"));
                 d.setImageUrl(rs.getString("image_url"));
                 d.setDesc(rs.getString("description"));
                 
                 CartDetail cd = new CartDetail();
                 cd.setId(rs.getInt("id"));
-                cd.setPrice(rs.getBigDecimal("cart_price"));
+                cd.setPrice(rs.getDouble("cart_price"));
                 cd.setQuantity(rs.getInt("quantity"));
                 cd.setCart_id(rs.getInt("cart_id"));
                 cd.setDevice(d);
-                cd.setTotalPrice(cd.getPrice().multiply(BigDecimal.valueOf(cd.getQuantity())));
+                cd.setTotalPrice(cd.getPrice() * cd.getQuantity());
                 
                 list.add(cd);
 			}
@@ -87,17 +87,17 @@ public class CartDAO extends DBContext {
 				Device d = new Device();
                 d.setId(rs.getInt("device_id"));
                 d.setName(rs.getString("name"));
-                d.setPrice(rs.getBigDecimal("device_price"));
+                d.setPrice(rs.getDouble("device_price"));
                 d.setImageUrl(rs.getString("image_url"));
                 d.setDesc(rs.getString("description"));
                 
                 CartDetail cd = new CartDetail();
                 cd.setId(rs.getInt("id"));
-                cd.setPrice(rs.getBigDecimal("cart_price"));
+                cd.setPrice(rs.getDouble("cart_price"));
                 cd.setQuantity(rs.getInt("quantity"));
                 cd.setCart_id(rs.getInt("cart_id"));
                 cd.setDevice(d);
-                cd.setTotalPrice(cd.getPrice().multiply(BigDecimal.valueOf(cd.getQuantity())));
+                cd.setTotalPrice(cd.getPrice() * cd.getQuantity());
                 
                 return cd;
 			}
@@ -116,6 +116,54 @@ public class CartDAO extends DBContext {
 		        ps.setInt(1, quantity);
 		        ps.setInt(2, cartDetailId);
 		        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	public boolean deleteCartDetail(int id) {
+	    String sql = "DELETE FROM cart_details WHERE id = ?";
+	    try (
+	    		Connection connection = DBContext.getConnection();
+	            PreparedStatement ps = connection.prepareStatement(sql)) {
+	            ps.setInt(1, id);
+	            return ps.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+	
+	public Cart getCartById(int id) {
+		String sql = "SELECT * FROM carts\r\n"
+				+ "WHERE id = ?;";
+	    try (
+	    		Connection connection = DBContext.getConnection();
+	            PreparedStatement ps = connection.prepareStatement(sql)) {
+	            ps.setInt(1, id);
+	            ResultSet rs = ps.executeQuery();
+	            if(rs.next()) {
+	            	int cartId = rs.getInt("id");
+	                int sum = rs.getInt("sum");
+	                int userId = rs.getInt("user_id");
+	                
+	                return new Cart(cartId, sum, userId);
+	            }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+	
+	public void updateCartSum(int cartId, double sum) {
+	    String sql = "UPDATE carts SET sum = ? WHERE id = ?;";
+	    try (Connection connection = DBContext.getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+
+	        ps.setDouble(1, sum);
+	        ps.setInt(2, cartId);
+	        ps.executeUpdate();
+
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }

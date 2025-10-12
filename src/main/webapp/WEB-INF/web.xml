@@ -17,12 +17,6 @@
   	<description></description>
   	<servlet-class>controller.homePage.RegisterServlet</servlet-class>
   </servlet>
-
-  <servlet-mapping>
-  	<servlet-name>CartServlet</servlet-name>
-  	<url-pattern>/cart</url-pattern>
-  </servlet-mapping>
-  
   
   <welcome-file-list>
     <welcome-file>home</welcome-file>
@@ -30,17 +24,17 @@
   
   <error-page>
         <error-code>404</error-code>
-        <location>/error/error404</location>
+        <location>/view/error/error404.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>500</error-code>
-        <location>/error/error500</location>
+        <location>/view/error/error500.jsp</location>
     </error-page>
 
     <error-page>
         <error-code>403</error-code>
-        <location>/error/error403</location>
+        <location>/view/error/error403.jsp</location>
     </error-page>
   
 </web-app>
