@@ -3,7 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 import model.DeviceSerial;
-import model.EnumModel.DeviceSerialEnum;
+
 
 public class DeviceSerialDAO extends dal.DBContext {
 
@@ -20,7 +20,7 @@ public class DeviceSerialDAO extends dal.DBContext {
                     ds.setId(rs.getInt("id"));
                     ds.setDevice_id(rs.getInt("device_id"));
                     ds.setSerial_no(rs.getString("serial_no"));
-                    ds.setStatus(DeviceSerialEnum.valueOf(rs.getString("status"))); 
+                    ds.setStatus(rs.getString("status")); 
                     ds.setImport_date(rs.getTimestamp("import_date"));
                     list.add(ds);
                 }
@@ -38,7 +38,7 @@ public class DeviceSerialDAO extends dal.DBContext {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, ds.getDevice_id());
             ps.setString(2, ds.getSerial_no());
-            ps.setString(3, ds.getStatus().name()); 
+            ps.setString(3, ds.getStatus()); 
             ps.setTimestamp(4, ds.getImport_date());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -47,11 +47,11 @@ public class DeviceSerialDAO extends dal.DBContext {
         }
     }
 
-    public boolean updateStatus(int serialId, DeviceSerialEnum status) {
+    public boolean updateStatus(int serialId, String status) {
         String sql = "UPDATE device_serials SET status = ? WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, status.name());
+            ps.setString(1, status);
             ps.setInt(2, serialId);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {

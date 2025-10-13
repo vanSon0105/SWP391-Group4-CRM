@@ -28,11 +28,11 @@ public class DeviceDetailController extends HttpServlet {
         Device device = deviceDao.getDeviceById(deviceId);
         request.setAttribute("device", device);
 
-        Category category = categoryDao.getCategoryById(device.getCategoryId());
+        Category category = categoryDao.getCategoryById(device.getCategory().getId());
         request.setAttribute("category", category);
         
 
-        List<Device> relatedDevices = deviceDao.getRelatedDevices(deviceId, device.getCategoryId(), 4);
+        List<Device> relatedDevices = deviceDao.getRelatedDevices(deviceId, device.getCategory().getId(), 4);
         request.setAttribute("relatedDevices", relatedDevices);
 
         request.getRequestDispatcher("/view/homepage/device-detailPage.jsp").forward(request, response);
