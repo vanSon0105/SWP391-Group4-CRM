@@ -30,7 +30,7 @@ public class DevicePageController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			
+			String keyword = request.getParameter("key");
 			List<Category> listCategory = categoryDao.getAllCategories();
 			List<Supplier> listSupplier = supplierDao.getAllSuppliers();
 
@@ -59,12 +59,16 @@ public class DevicePageController extends HttpServlet {
 				supplierId = null;
 			}
 
+			List<Device> listDevice = null;
+			if(keyword != null) {
+				listDevice = deviceDao.searchDevice(keyword);
+			}else {
+				listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price, sortPrice);				
+			}
 			
-			List<Device> listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price, sortPrice);
-			
+			request.setAttribute("key", keyword);
 			request.setAttribute("listDevice", listDevice);
 			request.setAttribute("listSupplier", listSupplier);
-			
 			request.setAttribute("listCategory", listCategory);
 
 			request.getRequestDispatcher("view/homepage/devicePage.jsp").forward(request, response);
@@ -73,17 +77,4 @@ public class DevicePageController extends HttpServlet {
 		}
 
 	}
-	
-	public static void main(String[] args) {
-		DeviceDAO deviceDao = new DeviceDAO();
-		Integer categoryId = null;
-		Integer supplierId = null;
-		String price = null;
-		String sortPrice = null;
-		List<Device> listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price, sortPrice);
-		for (Device device : listDevice) {
-			System.out.println(device.toString());
-		}
-	}
-
 }

@@ -14,75 +14,6 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-header.header-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background: #1e40af;
-    color: #fff;
-}
-
-header.header-toolbar h1 {
-    margin: 0;
-    font-size: 24px;
-}
-
-header .header-center form.search-bar {
-    display: flex;
-    align-items: center;
-}
-
-header .header-center input[type="search"] {
-    padding: 6px 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-}
-
-header .header-center button {
-    padding: 6px 10px;
-    border: none;
-    background: #2563eb;
-    color: #fff;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-header .header-bottom {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-header .header-bottom a.order-btn {
-    padding: 6px 12px;
-    border-radius: 4px;
-    background: #2563eb;
-    color: #fff;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-}
-
-header .header-bottom a.order-btn:hover {
-    background: #1d4ed8;
-}
-
-footer {
-    text-align: center;
-    padding: 15px 0;
-    background: #1e40af;
-    color: #fff;
-    margin-top: 20px;
-}
-
-main {
-    max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-}
 
 .product-detail {
     display: grid;
@@ -114,12 +45,6 @@ main {
     opacity: 0.9;
 }
 
-@media (max-width: 768px) {
-    .product-detail {
-        grid-template-columns: 1fr;
-    }
-}
-
 .product-image {
     text-align: center;
 }
@@ -132,19 +57,7 @@ main {
 </head>
 
 <body class="shop-page detail-page">
-<header class="header-toolbar">
-    <h1>TechShop</h1>
-    <div class="header-center">
-        <form class="search-bar" action="device-page" method="get">
-            <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ...">
-            <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
-    </div>
-    <div class="header-bottom">
-        <a href="login.html" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
-        <a href="cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i> Sản phẩm</a>
-    </div>
-</header>
+<jsp:include page="../common/header.jsp"></jsp:include>
 
 <h1 style="text-align:center; color:#312e81; margin-top:10px">Chi tiết sản phẩm</h1>
 
@@ -222,8 +135,6 @@ main {
 </main>
 
 <!-- Footer -->
-<footer>
-    NovaCare Shop · Mua sắm an tâm với bảo hành chuẩn quốc tế.
-</footer>
+<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
