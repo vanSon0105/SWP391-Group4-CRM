@@ -2,9 +2,6 @@ DROP DATABASE IF EXISTS SWP391;
 CREATE DATABASE IF NOT EXISTS SWP391;
 USE SWP391;
 
--- NOTE: Changed monetary data types (e.g., price, total_amount) to DECIMAL(14, 0)
--- to correctly handle large VND values without decimals.
-
 CREATE TABLE roles (
   id INT PRIMARY KEY AUTO_INCREMENT,
   role_name varchar(50) UNIQUE NOT NULL,

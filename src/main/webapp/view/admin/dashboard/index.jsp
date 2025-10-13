@@ -13,63 +13,29 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="management-page revenue-dashboard">
-    <div class="admin-layout">
-        <aside class="admin-sidebar" aria-label="Chức năng quản trị">
-            <div class="brand">
-                <img src="../assets/img/device-placeholder.svg" alt="">
-                <span>VanSon</span>
-            </div>
-            <nav>
-                <a href="revenue-dashboard.html" class="active">Dashboard</a>
-                <a href="admin-console.html">Bảng điều khiển</a>
-                <a href="order-tracking.html">Theo dõi đơn hàng</a>
-                <a href="storekeeper-dashboard.html">Kho & Nhân viên kho</a>
-                <a href="technical-manager-suite.html">Quản lý kỹ thuật</a>
-                <a href="technical-staff-hub.html">Nhân viên kỹ thuật</a>
-                <a href="technical-support-center.html">Hỗ trợ kỹ thuật</a>
-            </nav>
-        </aside>
-
-        <div class="admin-main">
-            <header class="admin-topbar">
-                <div class="topbar-left">
-                    <h1>TechShop</h1>
-                    <button class="sidebar-toggle" aria-label="Mở/đóng menu" aria-expanded="false"><i
-                            class="fa-solid fa-bars-staggered"></i></button>
-                    <div class="top-search">
-                        <input type="search" placeholder="Tìm kiếm trang, báo cáo, hoặc đơn hàng..."
-                            aria-label="Tìm kiếm">
-                    </div>
-                </div>
-                <div class="topbar-right">
-                    <div class="user-area">
-                        <a href=""><i class="fa-solid fa-gear"></i></a>
-                        <a href=""><i class="fa-solid fa-user"></i></a>
-                    </div>
-                </div>
-            </header>
-
-            <main>
+<body class="management-page dashboard">
+	<jsp:include page="../common/sidebar.jsp"></jsp:include>
+	<jsp:include page="../common/header.jsp"></jsp:include>
+            <main class="sidebar-main">
                 <section class="panel">
                     <h2>Chỉ số chính</h2>
-                    <div class="kpi-grid">
-                        <div class="kpi-card">
+                    <div class="grid">
+                        <div class="card">
                             <span>DOANH THU TUẦN</span>
                             <strong>12.4 tỷ</strong>
                             <small>+8.6% so với tuần trước</small>
                         </div>
-                        <div class="kpi-card">
+                        <div class="card">
                             <span>LỢI NHUẬN GỘP</span>
                             <strong>2.15 tỷ</strong>
                             <small>Biên lợi nhuận: 17.3%</small>
                         </div>
-                        <div class="kpi-card">
+                        <div class="card">
                             <span>TỶ LỆ CHUYỂN ĐỔI ONLINE</span>
                             <strong>3.9%</strong>
                             <small>+0.6 điểm phần trăm</small>
                         </div>
-                        <div class="kpi-card">
+                        <div class="card">
                             <span>GIÁ TRỊ ĐƠN TRUNG BÌNH</span>
                             <strong>7.2 triệu</strong>
                             <small>Thiết bị gia dụng thúc đẩy tăng trưởng</small>
@@ -223,28 +189,5 @@
             <footer>
                 Trung tâm phân tích doanh thu NovaCare · Email: revenue@novacare.vn · Hotline nội bộ: 1900 6688
             </footer>
-        </div>
-    </div>
 </body>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var toggleBtn = document.querySelector('.sidebar-toggle');
-        var sidebar = document.querySelector('.admin-sidebar');
-        if (!toggleBtn || !sidebar) return;
-
-        toggleBtn.addEventListener('click', function () {
-            var isCollapsed = document.body.classList.contains('sidebar-collapsed');
-
-            if (isCollapsed) {
-                document.body.classList.remove('sidebar-collapsed');
-                toggleBtn.setAttribute('aria-expanded', 'true');
-                sidebar.setAttribute('aria-hidden', 'false');
-            } else {
-            	document.body.classList.add('sidebar-collapsed');
-                toggleBtn.setAttribute('aria-expanded', 'false');
-                sidebar.setAttribute('aria-hidden', 'true');
-            }
-        });
-    });
-</script>
 </html>

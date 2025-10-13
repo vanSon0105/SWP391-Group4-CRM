@@ -36,7 +36,7 @@ public class CategoryDAO extends dal.DBContext {
 			System.out.print("Error connection");
 		} else {
 			for(Category c : list) {
-				System.out.print(" " + c.getId() + " "  + c.getCategoryName());
+				System.out.print(" " + c.getId() + " "  + c.getName());
 			}
 			
 		}

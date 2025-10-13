@@ -87,14 +87,6 @@ public class HomePageController extends HttpServlet {
 			session.setAttribute("keyword", key);
 			resp.sendRedirect("");
 		}
-	}
-	
-	public static void main(String[] args) {
-		DeviceDAO hpd1 = new DeviceDAO();
-		List<Device> getFeaturedDevicesList = hpd1.getFeaturedDevicesList(1,10);
-		for (Device device : getFeaturedDevicesList) {
-			System.out.println(device.toString());
-		}
-	}
+	}	
 
 }
