@@ -12,6 +12,39 @@ import model.Device;
 
 public class DeviceDAO extends DBContext {
 	
+	public List<Device> getRelatedDevices(int deviceId, int categoryId, int limit) {
+	    List<Device> list = new ArrayList<>();
+	    String sql = "SELECT * FROM devices WHERE category_id = ? AND id <> ? LIMIT ?";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, categoryId);
+	        ps.setInt(2, deviceId);
+	        ps.setInt(3, limit);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                Device d = new Device(
+	                    rs.getInt("id"),
+	                    rs.getInt("category_id"),
+	                    rs.getString("name"),
+	                    rs.getDouble("price"),       
+	                    rs.getString("unit"),
+	                    rs.getString("image_url"),     
+	                    rs.getString("description"),  
+	                    rs.getTimestamp("created_at"),
+	                    rs.getBoolean("is_featured")
+	                );
+	                list.add(d);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return list;
+	}
 	public boolean addDevice(Device d) {
         String sql = "INSERT INTO devices (category_id, name, price, unit, image_url, description, created_at) \"\r\n"
         		+ "                   + \"VALUES (?, ?, ?, ?, ?, ?, NOW()";
