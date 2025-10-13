@@ -97,6 +97,7 @@ table th, table td {
 	display:flex;
 	align-items: center;
 	justify-content: space-between;
+	margin-top: 30px;
 }
 </style>
 
@@ -115,7 +116,7 @@ table th, table td {
 	</section>
 
 	<section class="main-content">
-		<h1 style="font-weight: 500; margin-left: 30px">Task List</h1>
+		<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Task List</h1>
 		<form action="task-list" method="get">
 			<div class="filters">
 				<select id="status" name="status" style="border-radius: 6px; padding: 6px 8px">

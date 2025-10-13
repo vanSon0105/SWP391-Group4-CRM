@@ -14,6 +14,7 @@ import dao.CustomerIssueDao;
 import model.Task;
 import model.CustomerIssue;
 import model.User;
+import model.TaskDetail;
 
 @WebServlet("/task-form")
 public class TaskFormController extends HttpServlet {
@@ -32,12 +33,13 @@ public class TaskFormController extends HttpServlet {
 		try {
 			String idParam = request.getParameter("id");
 			Task task = null;
-			Set<Integer> assignedStaffIds = null;
-			
+//			Set<Integer> assignedStaffIds = null;
+			List<TaskDetail> taskDetail = new ArrayList<>();
 			if (idParam != null && !idParam.isEmpty()) {
 	            int taskId = Integer.parseInt(idParam);
 	            task = taskDao.getTaskById(taskId);
-	            assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
+	            taskDetail = taskDetailDao.getTaskDetail(taskId);
+//	            assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
 	        }
 			
 			List<CustomerIssue> issueList = issueDao.getAllIssues();
@@ -46,7 +48,8 @@ public class TaskFormController extends HttpServlet {
 			request.setAttribute("task", task);
 	        request.setAttribute("customerIssues", issueList);
 	        request.setAttribute("technicalStaffList", staffList);
-	        request.setAttribute("assignedStaffIds", assignedStaffIds);
+	        request.setAttribute("taskDetail", taskDetail);
+//	        request.setAttribute("assignedStaffIds", assignedStaffIds);
 			request.getRequestDispatcher("view/technicalmanager/taskForm.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");

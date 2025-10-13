@@ -108,7 +108,7 @@ a {
 				<c:forEach var="issue" items="${customerIssues}">
 					<option value="${issue.id}" ${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
 				</c:forEach>
-			</select>
+			</select> 
 			 <label>Technical Staff:</label>
 			<div class="checkbox-group">
 				<c:forEach var="staff" items="${technicalStaffList}">					
@@ -119,7 +119,7 @@ a {
 				</c:forEach>
 			</div>
 
-			<label>Deadline</label> <input type="date" name="deadline" value="${task.deadline}"/>
+			<label>Deadline</label> <input type="date" name="deadline" value="${taskDetail[0].deadline}"/>
 			 <div>
 			 	<a href="task-list-page">Back</a>
 			<button type="submit" style="margin-left:10px">Submit</button>
