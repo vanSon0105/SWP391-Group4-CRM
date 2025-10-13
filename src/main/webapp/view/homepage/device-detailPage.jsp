@@ -75,7 +75,7 @@
 </head>
 <body>
 <header class="header-toolbar">
-  <h1>NovaCare Shop</h1>
+  <h1>TechShop</h1>
   <div class="header-center">
     <form class="search-bar" action="device-page" method="get" role="search">
       <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ..." aria-label="Tìm kiếm thiết bị" />
@@ -105,7 +105,7 @@
       </div>
       
       <article class="warranty" aria-label="Cam kết mua hàng">
-        <h3>Cam kết của NovaCare Shop</h3>
+        <h3>Cam kết của TechShop</h3>
         <ul>
           <li>Cam kết hàng chính hãng 100%, nguồn gốc xuất xứ rõ ràng.</li>
           <li>Bảo hành chính hãng lên đến 24 tháng, đổi mới trong 7 ngày nếu lỗi kỹ thuật.</li>
