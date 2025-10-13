@@ -61,6 +61,15 @@ body {
 	font-size:16px;
 }
 
+.search-button { 
+	padding: 4px 6px;
+	border-radius:6px ;
+	background-color: #0d6efd;
+	color: white;
+	font-size:16px;
+	border:none;
+}
+
 table {
 	width: 100%;
 	border-collapse: collapse;
@@ -80,6 +89,14 @@ thead {
 
 table th, table td {
 	text-align: center;
+}
+
+.filters {
+	margin-left:10%;
+	width:80%;
+	display:flex;
+	align-items: center;
+	justify-content: space-between;
 }
 </style>
 
@@ -101,16 +118,21 @@ table th, table td {
 		<h1 style="font-weight: 500; margin-left: 30px">Task List</h1>
 		<form action="task-list" method="get">
 			<div class="filters">
-				<select id="status" name="status">
+				<select id="status" name="status" style="border-radius: 6px; padding: 6px 8px">
 					<option value="">All status</option>
 					<option value="">Pending</option>
 					<option value="">In progress</option>
 					<option value="">Completed</option>
 					<option value="">Cancelled</option>
-				</select> <input type="search" name="search"
-					placeholder="Enter keywords to search..." />
-				<button type="submit">Search</button>
-				<a href="add-task">Add Task</a>
+				</select>
+				<div>
+				
+				<input type="search" name="search"
+					placeholder="Enter keywords to search..."
+					style="border-radius: 6px; padding: 6px 8px; border:1px solid #000" />
+				<button type="submit" class="search-button">Search</button></div>
+				 
+				<a href="task-form">Add Task</a>
 			</div>
 		</form>
 
@@ -138,7 +160,7 @@ table th, table td {
 						<td>
 						<div style="display: flex; gap: 6px;">
 							<a href="task-detail?id=${task.id}">Xem</a>
-							<a href="update-task?id=${task.id}">Chỉnh sửa</a>
+							<a href="task-form?id=${task.id}">Chỉnh sửa</a>
 						</div>
 							
 						</td>

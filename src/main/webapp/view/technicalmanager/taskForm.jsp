@@ -16,8 +16,23 @@ body {
 	background: #f5f5f5;
 }
 
-.container {
+.side-bar {
+	width: 15%;
+	height: 100vh;
+	background-color: white;
+}
+
+.side-bar a:hover {
+	cursor: pointer;
+	background: grey;
+}
+
+.side-bar a {
 	width: 80%;
+}
+
+.container {
+	width: 85%;
 	margin: 30px auto;
 	padding: 20px 30px;
 	background: white;
@@ -62,23 +77,36 @@ button {
 	border: none;
 	margin-left: auto;
 }
+
+a {
+	padding: 5px 10px;
+	border-radius:6px ;
+	background-color: #3b82f6;
+	color: white;
+	font-size:16px;
+	text-align: center;
+	text-decoration: none;
+}
 </style>
 
 <body>
-	<div class="container">
+
+	<form action="task-form" method="get">
+	
+    <div class="container">
 		<div class="head">
 			<h2>Add/Update Task</h2>
 		</div>
 		<div class="task-form">
-			<input type="hidden" name="id" value="${task != null ? task.id : ''}"/>
+			<input type="hidden" name="id" value="${task.id}"/>
 			 <label>Title:</label>
-			 <input type="text" name="title" value="${task != null ? task.title : ''}"/> 
+			 <input type="text" name="title" value="${task.title}"/> 
 			 <label>Description:</label>
-			 <input type="text" name="description" value="${task != null ? task.description : ''}"/> 
+			 <input type="text" name="description" value="${task.description}"/> 
 			 <label>Customer Issue ID:</label>
 			<select name="customerIssueId">
-				<c:forEach var="issues" items="customerIssues">
-					<option value="${issue.id}" ${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.name}</option>
+				<c:forEach var="issue" items="${customerIssues}">
+					<option value="${issue.id}" ${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
 				</c:forEach>
 			</select>
 			 <label>Technical Staff:</label>
@@ -86,15 +114,21 @@ button {
 				<c:forEach var="staff" items="${technicalStaffList}">					
 					<p>
 						<input type="checkbox" name="technicalStaffIds" value="${staff.id}">
-						${staff.name}
+						${staff.username}
 					</p>
 				</c:forEach>
 			</div>
 
-			<label>Deadline</label> <input type="date" name="deadline" value="${task != null ? task.deadline : ''}"/>
-
-			<button type="submit">${task != null ? "Submit" : "Update"}</button>
-		</div>
+			<label>Deadline</label> <input type="date" name="deadline" value="${task.deadline}"/>
+			 <div>
+			 	<a href="task-list-page">Back</a>
+			<button type="submit" style="margin-left:10px">Submit</button>
+		
+			 </div>
+			 </div>
 	</div>
+</form>
+	
+	
 </body>
 </html>

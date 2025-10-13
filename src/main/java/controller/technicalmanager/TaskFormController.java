@@ -9,14 +9,19 @@ import java.io.IOException;
 import java.util.*;
 import dao.TaskDetailDAO;
 import dao.TaskDAO;
+import dao.UserDAO;
+import dao.CustomerIssueDao;
 import model.Task;
-import model.TaskDetail;
+import model.CustomerIssue;
+import model.User;
 
 @WebServlet("/task-form")
 public class TaskFormController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	TaskDetailDAO taskDetailDao = new TaskDetailDAO();
 	TaskDAO taskDao = new TaskDAO();
+	UserDAO userDao = new UserDAO();
+	CustomerIssueDao issueDao = new CustomerIssueDao();
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -25,18 +30,34 @@ public class TaskFormController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			int id = Integer.parseInt(request.getParameter("id"));
+			String idParam = request.getParameter("id");
+			Task task = null;
+			Set<Integer> assignedStaffIds = null;
 			
-			List<TaskDetail> listTaskDetail = taskDetailDao.getTaskDetail(id);
-			Task task = taskDao.getTaskById(id);
+			if (idParam != null && !idParam.isEmpty()) {
+	            int taskId = Integer.parseInt(idParam);
+	            task = taskDao.getTaskById(taskId);
+	            assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
+	        }
+			
+			List<CustomerIssue> issueList = issueDao.getAllIssues();
+		    List<User> staffList = userDao.getAllTechnicalStaff();
 			
 			request.setAttribute("task", task);
-			request.setAttribute("listTaskDetail", listTaskDetail);
+	        request.setAttribute("customerIssues", issueList);
+	        request.setAttribute("technicalStaffList", staffList);
+	        request.setAttribute("assignedStaffIds", assignedStaffIds);
 			request.getRequestDispatcher("view/technicalmanager/taskForm.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");
 		}
 
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		super.doPost(req, resp);
 	}
 
 }
