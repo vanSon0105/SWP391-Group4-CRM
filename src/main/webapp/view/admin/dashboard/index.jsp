@@ -8,16 +8,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard doanh thu - NovaCare</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body class="management-page revenue-dashboard">
     <div class="admin-layout">
         <aside class="admin-sidebar" aria-label="Chức năng quản trị">
-            <div class="brand">NovaCare Admin</div>
+            <div class="brand">
+                <img src="../assets/img/device-placeholder.svg" alt="">
+                <span>VanSon</span>
+            </div>
             <nav>
+                <a href="revenue-dashboard.html" class="active">Dashboard</a>
                 <a href="admin-console.html">Bảng điều khiển</a>
                 <a href="order-tracking.html">Theo dõi đơn hàng</a>
-                <a href="revenue-dashboard.html" class="active">Doanh thu</a>
                 <a href="storekeeper-dashboard.html">Kho & Nhân viên kho</a>
                 <a href="technical-manager-suite.html">Quản lý kỹ thuật</a>
                 <a href="technical-staff-hub.html">Nhân viên kỹ thuật</a>
@@ -28,7 +34,9 @@
         <div class="admin-main">
             <header class="admin-topbar">
                 <div class="topbar-left">
-                    <button class="sidebar-toggle" aria-label="Mở/đóng menu" aria-expanded="false">☰</button>
+                    <h1>TechShop</h1>
+                    <button class="sidebar-toggle" aria-label="Mở/đóng menu" aria-expanded="false"><i
+                            class="fa-solid fa-bars-staggered"></i></button>
                     <div class="top-search">
                         <input type="search" placeholder="Tìm kiếm trang, báo cáo, hoặc đơn hàng..."
                             aria-label="Tìm kiếm">
@@ -36,9 +44,8 @@
                 </div>
                 <div class="topbar-right">
                     <div class="user-area">
-                        <div class="avatar">NA</div>
-                        <span class="username">NovaAdmin</span>
-                        <a href="../login.html" class="logout">Đăng xuất</a>
+                        <a href=""><i class="fa-solid fa-gear"></i></a>
+                        <a href=""><i class="fa-solid fa-user"></i></a>
                     </div>
                 </div>
             </header>
@@ -222,19 +229,18 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         var toggleBtn = document.querySelector('.sidebar-toggle');
-        var layout = document.querySelector('.admin-layout');
         var sidebar = document.querySelector('.admin-sidebar');
-        if (!toggleBtn || !layout || !sidebar) return;
+        if (!toggleBtn || !sidebar) return;
 
         toggleBtn.addEventListener('click', function () {
-            var isCollapsed = layout.classList.contains('sidebar-collapsed');
+            var isCollapsed = document.body.classList.contains('sidebar-collapsed');
 
             if (isCollapsed) {
-                layout.classList.remove('sidebar-collapsed');
+                document.body.classList.remove('sidebar-collapsed');
                 toggleBtn.setAttribute('aria-expanded', 'true');
                 sidebar.setAttribute('aria-hidden', 'false');
             } else {
-                layout.classList.add('sidebar-collapsed');
+            	document.body.classList.add('sidebar-collapsed');
                 toggleBtn.setAttribute('aria-expanded', 'false');
                 sidebar.setAttribute('aria-hidden', 'true');
             }
