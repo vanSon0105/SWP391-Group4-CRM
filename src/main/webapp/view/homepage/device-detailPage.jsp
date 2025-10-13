@@ -14,79 +14,49 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
 
-  * { box-sizing: border-box; }
-  body { margin:0; font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif; background-color:#f5f5f7; color:#333; min-height:100vh; display:flex; flex-direction:column;}
-  header.header-toolbar { background-color:#0066b3; color:white; padding:12px 36px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; position:sticky; top:0; z-index:999; }
-  header.header-toolbar h1 { font-size:28px; font-weight:700; margin:0; }
-  header .header-center { flex-grow:1; max-width:600px; margin:10px 24px; }
-  header .header-center form.search-bar { display:flex; border-radius:8px; overflow:hidden; background:white; width:100%; }
-  header .header-center input[type="search"] { flex-grow:1; padding:10px 14px; border:none; font-size:16px; outline:none; }
-  header .header-center button { background-color:#ff6600; border:none; color:white; padding:0 20px; cursor:pointer; font-size:18px; display:flex; align-items:center; justify-content:center; transition:background-color 0.3s ease; }
-  header .header-center button:hover { background-color:#e65c00; }
-  header .header-bottom { display:flex; gap:16px; }
-  header .header-bottom a.order-btn { background-color:#ff6600; color:white; padding:10px 18px; border-radius:20px; font-weight:600; display:flex; align-items:center; gap:8px; text-decoration:none; transition:background-color 0.3s ease; }
-  header .header-bottom a.order-btn:hover { background-color:#e65c00; }
+.product-detail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
 
-  main { width:100%; max-width:1200px; margin:30px auto 60px auto; padding:24px 36px; background:white; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.1); display:grid; grid-template-columns:2fr 1.4fr; gap:48px; }
-  @media (max-width:1024px){ main{ grid-template-columns:1fr; padding:20px 24px; } }
+.product-detail article {
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 8px;
+}
 
-  .left-column { display:flex; flex-direction:column; gap:24px; }
-  .product-image { background-color:#f9fafb; padding:32px; border-radius:12px; border:1px solid #ddd; display:flex; justify-content:center; align-items:center; }
-  .product-image img { max-width:100%; border-radius:12px; max-height:500px; object-fit:contain; box-shadow:0 6px 12px rgba(0,0,0,0.05); }
+.warranty {
+    grid-column: span 2;
+}
 
-  .warranty { background-color:#fff6e5; border:1px solid #ffd773; padding:32px 40px; border-radius:16px; box-shadow:0 4px 18px rgba(255,215,0,0.25); }
-  .warranty h3 { color:#ff6600; font-weight:700; font-size:26px; margin-bottom:20px; border-bottom:3px solid #ff6600; padding-bottom:8px; }
-  .warranty ul { list-style:none; padding-left:0; margin-bottom:20px; }
-  .warranty ul li { position:relative; font-size:18px; padding-left:32px; margin-bottom:14px; color:#333; line-height:1.3; }
-  .warranty ul li::before { content:"✔"; position:absolute; left:0; top:2px; color:#ff6600; font-weight:700; font-size:20px; }
-  .warranty p { font-size:18px; font-weight:600; color:#cc5200; }
+.cta a.order-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+}
 
-  .right-column { display:flex; flex-direction:column; gap:36px; }
-  .hero-card { display:flex; flex-direction:column; gap:16px; padding:24px; border:1px solid #ddd; border-radius:12px; background-color:#fff; box-shadow:0 6px 18px rgba(0,0,0,0.08); }
-  .hero-card h2 { font-size:28px; color:#0066b3; font-weight:700; margin:0; }
-  .hero-card p { font-size:16px; color:#444; margin:4px 0; }
-  .hero-card strong.price { font-size:24px; color:#ff6600; font-weight:700; margin-top:8px; }
+.cta a.order-btn:hover {
+    opacity: 0.9;
+}
 
-  .promotion { background-color:#e0f2fe; border:1px solid #90cdf4; border-radius:16px; padding:28px 32px; box-shadow:0 4px 18px rgba(14,165,233,0.3); }
-  .promotion h3 { font-size:26px; font-weight:700; color:#0284c7; margin-bottom:18px; border-bottom:3px solid #0284c7; padding-bottom:8px; }
-  .promotion ul { list-style:disc inside; font-size:18px; color:#0369a1; padding-left:10px; margin:0; }
-  .promotion ul li { margin-bottom:12px; }
+.product-image {
+    text-align: center;
+}
 
-  .cta-inline { display:flex; gap:12px; margin-top:16px; flex-wrap:wrap; justify-content:flex-start; }
-  .cta-inline a { display:inline-flex; align-items:center; justify-content:center; padding:6px 14px; border-radius:20px; font-size:14px; font-weight:600; text-decoration:none; transition:all 0.3s ease; box-shadow:0 4px 12px rgba(0,0,0,0.15); }
-  .cta-inline a i { margin-right:6px; font-size:14px; }
-
-  .cta-inline a.add-to-cart { background-color:#2db400; color:white; }
-  .cta-inline a.add-to-cart:hover { background-color:#228800; box-shadow:0 6px 16px rgba(34,136,0,0.4); }
-
-  .cta-inline a.buy-now { background-color:#ff6600; color:white; }
-  .cta-inline a.buy-now:hover { background-color:#cc5200; box-shadow:0 6px 16px rgba(204,82,0,0.4); }
-
-  .cta-inline a.back { background-color:#eee; color:#555; }
-  .cta-inline a.back:hover { background-color:#ddd; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
-
-  .related-products h2 { text-align:center; margin-bottom:24px; }
-  .related-products .hero-card img { height:160px; object-fit:contain; margin-bottom:12px; }
-  .related-products .hero-card .cta-inline { justify-content:center; margin-top:12px; }
-  .related-products .hero-card .cta-inline a { padding:6px 10px; font-size:13px; }
-  
-  footer { width:100%; background-color:#0066b3; color:white; padding:24px 36px; text-align:center; font-weight:600; font-size:16px; margin-top:auto; }
+.product-image img {
+    max-width: 100%;
+    border-radius: 8px;
+}
 </style>
 </head>
-<body>
-<header class="header-toolbar">
-  <h1>TechShop</h1>
-  <div class="header-center">
-    <form class="search-bar" action="device-page" method="get" role="search">
-      <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ..." aria-label="Tìm kiếm thiết bị" />
-      <button type="submit" aria-label="Tìm kiếm"><i class="fa-solid fa-magnifying-glass"></i></button>
-    </form>
-  </div>
-  <div class="header-bottom">
-    <a href="login.html" class="order-btn login-btn" title="Đăng nhập"><i class="fa-solid fa-user"></i> Đăng nhập</a>
-    <a href="cart.jsp" class="order-btn" title="Giỏ hàng"><i class="fa-solid fa-cart-shopping"></i> Giỏ hàng</a>
-  </div>
-</header>
+
+<body class="shop-page detail-page">
+<jsp:include page="../common/header.jsp"></jsp:include>
 
 <main>
 <c:choose>
@@ -239,10 +209,7 @@
 </c:choose>
 </main>
 
-<footer>
-  NovaCare Shop · Mua sắm an tâm với bảo hành chuẩn quốc tế.
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Footer -->
+<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>

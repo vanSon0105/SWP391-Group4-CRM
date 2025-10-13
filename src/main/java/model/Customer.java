@@ -2,8 +2,6 @@ package model;
 
 import java.sql.Timestamp;
 
-import model.EnumModel.CustomerEnum;
-
 public class Customer {
 	private int id;
 	private String username;
@@ -12,13 +10,13 @@ public class Customer {
 	private String full_name;
 	private String phone;
 	private Role role_id;
-	private CustomerEnum status;
+	private String status;
     private Timestamp date;
     
     public Customer() {}
 
 	public Customer(int id, String username, String password, String email, String full_name, String phone,
-			Role role_id, CustomerEnum status, Timestamp date) {
+			Role role_id, String status, Timestamp date) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -87,11 +85,11 @@ public class Customer {
 		this.role_id = role_id;
 	}
 
-	public CustomerEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(CustomerEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

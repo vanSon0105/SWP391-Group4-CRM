@@ -8,7 +8,9 @@ import java.util.logging.Logger;
 import com.mysql.cj.x.protobuf.MysqlxPrepare.Execute;
 
 import dal.DBContext;
+import model.Category;
 import model.Device;
+import model.DeviceSerial;
 
 public class DeviceDAO extends DBContext {
 	
@@ -50,7 +52,7 @@ public class DeviceDAO extends DBContext {
         		+ "                   + \"VALUES (?, ?, ?, ?, ?, ?, NOW()";
         try {
             PreparedStatement prs = connection.prepareStatement(sql);
-            prs.setInt(1, d.getCategoryId());
+            prs.setInt(1, d.getCategory().getId());
             prs.setString(2, d.getName());
             prs.setDouble(3, d.getPrice());
             prs.setString(4, d.getUnit());
@@ -71,7 +73,7 @@ public class DeviceDAO extends DBContext {
         		+ "WHERE id = ?;";
         try {
             PreparedStatement prs = connection.prepareStatement(sql);
-            prs.setInt(1, d.getCategoryId());
+            prs.setInt(1, d.getCategory().getId());
             prs.setString(2, d.getName());
             prs.setDouble(3, d.getPrice());
             prs.setString(4, d.getUnit());
@@ -108,9 +110,12 @@ public class DeviceDAO extends DBContext {
 	        pre.setInt(1, id);
 	        try (ResultSet rs = pre.executeQuery()) {
 	            if (rs.next()) {
+	            	Category c = new Category();
+	            	c.setId(rs.getInt("category_id"));
+	            	
 	                return new Device(
 	                    rs.getInt("id"),
-	                    rs.getInt("category_id"),
+	                    c,
 	                    rs.getString("name"),
 	                    rs.getDouble("price"),
 	                    rs.getString("unit"),
@@ -136,7 +141,9 @@ public class DeviceDAO extends DBContext {
 				ResultSet rs = pre.executeQuery()) {
 
 			while (rs.next()) {
-				list.add(new Device(rs.getInt("id"), rs.getInt("category_id"), rs.getString("name"),
+				Category c = new Category();
+            	c.setId(rs.getInt("category_id"));
+				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
 						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("desciption"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 
@@ -198,7 +205,9 @@ public class DeviceDAO extends DBContext {
 				PreparedStatement pre = conn.prepareStatement(sql);
 				ResultSet rs = pre.executeQuery()){
 			while(rs.next()) {
-				list.add(new Device(rs.getInt("id"), rs.getInt("category_id"), rs.getString("name"),
+				Category c = new Category();
+            	c.setId(rs.getInt("category_id"));
+				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
 						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 			
@@ -208,6 +217,7 @@ public class DeviceDAO extends DBContext {
 		return list;
 	}
 	
+//	Device - Homepage
 	public List<Device> getBestSellingDevicesList(int offset, int recordsEachPage) {
 		List<Device> list = new ArrayList<>();   
         String sql = "SELECT d.id, d.name,d.price, d.description, d.image_url, SUM(od.quantity) AS total_sold FROM order_details od\r\n"
@@ -312,9 +322,12 @@ public class DeviceDAO extends DBContext {
 			ps.setString(2, "%" + key + "%");
 			ResultSet rs = ps.executeQuery();
 			while(rs.next()) {
+				Category c = new Category();
+				c.setId(rs.getInt("category_id"));
+				
 				Device d = new Device();
 				d.setId(rs.getInt("id"));
-				d.setCategoryId(rs.getInt("category_id"));
+				d.setCategory(c);
 	            d.setName(rs.getString("name"));
 	            d.setPrice(rs.getDouble("price"));
 	            d.setName(rs.getString("name"));
@@ -374,6 +387,67 @@ public class DeviceDAO extends DBContext {
 	        e.printStackTrace();
 	    }
 	    return count;
+	}
+	
+//	Device - Admin
+	public List<Device> findAllDevices() {
+		List<Device> list = new ArrayList<>();
+		String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price,\r\n"
+				+ "    COALESCE(stock.quantity, 0) AS 'inventory',\r\n"
+				+ "    CASE\r\n"
+				+ "        WHEN COALESCE(stock.quantity, 0) > 0 THEN 'Còn hàng'\r\n"
+				+ "        ELSE 'Hết hàng'\r\n"
+				+ "    END AS 'status'\r\n"
+				+ "FROM devices AS d\r\n"
+				+ "JOIN categories AS c ON d.category_id = c.id\r\n"
+				+ "LEFT JOIN\r\n"
+				+ "    (SELECT device_id, COUNT(id) AS quantity\r\n"
+				+ "     FROM  device_serials\r\n"
+				+ "     WHERE status = 'in_stock'\r\n"
+				+ "     GROUP BY device_id	\r\n"
+				+ "    ) AS stock ON d.id = stock.device_id;";
+
+		try (Connection connection = getConnection();
+				PreparedStatement pre = connection.prepareStatement(sql);
+				ResultSet rs = pre.executeQuery()) {
+
+			while (rs.next()) {
+				Category c = new Category();
+            	c.setName(rs.getString("category_name"));
+				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
+						rs.getDouble("price"), rs.getString("image_url"),rs.getInt("inventory"),rs.getString("status")));
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+
+		return list;
+	}
+	
+	public List<DeviceSerial> getAllDeviceSerials(int id){
+		List<DeviceSerial> list = new ArrayList<DeviceSerial>();
+		String sql = "\r\n"
+				+ "SELECT id, serial_no, status, import_date \r\n"
+				+ "FROM device_serials \r\n"
+				+ "WHERE device_id = ?;";
+		try {
+			Connection connection = getConnection();
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				DeviceSerial ds = new DeviceSerial();
+				ds.setId(rs.getInt("id"));
+				ds.setSerial_no(rs.getString("serial_no"));
+				ds.setStatus(rs.getString("status"));
+				ds.setImport_date(rs.getTimestamp("import_date"));
+				list.add(ds);
+			}
+			
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return list;
 	}
 
 }

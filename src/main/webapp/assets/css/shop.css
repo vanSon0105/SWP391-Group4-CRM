@@ -13,7 +13,6 @@ html {
 
 body {
 	margin: 0;
-	caret-color: transparent;
     font-size: 1.8rem;
 }
 
@@ -185,6 +184,7 @@ ul {
 
 .search-bar button i {
     color: red;
+    pointer-events: none;
 }
 
 .search-bar input {
@@ -1021,6 +1021,7 @@ body.shop-page.catalog-page .product-grid {
 }
 body.shop-page.catalog-page .sorts {
     display: flex;
+    align-items: center;
     flex-wrap:wrap;
     gap: 20px;
 }
@@ -1091,36 +1092,36 @@ body.shop-page.catalog-page .summary {
 }
 
 /* =============================================================device-detail.html */
-body.shop-page.detail-page {
+.shop-page.detail-page {
     min-height: 100vh;
     background: linear-gradient(135deg, #eef2ff, #fdf2f8 45%, #fff7ed 100%);
     color: #1e1b4b;
 }
 
-body.shop-page.detail-page header {
+.shop-page.detail-page header {
     padding: 38px 58px;
     background: linear-gradient(90deg, #6366f1, #ec4899);
     color: #f8fafc;
     border-bottom: 6px solid rgba(99, 102, 241, 0.28);
 }
 
-body.shop-page.detail-page header h1 {
+.shop-page.detail-page header h1 {
     font-size: 34px;
 }
 
-body.shop-page.detail-page header p {
+.shop-page.detail-page header p {
     margin-top: 10px;
     max-width: 720px;
     line-height: 1.6;
 }
 
-body.shop-page.detail-page main {
+.shop-page.detail-page main {
     padding: 48px 58px 68px;
     display: grid;
     gap: 32px;
 }
 
-body.shop-page.detail-page .product-detail {
+.shop-page.detail-page .product-detail {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 30px;
     padding: 32px;
@@ -1130,13 +1131,13 @@ body.shop-page.detail-page .product-detail {
     gap: 26px;
 }
 
-body.shop-page.detail-page .info-grid {
+.shop-page.detail-page .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 24px;
 }
 
-body.shop-page.detail-page .hero-card {
+.shop-page.detail-page .hero-card {
     border-radius: 24px;
     padding: 28px;
     background: linear-gradient(135deg, rgba(165, 180, 252, 0.28), rgba(244, 114, 182, 0.28));
@@ -1146,18 +1147,18 @@ body.shop-page.detail-page .hero-card {
     gap: 14px;
 }
 
-body.shop-page.detail-page .hero-card h2 {
+.shop-page.detail-page .hero-card h2 {
     font-size: 28px;
     color: #312e81;
 }
 
-body.shop-page.detail-page .hero-card span {
+.shop-page.detail-page .hero-card span {
     font-size: 20px;
     font-weight: 700;
     color: #f97316;
 }
 
-body.shop-page.detail-page .specs {
+.shop-page.detail-page .specs {
     border-radius: 24px;
     padding: 28px;
     background: linear-gradient(135deg, rgba(209, 250, 229, 0.28), rgba(224, 231, 255, 0.28));
@@ -1167,18 +1168,18 @@ body.shop-page.detail-page .specs {
     gap: 10px;
 }
 
-body.shop-page.detail-page .specs h3 {
+.shop-page.detail-page .specs h3 {
     color: #047857;
     font-size: 20px;
 }
 
-body.shop-page.detail-page .specs ul {
+.shop-page.detail-page .specs ul {
     list-style: disc inside;
     color: #065f46;
     line-height: 1.6;
 }
 
-body.shop-page.detail-page .warranty {
+.shop-page.detail-page .warranty {
     border-radius: 24px;
     padding: 26px;
     background: linear-gradient(135deg, rgba(253, 230, 138, 0.3), rgba(251, 191, 36, 0.3));
@@ -1189,13 +1190,13 @@ body.shop-page.detail-page .warranty {
     color: #92400e;
 }
 
-body.shop-page.detail-page .cta {
+.shop-page.detail-page .cta {
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
 }
 
-body.shop-page.detail-page .cta a {
+.shop-page.detail-page .cta a {
     padding: 12px 26px;
     border-radius: 999px;
     text-decoration: none;
@@ -1205,12 +1206,12 @@ body.shop-page.detail-page .cta a {
     color: #f8fafc;
 }
 
-body.shop-page.detail-page .cta a:nth-child(2) {
+.shop-page.detail-page .cta a:nth-child(2) {
     background: linear-gradient(90deg, #f97316, #fb7185);
     box-shadow: 0 16px 32px rgba(249, 115, 22, 0.28);
 }
 
-body.shop-page.detail-page .review-block {
+.shop-page.detail-page .review-block {
     background: rgba(255, 255, 255, 0.94);
     border-radius: 28px;
     padding: 30px;
@@ -1220,19 +1221,12 @@ body.shop-page.detail-page .review-block {
     gap: 16px;
 }
 
-body.shop-page.detail-page .review {
+.shop-page.detail-page .review {
     padding: 18px;
     border-radius: 20px;
     background: rgba(251, 191, 36, 0.18);
     border: 1px solid rgba(249, 115, 22, 0.32);
     color: #7c2d12;
-}
-
-body.shop-page.detail-page footer {
-    padding: 34px 58px;
-    background: rgba(129, 140, 248, 0.18);
-    color: #312e81;
-    font-size: 14px;
 }
 
 /* ================================================================cartPage.jsp */

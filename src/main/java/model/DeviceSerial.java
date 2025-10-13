@@ -6,12 +6,12 @@ public class DeviceSerial {
 	private int id;
 	private int device_id;
 	private String serial_no;
-	private Enum status;
+	private String status;
 	private Timestamp import_date;
 	
 	public DeviceSerial() {}
 
-	public DeviceSerial(int id, int device_id, String serial_no, Enum status, Timestamp import_date) {
+	public DeviceSerial(int id, int device_id, String serial_no, String status, Timestamp import_date) {
 		super();
 		this.id = id;
 		this.device_id = device_id;
@@ -44,11 +44,11 @@ public class DeviceSerial {
 		this.serial_no = serial_no;
 	}
 
-	public Enum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(Enum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
