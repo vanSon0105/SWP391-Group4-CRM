@@ -11,7 +11,7 @@ public class User {
     private int roleId;
     private String status;
 
-    // Getters & Setters
+    // Getters & Setters.
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
