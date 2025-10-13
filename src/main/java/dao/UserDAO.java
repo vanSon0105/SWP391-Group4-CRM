@@ -2,6 +2,7 @@ package dao;
 
 import model.User;
 import java.sql.*;
+import java.util.*;
 import dal.DBContext;
 
 public class UserDAO {
@@ -99,6 +100,26 @@ public class UserDAO {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public List<User> getAllTechnicalStaff() {
+    	List<User> list = new ArrayList<>();
+    	String sql = "select id, username from users where role_id = 3";
+    	
+    	try (Connection conn = DBContext.getConnection();
+    		 PreparedStatement pre = conn.prepareStatement(sql);
+    		 ResultSet rs = pre.executeQuery()){
+			while(rs.next()) {
+				list.add(new User(
+						rs.getInt("id"),
+						rs.getString("username")
+						));
+			}
+    		
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	return list;
     }
 
     
