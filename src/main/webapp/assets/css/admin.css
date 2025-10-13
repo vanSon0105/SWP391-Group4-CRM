@@ -449,10 +449,10 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 }
 
 .management-page.device-management .panel h2 {
+	margin-bottom: 20px;
     font-size: 22px;
     font-weight: 700;
     color: #1d4ed8;
-    margin-bottom: 16px;
 }
 
 .management-page.device-management .device-toolbar {
@@ -606,6 +606,168 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 .management-page.device-management .device-show-actions {
     display: flex;
     gap: 8px;
+}
+
+
+.management-page.device-management .device-form {
+    display: grid;
+    gap: 20px;
+}
+
+.management-page.device-management .device-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px 18px;
+}
+
+.management-page.device-management .device-form .form-field {
+    display: grid;
+    gap: 6px;
+}
+
+.file-image input[type="file"] {
+  display: block;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 270px;
+}
+.file-image input[type="file"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
+}
+
+
+.management-page.device-management .device-form label {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.management-page.device-management .device-form input,
+.management-page.device-management .device-form select,
+.management-page.device-management .device-form textarea {
+    padding: 11px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(255, 255, 255, 0.95);
+    font-size: 15px;
+    color: #0f172a;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.management-page.device-management .device-form input:focus,
+.management-page.device-management .device-form select:focus,
+.management-page.device-management .device-form textarea:focus {
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    outline: none;
+}
+
+.management-page.device-management .device-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.management-page.device-management .device-form .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .device-form .form-actions--spread {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.management-page.device-management .device-form .form-actions--spread>* {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/*view device*/
+.management-page.device-management .device-detail {
+    display: grid;
+    grid-template-columns: minmax(200px, 240px) 1fr;
+    gap: 28px;
+}
+
+.management-page.device-management .device-img {
+    border-radius: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 18px;
+    display: grid;
+    place-items: center;
+}
+
+.management-page.device-management .device-photo img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+}
+
+.management-page.device-management .device-container {
+    display: grid;
+    gap: 18px;
+}
+
+.management-page.device-management .device-action {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .danger-box {
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(254, 226, 226, 0.8);
+    border-radius: 18px;
+    padding: 16px 20px;
+    color: #7f1d1d;
+}
+
+.management-page.device-management .device-summary {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.management-page.device-management .device-summary img {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    padding: 8px;
+}
+
+.management-page.device-management .device-summary strong {
+    color: #0f172a;
+}
+
+.management-page.device-management .confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #475569;
+}
+
+.management-page.device-management .device-remove {
+    display: grid;
+    gap: 20px;
+}
+
+.management-page.device-management .device-remove p {
+    margin: 0;
+    color: #475569;
 }
 
 

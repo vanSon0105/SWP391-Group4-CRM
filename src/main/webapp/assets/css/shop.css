@@ -1098,27 +1098,17 @@ body.shop-page.catalog-page .summary {
     color: #1e1b4b;
 }
 
-.shop-page.detail-page header {
-    padding: 38px 58px;
-    background: linear-gradient(90deg, #6366f1, #ec4899);
-    color: #f8fafc;
-    border-bottom: 6px solid rgba(99, 102, 241, 0.28);
-}
-
-.shop-page.detail-page header h1 {
-    font-size: 34px;
-}
-
-.shop-page.detail-page header p {
-    margin-top: 10px;
-    max-width: 720px;
-    line-height: 1.6;
-}
-
 .shop-page.detail-page main {
     padding: 48px 58px 68px;
-    display: grid;
     gap: 32px;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.shop-page.detail-page main .container{
+	display: flex;
+	gap: 32px;
 }
 
 .shop-page.detail-page .product-detail {

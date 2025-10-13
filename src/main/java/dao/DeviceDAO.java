@@ -27,9 +27,11 @@ public class DeviceDAO extends DBContext {
 
 	        try (ResultSet rs = ps.executeQuery()) {
 	            while (rs.next()) {
+	            	Category c = new Category();
+	            	c.setId(rs.getInt("category_id"));
 	                Device d = new Device(
 	                    rs.getInt("id"),
-	                    rs.getInt("category_id"),
+	                    c,
 	                    rs.getString("name"),
 	                    rs.getDouble("price"),       
 	                    rs.getString("unit"),
@@ -47,61 +49,6 @@ public class DeviceDAO extends DBContext {
 
 	    return list;
 	}
-	public boolean addDevice(Device d) {
-        String sql = "INSERT INTO devices (category_id, name, price, unit, image_url, description, created_at) \"\r\n"
-        		+ "                   + \"VALUES (?, ?, ?, ?, ?, ?, NOW()";
-        try {
-            PreparedStatement prs = connection.prepareStatement(sql);
-            prs.setInt(1, d.getCategory().getId());
-            prs.setString(2, d.getName());
-            prs.setDouble(3, d.getPrice());
-            prs.setString(4, d.getUnit());
-            prs.setString(5, d.getImageUrl());
-            prs.setString(6, d.getDesc());
-            int n = prs.executeUpdate();
-            return n > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-    public boolean updateDeviceDetail(Device d) {
-        String sql = "UPDATE devices\r\n"
-        		+ "SET category_id = ?, name = ?, price = ?, unit = ?, image_url = ?, description = ?, updated_at = NOW()\r\n"
-        		+ "WHERE id = ?;";
-        try {
-            PreparedStatement prs = connection.prepareStatement(sql);
-            prs.setInt(1, d.getCategory().getId());
-            prs.setString(2, d.getName());
-            prs.setDouble(3, d.getPrice());
-            prs.setString(4, d.getUnit());
-            prs.setString(5, d.getImageUrl());
-            prs.setString(6, d.getDesc());
-            prs.setInt(8, d.getId());
-            int n = prs.executeUpdate();
-            return n > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-    public boolean removeDeviceDetail(int id) {
-        String sql = "DELETE FROM devices WHERE id= ?";
-        try {
-            Statement st = connection.createStatement();
-            PreparedStatement prs = connection.prepareStatement(sql);
-            prs.setInt(1, id);
-            int n = st.executeUpdate(sql);
-            return n > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
 	public Device getDeviceById(int id) {
 	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured FROM devices WHERE id = ?;";
@@ -448,6 +395,84 @@ public class DeviceDAO extends DBContext {
 			System.out.println(e.getMessage());
 		}
 		return list;
+	}
+	
+	public Device getDeviceDetail(int id) {
+	    String sql = "SELECT d.id, d.name, c.category_name, d.price, d.unit, d.description, d.created_at, d.image_url, (SELECT COUNT(ds.id) FROM device_serials ds WHERE ds.device_id = d.id AND ds.status = 'in_stock') AS stock_quantity\r\n"
+	    		+ "FROM devices AS d\r\n"
+	    		+ "JOIN categories AS c ON d.category_id = c.id\r\n"
+	    		+ "WHERE d.id = ?;";
+	    try (Connection connection = getConnection();
+	         PreparedStatement pre = connection.prepareStatement(sql)) {
+	        pre.setInt(1, id);
+	        try (ResultSet rs = pre.executeQuery()) {
+	            if (rs.next()) {
+	            	Category c = new Category();
+	            	c.setName(rs.getString("category_name"));
+	            	
+	                return new Device(
+	                    rs.getInt("id"),
+	                    c,
+	                    rs.getString("name"),
+	                    rs.getDouble("price"),
+	                    rs.getString("image_url"),
+	                    rs.getString("unit"),
+	                    rs.getString("description"),
+	                    rs.getTimestamp("created_at"),
+	                    rs.getInt("stock_quantity")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();  
+	    }
+	    return null;  
+	}
+	
+	public boolean updateDevice(Device deviceUpdate) {
+	    String sql = "UPDATE devices SET name = ?, category_id = ?, price = ?, unit = ?, description = ?, image_url=? WHERE id = ?;";
+	    boolean update = false;
+	    
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	        
+	        ps.setString(1, deviceUpdate.getName());
+	        ps.setInt(2, deviceUpdate.getCategory().getId());
+	        ps.setDouble(3, deviceUpdate.getPrice());
+	        ps.setString(4, deviceUpdate.getUnit());
+	        ps.setString(5, deviceUpdate.getDesc());
+	        ps.setString(6, deviceUpdate.getImageUrl());
+	        ps.setInt(7, deviceUpdate.getId());
+	        
+	        update = ps.executeUpdate() > 0;
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return update;
+	}
+	
+	public boolean addDevice(Device device) {
+		String sql = "INSERT INTO devices (name, category_id, price, unit, image_url, description, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?);";
+	    boolean add = false;
+	    
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        
+	        ps.setString(1, device.getName());
+	        ps.setInt(2, device.getCategory().getId());
+	        ps.setDouble(3, device.getPrice());
+	        ps.setString(4, device.getUnit());
+	        ps.setString(5, device.getImageUrl());
+	        ps.setString(6, device.getDesc());
+	        ps.setBoolean(7, device.isIs_featured());
+	        
+	        add = ps.executeUpdate() > 0;
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return add;
 	}
 
 }

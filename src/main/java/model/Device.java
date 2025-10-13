@@ -48,6 +48,28 @@ public class Device {
 		this.device_inventory = device_inventory;
 		this.status = status;
 	}
+	
+	public Device(int id, Category category, String name, double price, String imageUrl, String unit, String desc, Timestamp created_at, int device_inventory) {
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.imageUrl = imageUrl;
+		this.device_inventory = device_inventory;
+		this.unit = unit;
+		this.desc = desc;
+		this.created_at = created_at;
+	}
+	
+	public Device(int id, Category category, String name, double price, String imageUrl, String unit, String desc) {
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.imageUrl = imageUrl;
+		this.unit = unit;
+		this.desc = desc;
+	}
 
 	public boolean isIs_featured() {
 		return is_featured;

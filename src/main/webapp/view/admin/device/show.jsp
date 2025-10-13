@@ -20,7 +20,7 @@
             <section class="panel">
                 <div class="device-toolbar">
                     <div class="device-toolbar-actions">
-                        <a class="btn btn-add" href="device-add.html">
+                        <a class="btn btn-add" href="device-add">
                             <i class="fa-solid fa-plus"></i>
                             <span>Thêm thiết bị</span>
                         </a>
@@ -33,8 +33,13 @@
                 </div>
             </section>
 
-            <section class="panel">
-                <h2>Danh sách thiết bị</h2>
+            <section class="panel" id="table-panel">
+            	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+	                <h2>Danh sách thiết bị</h2>	
+	                <c:if test="${not empty listDeviceSerials}"> 
+	                	<a class="btn device-btn" href="device-show#table-panel">Quay lại</a>            
+	                </c:if>	
+            	</div>
                 <div class="table-wrapper">
                     <c:if test="${not empty listDevices}"> 
                     <table class="device-table">
@@ -64,9 +69,9 @@
 	                                <td><span class="device-status"></i>${s.status}</span></td>
 	                                <td class="device-show-actions">
 	                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
-	                                    <a class="btn device-btn" href="device-serials?id=${s.id}">Xem Serials</a>
-	                                    <a class="btn device-btn" href="device-edit.html?id=AC-SH-12000">Sửa</a>
-	                                    <a class="btn device-remove" href="device-remove.html?id=AC-SH-12000">Xóa</a>
+	                                    <a class="btn device-btn" href="device-serials?id=${s.id}#device-serial">Xem Serials</a>
+	                                    <a class="btn device-btn" href="device-update?id=${s.id}">Sửa</a>
+	                                    <a class="btn device-remove" href="device-remove?id=${s.id}">Xóa</a>
 	                                </td>
 	                            </tr>
 	                          </c:forEach>
@@ -75,7 +80,7 @@
                    </c:if>
                    
                    <c:if test="${not empty listDeviceSerials}"> 
-                    <table class="device-table">
+                    <table class="device-table" id="device-serial">
                         <thead>
                             <tr>
                                 <th>ID</th>
