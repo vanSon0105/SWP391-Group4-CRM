@@ -31,7 +31,7 @@ public class UserDAO {
             checkStmt.setString(2, user.getEmail());
             ResultSet rs = checkStmt.executeQuery();
             if (rs.next()) {
-                return false; // trùng username hoặc email
+                return false; 
             }
 
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -95,6 +95,47 @@ public class UserDAO {
             ps.setString(1, email);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public User getUserById(int userId) {
+        String sql = "SELECT * FROM users WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt("id"));
+                u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
+                u.setEmail(rs.getString("email"));
+                u.setImageUrl(rs.getString("image_url"));
+                u.setFullName(rs.getString("full_name"));
+                u.setPhone(rs.getString("phone"));
+                u.setRoleId(rs.getInt("role_id"));
+                u.setStatus(rs.getString("status"));
+                return u;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean updateUserProfile(User u) {
+        String sql = "UPDATE users SET full_name=?, phone=?, email=?, image_url=? WHERE id=?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, u.getFullName());
+            ps.setString(2, u.getPhone());
+            ps.setString(3, u.getEmail());
+            ps.setString(4, u.getImageUrl());
+            ps.setInt(5, u.getId());
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
         }

@@ -6,48 +6,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop88</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
-	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>TechShop</title>
 </head>
 <body class="home-page">
-    <header class="header">
-        <h1 class="header-title">NovaCare</h1>
-        <div class="header-center">
-            <div class="category-menu" data-category-menu>
-                <button type="button" data-category-toggle>
-                    <span>Danh mục</span>
-                    <span aria-hidden="true">☰</span>
-                </button>
-                <div class="category-panel" data-category-panel>
-                    <a href="device-catalog.html">Thiết bị</a>
-                    <a href="device-detail.html">Thông tin thiết bị</a>
-                    <a href="checkout.html">Thanh toán</a>
-                    <a href="order-tracking.html">Đơn hàng</a>
-                    <a href="customer-portal.html">Lịch sử</a>
-                </div>
-            </div>
-            <form class="search-bar" action="#" method="get">
-                <label for="search" class="sr-only"></label>
-                <input id="search" name="search" type="search" placeholder="Tìm thiết bị, linh kiện, ...">
-                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </form>
-        </div>
-        <div class="header-bottom">
-            <a href="login.jsp" class="order-btn login-btn"><i class="fa-solid fa-user"></i></a>
-            <a href="cart.jsp" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
-        </div>
-    </header>
-
+	<jsp:include page="../common/header.jsp"></jsp:include>
     <main>
         <section class="mega-banner" aria-labelledby="banner-title">
             <div class="mega-banner-content">
                 <h2 id="banner-title">Mua sắm điện máy thăng hoa - Ưu đãi đến 20% cho toàn bộ thiết bị</h2>
                 <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của Shop88</p>
                 <div class="banner-btn">
-                    <a href="device-catalog.html">Kham pha san pham</a>
-                    <a class="secondary" href="order-tracking.html">Theo doi don &amp; bao hanh</a>
+                    <a href="device-catalog.html">Khám phá sản phẩm</a>
+                    <a class="secondary" href="order-tracking.html">Theo dõi đơn hàng &amp; bảo hành</a>
                 </div>
             </div>
             <div class="banner-promos" data-hero-slider>
@@ -88,157 +58,242 @@
         </section>
 
         <section class="featured-categories">
-            <a class="shortcut-card" href="device-catalog.html#laptop">
+            <a class="shortcut-card" href="device-catalog.jsp#laptop">
                 <span class="shortcut-icon">💻</span>
                 <span class="shortcut-label">Laptop &amp; PC</span>
             </a>
-            <a class="shortcut-card" href="device-catalog.html#mobile">
+            <a class="shortcut-card" href="device-catalog.jsp#mobile">
                 <span class="shortcut-icon">📱</span>
                 <span class="shortcut-label">Điện Thoại</span>
             </a>
-            <a class="shortcut-card" href="device-catalog.html#accessories">
+            <a class="shortcut-card" href="device-catalog.jsp#accessories">
                 <span class="shortcut-icon">🔧</span>
                 <span class="shortcut-label">Linh Kiện</span>
             </a>
-            <a class="shortcut-card" href="order-tracking.html">
+            <a class="shortcut-card" href="order-tracking.jsp">
                 <span class="shortcut-icon">🛠️</span>
                 <span class="shortcut-label">Theo Dõi Sửa Chữa</span>
             </a>
         </section>
 
-        <section class="featured-devices">
+        <section class="featured-devices" id= "featured-devices">
             <div class="section-header">
                 <h2 id="featured-title">Thiết Bị Nổi Bật</h2>
                 <div class="slider-controls">
-                    <button class="slider-btn" type="button" disabled>
-                        &#10094;
-                    </button>
-                    <button class="slider-btn" type="button">
-                        &#10095;
-                    </button>
+                    <c:choose>
+				        <c:when test="${currentFeaturedPage > 1}">
+				            <a href="home?fpage=${currentFeaturedPage - 1}&npage=${currentNewPage}&bpage=${currentBestSellingPage}#featured-devices">&#10094;</a>
+				        </c:when>
+				        <c:otherwise>
+				            <a class="disabled">&#10094;</a>
+				        </c:otherwise>
+				    </c:choose>
+	        		
+            		 <c:choose>
+		                <c:when test="${currentFeaturedPage < totalFeaturedPages}">
+		                	<a href = "home?fpage=${currentFeaturedPage + 1}&npage=${currentNewPage}&bpage=${currentBestSellingPage}#featured-devices">&#10095;</a>            	
+		            	</c:when>
+		            	<c:otherwise>
+				            <a class="disabled">&#10095;</a>
+				        </c:otherwise>
+		            </c:choose>
                 </div>
             </div>
             <div class="device-slider">
                 <div class="device-window">
                     <div class="device-track">
-              	<c:forEach items="${list}" var="s">
-                        <article class="device-card">
-                            <h4>${s.getName()}</h4>
-                            <p>${s.getDesc()}</p>
-                            <span>Giá: ${s.getPrice()}Đ</span>
-                        </article>
-                </c:forEach>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="device-list new-devices">
-            <div class="section-heading">
-                <h2 id="new-devices-title">Thiết Bị Mới Về</h2>
-                <p>Nhung san pham vua cap ben showroom va san sang giao ngay.</p>
-            </div>
-            <div class="device-pages" data-paginated="new-devices">
-                <div class="device-page is-active">
-                    <div class="device-grid">
-                    <c:forEach items="${listNew}" var="s"> 
-                        <article class="device-card">
-                            <h4>${s.getName()}</h4>
-                            <p>${s.getDesc()}</p>
-                            <span>Gia: ${s.getPrice()}Đ</span>
-                        </article>
+              		<c:forEach items="${listFeatured}" var="s">
+              			<a href="device-detail?id=${s.id}">
+	              			<div class="device-card">
+	                        	<div class="device-thumb">
+	                        		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                        	</div>
+	                            <h4>${s.getName()}</h4>
+	                            <p>${s.getDesc()}</p>
+	                            <span>Giá: ${s.getPrice()}Đ</span>
+	                        </div>
+                        </a>
                     </c:forEach>
                     </div>
                 </div>
-                <div class="device-page">
-                    <div class="device-grid">
-                        <article class="device-card">
-                            <h4>Tai nghe NovaTone Air</h4>
-                            <p>Driver graphene, chong on ANC, pin 42 gio kem hop sac.</p>
-                            <span>Gia: 3.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Lo vi song NovaHeat Glass</h4>
-                            <p>Cua kinh phan xa, 25L, 12 che do nau tu dong.</p>
-                            <span>Gia: 4.290.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>May loc nuoc NovaPure Flow</h4>
-                            <p>RO 6 cap, UV-C, ket noi app theo doi chat luong nuoc.</p>
-                            <span>Gia: 9.850.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Tablet NovaTab Note</h4>
-                            <p>Man 11 inch 120Hz, but stylus, da tac vu chia doi man hinh.</p>
-                            <span>Gia: 11.490.000d</span>
-                        </article>
-                    </div>
-                </div>
-            </div>
-            <div class="pagination-pills" data-pagination="new-devices">
-                <button type="button" data-page="0" class="active">1</button>
-                <button type="button" data-page="1">2</button>
-            </div>
+           </div>
         </section>
 
-        <section class="device-list best-sellers" aria-labelledby="best-sellers-title">
+		<div class="img-gallery-6">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+        </div>
+
+        <section class="device-list new-devices" id="new-devices">
+            <div class="section-heading">
+                <h2 id="new-devices-title">Thiết Bị Mới Về</h2>
+                <p>Những sản phầm vừa mới về Shop88 và sẵn sàng bấm ngay</p>
+            </div>
+            
+            <div class="device-page">
+                <div class="device-grid">
+                <c:forEach items="${listNew}" var="s"> 
+	                <a href="device-detail?id=${s.id}">
+	                    <div class="device-card">
+	                    	<div class="device-thumb">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       	</div>
+	                        <h4>${s.getName()}</h4>
+	                        <p>${s.getDesc()}</p>
+	                        <span>Giá: ${s.getPrice()}Đ</span>
+	                    </div>
+                    </a>
+                </c:forEach>
+                </div>
+            </div>
+                
+            <div class="pagination-pills">
+            	<c:choose>
+			        <c:when test="${currentNewPage > 1}">
+			            <a href="home?npage=${currentNewPage - 1}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices">&#10094;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+			    
+			    <c:if test="${totalNewPages >= 10}">
+				  <c:set var="start" value="${currentNewPage - 1}" />
+				  <c:set var="end" value="${currentNewPage + 1}" />
+				
+				  <c:if test="${start < 1}">
+				    <c:set var="start" value="1" />
+				  </c:if>
+				  
+				  <c:if test="${end > totalNewPages}">
+				    <c:set var="end" value="${totalNewPages}" />
+				  </c:if>
+				
+				  <c:if test="${start > 1}">
+				    <a href="home?npage=1&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers">1</a>
+				    <span>…</span>
+				  </c:if>
+				
+				  <c:forEach var="i" begin="${start}" end="${end}">
+				    <a href="home?npage=${i}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers"
+				       class="${i == currentNewPage ? 'active' : ''}">${i}</a>
+				  </c:forEach>
+				
+				  <c:if test="${end < totalNewPages}">
+				    <span>…</span>
+				    <a href="home?npage=${totalNewPages}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers">
+				      ${totalNewPages}
+				    </a>
+				  </c:if>
+				</c:if>
+            	
+            	<c:if test="${totalNewPages < 10}">
+	            	<c:forEach var="i" begin="1" end="${totalNewPages}">
+	            		<a href="home?npage=${i}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices"
+	               		class="${i == currentNewPage ? 'active' : ''}">${i}</a>
+	        		</c:forEach>           	
+            	</c:if>
+            	
+            	<c:choose>
+	                <c:when test="${currentNewPage < totalNewPages}">
+	                	<a href = "home?npage=${currentNewPage + 1}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices">&#10095;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
+            </div>
+        </section>
+        
+        <div class="img-gallery-4">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+        </div>
+
+        <section class="device-list best-sellers" id="best-sellers">
             <div class="section-heading">
                 <h2 id="best-sellers-title">Thiết Bị Bán Chạy</h2>
                 <p>Duoc khach hang lua chon va danh gia cao nhat trong thang.</p>
             </div>
-            <div class="device-pages" data-paginated="best-sellers">
-                <div class="device-page is-active">
-                    <div class="device-grid">
-                        <article class="device-card">
-                            <h4>May lanh NovaCool 2HP</h4>
-                            <p>Tiet kiem dien A+++, mang loc khang khuan ProShield.</p>
-                            <span>Gia: 13.290.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Robot lau nha NovaClean Duo</h4>
-                            <p>Lau hut dong thoi, ban do 3D, tu nang khan khi len tham.</p>
-                            <span>Gia: 10.490.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Tai nghe NovaPods Max</h4>
-                            <p>Chong on chu dong, Spatial Audio, pin 28 gio.</p>
-                            <span>Gia: 6.990.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Bep tu NovaHeat Duo</h4>
-                            <p>Hai vung nau tu + hong ngoai, bang dieu khien cam ung.</p>
-                            <span>Gia: 8.890.000d</span>
-                        </article>
-                    </div>
-                </div>
+            <div class="device-pages">
                 <div class="device-page">
                     <div class="device-grid">
-                        <article class="device-card">
-                            <h4>May hut mui NovaBreeze</h4>
-                            <p>Cong suat 1100m3/h, bo loc than hoat tinh, dieu khien cam ung.</p>
-                            <span>Gia: 7.450.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>May say quan ao NovaDry S</h4>
-                            <p>Cong nghe HeatPump, 14 chuong trinh say thong minh.</p>
-                            <span>Gia: 15.900.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Combo loa NovaBeat Party</h4>
-                            <p>Am thanh 360 do, microphone bluetooth, pin 16 gio.</p>
-                            <span>Gia: 5.790.000d</span>
-                        </article>
-                        <article class="device-card">
-                            <h4>Camera an ninh NovaGuard 360</h4>
-                            <p>Quan sat 4K, AI phat hien nguoi, luu tru cloud.</p>
-                            <span>Gia: 3.650.000d</span>
-                        </article>
+                    <c:forEach items="${listBestSellingDevices}" var="s"> 
+	                    <a href="device-detail?id=${s.id}">
+	                        <div class="device-card">
+	                        	<div class="device-thumb">
+		                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+		                       	</div>
+	                            <h4>${s.getName()}</h4>
+	                        	<p>${s.getDesc()}</p>
+	                        	<span>Giá: ${s.getPrice()}Đ</span>
+	                        </div>
+                        </a>
+                    </c:forEach>
                     </div>
                 </div>
             </div>
-            <div class="pagination-pills" data-pagination="best-sellers">
-                <button type="button" data-page="0" class="active">1</button>
-                <button type="button" data-page="1">2</button>
+            <div class="pagination-pills" data-pagination="best-sellers">          
+                <c:choose>
+			        <c:when test="${currentBestSellingPage > 1}">
+			            <a href="home?bpage=${currentBestSellingPage - 1}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">&#10094;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+            	
+            	<c:if test="${totalBestSellingPages >= 10}">
+				  <c:set var="start" value="${currentBestSellingPage - 1}" />
+				  <c:set var="end" value="${currentBestSellingPage + 1}" />
+				
+				  <c:if test="${start < 1}">
+				    <c:set var="start" value="1" />
+				  </c:if>
+				  
+				  <c:if test="${end > totalBestSellingPages}">
+				    <c:set var="end" value="${totalBestSellingPages}" />
+				  </c:if>
+				
+				  <c:if test="${start > 1}">
+				    <a href="home?bpage=1&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">1</a>
+				    <span>…</span>
+				  </c:if>
+				
+				  <c:forEach var="i" begin="${start}" end="${end}">
+				    <a href="home?bpage=${i}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers"
+				       class="${i == currentBestSellingPage ? 'active' : ''}">${i}</a>
+				  </c:forEach>
+				
+				  <c:if test="${end < totalBestSellingPages}">
+				    <span>…</span>
+				    <a href="home?bpage=${totalBestSellingPages}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">
+				      ${totalBestSellingPages}
+				    </a>
+				  </c:if>
+				</c:if>
+            	
+            	<c:if test="${totalBestSellingPages < 10}">
+	            	<c:forEach var="i" begin="1" end="${totalBestSellingPages}">
+	            		<a href="home?bpage=${i}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers"
+	               		class="${i == currentBestSellingPage ? 'active' : ''}">${i}</a>
+	        		</c:forEach>           	
+        		</c:if>
+            	
+            	<c:choose>
+	                <c:when test="${currentBestSellingPage < totalBestSellingPages}">
+	                	<a href = "home?bpage=${currentBestSellingPage + 1}&fpage=${currentFeaturedPage}&npage=${currentNewPage}#best-sellers">&#10095;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
             </div>
         </section>
 
@@ -287,7 +342,6 @@
         </section>
     </main>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
-    <script src="${pageContext.request.contextPath}/assets/js/script.js"></script>
 </body>
 
 </html>

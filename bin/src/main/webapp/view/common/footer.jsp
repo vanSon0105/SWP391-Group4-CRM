@@ -7,92 +7,61 @@
 <meta charset="UTF-8">
 </head>
 <body>
-	    <footer class="footer">
+	    <footer id="contact" class="footer">
         <div class="container">
-            <div class="footer__body">
-                <section class="footer__logo">
-                    <!-- Logo -->
-                    <a href="#">
-                        <div class="logo">
-                            <span class="logo__circle"></span>
-                            <span class="logo__text">
-                                <span class="logo__brand">shine</span>
-                                <span class="logo__brand logo__brand--small">smile</span>
-                            </span>
-                        </div>
-                    </a>
-                    <p class="section-desc footer__desc">Exceptional dental care for all ages. Your great smile begins
-                        with a great dentist.</p>
+            <div class="footer-body">
+                <section class="footer-left">
+                    <h2 class="footer-title">Sign up for our newsletter</h2>
+                    <div class="footer-input-form"><input type="email" class="footer-input"
+                            placeholder="Enter your email">
+                        <a href="#1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="18" viewBox="0 0 28 18"
+                                fill="none">
+                                <path d="M1 9H27M27 9L18.3333 1M27 9L18.3333 17" stroke="#C4C4C4" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="footer-link">
+                        <a target="_blank" href="https://www.facebook.com/"><img src="./assets/img/facebook.svg"
+                                alt="facebook"></a>
+                        <a target="_blank" href="https://www.instagram.com/"><img src="./assets/img/instagram.svg"
+                                alt="instagram"></a>
+                        <a target="_blank" href="https://www.spacex.com/"><img class="footer-x-link"
+                                src="./assets/img/x.svg" alt="x"></a>
+                    </div>
                 </section>
-
-                <section class="footer__support">
-                    <h4 class="footer__title">Support</h4>
+                <section class="footer-right">
                     <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                        <li>
-                            <a href="#!">Account information</a>
-                        </li>
-                        <li>
-                            <a href="#!">About</a>
-                        </li>
-                        <li>
-                            <a href="#!">Contact us</a>
-                        </li>
+                        <h4 class="footer-title-right">Pages</h4>
+                        <li><a href="#1">Home</a></li>
+                        <li><a href="#1">About</a></li>
+                        <li><a href="#1">Blog</a></li>
+                        <li><a href="#1">Blog Post</a></li>
                     </ul>
-
-                    <h4 class="footer__title">Support</h4>
                     <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                        <li>
-                            <a href="#!">Account information</a>
-                        </li>
+                        <h4 class="footer-title-right">Product</h4>
+                        <li><a href="#1">Home</a></li>
+                        <li><a href="#1">About</a></li>
+                        <li><a href="#1">Blog</a></li>
+                        <li><a href="#1">Blog Post</a></li>
                     </ul>
-
-                </section>
-
-                <section class="footer__support">
-                    <h4 class="footer__title">Support</h4>
                     <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
-                        <li>
-                            <a href="#!">Account information</a>
-                        </li>
+                        <h4 class="footer-title-right">Overview</h4>
+                        <li><a href="#1">Home1</a></li>
+                        <li><a href="#1">Home2</a></li>
+                        <li><a href="#1">Home3</a></li>
+                        <li><a href="#1">Pricing1</a></li>
                     </ul>
-
-                    <h4 class="footer__title">Support</h4>
                     <ul>
-                        <li>
-                            <a href="#!">Help center</a>
-                        </li>
+                        <h4 class="footer-title-right">About Us</h4>
+                        <li><a href="#1">Team</a></li>
+                        <li><a href="#1">Investors</a></li>
+                        <li><a href="#1">Blog</a></li>
+                        <li><a href="#1">Press</a></li>
                     </ul>
                 </section>
-
-                <section class="footer__contact">
-                    <!-- <h4 class="footer__title">Stay In Touch</h4>
-
-                    <div class="footer__society">
-                        <a href="#!"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#!"><i class="fa-brands fa-square-x-twitter"></i></a>
-                        <a href="#!"><img src="./assets/img/linked.svg" alt="Linked"></a>
-                    </div> -->
-
-                    <h4 class="footer__title">Subscribe</h4>
-                    <p class="footer__sub">Subscribe our newsletter for the latest update of Dental care</p>
-
-                    <label for="">
-                        <input type="email" name="email" class="footer__input" placeholder="Enter your email...">
-                        <a href="#!" class="btn footer-sub__btn">Subscribe</a>
-                    </label>
-                </section>
-
             </div>
-            <strong class="footer__copyright">2021 GDN. Copyright and All rights reserved.</strong>
         </div>
     </footer>
 </body>

@@ -4,6 +4,26 @@ import java.util.*;
 import model.Category;
 
 public class CategoryDAO extends dal.DBContext {
+	public Category getCategoryById(int id) {
+        Category category = null;
+        String sql = "SELECT * FROM categories WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement pre = conn.prepareStatement(sql)) {
+
+            pre.setInt(1, id);
+            try (ResultSet rs = pre.executeQuery()) {
+                if (rs.next()) {
+                    category = new Category(
+                        rs.getInt("id"),
+                        rs.getString("category_name")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error getCategoryById: " + e.getMessage());
+        }
+        return category;
+    }
 	
 	public List<Category> getAllCategories() {
 		List<Category> list = new ArrayList<>();

@@ -1,6 +1,9 @@
-DROP DATABASE IF exists SWP391;
+DROP DATABASE IF EXISTS SWP391;
 CREATE DATABASE IF NOT EXISTS SWP391;
-use SWP391;
+USE SWP391;
+
+-- NOTE: Changed monetary data types (e.g., price, total_amount) to DECIMAL(14, 0)
+-- to correctly handle large VND values without decimals.
 
 CREATE TABLE roles (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -10,15 +13,16 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  username varchar(50),
+  username varchar(50) UNIQUE,
   password varchar(255),
-  email varchar(100),
+  email varchar(100) UNIQUE,
   image_url varchar(255),
   full_name varchar(100),
   phone varchar(20),
   role_id int,
   status enum('active','inactive') DEFAULT 'active',
-  date timestamp default current_timestamp,
+  created_at timestamp default current_timestamp,
+  last_login_at timestamp,
   foreign key (role_id) references roles(id)
 );
 
@@ -31,12 +35,119 @@ CREATE TABLE devices (
   id INT PRIMARY KEY AUTO_INCREMENT,
   category_id INT NOT NULL,
   name VARCHAR(100) NOT NULL,
-  price DECIMAL(10,2) NOT NULL,
+  price DECIMAL(14,0) NOT NULL,
   unit varchar(50),
   image_url varchar(255),
-  type enum('spare part','device'),
+  description text,
   created_at timestamp default current_timestamp,
+  is_featured BOOLEAN DEFAULT FALSE,
   foreign key (category_id) references categories(id)
+);
+
+CREATE TABLE device_serials(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  device_id INT NOT NULL,
+  serial_no VARCHAR(100) UNIQUE,
+  status ENUM('in_stock', 'sold', 'in_repair', 'out_stock') DEFAULT 'in_stock',
+  import_date TIMESTAMP,
+  foreign key (device_id) references devices(id)
+);
+
+CREATE TABLE inventories (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  storekeeper_id INT NOT NULL,
+  device_id INT NOT NULL,
+  quantity INT NOT NULL,
+  foreign key (storekeeper_id) references users(id),
+  foreign key (device_id) references devices(id)
+);
+
+CREATE TABLE orders (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  customer_id INT NOT NULL,
+  total_amount DECIMAL(14,0) NOT NULL,
+  discount DECIMAL(14,0) DEFAULT 0,
+  status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
+  date timestamp default current_timestamp,
+  foreign key (customer_id) references users(id)
+);
+
+CREATE TABLE warranty_cards(
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    device_serial_id INT NOT NULL UNIQUE,
+    customer_id INT NOT NULL,
+    start_at TIMESTAMP,
+    end_at TIMESTAMP,
+    foreign key (device_serial_id) references device_serials(id),
+    foreign key (customer_id) references users(id)
+);
+
+CREATE TABLE order_details (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT NOT NULL,
+  device_id INT NOT NULL,
+  device_serial_id INT NOT NULL UNIQUE,
+  quantity INT NOT NULL,
+  price DECIMAL(14,0) NOT NULL,
+  warranty_card_id INT NOT NULL UNIQUE,
+  foreign key (order_id) references orders(id),
+  foreign key (device_id) references devices(id),
+  foreign key (warranty_card_id) references warranty_cards(id),
+  foreign key (device_serial_id) references device_serials(id)
+);
+
+CREATE TABLE payments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  order_id INT UNIQUE NOT NULL,
+  payment_url varchar(255),
+  status ENUM('pending','success','failed') DEFAULT 'pending',
+  created_at timestamp default current_timestamp,
+  paid_at timestamp,
+  foreign key (order_id) references orders(id)
+);
+
+CREATE TABLE customer_issues (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  customer_id INT NOT NULL,
+  issue_code VARCHAR(50) UNIQUE,
+  title VARCHAR(100) NOT NULL,
+  description TEXT,
+  warranty_card_id INT,
+  created_at TIMESTAMP default current_timestamp,
+  foreign key (customer_id) references users(id),
+  foreign key (warranty_card_id) references warranty_cards(id)
+);
+
+CREATE TABLE tasks (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(100) NOT NULL,
+  description TEXT,
+  manager_id INT NOT NULL,
+  customer_issue_id INT not null,
+  foreign key (manager_id) references users(id),
+  foreign key (customer_issue_id) references customer_issues(id)
+);
+
+CREATE TABLE task_details (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  task_id INT NOT NULL,
+  technical_staff_id INT NOT NULL,
+  assigned_at timestamp default current_timestamp,
+  deadline timestamp,
+  status ENUM('pending','in_progress','completed','cancelled') DEFAULT 'pending',
+  foreign key (task_id) references tasks(id),
+  foreign key (technical_staff_id) references users(id)
+);
+
+CREATE TABLE customer_issue_details (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  issue_id INT NOT NULL,
+  staff_id INT NOT NULL,
+  role ENUM('main','assistant') DEFAULT 'assistant',
+  status ENUM('pending','in_progress','resolved','cancelled') DEFAULT 'pending',
+  updated_at timestamp default current_timestamp,
+  foreign key (issue_id) references customer_issues(id),
+  foreign key (staff_id) references users(id)
 );
 
 CREATE TABLE suppliers (
@@ -52,110 +163,30 @@ CREATE TABLE supplier_details (
   supplier_id INT NOT NULL,
   device_id INT NOT NULL,
   date timestamp default current_timestamp,
-  price DECIMAL(10,2) NOT NULL,
+  price DECIMAL(14,0) NOT NULL,
   foreign key (supplier_id) references suppliers(id),
   foreign key (device_id) references devices(id)
-);
-
-CREATE TABLE inventories (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  storekeeper_id INT NOT NULL,
-  device_id INT NOT NULL,
-  quantity INT NOT NULL,
-  foreign key (storekeeper_id) references users(id)
-);
-
-CREATE TABLE device_details (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  inventory_id INT NOT NULL,
-  device_id INT NOT NULL,
-  description text,
-  serial_no varchar(100),
-  status ENUM('in_stock','out_stock','sold'),
-  foreign key (inventory_id) references inventories(id)
-);
-
-
-CREATE TABLE orders (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  customer_id INT NOT NULL,
-  total_amount DECIMAL(10,2) NOT NULL,
-  status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
-  date timestamp default current_timestamp,
-  foreign key (customer_id) references users(id)
-);
-
-CREATE TABLE order_details (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  order_id INT NOT NULL,
-  device_id INT NOT NULL,
-  quantity INT NOT NULL,
-  price DECIMAL(10,2) NOT NULL,
-  discount DECIMAL(5,2),
-  warranty_date timestamp,
-  foreign key (order_id) references orders(id),
-  foreign key (device_id) references devices(id)
-);
-
-CREATE TABLE payments (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  order_id INT UNIQUE NOT NULL,
-  payment_url varchar(255),
-  status ENUM('pending','success','failed') DEFAULT 'pending',
-  created_at timestamp default current_timestamp,
-  updated_at timestamp,
-  foreign key (order_id) references orders(id)
-);
-
-CREATE TABLE tasks (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  title VARCHAR(100) NOT NULL,
-  description TEXT,
-  manager_id INT NOT NULL,
-  foreign key (manager_id) references users(id)
-);
-
-CREATE TABLE task_details (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  task_id INT NOT NULL,
-  technical_staff_id INT NOT NULL,
-  assigned_at timestamp default current_timestamp,
-  deadline timestamp,
-  status ENUM('pending','in_progress','completed','cancelled') DEFAULT 'pending',
-  foreign key (task_id) references tasks(id),
-  foreign key (technical_staff_id) references users(id)
-);
-
-CREATE TABLE customer_issues (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  customer_id INT NOT NULL,
-  title VARCHAR(100) NOT NULL,
-  description TEXT,
-  created_at TIMESTAMP default current_timestamp,
-  foreign key (customer_id) references users(id)
-);
-
-CREATE TABLE customer_issue_details (
-  id INT PRIMARY KEY AUTO_INCREMENT,
-  issue_id INT NOT NULL,
-  staff_id INT NOT NULL,
-  role ENUM('main','assistant') DEFAULT 'assistant',
-  status ENUM('pending','in_progress','resolved','cancelled') DEFAULT 'pending',
-  updated_at timestamp default current_timestamp,
-  foreign key (issue_id) references customer_issues(id),
-  foreign key (staff_id) references users(id)
 );
 
 CREATE TABLE transactions (
   id INT PRIMARY KEY AUTO_INCREMENT,
   storekeeper_id INT NOT NULL,
-  technical_staff_id INT NOT NULL,
+  user_id INT,
+  supplier_id INT,
   date timestamp default current_timestamp,
   type ENUM('export','import') NOT NULL,
   status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
   foreign key (storekeeper_id) references users(id),
-  foreign key (technical_staff_id) references users(id)
+  foreign key (user_id) references users(id),
+  foreign key (supplier_id) references suppliers(id)
 );
+
+ALTER TABLE transactions
+  ADD CONSTRAINT chk_type_refs
+  CHECK (
+    (type = 'import' AND supplier_id IS NOT NULL AND user_id IS NULL) OR
+    (type = 'export' AND user_id IS NOT NULL AND supplier_id IS NULL)
+  );
 
 CREATE TABLE transaction_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -163,6 +194,23 @@ CREATE TABLE transaction_details (
   device_id INT NOT NULL,
   quantity INT NOT NULL,
   foreign key (transaction_id) references transactions(id),
+  foreign key (device_id) references devices(id)
+);
+
+CREATE TABLE carts(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  sum DECIMAL(14,0) default 0,
+  user_id INT NOT NULL,
+  foreign key (user_id) references users(id)
+);
+
+CREATE TABLE cart_details(
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  price DECIMAL(14,0) NOT NULL,
+  quantity INT not null,
+  cart_id INT not null,
+  device_id INT not null,
+  foreign key (cart_id) references carts(id),
   foreign key (device_id) references devices(id)
 );
 
@@ -189,6 +237,9 @@ CREATE TABLE user_permission (
     UNIQUE (user_id, permission_id)
 );
 
+-- DATA INSERTION --
+-- NOTE: Prices and totals have been scaled up to represent VND values.
+
 INSERT INTO roles (role_name, description) VALUES
 ('Admin', 'System administrator'),
 ('Technical Manager', 'Manages technical staff and tasks'),
@@ -204,7 +255,12 @@ INSERT INTO users (username, password, email, image_url, full_name, phone, role_
 ('spstaff01', '123456', 'spstaff01@example.com', NULL, 'Xuan Bac', '0904567890', 4, 'active'),
 ('storekeeper01', '123456', 'storekeeper@example.com', NULL, 'Hai Dang', '0905678901', 5, 'active'),
 ('customer01', '123456', 'customer01@example.com', NULL, 'Hieu Pham', '0906789012', 6, 'active'),
-('customer02', '123456', 'customer02@example.com', NULL, 'Customer', '0907890123', 6, 'active');
+('customer02', '123456', 'customer02@example.com', NULL, 'Customer', '0907890123', 6, 'active'),
+('customer03', '123456', 'customer03@example.com', NULL, 'Nguyen An',  '0908000003', 6, 'active'),
+('customer04', '123456', 'customer04@example.com', NULL, 'Tran Binh',  '0908000004', 6, 'active'),
+('customer05', '123456', 'customer05@example.com', NULL, 'Le Chi',      '0908000005', 6, 'active'),
+('customer06', '123456', 'customer06@example.com', NULL, 'Pham Duong', '0908000006', 6, 'active'),
+('customer07', '123456', 'customer07@example.com', NULL, 'Hoai Giang', '0908000007', 6, 'active');
 
 INSERT INTO categories (category_name) VALUES
 ('Laptop'),
@@ -212,162 +268,842 @@ INSERT INTO categories (category_name) VALUES
 ('Printer'),
 ('Spare Parts');
 
-INSERT INTO devices (category_id, name, price, unit, image_url, type) VALUES
-(1, 'Dell XPS 13', 1200.00, 'pcs', NULL, 'device'),
-(1, 'MacBook Pro 14', 2200.00, 'pcs', NULL, 'device'),
-(2, 'iPhone 15', 999.00, 'pcs', NULL, 'device'),
-(2, 'Samsung Galaxy S24', 899.00, 'pcs', NULL, 'device'),
-(4, 'Laptop Charger 65W', 45.00, 'pcs', NULL, 'spare part'),
-(4, 'iPhone Case', 20.00, 'pcs', NULL, 'spare part');
+INSERT INTO devices (category_id, name, price, unit, image_url, description) VALUES
+(1, 'Dell XPS 13', 27990000, 'pcs', NULL, '13" ultrabook, Intel Core, 16GB RAM, 512GB SSD, ~1.2kg; phù hợp di động/doanh nhân.'),
+(1, 'MacBook Pro 14', 54990000, 'pcs', NULL, '14" laptop Apple Silicon, màn Liquid Retina XDR, thời lượng pin dài; máy trạm sáng tạo.'),
+(2, 'iPhone 15', 24990000, 'pcs', NULL, 'Smartphone 6.1", chip A16, camera cải thiện, sạc USB-C; flagship cân bằng hiệu năng.'),
+(2, 'Samsung Galaxy S24', 21990000, 'pcs', NULL, 'Flagship 6.2", màn AMOLED 120Hz, Exynos/Snapdragon, AI features; chụp ảnh mạnh.'),
+(4, 'Laptop Charger 65W', 490000, 'pcs', NULL, 'Sạc laptop 65W (DC/USB-C tuỳ mẫu), bảo vệ quá dòng/quá nhiệt; phù hợp đa số ultrabook.'),
+(4, 'iPhone Case', 290000, 'pcs', NULL, 'Ốp bảo vệ silicon/TPU, chống trầy xước, bám tay tốt; viền nhô bảo vệ camera/màn hình.'),
+(3, 'HP LaserJet Pro M404', 8490000, 'pcs', NULL, 'Máy in laser đơn sắc A4, ~38 ppm, kết nối USB/Ethernet; in văn phòng bền bỉ.'),
+(3, 'Canon Pixma G3020', 5990000, 'pcs', NULL, 'Máy in phun bình mực liên tục (G-Series), in màu, Wi-Fi, copy/scan; chi phí trang thấp.'),
+(1, 'Lenovo ThinkPad X1 Carbon', 42990000, 'pcs', NULL, '14" business ultralight, khung carbon, bàn phím ThinkPad, nhiều cổng; bền đạt chuẩn MIL-STD.'),
+(1, 'ASUS ROG Zephyrus G14', 45990000, 'pcs', NULL, '14" gaming mỏng nhẹ, Ryzen + GeForce RTX, màn 120–165Hz; cân bằng game/đồ hoạ.'),
+(2, 'Samsung Galaxy Tab S9', 19990000, 'pcs', NULL, 'Tablet AMOLED ~11", S Pen kèm, DeX, IP68; ghi chú và giải trí tốt.'),
+(2, 'iPad Air (5th Gen)', 14990000, 'pcs', NULL, 'Tablet 10.9" chip M1, Apple Pencil/Keyboard, màn Liquid Retina; tối ưu học tập/sáng tạo.'),
+(4, 'Printer Toner Cartridge', 890000, 'pcs', NULL, 'Hộp mực laser tương thích M404, năng suất ~3.000 trang; dễ thay thế, mực đều.'),
+(4, 'USB-C Cable 1m', 199000, 'pcs', NULL, 'Cáp USB-C to C 1m, sạc đến 60W/3A, truyền dữ liệu; lõi bền, đầu nối chắc.');
+
+INSERT INTO device_serials (id, device_id, serial_no, status, import_date) VALUES
+(1, 3, 'IP15-SN0001', 'sold', '2025-09-01 00:00:00'),
+(2, 2, 'MBP14-SN0001', 'sold', '2025-09-01 00:00:00'),
+(3, 4, 'S24-SN0001', 'sold', '2025-09-01 00:00:00'),
+(4, 2, 'MBP14-SN0002', 'sold', '2025-09-01 00:00:00'),
+(5, 6, 'CASE-SN0001', 'sold', '2025-09-01 00:00:00'),
+(6, 1, 'XPS13-SN0001', 'sold', '2025-09-01 00:00:00'),
+(7, 5, 'CHARGER-SN0001', 'sold', '2025-09-01 00:00:00'),
+(8, 7, 'HP404-SN0001', 'sold', '2025-09-01 00:00:00'),
+(9, 9, 'TPX1-SN0001', 'sold', '2025-09-01 00:00:00'),
+(10, 12, 'IPAD-AIR-SN0001', 'sold', '2025-09-01 00:00:00'),
+(11, 3, 'IP15-SN0002', 'sold', '2025-09-01 00:00:00'),
+(12, 11, 'TABS9-SN0001', 'sold', '2025-09-01 00:00:00'),
+(13, 14, 'USBC-SN0001', 'sold', '2025-09-01 00:00:00'),
+(14, 10, 'ROG-G14-SN0001', 'sold', '2025-09-01 00:00:00'),
+(15, 14, 'USBC-SN0002', 'sold', '2025-09-01 00:00:00'),
+(16, 13, 'TONER-SN0001', 'sold', '2025-09-01 00:00:00'),
+(17, 13, 'TONER-SN0002', 'sold', '2025-09-01 00:00:00'),
+(18, 7, 'HP404-SN0002', 'sold', '2025-09-01 00:00:00'),
+(19, 3, 'IP15-SN0003', 'sold', '2025-09-01 00:00:00'),
+(20, 2, 'MBP14-SN0003', 'sold', '2025-09-01 00:00:00'),
+(21, 1, 'XPS13-SN0002', 'sold', '2025-09-01 00:00:00'),
+(22, 6, 'CASE-SN0002', 'sold', '2025-09-01 00:00:00'),
+(23, 8, 'CANON-G3020-SN0001', 'sold', '2025-09-01 00:00:00'),
+(24, 7, 'HP404-SN0003', 'in_stock', '2025-09-01 00:00:00'),
+(25, 11, 'TABS9-SN0002', 'sold', '2025-09-01 00:00:00'),
+(26, 14, 'USBC-SN0003', 'sold', '2025-09-01 00:00:00'),
+(27, 9, 'TPX1-SN0002', 'sold', '2025-09-01 00:00:00'),
+(28, 3, 'IP15-SN0004', 'sold', '2025-09-01 00:00:00'),
+(29, 5, 'CHARGER-SN0002', 'sold', '2025-09-01 00:00:00'),
+(30, 4, 'S24-SN0002', 'sold', '2025-09-01 00:00:00'),
+(31, 12, 'IPAD-AIR-SN0002', 'sold', '2025-09-01 00:00:00'),
+(32, 6, 'CASE-SN0003', 'sold', '2025-09-01 00:00:00'),
+(33, 12, 'IPAD-SN9383', 'sold', '2025-09-01 00:00:00'),
+(34, 6, 'IPHONE-SN5497', 'sold', '2025-09-01 00:00:00'),
+(35, 8, 'CANON-SN5551', 'sold', '2025-09-01 00:00:00'),
+(36, 6, 'IPHONE-SN7913', 'sold', '2025-09-01 00:00:00'),
+(37, 11, 'SAMSUNG-SN5897', 'sold', '2025-09-01 00:00:00'),
+(38, 6, 'IPHONE-SN2125', 'sold', '2025-09-01 00:00:00'),
+(39, 6, 'IPHONE-SN5377', 'sold', '2025-09-01 00:00:00'),
+(40, 11, 'SAMSUNG-SN4946', 'sold', '2025-09-01 00:00:00'),
+(41, 4, 'SAMSUNG-SN5830', 'sold', '2025-09-01 00:00:00'),
+(42, 6, 'IPHONE-SN5094', 'sold', '2025-09-01 00:00:00'),
+(43, 3, 'IPHONE-SN5631', 'sold', '2025-09-01 00:00:00'),
+(44, 11, 'SAMSUNG-SN8267', 'sold', '2025-09-01 00:00:00'),
+(45, 3, 'IPHONE-SN9404', 'sold', '2025-09-01 00:00:00'),
+(46, 8, 'CANON-SN2265', 'sold', '2025-09-01 00:00:00'),
+(47, 7, 'HP-SN7280', 'sold', '2025-09-01 00:00:00'),
+(48, 9, 'LENOVO-SN1709', 'sold', '2025-09-01 00:00:00'),
+(49, 1, 'DELL-SN8295', 'sold', '2025-09-01 00:00:00'),
+(50, 11, 'SAMSUNG-SN8279', 'sold', '2025-09-01 00:00:00'),
+(51, 3, 'IPHONE-SN2381', 'sold', '2025-09-01 00:00:00'),
+(52, 14, 'USB-C-SN8594', 'sold', '2025-09-01 00:00:00'),
+(53, 10, 'ASUS-SN3397', 'sold', '2025-09-01 00:00:00'),
+(54, 1, 'DELL-SN9202', 'sold', '2025-09-01 00:00:00'),
+(55, 14, 'USB-C-SN2893', 'sold', '2025-09-01 00:00:00'),
+(56, 11, 'SAMSUNG-SN3573', 'sold', '2025-09-01 00:00:00'),
+(57, 8, 'CANON-SN1392', 'sold', '2025-09-01 00:00:00'),
+(58, 4, 'SAMSUNG-SN9849', 'sold', '2025-09-01 00:00:00'),
+(59, 2, 'MACBOOK-SN1605', 'sold', '2025-09-01 00:00:00'),
+(60, 10, 'ASUS-SN1403', 'sold', '2025-09-01 00:00:00'),
+(61, 13, 'PRINTER-SN1138', 'sold', '2025-09-01 00:00:00'),
+(62, 11, 'SAMSUNG-SN2686', 'sold', '2025-09-01 00:00:00'),
+(63, 5, 'LAPTOP-SN6409', 'sold', '2025-09-01 00:00:00'),
+(64, 11, 'SAMSUNG-SN6673', 'sold', '2025-09-01 00:00:00'),
+(65, 5, 'LAPTOP-SN2746', 'sold', '2025-09-01 00:00:00'),
+(66, 3, 'IPHONE-SN8571', 'sold', '2025-09-01 00:00:00'),
+(67, 6, 'IPHONE-SN4508', 'sold', '2025-09-01 00:00:00'),
+(68, 8, 'CANON-SN4542', 'sold', '2025-09-01 00:00:00'),
+(69, 12, 'IPAD-SN4053', 'sold', '2025-09-01 00:00:00'),
+(70, 8, 'CANON-SN4141', 'sold', '2025-09-01 00:00:00'),
+(71, 9, 'LENOVO-SN1604', 'sold', '2025-09-01 00:00:00'),
+(72, 11, 'SAMSUNG-SN2793', 'sold', '2025-09-01 00:00:00'),
+(73, 4, 'SAMSUNG-SN6510', 'sold', '2025-09-01 00:00:00'),
+(74, 7, 'HP-SN8223', 'sold', '2025-09-01 00:00:00'),
+(75, 5, 'LAPTOP-SN2223', 'sold', '2025-09-01 00:00:00'),
+(76, 9, 'LENOVO-SN1872', 'sold', '2025-09-01 00:00:00'),
+(77, 3, 'IPHONE-SN6722', 'sold', '2025-09-01 00:00:00'),
+(78, 2, 'MACBOOK-SN2882', 'sold', '2025-09-01 00:00:00'),
+(79, 5, 'LAPTOP-SN5051', 'sold', '2025-09-01 00:00:00'),
+(80, 10, 'ASUS-SN8808', 'sold', '2025-09-01 00:00:00'),
+(81, 13, 'PRINTER-SN9576', 'sold', '2025-09-01 00:00:00'),
+(82, 10, 'ASUS-SN7073', 'sold', '2025-09-01 00:00:00'),
+(83, 7, 'HP-SN3259', 'sold', '2025-09-01 00:00:00'),
+(84, 7, 'HP-SN8204', 'sold', '2025-09-01 00:00:00'),
+(85, 6, 'IPHONE-SN4601', 'sold', '2025-09-01 00:00:00'),
+(86, 14, 'USB-C-SN5776', 'sold', '2025-09-01 00:00:00'),
+(87, 4, 'SAMSUNG-SN6600', 'sold', '2025-09-01 00:00:00'),
+(88, 5, 'LAPTOP-SN2858', 'sold', '2025-09-01 00:00:00'),
+(89, 9, 'LENOVO-SN8346', 'sold', '2025-09-01 00:00:00'),
+(90, 8, 'CANON-SN3807', 'sold', '2025-09-01 00:00:00'),
+(91, 9, 'LENOVO-SN2617', 'sold', '2025-09-01 00:00:00'),
+(92, 11, 'SAMSUNG-SN5058', 'sold', '2025-09-01 00:00:00'),
+(93, 5, 'LAPTOP-SN7621', 'sold', '2025-09-01 00:00:00'),
+(94, 14, 'USB-C-SN2902', 'sold', '2025-09-01 00:00:00'),
+(95, 9, 'LENOVO-SN3295', 'sold', '2025-09-01 00:00:00'),
+(96, 8, 'CANON-SN7834', 'sold', '2025-09-01 00:00:00'),
+(97, 3, 'IPHONE-SN1167', 'sold', '2025-09-01 00:00:00'),
+(98, 1, 'DELL-SN6272', 'sold', '2025-09-01 00:00:00'),
+(99, 1, 'DELL-SN1307', 'sold', '2025-09-01 00:00:00'),
+(100, 8, 'CANON-SN3866', 'sold', '2025-09-01 00:00:00'),
+(101, 4, 'SAMSUNG-SN2436', 'sold', '2025-09-01 00:00:00'),
+(102, 8, 'CANON-SN3792', 'sold', '2025-09-01 00:00:00'),
+(103, 11, 'SAMSUNG-SN7468', 'sold', '2025-09-01 00:00:00'),
+(104, 2, 'MACBOOK-SN6062', 'sold', '2025-09-01 00:00:00'),
+(105, 1, 'DELL-SN5282', 'sold', '2025-09-01 00:00:00'),
+(106, 6, 'IPHONE-SN5920', 'sold', '2025-09-01 00:00:00'),
+(107, 6, 'IPHONE-SN4537', 'sold', '2025-09-01 00:00:00'),
+(108, 6, 'IPHONE-SN2693', 'sold', '2025-09-01 00:00:00'),
+(109, 11, 'SAMSUNG-SN5586', 'sold', '2025-09-01 00:00:00'),
+(110, 6, 'IPHONE-SN4445', 'sold', '2025-09-01 00:00:00'),
+(111, 3, 'IPHONE-SN3847', 'sold', '2025-09-01 00:00:00'),
+(112, 6, 'IPHONE-SN5297', 'sold', '2025-09-01 00:00:00'),
+(113, 6, 'IPHONE-SN1292', 'sold', '2025-09-01 00:00:00'),
+(114, 5, 'LAPTOP-SN3129', 'sold', '2025-09-01 00:00:00'),
+(115, 8, 'CANON-SN5372', 'sold', '2025-09-01 00:00:00'),
+(116, 14, 'USB-C-SN1969', 'sold', '2025-09-01 00:00:00'),
+(117, 8, 'CANON-SN6808', 'sold', '2025-09-01 00:00:00'),
+(118, 7, 'HP-SN9124', 'sold', '2025-09-01 00:00:00'),
+(119, 7, 'HP-SN5603', 'sold', '2025-09-01 00:00:00'),
+(120, 7, 'HP-SN4338', 'sold', '2025-09-01 00:00:00'),
+(121, 7, 'HP-SN5831', 'sold', '2025-09-01 00:00:00'),
+(122, 14, 'USB-C-SN9875', 'sold', '2025-09-01 00:00:00'),
+(123, 14, 'USB-C-SN7429', 'sold', '2025-09-01 00:00:00'),
+(124, 10, 'ASUS-SN1323', 'sold', '2025-09-01 00:00:00'),
+(125, 7, 'HP-SN9029', 'sold', '2025-09-01 00:00:00'),
+(126, 13, 'PRINTER-SN5289', 'sold', '2025-09-01 00:00:00'),
+(127, 2, 'MACBOOK-SN7402', 'sold', '2025-09-01 00:00:00'),
+(128, 5, 'LAPTOP-SN3100', 'sold', '2025-09-01 00:00:00'),
+(129, 1, 'DELL-SN4808', 'sold', '2025-09-01 00:00:00'),
+(130, 14, 'USB-C-SN7771', 'sold', '2025-09-01 00:00:00'),
+(131, 14, 'USB-C-SN7438', 'sold', '2025-09-01 00:00:00'),
+(132, 3, 'IPHONE-SN9126', 'sold', '2025-09-01 00:00:00'),
+(133, 2, 'MACBOOK-SN4473', 'sold', '2025-09-01 00:00:00'),
+(134, 2, 'MACBOOK-SN8519', 'sold', '2025-09-01 00:00:00'),
+(135, 13, 'PRINTER-SN8332', 'sold', '2025-09-01 00:00:00');
 
 INSERT INTO suppliers (name, phone, email, address) VALUES
 ('TechSupplier Ltd.', '0901111222', 'sales@techsupplier.com', '123, Thach Hoa, Thach That, Ha Noi'),
 ('MobileWorld Co.', '0902222333', 'contact@mobileworld.com', '456, Thach Hoa, Thach That, Ha Noi');
 
 INSERT INTO supplier_details (supplier_id, device_id, price) VALUES
-(1, 1, 1150.00),
-(1, 5, 40.00),
-(2, 3, 950.00),
-(2, 6, 18.00);
+(1, 7, 7900000),
+(1, 9, 41000000),
+(1, 13, 750000),
+(2, 8, 5500000),
+(2, 10, 44000000),
+(2, 11, 18500000),
+(2, 12, 13900000),
+(2, 14, 150000);
 
 INSERT INTO inventories (storekeeper_id, device_id, quantity) VALUES
-(5, 1, 10),
-(5, 2, 5),
-(5, 3, 20),
-(5, 4, 15),
-(5, 5, 50),
-(5, 6, 100);
+(5, 7, 12),
+(5, 8, 10),
+(5, 9, 6),
+(5, 10, 5),
+(5, 11, 15),
+(5, 12, 18),
+(5, 13, 80),
+(5, 14, 200);
 
-INSERT INTO device_details (inventory_id, device_id, description, serial_no, status) VALUES
-(1, 1, 'Dell XPS 13 2024 Model', 'SNXPS001', 'in_stock'),
-(2, 2, 'MacBook Pro 14 M2', 'SNMBP002', 'in_stock'),
-(3, 3, 'iPhone 15 Black', 'SNIP015', 'in_stock'),
-(4, 4, 'Samsung Galaxy S24 White', 'SNSAM024', 'in_stock');
+INSERT INTO orders (id, customer_id, total_amount, discount, status, date) VALUES
+(1, 6, 24990000, 0, 'confirmed', '2025-09-15 14:30:00'),
+(2, 7, 54990000, 0, 'pending', '2025-09-15 14:30:00'),
+(3, 8, 21990000, 0, 'confirmed', '2025-09-12 10:00:00'),
+(4, 9, 55280000, 0, 'confirmed', '2025-09-15 14:30:00'),
+(5, 10, 28480000, 0, 'confirmed', '2025-09-18 09:15:00'),
+(6, 11, 8490000, 0, 'confirmed', '2025-09-20 11:45:00'),
+(7, 12, 42990000, 0, 'pending', '2025-09-22 16:00:00'),
+(8, 6, 14990000, 0, 'confirmed', '2025-09-24 18:10:00'),
+(9, 7, 24990000, 0, 'confirmed', '2025-09-25 08:20:00'),
+(10, 8, 20189000, 0, 'confirmed', '2025-09-26 13:05:00'),
+(11, 9, 46979000, 0, 'confirmed', '2025-09-27 15:40:00'),
+(12, 10, 9380000, 0, 'confirmed', '2025-09-28 17:55:00'),
+(13, 11, 79980000, 0, 'confirmed', '2025-09-29 10:22:00'),
+(14, 12, 28270000, 0, 'pending', '2025-09-30 19:45:00'),
+(15, 6, 5990000, 0, 'confirmed', '2025-10-01 09:02:00'),
+(16, 7, 8490000, 0, 'cancelled', '2025-10-02 11:11:00'),
+(17, 8, 20189000, 0, 'confirmed', '2025-10-03 12:34:00'),
+(18, 9, 68870000, 0, 'confirmed', '2025-10-04 08:08:00'),
+(19, 10, 21990000, 0, 'confirmed', '2025-10-05 20:20:00'),
+(20, 11, 15280000, 0, 'confirmed', '2025-10-06 07:07:00'),
+(21, 9, 14990000, 0, 'confirmed', '2025-10-07 00:00:00'),
+(22, 9, 290000, 0, 'confirmed', '2025-10-07 03:14:00'),
+(23, 7, 26270000, 0, 'confirmed', '2025-10-07 08:25:00'),
+(24, 10, 580000, 0, 'confirmed', '2025-10-07 14:00:00'),
+(25, 6, 41980000, 0, 'confirmed', '2025-10-07 17:56:00'),
+(26, 8, 51270000, 0, 'confirmed', '2025-10-07 18:57:00'),
+(27, 6, 43470000, 0, 'confirmed', '2025-10-07 22:50:00'),
+(28, 8, 70980000, 0, 'confirmed', '2025-10-08 04:10:00'),
+(29, 7, 19990000, 0, 'confirmed', '2025-10-08 06:49:00'),
+(30, 9, 24990000, 0, 'confirmed', '2025-10-08 09:52:00'),
+(31, 8, 74179000, 0, 'confirmed', '2025-10-08 12:48:00'),
+(32, 9, 26179000, 0, 'confirmed', '2025-10-08 15:13:00'),
+(33, 10, 76980000, 0, 'confirmed', '2025-10-08 17:35:00'),
+(34, 8, 46880000, 0, 'confirmed', '2025-10-08 22:37:00'),
+(35, 10, 40470000, 0, 'confirmed', '2025-10-09 02:21:00'),
+(36, 7, 25480000, 0, 'confirmed', '2025-10-09 03:58:00'),
+(37, 6, 290000, 0, 'confirmed', '2025-10-09 06:28:00'),
+(38, 10, 5990000, 0, 'confirmed', '2025-10-09 12:06:00'),
+(39, 7, 20980000, 0, 'confirmed', '2025-10-09 16:29:00'),
+(40, 9, 62980000, 0, 'confirmed', '2025-10-09 20:22:00'),
+(41, 8, 21990000, 0, 'confirmed', '2025-10-09 21:26:00'),
+(42, 7, 51970000, 0, 'confirmed', '2025-10-10 03:19:00'),
+(43, 11, 79980000, 0, 'confirmed', '2025-10-10 08:10:00'),
+(44, 11, 51460000, 0, 'confirmed', '2025-10-10 10:50:00'),
+(45, 8, 54480000, 0, 'confirmed', '2025-10-10 13:51:00'),
+(46, 7, 8780000, 0, 'confirmed', '2025-10-10 16:23:00'),
+(47, 12, 199000, 0, 'confirmed', '2025-10-10 18:33:00'),
+(48, 11, 65470000, 0, 'confirmed', '2025-10-10 23:56:00'),
+(49, 7, 5990000, 0, 'confirmed', '2025-10-11 05:08:00'),
+(50, 11, 63470000, 0, 'confirmed', '2025-10-11 10:06:00'),
+(51, 12, 43189000, 0, 'confirmed', '2025-10-11 12:22:00'),
+(52, 10, 5990000, 0, 'confirmed', '2025-10-11 14:21:00'),
+(53, 12, 52980000, 0, 'confirmed', '2025-10-11 19:33:00'),
+(54, 11, 27990000, 0, 'confirmed', '2025-10-11 23:56:00'),
+(55, 11, 5990000, 0, 'confirmed', '2025-10-12 02:17:00'),
+(56, 7, 47970000, 0, 'confirmed', '2025-10-12 07:36:00'),
+(57, 9, 82970000, 0, 'confirmed', '2025-10-12 10:37:00'),
+(58, 6, 20270000, 0, 'confirmed', '2025-10-12 12:44:00'),
+(59, 8, 25280000, 0, 'confirmed', '2025-10-12 15:19:00'),
+(60, 10, 290000, 0, 'confirmed', '2025-10-12 18:22:00'),
+(61, 9, 780000, 0, 'confirmed', '2025-10-12 21:14:00'),
+(62, 10, 6189000, 0, 'confirmed', '2025-10-13 02:07:00'),
+(63, 12, 14480000, 0, 'confirmed', '2025-10-13 04:52:00'),
+(64, 10, 25470000, 0, 'confirmed', '2025-10-13 10:44:00'),
+(65, 10, 398000, 0, 'confirmed', '2025-10-13 12:05:00'),
+(66, 6, 55130000, 0, 'confirmed', '2025-10-13 13:09:00'),
+(67, 8, 55440000, 0, 'confirmed', '2025-10-13 14:20:00'),
+(68, 6, 27990000, 0, 'confirmed', '2025-10-13 17:38:00'),
+(69, 12, 25189000, 0, 'confirmed', '2025-10-13 21:12:00'),
+(70, 10, 109410000, 0, 'confirmed', '2025-10-14 01:40:00');
 
-INSERT INTO orders (customer_id, total_amount, status) VALUES
-(6, 999.00, 'confirmed'),
-(7, 2200.00, 'pending');
+INSERT INTO warranty_cards (id, device_serial_id, customer_id, start_at, end_at) VALUES
+(1, 1, 6, '2025-09-28 00:00:00', '2026-09-28 00:00:00'),
+(2, 2, 7, '2025-09-28 00:00:00', '2027-09-28 00:00:00'),
+(3, 3, 8, '2025-09-12 10:00:00', '2027-09-12 10:00:00'),
+(4, 4, 9, '2025-09-15 14:30:00', '2027-09-15 14:30:00'),
+(5, 5, 9, '2025-09-15 14:30:00', '2026-03-15 14:30:00'),
+(6, 6, 10, '2025-09-18 09:15:00', '2027-09-18 09:15:00'),
+(7, 7, 10, '2025-09-18 09:15:00', '2026-03-18 09:15:00'),
+(8, 8, 11, '2025-09-20 11:45:00', '2027-09-20 11:45:00'),
+(9, 9, 12, '2025-09-22 16:00:00', '2027-09-22 16:00:00'),
+(10, 10, 6, '2025-09-24 18:10:00', '2027-09-24 18:10:00'),
+(11, 11, 7, '2025-09-25 08:20:00', '2027-09-25 08:20:00'),
+(12, 12, 8, '2025-09-26 13:05:00', '2027-09-26 13:05:00'),
+(13, 13, 8, '2025-09-26 13:05:00', '2026-03-26 13:05:00'),
+(14, 14, 9, '2025-09-27 15:40:00', '2027-09-27 15:40:00'),
+(15, 15, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'),
+(16, 16, 9, '2025-09-27 15:40:00', '2026-03-27 15:40:00'),
+(17, 17, 10, '2025-09-28 17:55:00', '2026-03-28 17:55:00'),
+(18, 18, 10, '2025-09-28 17:55:00', '2027-09-28 17:55:00'),
+(19, 19, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'),
+(20, 20, 11, '2025-09-29 10:22:00', '2027-09-29 10:22:00'),
+(21, 21, 12, '2025-09-30 19:45:00', '2027-09-30 19:45:00'),
+(22, 22, 12, '2025-09-30 19:45:00', '2026-03-30 19:45:00'),
+(23, 23, 6, '2025-10-01 09:02:00', '2027-10-01 09:02:00'),
+(24, 24, 7, '2025-10-02 11:11:00', '2027-10-02 11:11:00'),
+(25, 25, 8, '2025-10-03 12:34:00', '2027-10-03 12:34:00'),
+(26, 26, 8, '2025-10-03 12:34:00', '2026-04-03 12:34:00'),
+(27, 27, 9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'),
+(28, 28, 9, '2025-10-04 08:08:00', '2027-10-04 08:08:00'),
+(29, 29, 9, '2025-10-04 08:08:00', '2026-04-04 08:08:00'),
+(30, 30, 10, '2025-10-05 20:20:00', '2027-10-05 20:20:00'),
+(31, 31, 11, '2025-10-06 07:07:00', '2027-10-06 07:07:00'),
+(32, 32, 11, '2025-10-06 07:07:00', '2026-04-06 07:07:00'),
+(33, 33, 9, '2025-10-07 00:00:00', '2027-10-07 00:00:00'),
+(34, 34, 9, '2025-10-07 03:14:00', '2027-10-07 03:14:00'),
+(35, 35, 7, '2025-10-07 08:25:00', '2027-10-07 08:25:00'),
+(36, 36, 7, '2025-10-07 08:25:00', '2027-10-07 08:25:00'),
+(37, 37, 7, '2025-10-07 08:25:00', '2027-10-07 08:25:00'),
+(38, 38, 10, '2025-10-07 14:00:00', '2027-10-07 14:00:00'),
+(39, 39, 10, '2025-10-07 14:00:00', '2027-10-07 14:00:00'),
+(40, 40, 6, '2025-10-07 17:56:00', '2027-10-07 17:56:00'),
+(41, 41, 6, '2025-10-07 17:56:00', '2027-10-07 17:56:00'),
+(42, 42, 8, '2025-10-07 18:57:00', '2027-10-07 18:57:00'),
+(43, 43, 8, '2025-10-07 18:57:00', '2027-10-07 18:57:00'),
+(44, 44, 8, '2025-10-07 18:57:00', '2027-10-07 18:57:00'),
+(45, 45, 6, '2025-10-07 22:50:00', '2027-10-07 22:50:00'),
+(46, 46, 6, '2025-10-07 22:50:00', '2027-10-07 22:50:00'),
+(47, 47, 6, '2025-10-07 22:50:00', '2027-10-07 22:50:00'),
+(48, 48, 8, '2025-10-08 04:10:00', '2027-10-08 04:10:00'),
+(49, 49, 8, '2025-10-08 04:10:00', '2027-10-08 04:10:00'),
+(50, 50, 7, '2025-10-08 06:49:00', '2027-10-08 06:49:00'),
+(51, 51, 9, '2025-10-08 09:52:00', '2027-10-08 09:52:00'),
+(52, 52, 8, '2025-10-08 12:48:00', '2027-10-08 12:48:00'),
+(53, 53, 8, '2025-10-08 12:48:00', '2027-10-08 12:48:00'),
+(54, 54, 8, '2025-10-08 12:48:00', '2027-10-08 12:48:00'),
+(55, 55, 9, '2025-10-08 15:13:00', '2027-10-08 15:13:00'),
+(56, 56, 9, '2025-10-08 15:13:00', '2027-10-08 15:13:00'),
+(57, 57, 9, '2025-10-08 15:13:00', '2027-10-08 15:13:00'),
+(58, 58, 10, '2025-10-08 17:35:00', '2027-10-08 17:35:00'),
+(59, 59, 10, '2025-10-08 17:35:00', '2027-10-08 17:35:00'),
+(60, 60, 8, '2025-10-08 22:37:00', '2027-10-08 22:37:00'),
+(61, 61, 8, '2025-10-08 22:37:00', '2027-10-08 22:37:00'),
+(62, 62, 10, '2025-10-09 02:21:00', '2027-10-09 02:21:00'),
+(63, 63, 10, '2025-10-09 02:21:00', '2027-10-09 02:21:00'),
+(64, 64, 10, '2025-10-09 02:21:00', '2027-10-09 02:21:00'),
+(65, 65, 7, '2025-10-09 03:58:00', '2027-10-09 03:58:00'),
+(66, 66, 7, '2025-10-09 03:58:00', '2027-10-09 03:58:00'),
+(67, 67, 6, '2025-10-09 06:28:00', '2027-10-09 06:28:00'),
+(68, 68, 10, '2025-10-09 12:06:00', '2027-10-09 12:06:00'),
+(69, 69, 7, '2025-10-09 16:29:00', '2027-10-09 16:29:00'),
+(70, 70, 7, '2025-10-09 16:29:00', '2027-10-09 16:29:00'),
+(71, 71, 9, '2025-10-09 20:22:00', '2027-10-09 20:22:00'),
+(72, 72, 9, '2025-10-09 20:22:00', '2027-10-09 20:22:00'),
+(73, 73, 8, '2025-10-09 21:26:00', '2027-10-09 21:26:00'),
+(74, 74, 7, '2025-10-10 03:19:00', '2027-10-10 03:19:00'),
+(75, 75, 7, '2025-10-10 03:19:00', '2027-10-10 03:19:00'),
+(76, 76, 7, '2025-10-10 03:19:00', '2027-10-10 03:19:00'),
+(77, 77, 11, '2025-10-10 08:10:00', '2027-10-10 08:10:00'),
+(78, 78, 11, '2025-10-10 08:10:00', '2027-10-10 08:10:00'),
+(79, 79, 11, '2025-10-10 10:50:00', '2027-10-10 10:50:00'),
+(80, 80, 11, '2025-10-10 10:50:00', '2027-10-10 10:50:00'),
+(81, 81, 11, '2025-10-10 10:50:00', '2027-10-10 10:50:00'),
+(82, 82, 8, '2025-10-10 13:51:00', '2027-10-10 13:51:00'),
+(83, 83, 8, '2025-10-10 13:51:00', '2027-10-10 13:51:00'),
+(84, 84, 7, '2025-10-10 16:23:00', '2027-10-10 16:23:00'),
+(85, 85, 7, '2025-10-10 16:23:00', '2027-10-10 16:23:00'),
+(86, 86, 12, '2025-10-10 18:33:00', '2027-10-10 18:33:00'),
+(87, 87, 11, '2025-10-10 23:56:00', '2027-10-10 23:56:00'),
+(88, 88, 11, '2025-10-10 23:56:00', '2027-10-10 23:56:00'),
+(89, 89, 11, '2025-10-10 23:56:00', '2027-10-10 23:56:00'),
+(90, 90, 7, '2025-10-11 05:08:00', '2027-10-11 05:08:00'),
+(91, 91, 11, '2025-10-11 10:06:00', '2027-10-11 10:06:00'),
+(92, 92, 11, '2025-10-11 10:06:00', '2027-10-11 10:06:00'),
+(93, 93, 11, '2025-10-11 10:06:00', '2027-10-11 10:06:00'),
+(94, 94, 12, '2025-10-11 12:22:00', '2027-10-11 12:22:00'),
+(95, 95, 12, '2025-10-11 12:22:00', '2027-10-11 12:22:00'),
+(96, 96, 10, '2025-10-11 14:21:00', '2027-10-11 14:21:00'),
+(97, 97, 12, '2025-10-11 19:33:00', '2027-10-11 19:33:00'),
+(98, 98, 12, '2025-10-11 19:33:00', '2027-10-11 19:33:00'),
+(99, 99, 11, '2025-10-11 23:56:00', '2027-10-11 23:56:00'),
+(100, 100, 11, '2025-10-12 02:17:00', '2027-10-12 02:17:00'),
+(101, 101, 7, '2025-10-12 07:36:00', '2027-10-12 07:36:00'),
+(102, 102, 7, '2025-10-12 07:36:00', '2027-10-12 07:36:00'),
+(103, 103, 7, '2025-10-12 07:36:00', '2027-10-12 07:36:00'),
+(104, 104, 9, '2025-10-12 10:37:00', '2027-10-12 10:37:00'),
+(105, 105, 9, '2025-10-12 10:37:00', '2027-10-12 10:37:00'),
+(106, 106, 9, '2025-10-12 10:37:00', '2027-10-12 10:37:00'),
+(107, 107, 6, '2025-10-12 12:44:00', '2027-10-12 12:44:00'),
+(108, 108, 6, '2025-10-12 12:44:00', '2027-10-12 12:44:00'),
+(109, 109, 6, '2025-10-12 12:44:00', '2027-10-12 12:44:00'),
+(110, 110, 8, '2025-10-12 15:19:00', '2027-10-12 15:19:00'),
+(111, 111, 8, '2025-10-12 15:19:00', '2027-10-12 15:19:00'),
+(112, 112, 10, '2025-10-12 18:22:00', '2027-10-12 18:22:00'),
+(113, 113, 9, '2025-10-12 21:14:00', '2027-10-12 21:14:00'),
+(114, 114, 9, '2025-10-12 21:14:00', '2027-10-12 21:14:00'),
+(115, 115, 10, '2025-10-13 02:07:00', '2027-10-13 02:07:00'),
+(116, 116, 10, '2025-10-13 02:07:00', '2027-10-13 02:07:00'),
+(117, 117, 12, '2025-10-13 04:52:00', '2027-10-13 04:52:00'),
+(118, 118, 12, '2025-10-13 04:52:00', '2027-10-13 04:52:00'),
+(119, 119, 10, '2025-10-13 10:44:00', '2027-10-13 10:44:00'),
+(120, 120, 10, '2025-10-13 10:44:00', '2027-10-13 10:44:00'),
+(121, 121, 10, '2025-10-13 10:44:00', '2027-10-13 10:44:00'),
+(122, 122, 10, '2025-10-13 12:05:00', '2027-10-13 12:05:00'),
+(123, 123, 10, '2025-10-13 12:05:00', '2027-10-13 12:05:00'),
+(124, 124, 6, '2025-10-13 13:09:00', '2027-10-13 13:09:00'),
+(125, 125, 6, '2025-10-13 13:09:00', '2027-10-13 13:09:00'),
+(126, 126, 6, '2025-10-13 13:09:00', '2027-10-13 13:09:00'),
+(127, 127, 8, '2025-10-13 14:20:00', '2027-10-13 14:20:00'),
+(128, 128, 8, '2025-10-13 14:20:00', '2027-10-13 14:20:00'),
+(129, 129, 6, '2025-10-13 17:38:00', '2027-10-13 17:38:00'),
+(130, 130, 12, '2025-10-13 21:12:00', '2027-10-13 21:12:00'),
+(131, 131, 12, '2025-10-13 21:12:00', '2027-10-13 21:12:00'),
+(132, 132, 12, '2025-10-13 21:12:00', '2027-10-13 21:12:00'),
+(133, 133, 10, '2025-10-14 01:40:00', '2027-10-14 01:40:00'),
+(134, 134, 10, '2025-10-14 01:40:00', '2027-10-14 01:40:00'),
+(135, 135, 10, '2025-10-14 01:40:00', '2027-10-14 01:40:00');
 
-INSERT INTO order_details (order_id, device_id, quantity, price, discount, warranty_date) VALUES
-(1, 3, 1, 999.00, 0.00, '2026-09-28 00:00:00'),
-(2, 2, 1, 2200.00, 0.00, '2027-09-28 00:00:00');
+INSERT INTO order_details (order_id, device_id, device_serial_id, quantity, price, warranty_card_id) VALUES
+(1, 3, 1, 1, 24990000, 1),
+(2, 2, 2, 1, 54990000, 2),
+(3, 4, 3, 1, 21990000, 3),
+(4, 2, 4, 1, 54990000, 4),
+(4, 6, 5, 1, 290000, 5),
+(5, 1, 6, 1, 27990000, 6),
+(5, 5, 7, 1, 490000, 7),
+(6, 7, 8, 1, 8490000, 8),
+(7, 9, 9, 1, 42990000, 9),
+(8, 12, 10, 1, 14990000, 10),
+(9, 3, 11, 1, 24990000, 11),
+(10, 11, 12, 1, 19990000, 12),
+(10, 14, 13, 1, 199000, 13),
+(11, 10, 14, 1, 45990000, 14),
+(11, 14, 15, 1, 199000, 15),
+(11, 13, 16, 1, 790000, 16),
+(12, 13, 17, 1, 890000, 17),
+(12, 7, 18, 1, 8490000, 18),
+(13, 3, 19, 1, 24990000, 19),
+(13, 2, 20, 1, 54990000, 20),
+(14, 1, 21, 1, 27990000, 21),
+(14, 6, 22, 1, 280000, 22),
+(15, 8, 23, 1, 5990000, 23),
+(16, 7, 24, 1, 8490000, 24),
+(17, 11, 25, 1, 19990000, 25),
+(17, 14, 26, 1, 199000, 26),
+(18, 9, 27, 1, 42990000, 27),
+(18, 3, 28, 1, 24990000, 28),
+(18, 5, 29, 1, 890000, 29),
+(19, 4, 30, 1, 21990000, 30),
+(20, 12, 31, 1, 14990000, 31),
+(20, 6, 32, 1, 290000, 32),
+(21, 12, 33, 1, 14990000, 33),
+(22, 6, 34, 1, 290000, 34),
+(23, 8, 35, 1, 5990000, 35),
+(23, 6, 36, 1, 290000, 36),
+(23, 11, 37, 1, 19990000, 37),
+(24, 6, 38, 1, 290000, 38),
+(24, 6, 39, 1, 290000, 39),
+(25, 11, 40, 1, 19990000, 40),
+(25, 4, 41, 1, 21990000, 41),
+(26, 6, 42, 1, 290000, 42),
+(26, 3, 43, 1, 24990000, 43),
+(26, 11, 44, 1, 19990000, 44),
+(27, 3, 45, 1, 24990000, 45),
+(27, 8, 46, 1, 5990000, 46),
+(27, 7, 47, 1, 8490000, 47),
+(28, 9, 48, 1, 42990000, 48),
+(28, 1, 49, 1, 27990000, 49),
+(29, 11, 50, 1, 19990000, 50),
+(30, 3, 51, 1, 24990000, 51),
+(31, 14, 52, 1, 199000, 52),
+(31, 10, 53, 1, 45990000, 53),
+(31, 1, 54, 1, 27990000, 54),
+(32, 14, 55, 1, 199000, 55),
+(32, 11, 56, 1, 19990000, 56),
+(32, 8, 57, 1, 5990000, 57),
+(33, 4, 58, 1, 21990000, 58),
+(33, 2, 59, 1, 54990000, 59),
+(34, 10, 60, 1, 45990000, 60),
+(34, 13, 61, 1, 890000, 61),
+(35, 11, 62, 1, 19990000, 62),
+(35, 5, 63, 1, 490000, 63),
+(35, 11, 64, 1, 19990000, 64),
+(36, 5, 65, 1, 490000, 65),
+(36, 3, 66, 1, 24990000, 66),
+(37, 6, 67, 1, 290000, 67),
+(38, 8, 68, 1, 5990000, 68),
+(39, 12, 69, 1, 14990000, 69),
+(39, 8, 70, 1, 5990000, 70),
+(40, 9, 71, 1, 42990000, 71),
+(40, 11, 72, 1, 19990000, 72),
+(41, 4, 73, 1, 21990000, 73),
+(42, 7, 74, 1, 8490000, 74),
+(42, 5, 75, 1, 490000, 75),
+(42, 9, 76, 1, 42990000, 76),
+(43, 3, 77, 1, 24990000, 77),
+(43, 2, 78, 1, 54990000, 78),
+(44, 5, 79, 1, 490000, 79),
+(44, 10, 80, 1, 45990000, 80),
+(44, 13, 81, 1, 890000, 81),
+(45, 10, 82, 1, 45990000, 82),
+(45, 7, 83, 1, 8490000, 83),
+(46, 7, 84, 1, 8490000, 84),
+(46, 6, 85, 1, 290000, 85),
+(47, 14, 86, 1, 199000, 86),
+(48, 4, 87, 1, 21990000, 87),
+(48, 5, 88, 1, 490000, 88),
+(48, 9, 89, 1, 42990000, 89),
+(49, 8, 90, 1, 5990000, 90),
+(50, 9, 91, 1, 42990000, 91),
+(50, 11, 92, 1, 19990000, 92),
+(50, 5, 93, 1, 490000, 93),
+(51, 14, 94, 1, 199000, 94),
+(51, 9, 95, 1, 42990000, 95),
+(52, 8, 96, 1, 5990000, 96),
+(53, 3, 97, 1, 24990000, 97),
+(53, 1, 98, 1, 27990000, 98),
+(54, 1, 99, 1, 27990000, 99),
+(55, 8, 100, 1, 5990000, 100),
+(56, 4, 101, 1, 21990000, 101),
+(56, 8, 102, 1, 5990000, 102),
+(56, 11, 103, 1, 19990000, 103),
+(57, 2, 104, 1, 54990000, 104),
+(57, 1, 105, 1, 27990000, 105),
+(57, 6, 106, 1, 290000, 106),
+(58, 6, 107, 1, 290000, 107),
+(58, 6, 108, 1, 290000, 108),
+(58, 11, 109, 1, 19990000, 109),
+(59, 6, 110, 1, 290000, 110),
+(59, 3, 111, 1, 24990000, 111),
+(60, 6, 112, 1, 290000, 112),
+(61, 6, 113, 1, 290000, 113),
+(61, 5, 114, 1, 490000, 114),
+(62, 8, 115, 1, 5990000, 115),
+(62, 14, 116, 1, 199000, 116),
+(63, 8, 117, 1, 5990000, 117),
+(63, 7, 118, 1, 8490000, 118),
+(64, 7, 119, 1, 8490000, 119),
+(64, 7, 120, 1, 8490000, 120),
+(64, 7, 121, 1, 8490000, 121),
+(65, 14, 122, 1, 199000, 122),
+(65, 14, 123, 1, 199000, 123),
+(66, 10, 124, 1, 45990000, 124),
+(66, 7, 125, 1, 8490000, 125),
+(66, 13, 126, 1, 890000, 126),
+(67, 2, 127, 1, 54990000, 127),
+(67, 5, 128, 1, 450000, 128),
+(68, 1, 129, 1, 27990000, 129),
+(69, 14, 130, 1, 199000, 130),
+(69, 14, 131, 1, 199000, 131),
+(69, 3, 132, 1, 24990000, 132),
+(70, 2, 133, 1, 54990000, 133),
+(70, 2, 134, 1, 54990000, 134),
+(70, 13, 135, 1, 890000, 135);
 
-INSERT INTO payments (order_id, payment_url, status) VALUES
-(1, Null, 'success'),
-(2, Null, 'pending');
+INSERT INTO payments (order_id, payment_url, status, created_at, paid_at) VALUES
+(1, NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(3, NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
+(4, NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(5, NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
+(6, NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
+(7, NULL, 'pending', '2025-09-22 16:05:00', NULL),
+(8, NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
+(9, NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
+(10, NULL, 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00'),
+(11, NULL, 'success', '2025-09-27 15:45:00', '2025-09-27 15:45:00'),
+(12, NULL, 'success', '2025-09-28 18:00:00', '2025-09-28 18:00:00'),
+(13, NULL, 'success', '2025-09-29 10:25:00', '2025-09-29 10:25:00'),
+(14, NULL, 'pending', '2025-09-30 19:50:00', NULL),
+(15, NULL, 'success', '2025-10-01 09:05:00', '2025-10-01 09:05:00'),
+(16, NULL, 'failed', '2025-10-02 11:15:00', '2025-10-02 11:20:00'),
+(17, NULL, 'success', '2025-10-03 12:40:00', '2025-10-03 12:40:00'),
+(18, NULL, 'success', '2025-10-04 08:12:00', '2025-10-04 08:12:00'),
+(19, NULL, 'success', '2025-10-05 20:25:00', '2025-10-05 20:25:00'),
+(20, NULL, 'success', '2025-10-06 07:10:00', '2025-10-06 07:10:00'),
+(21, NULL, 'success', '2025-10-07 00:05:00', '2025-10-07 00:05:00'),
+(22, NULL, 'success', '2025-10-07 03:19:00', '2025-10-07 03:19:00'),
+(23, NULL, 'success', '2025-10-07 08:30:00', '2025-10-07 08:30:00'),
+(24, NULL, 'success', '2025-10-07 14:05:00', '2025-10-07 14:05:00'),
+(25, NULL, 'success', '2025-10-07 18:01:00', '2025-10-07 18:01:00'),
+(26, NULL, 'success', '2025-10-07 19:02:00', '2025-10-07 19:02:00'),
+(27, NULL, 'success', '2025-10-07 22:55:00', '2025-10-07 22:55:00'),
+(28, NULL, 'success', '2025-10-08 04:15:00', '2025-10-08 04:15:00'),
+(29, NULL, 'success', '2025-10-08 06:54:00', '2025-10-08 06:54:00'),
+(30, NULL, 'success', '2025-10-08 09:57:00', '2025-10-08 09:57:00'),
+(31, NULL, 'success', '2025-10-08 12:53:00', '2025-10-08 12:53:00'),
+(32, NULL, 'success', '2025-10-08 15:18:00', '2025-10-08 15:18:00'),
+(33, NULL, 'success', '2025-10-08 17:40:00', '2025-10-08 17:40:00'),
+(34, NULL, 'success', '2025-10-08 22:42:00', '2025-10-08 22:42:00'),
+(35, NULL, 'success', '2025-10-09 02:26:00', '2025-10-09 02:26:00'),
+(36, NULL, 'success', '2025-10-09 04:03:00', '2025-10-09 04:03:00'),
+(37, NULL, 'success', '2025-10-09 06:33:00', '2025-10-09 06:33:00'),
+(38, NULL, 'success', '2025-10-09 12:11:00', '2025-10-09 12:11:00'),
+(39, NULL, 'success', '2025-10-09 16:34:00', '2025-10-09 16:34:00'),
+(40, NULL, 'success', '2025-10-09 20:27:00', '2025-10-09 20:27:00'),
+(41, NULL, 'success', '2025-10-09 21:31:00', '2025-10-09 21:31:00'),
+(42, NULL, 'success', '2025-10-10 03:24:00', '2025-10-10 03:24:00'),
+(43, NULL, 'success', '2025-10-10 08:15:00', '2025-10-10 08:15:00'),
+(44, NULL, 'success', '2025-10-10 10:55:00', '2025-10-10 10:55:00'),
+(45, NULL, 'success', '2025-10-10 13:56:00', '2025-10-10 13:56:00'),
+(46, NULL, 'success', '2025-10-10 16:28:00', '2025-10-10 16:28:00'),
+(47, NULL, 'success', '2025-10-10 18:38:00', '2025-10-10 18:38:00'),
+(48, NULL, 'success', '2025-10-11 00:01:00', '2025-10-11 00:01:00'),
+(49, NULL, 'success', '2025-10-11 05:13:00', '2025-10-11 05:13:00'),
+(50, NULL, 'success', '2025-10-11 10:11:00', '2025-10-11 10:11:00'),
+(51, NULL, 'success', '2025-10-11 12:27:00', '2025-10-11 12:27:00'),
+(52, NULL, 'success', '2025-10-11 14:26:00', '2025-10-11 14:26:00'),
+(53, NULL, 'success', '2025-10-11 19:38:00', '2025-10-11 19:38:00'),
+(54, NULL, 'success', '2025-10-12 00:01:00', '2025-10-12 00:01:00'),
+(55, NULL, 'success', '2025-10-12 02:22:00', '2025-10-12 02:22:00'),
+(56, NULL, 'success', '2025-10-12 07:41:00', '2025-10-12 07:41:00'),
+(57, NULL, 'success', '2025-10-12 10:42:00', '2025-10-12 10:42:00'),
+(58, NULL, 'success', '2025-10-12 12:49:00', '2025-10-12 12:49:00'),
+(59, NULL, 'success', '2025-10-12 15:24:00', '2025-10-12 15:24:00'),
+(60, NULL, 'success', '2025-10-12 18:27:00', '2025-10-12 18:27:00'),
+(61, NULL, 'success', '2025-10-12 21:19:00', '2025-10-12 21:19:00'),
+(62, NULL, 'success', '2025-10-13 02:12:00', '2025-10-13 02:12:00'),
+(63, NULL, 'success', '2025-10-13 04:57:00', '2025-10-13 04:57:00'),
+(64, NULL, 'success', '2025-10-13 10:49:00', '2025-10-13 10:49:00'),
+(65, NULL, 'success', '2025-10-13 12:10:00', '2025-10-13 12:10:00'),
+(66, NULL, 'success', '2025-10-13 13:14:00', '2025-10-13 13:14:00'),
+(67, NULL, 'success', '2025-10-13 14:25:00', '2025-10-13 14:25:00'),
+(68, NULL, 'success', '2025-10-13 17:43:00', '2025-10-13 17:43:00'),
+(69, NULL, 'success', '2025-10-13 21:17:00', '2025-10-13 21:17:00'),
+(70, NULL, 'success', '2025-10-14 01:45:00', '2025-10-14 01:45:00');
 
-INSERT INTO tasks (title, description, manager_id) VALUES
-('Setup new laptops', 'Prepare laptops for new staff', 2),
-('Fix printer issue', 'Resolve error E05 in printer', 2);
-
-INSERT INTO task_details (task_id, technical_staff_id, deadline, status) VALUES
-(1, 3, '2025-10-05 00:00:00', 'in_progress'),
-(2, 4, '2025-10-10 00:00:00', 'pending');
-
-INSERT INTO customer_issues (customer_id, title, description) VALUES
-(6, 'Laptop overheating', 'Laptop gets very hot after 30 minutes'),
-(7, 'Phone battery issue', 'Battery drains too fast on Galaxy S24');
-
-INSERT INTO transactions (storekeeper_id, technical_staff_id, type, status) VALUES
-(5, 3, 'export', 'confirmed'),
-(5, 4, 'import', 'pending');
+INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES
+(1, 5, 6, NULL, '2025-09-28 00:10:00', 'export', 'confirmed'),
+(2, 5, 7, NULL, '2025-09-28 00:15:00', 'export', 'pending'),
+(3, 5, 8, NULL, '2025-09-12 10:06:00', 'export', 'confirmed'),
+(4, 5, 9, NULL, '2025-09-15 14:36:00', 'export', 'confirmed'),
+(5, 5, 10, NULL, '2025-09-18 09:21:00', 'export', 'confirmed'),
+(6, 5, 11, NULL, '2025-09-20 11:51:00', 'export', 'confirmed'),
+(7, 5, 12, NULL, '2025-09-22 16:06:00', 'export', 'pending'),
+(8, 5, 6, NULL, '2025-09-24 18:16:00', 'export', 'confirmed'),
+(9, 5, 7, NULL, '2025-09-25 08:26:00', 'export', 'confirmed'),
+(10, 5, 8, NULL, '2025-09-26 13:11:00', 'export', 'confirmed'),
+(11, 5, 9, NULL, '2025-09-27 15:46:00', 'export', 'confirmed'),
+(12, 5, 10, NULL, '2025-09-28 18:01:00', 'export', 'confirmed'),
+(13, 5, 11, NULL, '2025-09-29 10:26:00', 'export', 'confirmed'),
+(14, 5, 12, NULL, '2025-09-30 19:51:00', 'export', 'pending'),
+(15, 5, 6, NULL, '2025-10-01 09:06:00', 'export', 'confirmed'),
+(16, 5, 7, NULL, '2025-10-02 11:16:00', 'export', 'cancelled'),
+(17, 5, 8, NULL, '2025-10-03 12:41:00', 'export', 'confirmed'),
+(18, 5, 9, NULL, '2025-10-04 08:13:00', 'export', 'confirmed'),
+(19, 5, 10, NULL, '2025-10-05 20:26:00', 'export', 'confirmed'),
+(20, 5, 11, NULL, '2025-10-06 07:11:00', 'export', 'confirmed'),
+(21, 5, 9, NULL, '2025-10-07 00:06:00', 'export', 'confirmed'),
+(22, 5, 9, NULL, '2025-10-07 03:20:00', 'export', 'confirmed'),
+(23, 5, 7, NULL, '2025-10-07 08:31:00', 'export', 'confirmed'),
+(24, 5, 10, NULL, '2025-10-07 14:06:00', 'export', 'confirmed'),
+(25, 5, 6, NULL, '2025-10-07 18:02:00', 'export', 'confirmed'),
+(26, 5, 8, NULL, '2025-10-07 19:03:00', 'export', 'confirmed'),
+(27, 5, 6, NULL, '2025-10-07 22:56:00', 'export', 'confirmed'),
+(28, 5, 8, NULL, '2025-10-08 04:16:00', 'export', 'confirmed'),
+(29, 5, 7, NULL, '2025-10-08 06:55:00', 'export', 'confirmed'),
+(30, 5, 9, NULL, '2025-10-08 09:58:00', 'export', 'confirmed'),
+(31, 5, 8, NULL, '2025-10-08 12:54:00', 'export', 'confirmed'),
+(32, 5, 9, NULL, '2025-10-08 15:19:00', 'export', 'confirmed'),
+(33, 5, 10, NULL, '2025-10-08 17:41:00', 'export', 'confirmed'),
+(34, 5, 8, NULL, '2025-10-08 22:43:00', 'export', 'confirmed'),
+(35, 5, 10, NULL, '2025-10-09 02:27:00', 'export', 'confirmed'),
+(36, 5, 7, NULL, '2025-10-09 04:04:00', 'export', 'confirmed'),
+(37, 5, 6, NULL, '2025-10-09 06:34:00', 'export', 'confirmed'),
+(38, 5, 10, NULL, '2025-10-09 12:12:00', 'export', 'confirmed'),
+(39, 5, 7, NULL, '2025-10-09 16:35:00', 'export', 'confirmed'),
+(40, 5, 9, NULL, '2025-10-09 20:28:00', 'export', 'confirmed'),
+(41, 5, 8, NULL, '2025-10-09 21:32:00', 'export', 'confirmed'),
+(42, 5, 7, NULL, '2025-10-10 03:25:00', 'export', 'confirmed'),
+(43, 5, 11, NULL, '2025-10-10 08:16:00', 'export', 'confirmed'),
+(44, 5, 11, NULL, '2025-10-10 10:56:00', 'export', 'confirmed'),
+(45, 5, 8, NULL, '2025-10-10 13:57:00', 'export', 'confirmed'),
+(46, 5, 7, NULL, '2025-10-10 16:29:00', 'export', 'confirmed'),
+(47, 5, 12, NULL, '2025-10-10 18:39:00', 'export', 'confirmed'),
+(48, 5, 11, NULL, '2025-10-11 00:02:00', 'export', 'confirmed'),
+(49, 5, 7, NULL, '2025-10-11 05:14:00', 'export', 'confirmed'),
+(50, 5, 11, NULL, '2025-10-11 10:12:00', 'export', 'confirmed'),
+(51, 5, 12, NULL, '2025-10-11 12:28:00', 'export', 'confirmed'),
+(52, 5, 10, NULL, '2025-10-11 14:27:00', 'export', 'confirmed'),
+(53, 5, 12, NULL, '2025-10-11 19:39:00', 'export', 'confirmed'),
+(54, 5, 11, NULL, '2025-10-12 00:02:00', 'export', 'confirmed'),
+(55, 5, 11, NULL, '2025-10-12 02:23:00', 'export', 'confirmed'),
+(56, 5, 7, NULL, '2025-10-12 07:42:00', 'export', 'confirmed'),
+(57, 5, 9, NULL, '2025-10-12 10:43:00', 'export', 'confirmed'),
+(58, 5, 6, NULL, '2025-10-12 12:50:00', 'export', 'confirmed'),
+(59, 5, 8, NULL, '2025-10-12 15:25:00', 'export', 'confirmed'),
+(60, 5, 10, NULL, '2025-10-12 18:28:00', 'export', 'confirmed'),
+(61, 5, 9, NULL, '2025-10-12 21:20:00', 'export', 'confirmed'),
+(62, 5, 10, NULL, '2025-10-13 02:13:00', 'export', 'confirmed'),
+(63, 5, 12, NULL, '2025-10-13 04:58:00', 'export', 'confirmed'),
+(64, 5, 10, NULL, '2025-10-13 10:50:00', 'export', 'confirmed'),
+(65, 5, 10, NULL, '2025-10-13 12:11:00', 'export', 'confirmed'),
+(66, 5, 6, NULL, '2025-10-13 13:15:00', 'export', 'confirmed'),
+(67, 5, 8, NULL, '2025-10-13 14:26:00', 'export', 'confirmed'),
+(68, 5, 6, NULL, '2025-10-13 17:44:00', 'export', 'confirmed'),
+(69, 5, 12, NULL, '2025-10-13 21:18:00', 'export', 'confirmed'),
+(70, 5, 10, NULL, '2025-10-14 01:46:00', 'export', 'confirmed'),
+(101, 5, NULL, 1, '2025-09-10 09:00:00', 'import', 'confirmed'),
+(102, 5, NULL, 2, '2025-09-16 09:00:00', 'import', 'confirmed');
 
 INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
-(1, 1, 2),
-(2, 5, 10);
+(1, 3, 1),
+(2, 2, 1),
+(3, 4, 1),
+(4, 2, 1), (4, 6, 1),
+(5, 1, 1), (5, 5, 1),
+(6, 7, 1),
+(7, 9, 1),
+(8,12, 1),
+(9, 3, 1),
+(10,11, 1), (10,14, 1),
+(11,10, 1), (11,14, 1), (11,13, 1),
+(12,13, 1), (12,7, 1),
+(13, 3, 1), (13,2, 1),
+(14, 1, 1), (14,6, 1),
+(15, 8, 1),
+(16, 7, 1),
+(17,11, 1), (17,14, 1),
+(18, 9, 1), (18,3, 1), (18,5, 1),
+(19, 4, 1),
+(20,12, 1), (20,6, 1),
+(21, 12, 1),
+(22, 6, 1),
+(23, 8, 1), (23, 6, 1), (23, 11, 1),
+(24, 6, 1), (24, 6, 1),
+(25, 11, 1), (25, 4, 1),
+(26, 6, 1), (26, 3, 1), (26, 11, 1),
+(27, 3, 1), (27, 8, 1), (27, 7, 1),
+(28, 9, 1), (28, 1, 1),
+(29, 11, 1),
+(30, 3, 1),
+(31, 14, 1), (31, 10, 1), (31, 1, 1),
+(32, 14, 1), (32, 11, 1), (32, 8, 1),
+(33, 4, 1), (33, 2, 1),
+(34, 10, 1), (34, 13, 1),
+(35, 11, 1), (35, 5, 1), (35, 11, 1),
+(36, 5, 1), (36, 3, 1),
+(37, 6, 1),
+(38, 8, 1),
+(39, 12, 1), (39, 8, 1),
+(40, 9, 1), (40, 11, 1),
+(41, 4, 1),
+(42, 7, 1), (42, 5, 1), (42, 9, 1),
+(43, 3, 1), (43, 2, 1),
+(44, 5, 1), (44, 10, 1), (44, 13, 1),
+(45, 10, 1), (45, 7, 1),
+(46, 7, 1), (46, 6, 1),
+(47, 14, 1),
+(48, 4, 1), (48, 5, 1), (48, 9, 1),
+(49, 8, 1),
+(50, 9, 1), (50, 11, 1), (50, 5, 1),
+(51, 14, 1), (51, 9, 1),
+(52, 8, 1),
+(53, 3, 1), (53, 1, 1),
+(54, 1, 1),
+(55, 8, 1),
+(56, 4, 1), (56, 8, 1), (56, 11, 1),
+(57, 2, 1), (57, 1, 1), (57, 6, 1),
+(58, 6, 1), (58, 6, 1), (58, 11, 1),
+(59, 6, 1), (59, 3, 1),
+(60, 6, 1),
+(61, 6, 1), (61, 5, 1),
+(62, 8, 1), (62, 14, 1),
+(63, 8, 1), (63, 7, 1),
+(64, 7, 1), (64, 7, 1), (64, 7, 1),
+(65, 14, 1), (65, 14, 1),
+(66, 10, 1), (66, 7, 1), (66, 13, 1),
+(67, 2, 1), (67, 5, 1),
+(68, 1, 1),
+(69, 14, 1), (69, 14, 1), (69, 3, 1),
+(70, 2, 1), (70, 2, 1), (70, 13, 1),
+(101, 1, 5), (101, 3, 10), (101, 13, 50),
+(102, 2, 3), (102, 11, 10), (102, 14, 100);
+
+INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, created_at) VALUES
+(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, '2025-10-02 11:00:00'),
+(10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, '2025-10-03 09:30:00'),
+(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, '2025-10-04 16:45:00');
+
+INSERT INTO tasks (id, title, description, manager_id, customer_issue_id) VALUES
+(1, 'Kiểm tra iPhone 15 nóng', 'Khách hàng Hieu Pham (ID 6) báo máy nóng khi sạc.', 2, 1),
+(2, 'Kiểm tra pin iPhone 15', 'Khách hàng Customer (ID 7) báo máy tụt pin nhanh.', 2, 2),
+(3, 'Sửa lỗi kẹt giấy máy in', 'Khách hàng Le Chi (ID 10) báo máy in HP kẹt giấy.', 2, 3),
+(4, 'Kiểm tra màn hình iPad', 'Khách hàng Pham Duong (ID 11) báo màn hình sọc.', 2, 4);
+
+INSERT INTO task_details (task_id, technical_staff_id, deadline, status) VALUES
+(1, 3, '2025-10-08 17:00:00', 'in_progress'),
+(2, 3, '2025-10-09 17:00:00', 'pending'),
+(3, 3, '2025-10-10 17:00:00', 'pending');
 
 INSERT INTO permissions (id, permission_name) VALUES
-(1, 'CREATE_TASK'),
-(2, 'VIEW_TASK_LIST'),
-(3, 'UPDATE_TASK'),
-(4, 'DELETE_TASK'),
-(5, 'ASSIGN_TASK'),
-(6, 'UNASSIGN_TASK'),
-
-(7, 'CREATE_ACCOUNT'),
-(8, 'VIEW_ACCOUNT'),
-(9, 'UPDATE_ACCOUNT'),
-(10, 'ACTIVE_ACCOUNT'),
-(11, 'DEACTIVE_ACCOUNT'),
-
-(12, 'CATEGORY_MANAGEMENT'),
-(13, 'PRODUCT_CATALOG_MANAGEMENT'),
-(14, 'PRODUCT_OVERVIEW'),
-(15, 'PRICING_MANAGEMENT'),
-
-(16, 'CREATE_IMPORT_EXPORT_ORDER'),
-(17, 'QUANTITY_CHECK'),
-(18, 'IMPORT_EXPORT_REPORTS'),
-
-(19, 'CRUD_SUPPLIER'),
-(20, 'PRODUCT_SUPPLY_MANAGEMENT'),
-(21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
-(22, 'SUPPLIER_INFO_INTEGRATION'),
-
-(23, 'ORDER_VALIDATION'),
-(24, 'CRUD_ORDER'),
-(25, 'ORDER_TRACKING'),
-(26, 'ORDER_REPORTS'),
-
-(27, 'INTEGRATION_PAYOS'),
-(28, 'PAYMENT_REPORTS'),
-(29, 'PAYMENT_CONFIRMATION'),
-(30, 'PAYMENT_REQUEST_CREATION'),
-
-(31, 'REVENUE_PROFIT_ANALYSIS'),
-(32, 'CUSTOMER_ORDER_REPORT'),
-(33, 'SALE_REPORTS'),
-(34, 'INVENTORY_REPORTS'),
-
-(35, 'CUSTOMER_ISSUES_RESPONDING'),
-(36, 'CUSTOMER_ISSUES_MANAGEMENT'),
+(1, 'CREATE_TASK'), (2, 'VIEW_TASK_LIST'), (3, 'UPDATE_TASK'), (4, 'DELETE_TASK'), (5, 'ASSIGN_TASK'),
+(6, 'UNASSIGN_TASK'), (7, 'CREATE_ACCOUNT'), (8, 'VIEW_ACCOUNT'), (9, 'UPDATE_ACCOUNT'), (10, 'ACTIVE_ACCOUNT'),
+(11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'PRODUCT_CATALOG_MANAGEMENT'), (14, 'PRODUCT_OVERVIEW'),
+(15, 'PRICING_MANAGEMENT'), (16, 'CREATE_IMPORT_EXPORT_ORDER'), (17, 'QUANTITY_CHECK'), (18, 'IMPORT_EXPORT_REPORTS'),
+(19, 'CRUD_SUPPLIER'), (20, 'PRODUCT_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
+(22, 'SUPPLIER_INFO_INTEGRATION'), (23, 'ORDER_VALIDATION'), (24, 'CRUD_ORDER'), (25, 'ORDER_TRACKING'),
+(26, 'ORDER_REPORTS'), (27, 'INTEGRATION_PAYOS'), (28, 'PAYMENT_REPORTS'), (29, 'PAYMENT_CONFIRMATION'),
+(30, 'PAYMENT_REQUEST_CREATION'), (31, 'REVENUE_PROFIT_ANALYSIS'), (32, 'CUSTOMER_ORDER_REPORT'),
+(33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
 (37, 'CUSTOMER_ISSUES');
 
 -- Admin
-INSERT INTO role_permission (role_id, permission_id)
-SELECT 1, id FROM permissions;
-
+INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
 -- Technical Manager
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6),
-(2, 12), (2, 13), (2, 14), (2, 15),
-(2, 19), (2, 20), (2, 21), (2, 22),
-(2, 23), (2, 24), (2, 25), (2, 26),
-(2, 28),
-(2, 31), (2, 32), (2, 33), (2, 34),
-(2, 36)
-;
-
+(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 12), (2, 13), (2, 14), (2, 15), (2, 19),
+(2, 20), (2, 21), (2, 22), (2, 23), (2, 24), (2, 25), (2, 26), (2, 28), (2, 31), (2, 32), (2, 33), (2, 34), (2, 36);
 -- Technical Staff
-INSERT INTO role_permission (role_id, permission_id) VALUES
-(3, 2), 
-(3, 3),
-(3, 14),
-(3, 16), 
-(3, 36)
-;
-
+INSERT INTO role_permission (role_id, permission_id) VALUES (3, 2), (3, 3), (3, 14), (3, 16), (3, 36);
 -- Customer Support Staff
-INSERT INTO role_permission (role_id, permission_id) VALUES
-(4, 14),
-(4, 23), (4, 25), (4, 26),
-(4, 35), (4, 36)
-;
-
+INSERT INTO role_permission (role_id, permission_id) VALUES (4, 14), (4, 23), (4, 25), (4, 26), (4, 35), (4, 36);
 -- Storekeeper
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(5, 12), (5, 13), (5, 14), (5, 15), 
-(5, 16), (5, 17), (5, 18), 
-(5, 23), (5, 24), (5, 25), (5, 26),
-(5, 28),
-(5, 31), (5, 32), (5, 33), (5, 34)
-;
-
+(5, 12), (5, 13), (5, 14), (5, 15), (5, 16), (5, 17), (5, 18), (5, 23), (5, 24), (5, 25), (5, 26), (5, 28),
+(5, 31), (5, 32), (5, 33), (5, 34);
 -- Customer
-INSERT INTO role_permission (role_id, permission_id) VALUES
-(6, 14), 
-(6, 24), (6, 25), (6, 26),
-(6, 27), (6, 30),
-(6, 37)
-;
+INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 24), (6, 25), (6, 26), (6, 27), (6, 30), (6, 37);
 
+INSERT INTO devices (id, category_id, name, price, unit, image_url, description) VALUES
+(25, 1, 'Dell XPS 15', 48990000, 'pcs', NULL, '15.6" OLED, Intel Core Ultra 9, NVIDIA RTX 40-series; máy trạm sáng tạo mạnh mẽ.'),
+(26, 1, 'Lenovo Yoga 9i 14', 38990000, 'pcs', NULL, '14" 2-in-1, màn hình OLED 4K, Bowers & Wilkins soundbar; thiết kế xoay gập cao cấp.'),
+(27, 1, 'HP Envy x360 15', 24990000, 'pcs', NULL, '15.6" 2-in-1, AMD Ryzen 7, màn cảm ứng; laptop linh hoạt cho công việc và giải trí.'),
+(28, 1, 'Acer Swift Go 14', 21990000, 'pcs', NULL, '14" OLED, Intel Core Ultra 7, siêu mỏng nhẹ; tối ưu cho di động và hiệu năng.'),
+(29, 1, 'ASUS Zenbook Duo', 51990000, 'pcs', NULL, 'Laptop 2 màn hình 14" OLED, bàn phím rời; trải nghiệm đa nhiệm đỉnh cao.'),
+(30, 1, 'Samsung Galaxy Book4 Ultra', 59990000, 'pcs', NULL, '16" Dynamic AMOLED 2X, Intel Core Ultra 9, RTX 4070; hiệu năng cao trong hệ sinh thái Samsung.'),
+(31, 1, 'Lenovo Legion 5 Pro', 39990000, 'pcs', NULL, '16" gaming, màn QHD+ 165Hz, AMD Ryzen + RTX; tản nhiệt hiệu quả, hiệu năng ổn định.'),
+(32, 1, 'HP Omen 16', 41990000, 'pcs', NULL, '16.1" gaming, Intel Core i7, RTX 4060, tản nhiệt OMEN Tempest; thiết kế hiện đại.'),
+(33, 1, 'Microsoft Surface Pro 9', 32990000, 'pcs', NULL, '13" 2-in-1, Intel Core i7, màn PixelSense 120Hz; kết hợp sức mạnh laptop và sự linh hoạt tablet.'),
+(34, 1, 'Dell Inspiron 16', 19990000, 'pcs', NULL, '16" FHD+, Intel Core i5/i7, RAM DDR5; laptop văn phòng màn hình lớn, giá hợp lý.'),
+(35, 1, 'Acer Predator Helios 300', 37990000, 'pcs', NULL, '15.6" QHD 165Hz, Intel Core i7, RTX 30-series; laptop gaming tầm trung phổ biến.'),
+(36, 1, 'Lenovo IdeaPad Slim 5', 18990000, 'pcs', NULL, '14" OLED, AMD Ryzen 5, thiết kế mỏng nhẹ; lựa chọn tốt cho sinh viên, văn phòng.'),
+(37, 1, 'ASUS Vivobook Pro 15 OLED', 28990000, 'pcs', NULL, '15.6" OLED, AMD Ryzen 9, NVIDIA RTX; dành cho nhà sáng tạo nội dung.'),
+(38, 1, 'Framework Laptop 13', 29990000, 'pcs', NULL, '13.5" laptop module, cho phép tự nâng cấp và sửa chữa; bền vững và tùy biến cao.'),
+(39, 1, 'MSI Katana 15', 25990000, 'pcs', NULL, '15.6" 144Hz, Intel Core i7, RTX 4050; laptop gaming nhập môn với bàn phím RGB.'),
+(40, 2, 'Samsung Galaxy S24 Ultra', 33990000, 'pcs', NULL, 'Flagship 6.8", bút S Pen, khung Titan, camera 200MP; đỉnh cao nhiếp ảnh và Galaxy AI.'),
+(41, 2, 'iPhone 15 Pro Max', 35990000, 'pcs', NULL, 'Smartphone 6.7", chip A17 Pro, camera tele 5x, pin tốt nhất; lựa chọn cao cấp nhất của Apple.'),
+(42, 2, 'Google Pixel 9 Pro', 28990000, 'pcs', NULL, 'Flagship Google, chip Tensor G4, hệ thống camera chuyên nghiệp với tính năng AI độc quyền.'),
+(43, 2, 'Samsung Galaxy Z Flip 5', 25990000, 'pcs', NULL, 'Điện thoại gập vỏ sò, màn hình ngoài Flex Window lớn; nhỏ gọn, thời trang và linh hoạt.'),
+(44, 2, 'Xiaomi 14 Ultra', 32990000, 'pcs', NULL, 'Hệ thống camera Leica Summilux, cảm biến 1-inch, quay video 8K; smartphone chuyên chụp ảnh.'),
+(45, 2, 'Sony Xperia 1 VI', 34990000, 'pcs', NULL, 'Màn hình 4K, camera tele zoom quang học thực, các tính năng chuyên nghiệp từ máy ảnh Alpha.'),
+(46, 2, 'Nothing Phone (3)', 16990000, 'pcs', NULL, 'Thiết kế trong suốt độc đáo với giao diện Glyph, trải nghiệm Android tối giản và khác biệt.'),
+(47, 2, 'Motorola Razr+', 24990000, 'pcs', NULL, 'Điện thoại gập vỏ sò, màn hình ngoài lớn nhất phân khúc, thiết kế da vegan cao cấp.'),
+(48, 2, 'Oppo Find X7 Ultra', 30990000, 'pcs', NULL, 'Camera Hasselblad, hai camera tele tiềm vọng; khả năng zoom và chụp chân dung ấn tượng.'),
+(49, 2, 'Vivo X100 Pro', 29990000, 'pcs', NULL, 'Camera ZEISS APO, chip Dimensity 9300, chuyên gia chụp ảnh thiếu sáng và tele.'),
+(50, 2, 'Samsung Galaxy A55', 9990000, 'pcs', NULL, 'Smartphone tầm trung, khung kim loại, màn Super AMOLED 120Hz, kháng nước IP67; cân bằng tốt.'),
+(51, 2, 'iPhone SE (4th Gen)', 12990000, 'pcs', NULL, 'Thiết kế giống iPhone 14, chip A-series mạnh mẽ, nút Action; lựa chọn iPhone giá rẻ nhất.'),
+(52, 2, 'Google Pixel 8a', 13990000, 'pcs', NULL, 'Trải nghiệm AI của Google với giá tầm trung, camera chụp ảnh đẹp, cập nhật phần mềm lâu dài.'),
+(53, 2, 'OnePlus Nord 4', 11990000, 'pcs', NULL, 'Hiệu năng mạnh mẽ trong tầm giá, sạc nhanh SUPERVOOC, màn hình mượt mà.'),
+(54, 2, 'Xiaomi Redmi Note 14 Pro', 8990000, 'pcs', NULL, 'Smartphone tầm trung với camera 200MP, sạc nhanh 120W, màn hình AMOLED 120Hz.');
+
+UPDATE devices
+SET is_featured = TRUE
+WHERE id IN (1, 5, 12, 4, 6, 3, 25, 26, 14, 27, 30);
+
+INSERT INTO carts (id, sum, user_id) VALUES
+(1, 55280000, 9),
+(2, 28480000, 10),
+(3, 20189000, 8),
+(4, 79980000, 11);
+
+INSERT INTO cart_details (price, quantity, cart_id, device_id) VALUES
+(54990000, 1, 1, 2),
+(290000, 1, 1, 6),
+(27990000, 1, 2, 1),
+(490000, 1, 2, 5),
+(19990000, 1, 3, 11),
+(199000, 1, 3, 14),
+(24990000, 1, 4, 3),
+(54990000, 1, 4, 2);
