@@ -4,7 +4,7 @@ import java.sql.Timestamp;
 
 public class Device {
 	private int id;
-	private int categoryId;
+	private Category category;
 	private String name;
 	private double price;
 	private String unit;
@@ -13,13 +13,14 @@ public class Device {
 	private String desc;
 	private Timestamp created_at;
 	private boolean is_featured;
+	private int device_inventory;
+	private String status;
 
 	public Device() {}
 
-	public Device(int id, int categoryId, String name, double price, String unit, String imageUrl, String desc, Timestamp created_at, boolean is_featured) {
-		super();
+	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc, Timestamp created_at, boolean is_featured) {
 		this.id = id;
-		this.categoryId = categoryId;
+		this.category = category;
 		this.name = name;
 		this.price = price;
 		this.unit = unit;
@@ -29,6 +30,7 @@ public class Device {
 		this.is_featured = is_featured;
 	}
 	
+	
 	public Device(int id, String name, double price, String imageUrl) {
 		this.id = id;
 		this.name = name;
@@ -37,6 +39,38 @@ public class Device {
 	}
 	
 	
+	public Device(int id, Category category, String name, double price, String imageUrl, int device_inventory, String status) {
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.imageUrl = imageUrl;
+		this.device_inventory = device_inventory;
+		this.status = status;
+	}
+	
+	public Device(int id, Category category, String name, double price, String imageUrl, String unit, String desc, Timestamp created_at, int device_inventory) {
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.imageUrl = imageUrl;
+		this.device_inventory = device_inventory;
+		this.unit = unit;
+		this.desc = desc;
+		this.created_at = created_at;
+	}
+	
+	public Device(int id, Category category, String name, double price, String imageUrl, String unit, String desc) {
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.imageUrl = imageUrl;
+		this.unit = unit;
+		this.desc = desc;
+	}
+
 	public boolean isIs_featured() {
 		return is_featured;
 	}
@@ -78,14 +112,6 @@ public class Device {
 		this.id = id;
 	}
 
-	public int getCategoryId() {
-		return categoryId;
-	}
-
-	public void setCategoryId(int categoryId) {
-		this.categoryId = categoryId;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -119,9 +145,33 @@ public class Device {
 	}
 
 
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public int getDevice_inventory() {
+		return device_inventory;
+	}
+
+	public void setDevice_inventory(int device_inventory) {
+		this.device_inventory = device_inventory;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	@Override
 	public String toString() {
-		return "Device [id=" + id + ", categoryId=" + categoryId + ", name=" + name + ", price=" + price + ", unit="
+		return "Device [id=" + id + ", categoryId=" + category + ", name=" + name + ", price=" + price + ", unit="
 				+ unit + ", imageUrl=" + imageUrl;
 	}
 	

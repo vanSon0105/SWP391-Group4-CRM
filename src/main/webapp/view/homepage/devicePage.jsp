@@ -54,7 +54,7 @@ body.shop-page.catalog-page .product-grid {
 								value="${category.id}" onchange="this.form.submit()"
 								style="margin-right: 5px;"
 								<c:if test="${param.category == category.id}">checked</c:if>>
-								${category.categoryName} </input>
+								${category.name} </input>
 							</span>
 
 						</c:forEach>

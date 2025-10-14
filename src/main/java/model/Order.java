@@ -3,18 +3,17 @@ package model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-import model.EnumModel.OrderEnum;
 
 public class Order {
 	private int id;
 	private Customer customer_id;
 	private double total_amount;
-	private OrderEnum status;
+	private String status;
 	private Timestamp date;
 	
 	public Order() {}
 
-	public Order(int id, Customer customer_id, double total_amount, OrderEnum status, Timestamp date) {
+	public Order(int id, Customer customer_id, double total_amount, String status, Timestamp date) {
 		super();
 		this.id = id;
 		this.customer_id = customer_id;
@@ -47,11 +46,11 @@ public class Order {
 		this.total_amount = total_amount;
 	}
 
-	public OrderEnum getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
-	public void setStatus(OrderEnum status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 

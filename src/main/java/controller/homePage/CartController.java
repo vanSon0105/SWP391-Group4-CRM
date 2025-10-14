@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Cart;
 import model.CartDetail;
+import model.User;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,9 +26,10 @@ public class CartController extends HttpServlet {
 		public CartDAO cdao = new CartDAO();
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-//        int userId = (int) session.getAttribute("id");
-		int id = 2;
-		List<CartDetail> list = cdao.getCartDetail(id);
+		User u = (User) session.getAttribute("user");
+//        int userId = u.getId();
+		int userId = 2;
+		List<CartDetail> list = cdao.getCartDetail(userId);
 		int cartId = -1;
 		double cartTotal = 0;
 		double discount = 0;
