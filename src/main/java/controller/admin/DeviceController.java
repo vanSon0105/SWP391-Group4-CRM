@@ -21,7 +21,7 @@ import dao.DeviceDAO;
 /**
  * Servlet implementation class DeviceController
  */
-@WebServlet({"/device-show", "/device-view", "/device-serials", "/device-update", "/device-add"})
+@WebServlet({"/device-show", "/device-view", "/device-serials", "/device-update", "/device-add", "/device-delete"})
 @MultipartConfig
 public class DeviceController extends HttpServlet {
 	public DeviceDAO dao = new DeviceDAO();
@@ -29,8 +29,8 @@ public class DeviceController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
         switch (path) {
-            case "/device-show":
-                showDeviceList(request, response);
+            case "/device-delete":
+                deleteDevice(request, response);
                 break;
             case "/device-serials":
             	viewDeviceSerialList(request, response);
@@ -44,7 +44,8 @@ public class DeviceController extends HttpServlet {
             case "/device-add":
             	addDevice(request, response);
             	break;
-            
+            default:
+            	showDeviceList(request, response);
         }
 	}
 	
@@ -57,7 +58,9 @@ public class DeviceController extends HttpServlet {
             case "/device-add":
             	addDeviceDoPost(request, response);
             	break;
-            
+            case "/device-delete":
+            	deleteDeviceDoPost(request, response);
+            	break;
         }
     }
 	
@@ -170,4 +173,36 @@ public class DeviceController extends HttpServlet {
         response.sendRedirect("device-show");
 	}
 
+	public void deleteDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = 0;
+		try {
+			id = Integer.parseInt(request.getParameter("id"));			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		Device getDevice = dao.getDeviceById(id);
+		List<DeviceSerial> listDeviceSerials = dao.getAllDeviceSerials(getDevice.getId());
+		request.setAttribute("listDeviceSerials", listDeviceSerials);
+		request.setAttribute("device", getDevice);
+		request.getRequestDispatcher("view/admin/device/delete.jsp").forward(request, response);
+	}
+	
+	public void deleteDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = 0;
+		try {
+			id = Integer.parseInt(request.getParameter("id"));			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String mess = "";
+		boolean check = dao.deleteDevice(id);
+		if(check) {
+			mess ="Delete Successfully";
+		}else {
+			mess ="Delete Failed";
+		}
+		request.setAttribute("mess", mess);
+		response.sendRedirect("device-show");
+	}
 }

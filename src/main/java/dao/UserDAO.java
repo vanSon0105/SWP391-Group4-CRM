@@ -120,6 +120,8 @@ public class UserDAO {
 			// TODO: handle exception
 		}
     	return list;
+    }
+    
     public void updatePassword(String email, String newPassword) {
         try {
             PreparedStatement ps = conn.prepareStatement(
