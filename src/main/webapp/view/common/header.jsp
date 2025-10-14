@@ -28,6 +28,13 @@
                     <a href="checkout.jsp">Thanh toán</a>
                     <a href="order-tracking.jsp">Đơn hàng</a>
                     <a href="customer-portal.jsp">Lịch sử</a>
+                    <c:if test="${sessionScope.user != null}">
+					    <form action="logout" method="post" style="display:inline;">
+					        <button type="submit" class="order-btn logout-btn">
+					            <i class="fa-solid fa-right-from-bracket"></i> Logout
+					        </button>
+					    </form>
+					</c:if>
                 </div>
             </div>
             <form class="search-bar" action="device-page" method="get">
@@ -37,11 +44,21 @@
             </form>
         </div>
         <div class="header-bottom">
-            <form action="login" method="post" style="display:inline;">
-			    <button type="submit" class="order-btn login-btn">
-			        <i class="fa-solid fa-user"></i>
-			    </button>
-			</form>
+        	<c:if test="${sessionScope.user == null}">
+	            <form action="login" method="post" style="display:inline;">
+				    <button type="submit" class="order-btn login-btn">
+				        <i class="fa-solid fa-user"></i>
+				    </button>
+				</form>
+			</c:if>
+			
+			<c:if test="${sessionScope.user != null}">
+			    <a href="account" class="order-btn account-btn">
+		            <i class="fa-solid fa-user"></i>
+		        </a>
+			</c:if>
+			
+			
             <a href="cart" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
         </div>
     </header>

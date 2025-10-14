@@ -58,21 +58,21 @@
         </section>
 
         <section class="featured-categories">
-            <a class="shortcut-card" href="device-catalog.jsp#laptop">
+            <a class="shortcut-card" href="device-page?category=1">
                 <span class="shortcut-icon">💻</span>
                 <span class="shortcut-label">Laptop &amp; PC</span>
             </a>
-            <a class="shortcut-card" href="device-catalog.jsp#mobile">
+            <a class="shortcut-card" href="device-page?category=2">
                 <span class="shortcut-icon">📱</span>
                 <span class="shortcut-label">Điện Thoại</span>
             </a>
             <a class="shortcut-card" href="device-catalog.jsp#accessories">
                 <span class="shortcut-icon">🔧</span>
-                <span class="shortcut-label">Linh Kiện</span>
+                <span class="shortcut-label">Bảo Hành</span>
             </a>
             <a class="shortcut-card" href="order-tracking.jsp">
                 <span class="shortcut-icon">🛠️</span>
-                <span class="shortcut-label">Theo Dõi Sửa Chữa</span>
+                <span class="shortcut-label">Sửa Chữa</span>
             </a>
         </section>
 
@@ -174,18 +174,18 @@
 				  </c:if>
 				
 				  <c:if test="${start > 1}">
-				    <a href="home?npage=1&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers">1</a>
+				    <a href="home?npage=1&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devicesd">1</a>
 				    <span>…</span>
 				  </c:if>
 				
 				  <c:forEach var="i" begin="${start}" end="${end}">
-				    <a href="home?npage=${i}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers"
+				    <a href="home?npage=${i}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices"
 				       class="${i == currentNewPage ? 'active' : ''}">${i}</a>
 				  </c:forEach>
 				
 				  <c:if test="${end < totalNewPages}">
 				    <span>…</span>
-				    <a href="home?npage=${totalNewPages}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#best-sellers">
+				    <a href="home?npage=${totalNewPages}&fpage=${currentFeaturedPage}&bpage=${currentBestSellingPage}#new-devices">
 				      ${totalNewPages}
 				    </a>
 				  </c:if>
