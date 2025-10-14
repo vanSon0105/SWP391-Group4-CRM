@@ -28,8 +28,8 @@
             </div>
 
             <div class="links">
-                <a href="forgot-password.jsp">Quên mật khẩu?</a>
-                <a href="register.jsp">Đăng ký tài khoản</a>
+                <a href="../authentication/forgot-password.jsp">Quên mật khẩu?</a>
+                <a href="../authentication/register.jsp">Đăng ký tài khoản</a>
             </div>
 
             <button type="submit">Đăng nhập</button>
