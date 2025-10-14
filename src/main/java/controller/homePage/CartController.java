@@ -21,6 +21,8 @@ import dao.CartDAO;
  */
 @WebServlet("/cart")
 public class CartController extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
 		public CartDAO cdao = new CartDAO();
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();

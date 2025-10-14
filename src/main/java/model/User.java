@@ -10,6 +10,19 @@ public class User {
     private String phone;
     private int roleId;
     private String status;
+    
+    
+    
+    
+	public User() {
+		super();
+	}
+	public User(int id, String username) {
+		super();
+		this.id = id;
+		this.username = username;
+	}
+	// Getters & Setters
 
     // Getters & Setters.
     public int getId() { return id; }

@@ -30,7 +30,6 @@
 body.shop-page.catalog-page .product-grid {
 	margin-top: 20px;
 }
-
 </style>
 
 <body class="shop-page catalog-page">
@@ -100,12 +99,17 @@ body.shop-page.catalog-page .product-grid {
 			<section class="main-content">
 				<section class="sorts">
 					<label for="sort">Sắp xếp theo:</label> <select id="sort"
-						style="margin-left: 10px" name="sortPrice" onchange="this.form.submit()">
+						style="margin-left: 10px" name="sortPrice"
+						onchange="this.form.submit()">
 						<option value="">--Sắp Xếp--</option>
-						<option value="asc" <c:if test="${param.sortPrice == 'asc'}">selected</c:if>><span>Giá: thấp đến cao</span></option>
-						<option value="desc" <c:if test="${param.sortPrice == 'desc'}">selected</c:if>><span>Giá: cao đến thấp</span></option>
+						<option value="asc"
+							<c:if test="${param.sortPrice == 'asc'}">selected</c:if>><span>Giá:
+								thấp đến cao</span></option>
+						<option value="desc"
+							<c:if test="${param.sortPrice == 'desc'}">selected</c:if>><span>Giá:
+								cao đến thấp</span></option>
 					</select>
-<!-- 					<button id="sort" type="submit"
+					<!-- 					<button id="sort" type="submit"
 						style="padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.35); background: rgba(255, 255, 255, 0.96); font-size: 15px; color: #1e1b4b; margin-left: 10px">
 						<span>Phổ biến</span>
 					</button> -->
@@ -113,12 +117,13 @@ body.shop-page.catalog-page .product-grid {
 				<section class="product-grid">
 					<c:forEach var="device" items="${listDevice}">
 						<article class="product-card" style="min-width: 350px">
+							<img alt="" style="width: 100%; height: 100%; object-fit: cover;"
+								src="<%=request.getContextPath()%>/assets/img/laptop.jpg" />
 							<h3>${device.name}</h3>
 							<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
 							<strong> <fmt:formatNumber value="${device.price + 0}"
 									type="number" />
-							</strong> 
-							<a href="device-detail?id=${device.id}">Xem chi tiết</a>
+							</strong> <a href="device-detail?id=${device.id}">Xem chi tiết</a>
 						</article>
 					</c:forEach>
 
