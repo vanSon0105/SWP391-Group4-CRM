@@ -10,16 +10,41 @@ import jakarta.servlet.http.HttpSession;
 import model.User;
 import java.io.IOException;
 
-@WebServlet("/login")
+@WebServlet({"/login","/logout"})
 public class LoginController extends HttpServlet {
 
     private UserDAO userDAO = new UserDAO();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+    	String path = req.getServletPath();
+        switch (path) {
+            case "/login":
+                loginPage(req, resp);
+                break;
+            case "/logout":
+            	logoutPage(req, resp);
+            	break;
+            default:
+            	resp.sendRedirect("home");
+        }
         
-        String email = request.getParameter("email");
+        
+    }
+    
+    private void logoutPage(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate(); 
+        }
+        response.sendRedirect("home"); 	
+    }
+    
+    private void loginPage(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+    	String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         User user = userDAO.getUserByLogin(email, password);
