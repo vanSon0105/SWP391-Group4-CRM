@@ -4,20 +4,38 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  
   <servlet>
-  	<servlet-name>CartServlet</servlet-name>
-  	<display-name>CartServlet</display-name>
+  	<servlet-name>RegisterController</servlet-name>
+  	<display-name>RegisterController</display-name>
   	<description></description>
-  	<servlet-class>controller.Cart.CartServlet</servlet-class>
+  	<servlet-class>controller.homePage.RegisterController</servlet-class>
   </servlet>
-  <servlet-mapping>
-  	<servlet-name>CartServlet</servlet-name>
-  	<url-pattern>/cart</url-pattern>
-  </servlet-mapping>
- 
+  <servlet>
+  	<servlet-name>RegisterServlet</servlet-name>
+  	<display-name>RegisterServlet</display-name>
+  	<description></description>
+  	<servlet-class>controller.homePage.RegisterServlet</servlet-class>
+  </servlet>
+  
   
   <welcome-file-list>
     <welcome-file>home</welcome-file>
   </welcome-file-list>
+  
+  <error-page>
+        <error-code>404</error-code>
+        <location>/view/error/error404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/view/error/error500.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/view/error/error403.jsp</location>
+    </error-page>
   
 </web-app>

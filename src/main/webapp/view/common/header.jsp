@@ -30,9 +30,9 @@
                     <a href="customer-portal.jsp">Lịch sử</a>
                 </div>
             </div>
-            <form class="search-bar" action="search" method="get">
+            <form class="search-bar" action="device-page" method="get">
                 <label for="search" class="sr-only"></label>
-                <input id="search" name="keyword" type="search" placeholder="Tìm thiết bị, linh kiện, ..." value="${param.keyword}">
+                <input id="search" name="key" type="search" placeholder="Tìm thiết bị, linh kiện, ..." value="${param.key}">
                 <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
             </form>
         </div>

@@ -19,36 +19,20 @@ body * {
     padding: 0;
 }
 
-/* -----------------------------------revenue-dashboard.html */
-.management-page.revenue-dashboard {
+/* -----------------------------------dashboard.html */
+.management-page.dashboard {
     min-height: 100vh;
     background: linear-gradient(135deg, #fce7f3, #fff7ed 45%, #e0f2fe 100%);
     color: #7c2d12;
 }
 
-.management-page.revenue-dashboard header {
-    background: linear-gradient(90deg, #48e4ec, #16f9a2);
-    color: #fff7ed;
-}
-
-.management-page.revenue-dashboard header h1 {
-    font-size: 30px;
-}
-
-.management-page.revenue-dashboard header p {
-    margin-top: 14px;
-    max-width: 760px;
-    font-size: 16px;
-    line-height: 1.6;
-}
-
-.management-page.revenue-dashboard main {
+.management-page.dashboard main {
     padding: 50px 60px 70px;
     display: grid;
     gap: 34px;
 }
 
-.management-page.revenue-dashboard .panel {
+.management-page.dashboard .panel {
     background: rgba(255, 255, 255, 0.94);
     border-radius: 28px;
     padding: 30px;
@@ -56,19 +40,19 @@ body * {
     box-shadow: 0 24px 52px rgba(249, 115, 22, 0.18);
 }
 
-.management-page.revenue-dashboard .panel h2 {
+.management-page.dashboard .panel h2 {
     font-size: 24px;
     color: #b91c1c;
     margin-bottom: 18px;
 }
 
-.management-page.revenue-dashboard .kpi-grid {
+.management-page.dashboard .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 20px;
 }
 
-.management-page.revenue-dashboard .kpi-card {
+.management-page.dashboard .card {
     border-radius: 22px;
     padding: 24px;
     background: linear-gradient(135deg, rgba(251, 191, 36, 0.18), rgba(248, 113, 113, 0.18));
@@ -78,29 +62,29 @@ body * {
     gap: 8px;
 }
 
-.management-page.revenue-dashboard .kpi-card span {
+.management-page.dashboard .card span {
     font-size: 13px;
     letter-spacing: 0.5px;
     color: #c2410c;
 }
 
-.management-page.revenue-dashboard .kpi-card strong {
+.management-page.dashboard .card strong {
     font-size: 30px;
     color: #9a3412;
 }
 
-.management-page.revenue-dashboard .kpi-card small {
+.management-page.dashboard .card small {
     font-size: 13px;
     color: #b45309;
 }
 
-.management-page.revenue-dashboard .trend-board {
+.management-page.dashboard .trend-board {
     display: grid;
     grid-template-columns: minmax(260px, 2fr) minmax(200px, 1fr);
     gap: 26px;
 }
 
-.management-page.revenue-dashboard .trend-chart {
+.management-page.dashboard .trend-chart {
     position: relative;
     height: 260px;
     border-radius: 22px;
@@ -110,7 +94,7 @@ body * {
     overflow: hidden;
 }
 
-.management-page.revenue-dashboard .trend-chart::before {
+.management-page.dashboard .trend-chart::before {
     content: "";
     position: absolute;
     inset: 14px;
@@ -120,12 +104,12 @@ body * {
     border-radius: 18px;
 }
 
-.management-page.revenue-dashboard .plot-line {
+.management-page.dashboard .plot-line {
     position: absolute;
     inset: 34px 24px 24px 24px;
 }
 
-.management-page.revenue-dashboard .plot-line span {
+.management-page.dashboard .plot-line span {
     position: absolute;
     width: 16px;
     height: 16px;
@@ -134,7 +118,7 @@ body * {
     box-shadow: 0 8px 18px rgba(239, 68, 68, 0.35);
 }
 
-.management-page.revenue-dashboard .plot-line span::after {
+.management-page.dashboard .plot-line span::after {
     content: "";
     position: absolute;
     width: 2px;
@@ -144,14 +128,14 @@ body * {
     background: rgba(255, 255, 255, 0.9);
 }
 
-.management-page.revenue-dashboard .plot-line svg {
+.management-page.dashboard .plot-line svg {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
 }
 
-.management-page.revenue-dashboard .trend-notes {
+.management-page.dashboard .trend-notes {
     border-radius: 22px;
     background: linear-gradient(135deg, rgba(254, 215, 170, 0.45), rgba(254, 243, 199, 0.7));
     padding: 24px;
@@ -162,49 +146,49 @@ body * {
     color: #7c2d12;
 }
 
-.management-page.revenue-dashboard .trend-notes h3 {
+.management-page.dashboard .trend-notes h3 {
     color: #c2410c;
     font-size: 18px;
 }
 
-.management-page.revenue-dashboard .trend-notes ul {
+.management-page.dashboard .trend-notes ul {
     list-style: disc inside;
     line-height: 1.6;
 }
 
-.management-page.revenue-dashboard table {
+.management-page.dashboard table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.management-page.revenue-dashboard th,
-.management-page.revenue-dashboard td {
+.management-page.dashboard th,
+.management-page.dashboard td {
     padding: 14px 16px;
     text-align: left;
 }
 
-.management-page.revenue-dashboard thead {
+.management-page.dashboard thead {
     background: rgba(249, 115, 22, 0.25);
     color: #9a3412;
     font-weight: 700;
     letter-spacing: 0.4px;
 }
 
-.management-page.revenue-dashboard t tr:nth-child(even) {
+.management-page.dashboard t tr:nth-child(even) {
     background: rgba(254, 243, 199, 0.6);
 }
 
-.management-page.revenue-dashboard t tr:hover {
+.management-page.dashboard t tr:hover {
     background: rgba(253, 230, 138, 0.55);
 }
 
-.management-page.revenue-dashboard .region-grid {
+.management-page.dashboard .region-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
 }
 
-.management-page.revenue-dashboard .region-card {
+.management-page.dashboard .region-card {
     border-radius: 22px;
     padding: 24px;
     background: linear-gradient(135deg, rgba(125, 211, 252, 0.18), rgba(250, 232, 255, 0.28));
@@ -214,23 +198,23 @@ body * {
     gap: 8px;
 }
 
-.management-page.revenue-dashboard .region-card h3 {
+.management-page.dashboard .region-card h3 {
     color: #075985;
     font-size: 18px;
 }
 
-.management-page.revenue-dashboard .region-card span {
+.management-page.dashboard .region-card span {
     color: #0f172a;
     font-size: 15px;
 }
 
-.management-page.revenue-dashboard .insight-grid {
+.management-page.dashboard .insight-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 22px;
 }
 
-.management-page.revenue-dashboard .insight {
+.management-page.dashboard .insight {
     border-radius: 24px;
     padding: 24px;
     background: linear-gradient(135deg, rgba(199, 210, 254, 0.2), rgba(209, 250, 229, 0.32));
@@ -240,17 +224,17 @@ body * {
     gap: 8px;
 }
 
-.management-page.revenue-dashboard .insight h3 {
+.management-page.dashboard .insight h3 {
     color: #4338ca;
     font-size: 18px;
 }
 
-.management-page.revenue-dashboard .insight p {
+.management-page.dashboard .insight p {
     color: #312e81;
     line-height: 1.6;
 }
 
-.management-page.revenue-dashboard footer {
+.management-page.dashboard footer {
     padding: 10px 60px;
     background: rgba(251, 191, 36, 0.22);
     color: #9a3412;
@@ -258,9 +242,9 @@ body * {
     text-align: center;
 }
 
-/* -----------------------------Admin layout: sidebar + topbar */
+/* -----------------------------layout common: sidebar + topbar */
 
-.admin-sidebar {
+.sidebar {
     width: 220px;
     background: linear-gradient(180deg, #537ad4, #102755);
     color: #e6eef8;
@@ -268,21 +252,21 @@ body * {
     flex-shrink: 0;
 }
 
-body.sidebar-collapsed .admin-sidebar {
+.sidebar-collapsed .sidebar {
     width: 0px;
     padding: 22px 0;
 }
 
-.admin-main {
+.sidebar-main {
     margin-top: 50px;
 }
 
-.admin-sidebar,
-.admin-main {
+.sidebar,
+.sidebar-main {
     transition: width 220ms ease, margin-left 220ms ease, transform 200ms ease;
 }
 
-.admin-sidebar .brand {
+.sidebar .brand {
     margin: 18px 12px;
     display: flex;
     justify-content: left;
@@ -290,7 +274,7 @@ body.sidebar-collapsed .admin-sidebar {
 
 }
 
-.admin-sidebar .brand img {
+.sidebar .brand img {
     border-radius: 5px;
     width: 60px;
     height: 50px;
@@ -298,13 +282,13 @@ body.sidebar-collapsed .admin-sidebar {
     object-fit: cover;
 }
 
-.admin-sidebar nav {
+.sidebar nav {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.admin-sidebar nav a {
+.sidebar nav a {
     color: rgba(230, 238, 248, 0.95);
     text-decoration: none;
     padding: 10px 12px;
@@ -313,19 +297,19 @@ body.sidebar-collapsed .admin-sidebar {
     transition: all 0.2s ease;
 }
 
-.admin-sidebar nav a.active,
-.admin-sidebar nav a:hover {
+.sidebar nav a.active,
+.sidebar nav a:hover {
     background: rgba(24, 169, 205, 0.596);
 }
 
-.admin-main {
+.sidebar-main {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     background: linear-gradient(180deg, #f8fafc, #ffffff);
 }
 
-.admin-topbar {
+.topbar {
     justify-content: space-between;
     position: fixed;
     left: 0;
@@ -336,15 +320,15 @@ body.sidebar-collapsed .admin-sidebar {
     display: flex;
     align-items: center;
     padding: 0 20px;
-    background: #06b6d4;
-    color: #fff;
+    background: linear-gradient(90deg, #48e4ec, #16f9a2);
+    color: #fff7ed;
 }
 
-.admin-main {
+.sidebar-main {
     padding-top: 64px;
 }
 
-.admin-sidebar {
+.sidebar {
     position: fixed;
     top: 64px;
     left: 0;
@@ -352,7 +336,7 @@ body.sidebar-collapsed .admin-sidebar {
     z-index: 1100;
 }
 
-body.sidebar-collapsed .admin-sidebar {
+.sidebar-collapsed .sidebar {
     transform: translateX(-120%);
     width: 0 !important;
     padding: 0 !important;
@@ -362,16 +346,16 @@ body.sidebar-collapsed .admin-sidebar {
     pointer-events: none !important;
 }
 
-body.sidebar-collapsed .admin-sidebar * {
+.sidebar-collapsed .sidebar * {
     display: none !important;
 }
 
-body:not(.sidebar-collapsed) .admin-main {
+body:not(.sidebar-collapsed) .sidebar-main {
     margin-left: 220px;
 }
 
-.admin-sidebar,
-.admin-main {
+.sidebar,
+.sidebar-main {
     transition: transform 220ms ease, margin-left 220ms ease;
 }
 
@@ -382,10 +366,11 @@ body:not(.sidebar-collapsed) .admin-main {
     gap: 12px;
 }
 
-.topbar-left h1 {
+.topbar-left h1 a {
     letter-spacing: 0.6px;
     font-weight: 700;
     color: #0c65eb;
+    text-decoration: none;
 }
 
 .sidebar-toggle {
@@ -441,6 +426,350 @@ body:not(.sidebar-collapsed) .admin-main {
     font-weight: 700;
 }
 
+/*show device*/
+.management-page.device-management .sidebar-main {
+    background: transparent;
+    padding: 96px 36px 52px;
+    display: grid;
+    gap: 24px;
+}
+
+body.sidebar-collapsed .management-page.device-management .sidebar-main {
+    margin-left: 0;
+}
+
+.management-page.device-management .panel {
+    height: max-content;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 24px;
+    padding: 24px 28px;
+    border: 1px solid rgba(14, 165, 233, 0.18);
+    box-shadow: 0 24px 60px rgba(45, 128, 206, 0.12);
+    backdrop-filter: blur(6px);
+}
+
+.management-page.device-management .panel h2 {
+	margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+
+.management-page.device-management .device-toolbar {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .device-toolbar-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .device-search {
+    position: relative;
+    min-width: 260px;
+}
+
+.management-page.device-management .device-search input[type="search"] {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    border-radius: 14px;
+    border: 1px solid rgba(30, 64, 175, 0.18);
+    box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.08);
+    font-size: 15px;
+    background: rgba(255, 255, 255, 0.88);
+    color: #0f172a;
+}
+
+.management-page.device-management .device-search i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.management-page.device-management .btn,
+.management-page.device-management button.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(14, 165, 233, 0.28);
+    background: rgba(255, 255, 255, 0.85);
+    color: #1d4ed8;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.management-page.device-management .btn:hover,
+.management-page.device-management button.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(99, 102, 241, 0.18);
+}
+
+.management-page.device-management .btn.btn-add,
+.management-page.device-management button.btn.btn-add {
+    background: linear-gradient(90deg, #0ea5e9, #6366f1);
+    color: #f8fafc;
+    border-color: transparent;
+}
+
+.management-page.device-management .btn.device-remove,
+.management-page.device-management button.btn.device-remove {
+    background: linear-gradient(90deg, #f97316, #ef4444);
+    color: #fff7ed;
+    border-color: transparent;
+}
+
+.management-page.device-management .btn.device-btn,
+.management-page.device-management button.btn.device-btn {
+    background: transparent;
+    color: #1d4ed8;
+}
+
+.management-page.device-management .table-wrapper {
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.management-page.device-management .table-wrapper th,
+.management-page.device-management .table-wrapper td{
+	text-align: center;
+}
+
+.management-page.device-management table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.management-page.device-management thead {
+    background: linear-gradient(90deg, rgba(14, 165, 233, 0.18), rgba(99, 102, 241, 0.18));
+    color: #1e3a8a;
+}
+
+.management-page.device-management th,
+.management-page.device-management td {
+    padding: 14px 18px;
+    text-align: left;
+    font-size: 15px;
+}
+
+.management-page.device-management tbody tr {
+    transition: background 0.2s ease;
+}
+
+.management-page.device-management tbody tr:nth-child(even) {
+    background: rgba(248, 250, 252, 0.7);
+}
+
+.management-page.device-management tbody tr:hover {
+    background: rgba(224, 242, 254, 0.75);
+}
+
+.management-page.device-management .device-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    padding: 6px;
+}
+
+.management-page.device-management .device-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+}
+
+.management-page.device-management .device-status.is-out {
+    background: rgba(239, 68, 68, 0.14);
+    color: #991b1b;
+}
+
+.management-page.device-management .device-show-actions {
+    display: flex;
+    gap: 8px;
+}
+
+
+.management-page.device-management .device-form {
+    display: grid;
+    gap: 20px;
+}
+
+.management-page.device-management .device-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px 18px;
+}
+
+.management-page.device-management .device-form .form-field {
+    display: grid;
+    gap: 6px;
+}
+
+.file-image input[type="file"] {
+  display: block;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 270px;
+}
+.file-image input[type="file"]:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
+}
+
+
+.management-page.device-management .device-form label {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.management-page.device-management .device-form input,
+.management-page.device-management .device-form select,
+.management-page.device-management .device-form textarea {
+    padding: 11px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(255, 255, 255, 0.95);
+    font-size: 15px;
+    color: #0f172a;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.management-page.device-management .device-form input:focus,
+.management-page.device-management .device-form select:focus,
+.management-page.device-management .device-form textarea:focus {
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+    outline: none;
+}
+
+.management-page.device-management .device-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.management-page.device-management .device-form .form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .device-form .form-actions--spread {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.management-page.device-management .device-form .form-actions--spread>* {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/*view device*/
+.management-page.device-management .device-detail {
+    display: grid;
+    grid-template-columns: minmax(200px, 240px) 1fr;
+    gap: 28px;
+}
+
+.management-page.device-management .device-img {
+    border-radius: 20px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 18px;
+    display: grid;
+    place-items: center;
+}
+
+.management-page.device-management .device-photo img {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+}
+
+.management-page.device-management .device-container {
+    display: grid;
+    gap: 18px;
+}
+
+.management-page.device-management .device-action {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .danger-box {
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: rgba(254, 226, 226, 0.8);
+    border-radius: 18px;
+    padding: 16px 20px;
+    color: #7f1d1d;
+}
+
+.management-page.device-management .device-summary {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.management-page.device-management .device-summary img {
+    width: 72px;
+    height: 72px;
+    border-radius: 16px;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    padding: 8px;
+}
+
+.management-page.device-management .device-summary strong {
+    color: #0f172a;
+}
+
+.management-page.device-management .confirm-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.management-page.device-management .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #475569;
+}
+
+.management-page.device-management .device-remove {
+    display: grid;
+    gap: 20px;
+}
+
+.management-page.device-management .device-remove p {
+    margin: 0;
+    color: #475569;
+}
+
 
 
 
@@ -482,7 +811,7 @@ body:not(.sidebar-collapsed) .admin-main {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
 }
 
-.management-page.admin-console .kpi-card {
+.management-page.admin-console .card {
     background: rgba(255, 255, 255, 0.92);
     border-radius: 22px;
     padding: 26px;
@@ -490,7 +819,7 @@ body:not(.sidebar-collapsed) .admin-main {
     box-shadow: 0 16px 38px rgba(5, 150, 105, 0.18);
 }
 
-.management-page.admin-console .kpi-card span {
+.management-page.admin-console .card span {
     display: block;
     font-size: 14px;
     color: #047857;
@@ -498,7 +827,7 @@ body:not(.sidebar-collapsed) .admin-main {
     letter-spacing: 0.5px;
 }
 
-.management-page.admin-console .kpi-card strong {
+.management-page.admin-console .card strong {
     font-size: 28px;
     color: #064e3b;
 }

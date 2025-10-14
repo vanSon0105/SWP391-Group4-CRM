@@ -2,12 +2,12 @@ package model;
 
 public class Category {
 	private int id;
-	private String categoryName;
+	private String name;
 	public Category() {
 	}
-	public Category(int id, String categoryName) {
+	public Category(int id, String name) {
 		this.id = id;
-		this.categoryName = categoryName;
+		this.name = name;
 	}
 	public int getId() {
 		return id;
@@ -15,15 +15,15 @@ public class Category {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getCategoryName() {
-		return categoryName;
+	public String getName() {
+		return name;
 	}
-	public void setCategoryName(String categoryName) {
-		this.categoryName = categoryName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	@Override
 	public String toString() {
-		return "Category [id=" + id + ", categoryName=" + categoryName + "]";
+		return "Category [id=" + id + ", categoryName=" + name + "]";
 	}
 
 }

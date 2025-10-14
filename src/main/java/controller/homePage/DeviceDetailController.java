@@ -10,10 +10,8 @@ import java.util.List;
 
 import dao.DeviceDAO;
 import dao.CategoryDAO;
-import dao.SupplierDAO;
 import model.Device;
 import model.Category;
-import model.Supplier;
 
 @WebServlet("/device-detail")
 public class DeviceDetailController extends HttpServlet {
@@ -21,23 +19,24 @@ public class DeviceDetailController extends HttpServlet {
 
     private DeviceDAO deviceDao = new DeviceDAO();
     private CategoryDAO categoryDao = new CategoryDAO();
-    private SupplierDAO supplierDao = new SupplierDAO();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-    	   int deviceId = Integer.parseInt(request.getParameter("id"));
-           
-           
-           DeviceDAO deviceDAO = new DeviceDAO();
-           Device device = deviceDAO.getDeviceById(deviceId); 
+        int deviceId = Integer.parseInt(request.getParameter("id"));
 
-           request.setAttribute("device", device);
-           
-    
-           request.getRequestDispatcher("/view/homepage/device-detailPage.jsp").forward(request, response);
-       }
-    
+        Device device = deviceDao.getDeviceById(deviceId);
+        request.setAttribute("device", device);
+
+        Category category = categoryDao.getCategoryById(device.getCategory().getId());
+        request.setAttribute("category", category);
+        
+
+        List<Device> relatedDevices = deviceDao.getRelatedDevices(deviceId, device.getCategory().getId(), 4);
+        request.setAttribute("relatedDevices", relatedDevices);
+
+        request.getRequestDispatcher("/view/homepage/device-detailPage.jsp").forward(request, response);
+    }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

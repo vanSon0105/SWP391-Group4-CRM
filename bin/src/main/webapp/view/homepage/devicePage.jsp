@@ -1,179 +1,140 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%> 
-<%@ page isELIgnored="false" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+	pageEncoding="UTF-8"%>
+<%@ page isELIgnored="false"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
 
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>NovaCare Shop - Danh mục sản phẩm</title>
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/shop.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaCare Shop - Danh mục sản phẩm</title>
+<link rel="stylesheet"
+	href="<%=request.getContextPath()%>/assets/css/shop.css">
 
-	
-	<!-- Font Awesome -->
-	<link rel="stylesheet"
+
+<!-- Font Awesome -->
+<link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="shop-page catalog-page">
-	<header class="header-toolbar">
-		<h1>Shop88</h1>
-		<div class="header-center">
+<style>
+.sorts button:hover {
+	background: linear-gradient(90deg, #38bdf8, #22d3ee) !important;
+}
 
-			<form class="search-bar" action="#" method="get">
-				<label for="search" class="sr-only"></label> <input id="search"
-					name="search" type="search"
-					placeholder="Tìm thiết bị, linh kiện, ...">
-				<button type="submit">
-					<i class="fa-solid fa-magnifying-glass"></i>
-				</button>
-			</form>
-		</div>
-		<div class="header-bottom">
-			<a href="login.html" class="order-btn login-btn"><i
-				class="fa-solid fa-user"></i></a> <a href="cart.html" class="order-btn"><i
-				class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
-		</div>
-	</header>
+body.shop-page.catalog-page .product-grid {
+	margin-top: 20px;
+}
+
+</style>
+
+<body class="shop-page catalog-page">
+	<jsp:include page="../common/header.jsp"></jsp:include>
 	<h1 style="text-align: center; color: #312e81; margin-top: 10px">Danh
 		Mục Sản Phẩm</h1>
-	
-	<main>
-	
-		<section class="toolbar">
-			<div class="filters">
-				<div style="display:flex; flex-direction:column; gap:5px">
-					<label for="category">Danh mục</label> 
-					<!-- <select id="category">
-						<option>Tất cả</option>
-						<option>Laptop</option>
-						<option>Điện thoại</option>
-						<option>Linh kiện bảo hành</option>
-						<option>Dịch vụ sửa chữa</option>
-					</select> -->
-					<span><input type="checkbox" style="margin-right:5px;"/>Tất cả</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Laptop</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Điện thoại</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Linh kiện bảo hành</span>
-					<span><input type="checkbox" style="margin-right:5px"/>Dịch vụ sửa chữa</span>	
-				</div>
-				<div style="display:flex; flex-direction:column; gap:5px">
-					<label for="brand">Thương hiệu</label>
-					 <!-- <select id="brand">
-						<option>Tất cả</option>
-						<option>NovaCare</option>
-						<option>Samsung</option>
-						<option>Sony</option>
-						<option>LG</option>
-						<option>Daikin</option>
-					</select> -->
-					<span><input type="checkbox" style="margin-right:5px;"/>Tất cả</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>NovaCare</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>Samsung</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>Sony</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>LG</span>
-					<span><input type="checkbox" style="margin-right:5px;"/>Daikin</span>
-				</div>
-				<div>
-					<label for="price">Mức giá</label> <select id="price">
-						<option>Dưới 5 triệu</option>
-						<option>5 - 15 triệu</option>
-						<option>15 - 30 triệu</option>
-						<option>Trên 30 triệu</option>
-					</select>
-				</div>
-			</div>
-		</section>
-		
-		<section class="product-grid">
-			<c:forEach var="device" items="${listDevice}">
-				<article class="product-card">
-					<h3>${device.name}</h3>
-					<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
-					<div class="tags">
-						<span>Laptop</span><span>NovaCare</span><span>Intel</span>
+	<form action="device-page" method="get" id="filter-form">
+		<main>
+
+			<section class="toolbar" style="max-width: 184px">
+
+
+				<div class="filters">
+					<div style="display: flex; flex-direction: column; gap: 5px">
+						<label for="category">Danh mục</label> <span><input
+							type="radio" name="category" value=""
+							onchange="this.form.submit()" style="margin-right: 5px;"
+							<c:if test="${empty param.category}">checked</c:if>> Tất
+							cả </input> </span>
+						<c:forEach var="category" items="${listCategory}">
+							<span> <input type="radio" name="category"
+								value="${category.id}" onchange="this.form.submit()"
+								style="margin-right: 5px;"
+								<c:if test="${param.category == category.id}">checked</c:if>>
+								${category.categoryName} </input>
+							</span>
+
+						</c:forEach>
 					</div>
-					<strong>
-						<fmt:formatNumber value="${device.price + 0}" type="number"/>
-					</strong> 
-					<a href="device-detail.html">Xem chi tiết</a>
-				</article>
-			</c:forEach>
-		
-<!-- 			<article class="product-card">
-				<h3>NovaCore X15</h3>
-				<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
-				<div class="tags">
-					<span>Laptop</span><span>NovaCare</span><span>Intel</span>
-				</div>
-				<strong>32.990.000đ</strong> 
-				<a href="device-detail.html">Xem chi tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>NovaCare S9</h3>
-				<p>Smartphone flagship, camera AI, chống nước IP68.</p>
-				<div class="tags">
-					<span>Điện thoại</span><span>5G</span><span>120Hz</span>
-				</div>
-				<strong>18.490.000đ</strong> <a href="device-detail.html">Xem
-					chi tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>Kit sửa TV 55"</h3>
-				<p>Board nguồn, cáp tín hiệu, hướng dẫn lắp đặt.</p>
-				<div class="tags">
-					<span>Linh kiện</span><span>Bảo hành</span>
-				</div>
-				<strong>2.850.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>Gói bảo hành Premium</h3>
-				<p>Bảo hành nâng cao 36 tháng, hotline kỹ thuật 24/7.</p>
-				<div class="tags">
-					<span>Dịch vụ</span><span>Gia dụng</span>
-				</div>
-				<strong>3.200.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-					
-			</article>
-			<article class="product-card">
-				<h3>Máy lọc không khí NovaPure</h3>
-				<p>Lọc HEPA 4 lớp, cảm biến bụi mịn, kết nối app.</p>
-				<div class="tags">
-					<span>Gia dụng</span><span>Smart home</span>
-				</div>
-				<strong>7.990.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-			</article>
-			<article class="product-card">
-				<h3>Combo vệ sinh điều hòa</h3>
-				<p>Dịch vụ vệ sinh sâu, nạp gas, kiểm tra rò rỉ.</p>
-				<div class="tags">
-					<span>Dịch vụ</span><span>Điều hòa</span>
-				</div>
-				<strong>1.190.000đ</strong> <a href="device-detail.html">Xem chi
-					tiết</a>
-			</article> -->
-			<!-- pagination -->
-
-		</section>
 
 
-	</main>
+					<div style="display: flex; flex-direction: column; gap: 5px">
+						<label for="supplier">Thương hiệu</label> <span><input
+							type="radio" name="supplier" value=""
+							onchange="this.form.submit()" style="margin-right: 5px;"
+							<c:if test="${empty param.supplier}">checked</c:if> />Tất cả</span>
+						<c:forEach var="supplier" items="${listSupplier}">
+							<span><input type="radio" name="supplier"
+								onchange="this.form.submit()" value="${supplier.id}"
+								style="margin-right: 5px;"
+								<c:if test="${param.supplier == supplier.id}">checked</c:if> />${supplier.name}</span>
+						</c:forEach>
+					</div>
+					<div>
+						<label for="price">Mức giá</label> <select id="price"
+							onchange="this.form.submit()" name="price">
+							<option value="" ${empty param.price ? 'selected' : ''}>Mọi
+								mức giá</option>
+							<option value="under5"
+								<c:if test="${param.price == 'under5'}">selected</c:if>>Dưới
+								5 triệu</option>
+							<option value="5to15"
+								<c:if test="${param.price == '5to15'}">selected</c:if>>5
+								- 15 triệu</option>
+							<option value="15to30"
+								<c:if test="${param.price == '15to30'}">selected</c:if>>15
+								- 30 triệu</option>
+							<option value="over30"
+								<c:if test="${param.price == 'over30'}">selected</c:if>>Trên
+								30 triệu</option>
+						</select>
+					</div>
+				</div>
+
+
+			</section>
+			<section class="main-content">
+				<section class="sorts">
+					<label for="sort">Sắp xếp theo:</label> <select id="sort"
+						style="margin-left: 10px" name="sortPrice" onchange="this.form.submit()">
+						<option value="">--Sắp Xếp--</option>
+						<option value="asc" <c:if test="${param.sortPrice == 'asc'}">selected</c:if>><span>Giá: thấp đến cao</span></option>
+						<option value="desc" <c:if test="${param.sortPrice == 'desc'}">selected</c:if>><span>Giá: cao đến thấp</span></option>
+					</select>
+<!-- 					<button id="sort" type="submit"
+						style="padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(99, 102, 241, 0.35); background: rgba(255, 255, 255, 0.96); font-size: 15px; color: #1e1b4b; margin-left: 10px">
+						<span>Phổ biến</span>
+					</button> -->
+				</section>
+				<section class="product-grid">
+					<c:forEach var="device" items="${listDevice}">
+						<article class="product-card" style="min-width: 350px">
+							<h3>${device.name}</h3>
+							<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
+							<strong> <fmt:formatNumber value="${device.price + 0}"
+									type="number" />
+							</strong> 
+							<a href="device-detail?id=${device.id}">Xem chi tiết</a>
+						</article>
+					</c:forEach>
+
+				</section>
+			</section>
+
+
+
+		</main>
+	</form>
 	<nav
 		style="display: flex; justify-content: center; align-items: center; gap: 2px">
 		<button style="padding: 8px; border-radius: 8px">1</button>
 		<button style="padding: 8px; border-radius: 8px">2</button>
 	</nav>
-	<footer> NovaCare Shop · Mua sắm an tâm với bảo hành chuẩn
-		quốc tế. </footer>
+	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 
 </html>
