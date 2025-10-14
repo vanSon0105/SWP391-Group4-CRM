@@ -339,12 +339,7 @@ public class DeviceDAO extends DBContext {
 //	Device - Admin
 	public List<Device> findAllDevices() {
 		List<Device> list = new ArrayList<>();
-		String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price,\r\n"
-				+ "    COALESCE(stock.quantity, 0) AS 'inventory',\r\n"
-				+ "    CASE\r\n"
-				+ "        WHEN COALESCE(stock.quantity, 0) > 0 THEN 'Còn hàng'\r\n"
-				+ "        ELSE 'Hết hàng'\r\n"
-				+ "    END AS 'status'\r\n"
+		String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price, COALESCE(stock.quantity, 0) AS 'inventory', d.status\r\n"
 				+ "FROM devices AS d\r\n"
 				+ "JOIN categories AS c ON d.category_id = c.id\r\n"
 				+ "LEFT JOIN\r\n"
@@ -473,6 +468,20 @@ public class DeviceDAO extends DBContext {
 	        e.printStackTrace();
 	    }
 	    return add;
+	}
+	
+	public boolean deleteDevice(int id) {
+	    String sql = "UPDATE devices SET status = 'discontinued' WHERE id = ?;";
+	    boolean updated = false;
+
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setInt(1, id);
+	        updated = ps.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return updated;
 	}
 
 }

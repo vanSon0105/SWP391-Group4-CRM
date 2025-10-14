@@ -1849,7 +1849,7 @@ body.shop-page.customer-portal-page footer {
     margin-top: 20px;
 }
 
-/* ========================================= login.html, register.html, forgot-password.html */
+/* ========================================= login.html, register.html, forgot-password.html 
 body.shop-page.login-page,
 body.shop-page.register-page,
 body.shop-page.forgot-page {
@@ -1857,11 +1857,21 @@ body.shop-page.forgot-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
 }
 
+*/
+
 body.shop-page.login-page {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
     background: linear-gradient(135deg, #bfdbfe, #f0f9ff 45%, #fef3c7);
+    height: 100vh;
+}
+
+body.shop-page.login-page .header{
+	margin-bottom: 20px; 
+	width: 100%;
 }
 
 body.shop-page.register-page {
@@ -1871,6 +1881,7 @@ body.shop-page.register-page {
 body.shop-page.forgot-page {
     background: linear-gradient(135deg, #cffafe, #e0f2fe 45%, #ede9fe);
 }
+
 
 body.shop-page.login-page .card,
 body.shop-page.register-page .card,
@@ -1932,8 +1943,7 @@ body.shop-page.forgot-page label {
     color: #0ea5e9;
 }
 
-body.shop-page.login-page input,
-body.shop-page.register-page input,
+body.shop-page.login-page .card input,
 body.shop-page.register-page select,
 body.shop-page.forgot-page input {
     padding: 12px 14px;
@@ -1953,18 +1963,13 @@ body.shop-page.forgot-page input {
     border-color: rgba(56, 189, 248, 0.35);
 }
 
-body.shop-page.login-page button,
-body.shop-page.register-page button,
-body.shop-page.forgot-page button {
-    padding: 12px 28px;
+body.shop-page.login-page .card button{
+	padding: 12px 28px;
     border-radius: 999px;
     border: none;
     color: #f8fafc;
     font-weight: 600;
     cursor: pointer;
-}
-
-body.shop-page.login-page button {
     background: linear-gradient(90deg, #2563eb, #38bdf8);
     box-shadow: 0 18px 36px rgba(37, 99, 235, 0.28);
 }

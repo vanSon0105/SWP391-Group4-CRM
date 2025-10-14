@@ -35,7 +35,10 @@
 
             <section class="panel" id="table-panel">
             	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-	                <h2>Danh sách thiết bị</h2>	
+	                <h2>Danh sách thiết bị</h2>
+	                <c:if test="${not empty mess}">
+	                	<span style="color: red;font-size: 1.5rem;"></span>	
+	                </c:if>	
 	                <c:if test="${not empty listDeviceSerials}"> 
 	                	<a class="btn device-btn" href="device-show#table-panel">Quay lại</a>            
 	                </c:if>	
@@ -71,7 +74,7 @@
 	                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
 	                                    <a class="btn device-btn" href="device-serials?id=${s.id}#device-serial">Xem Serials</a>
 	                                    <a class="btn device-btn" href="device-update?id=${s.id}">Sửa</a>
-	                                    <a class="btn device-remove" href="device-remove?id=${s.id}">Xóa</a>
+	                                    <a class="btn device-remove" href="device-delete?id=${s.id}">Xóa</a>
 	                                </td>
 	                            </tr>
 	                          </c:forEach>
