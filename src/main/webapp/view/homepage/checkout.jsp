@@ -10,11 +10,8 @@
 </head>
 <body class="shop-page checkout-page">
 
-    <!-- Header -->
-    <header>
-        <h1>Thanh toán an toàn</h1>
-        <p>NovaCare sử dụng mã hóa SSL và đối tác thanh toán đạt chuẩn PCI-DSS. Vui lòng kiểm tra thông tin giao hàng, phương thức thanh toán trước khi xác nhận.</p>
-    </header>
+<jsp:include page="../common/header.jsp"></jsp:include>
+
 
     <main>
         <section class="checkout-grid">

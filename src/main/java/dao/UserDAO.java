@@ -100,6 +100,17 @@ public class UserDAO {
         }
         return false;
     }
-
+    
+    public void updatePassword(String email, String newPassword) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                "UPDATE account SET password = ? WHERE email = ?");
+            ps.setString(1, newPassword);
+            ps.setString(2, email);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     
 }
