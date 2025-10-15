@@ -38,6 +38,7 @@ CREATE TABLE devices (
   description text,
   created_at timestamp default current_timestamp,
   is_featured BOOLEAN DEFAULT FALSE,
+  status ENUM('active', 'discontinued') DEFAULT 'active',
   foreign key (category_id) references categories(id)
 );
 
