@@ -12,27 +12,47 @@
 
 <style>
 body {
-	font-family: Arial, sans-serif;
-	background: #f5f5f5;
+	display: flex;
+	box-sizing: border-box;
+	font-family: 'Segoe UI', Tahoma, sans-serif;
+	margin: 0;
+	padding: 0;
+	background: linear-gradient(135deg, #f0fdfa, #eff6ff 45%, #fff5f5 100%);
 }
 
 .side-bar {
 	width: 15%;
 	height: 100vh;
-	background-color: white;
+	color: white;
+	background-color: #4E74CA;
 }
 
 .side-bar a:hover {
 	cursor: pointer;
-	background: grey;
+	background: #2B90C6;
 }
 
 .side-bar a {
 	width: 80%;
+	border-radius: 8px;
+	padding: 8px 10px;
+	color: white;
+	text-decoration: none;
+}
+
+.side-bar a.active {
+	background: #2B90C6;
+}
+
+form {
+	width: 80%;
+	margin-left: 2%;
+	display: flex;
+	justify-content: center;
 }
 
 .container {
-	width: 85%;
+	width: 100%;
 	margin: 30px auto;
 	padding: 20px 30px;
 	background: white;
@@ -78,57 +98,68 @@ button {
 	margin-left: auto;
 }
 
-a {
+form a {
 	padding: 5px 10px;
-	border-radius:6px ;
+	border-radius: 6px;
 	background-color: #3b82f6;
 	color: white;
-	font-size:16px;
+	font-size: 16px;
 	text-align: center;
 	text-decoration: none;
 }
 </style>
 
 <body>
-
-	<form action="task-form" method="get">
-	
-    <div class="container">
-		<div class="head">
-			<h2>Add/Update Task</h2>
+	<section class="side-bar">
+		<div style="border-bottom: thin solid white; padding: 8px 10px">
+			<h1 style="font-weight: 500;">TechShop</h1>
+			<p>Technical Manager</p>
 		</div>
-		<div class="task-form">
-			<input type="hidden" name="id" value="${task.id}"/>
-			 <label>Title:</label>
-			 <input type="text" name="title" value="${task.title}"/> 
-			 <label>Description:</label>
-			 <input type="text" name="description" value="${task.description}"/> 
-			 <label>Customer Issue ID:</label>
-			<select name="customerIssueId">
-				<c:forEach var="issue" items="${customerIssues}">
-					<option value="${issue.id}" ${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
-				</c:forEach>
-			</select> 
-			 <label>Technical Staff:</label>
-			<div class="checkbox-group">
-				<c:forEach var="staff" items="${technicalStaffList}">					
-					<p>
-						<input type="checkbox" name="technicalStaffIds" value="${staff.id}">
-						${staff.username}
-					</p>
-				</c:forEach>
-			</div>
 
-			<label>Deadline</label> <input type="date" name="deadline" value="${taskDetail[0].deadline}"/>
-			 <div>
-			 	<a href="task-list-page">Back</a>
-			<button type="submit" style="margin-left:10px">Submit</button>
-		
-			 </div>
-			 </div>
-	</div>
-</form>
-	
-	
+		<div
+			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
+			<a href="task-list-page" class="active">Task List</a> <a>Staff
+				List</a> <a>Device List</a> <a>Report</a>
+		</div>
+
+	</section>
+	<form action="task-form" method="get">
+
+		<div class="container">
+			<div class="head">
+				<h2>Add/Update Task</h2>
+			</div>
+			<div class="task-form">
+				<input type="hidden" name="id" value="${task.id}" /> <label>Title:</label>
+				<input type="text" name="title" value="${task.title}" /> <label>Description:</label>
+				<input type="text" name="description" value="${task.description}" />
+				<label>Customer Issue ID:</label> <select name="customerIssueId">
+					<c:forEach var="issue" items="${customerIssues}">
+						<option value="${issue.id}"
+							${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
+					</c:forEach>
+				</select> <label>Technical Staff:</label>
+				<div class="checkbox-group">
+					<c:forEach var="staff" items="${technicalStaffList}">
+						<p>
+							<input type="checkbox" name="technicalStaffIds"
+								value="${staff.id}"> ${staff.username}
+						</p>
+					</c:forEach>
+				</div>
+
+				<label>Deadline</label> <input type="date" name="deadline"
+					value="${taskDetail[0].deadline}" />
+				<div>
+					<a href="task-list-page">Back</a>
+					<button type="submit" style="margin-left: 10px">Submit</button>
+
+				</div>
+			</div>
+		</div>
+	</form>
+
+
+
 </body>
 </html>

@@ -10,8 +10,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/css/shop.css">
+<%-- <link rel="stylesheet"
+	href="<%=request.getContextPath()%>/assets/css/shop.css"> --%>
 
 
 <!-- Font Awesome -->
@@ -20,6 +20,39 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
+body {
+	display: flex;
+	box-sizing: border-box;
+	font-family: 'Segoe UI', Tahoma, sans-serif;
+	margin: 0;
+	padding: 0;
+	background: linear-gradient(135deg, #f0fdfa, #eff6ff 45%, #fff5f5 100%);
+}
+
+.side-bar {
+	width: 15%;
+	height: 100vh;
+	color: white;
+	background-color: #4E74CA;
+}
+
+.side-bar a:hover {
+	cursor: pointer;
+	background: #2B90C6;
+}
+
+.side-bar a {
+	width: 80%;
+	border-radius: 8px;
+	padding: 8px 10px;
+	color: white;
+	text-decoration: none;
+}
+
+.side-bar a.active {
+	background: #2B90C6;
+}
+
     .container {
         width: 80%;
         margin: 0 auto;
@@ -66,6 +99,7 @@
         color: white;
         border-radius: 4px;
         cursor: pointer;
+        text-decoration: none;
     }
     .btn-secondary {
         background: #6b7280;
@@ -73,7 +107,21 @@
 </style>
 </head>
 <body>
+<section class="side-bar">
+		<div style="border-bottom: thin solid white; padding: 8px 10px">
+			<h1 style="font-weight: 500;">TechShop</h1>
+			<p>Technical Manager</p>
+		</div>
 
+		<div
+			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
+			<a href="task-list-page" class="active">Task List</a>
+			<a>Staff List</a>
+			<a>Device List</a>
+			<a>Report</a>
+		</div>
+
+	</section>
 <div class="container">
 
     <div class="head">
