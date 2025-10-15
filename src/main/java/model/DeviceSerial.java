@@ -6,18 +6,28 @@ public class DeviceSerial {
 	private int id;
 	private int device_id;
 	private String serial_no;
-	private String status;
+	private String stock_status;
 	private Timestamp import_date;
+	private String status;
 	
 	public DeviceSerial() {}
 
-	public DeviceSerial(int id, int device_id, String serial_no, String status, Timestamp import_date) {
+	public DeviceSerial(int id, int device_id, String serial_no, String stock_status, Timestamp import_date, String status) {
 		super();
 		this.id = id;
 		this.device_id = device_id;
 		this.serial_no = serial_no;
-		this.status = status;
+		this.stock_status = stock_status;
 		this.import_date = import_date;
+		this.status = status;
+	}
+
+	public String getStock_status() {
+		return stock_status;
+	}
+
+	public void setStock_status(String stock_status) {
+		this.stock_status = stock_status;
 	}
 
 	public int getId() {
@@ -62,7 +72,7 @@ public class DeviceSerial {
 
 	@Override
 	public String toString() {
-		return "DeviceSerial [id=" + id + ", device_id=" + device_id + ", serial_no=" + serial_no + ", status=" + status
+		return "DeviceSerial [id=" + id + ", device_id=" + device_id + ", serial_no=" + serial_no + ", status=" + stock_status
 				+ ", import_date=" + import_date + "]";
 	}
 	

@@ -48,7 +48,7 @@
         	<c:if test="${sessionScope.user == null}">
 	            <form action="login" method="post" style="display:inline;">
 				    <button type="submit" class="order-btn login-btn">
-				        <i class="fa-solid fa-user"></i>
+				        Login
 				    </button>
 				</form>
 			</c:if>

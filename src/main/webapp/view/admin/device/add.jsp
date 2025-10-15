@@ -27,7 +27,7 @@
                 <div class="form-grid">
                     <div class="form-field">
                         <label for="name">Tên thiết bị</label>
-                        <input id="name" name="name" size="50" placeholder="Ví dụ: Laptop Asus" required>
+                        <input id="name" name="name" placeholder="Ví dụ: Laptop Asus" required>
                     </div>
                     <div class="form-field">
                         <label for="category">Danh mục</label>
@@ -41,7 +41,7 @@
                     </div>
                     <div class="form-field">
                         <label for="price">Giá bán (₫)</label>
-                        <input id="price" name="price" type="number" min="0" step="1000" placeholder="9490000" required>
+                        <input id="price" name="price" type="number" min="0" placeholder="9490000" required>
                     </div>
                     <div class="form-field">
                         <label for="unit">Đơn vị</label>
@@ -50,7 +50,8 @@
                     
                     <div class="form-field">
                         <label for="isFeatured">Nổi bật</label>
-                        <input type="checkbox" id="isFeatured"  name="isFeatured" value="true" required>
+                        <input type="hidden" name="isFeatured" value="false">
+                        <input style="margin-bottom: 7px;width: 35px;" type="checkbox" id="isFeatured"  name="isFeatured" value="true">
                     </div>
                     
                     <div class="form-field file-image">
