@@ -10,8 +10,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/css/shop.css">
+<%-- <link rel="stylesheet"
+	href="<%=request.getContextPath()%>/assets/css/shop.css"> --%>
 
 
 <!-- Font Awesome -->
@@ -34,16 +34,25 @@ body {
 .side-bar {
 	width: 15%;
 	height: 100vh;
-	background-color: white;
+	color:white;
+	background-color: #4E74CA;
 }
 
 .side-bar a:hover {
 	cursor: pointer;
-	background: grey;
+	background: #2B90C6;
 }
 
 .side-bar a {
 	width: 80%;
+	border-radius: 8px;
+	padding: 8px 10px; 
+	color:white;
+	text-decoration: none;
+}
+
+.side-bar a.active {
+	background:#2B90C6;
 }
 
 
@@ -59,6 +68,7 @@ body {
 	background-color: #0d6efd;
 	color: white;
 	font-size:16px;
+	text-decoration: none; 
 }
 
 .search-button { 
@@ -74,6 +84,7 @@ table {
 	width: 100%;
 	border-collapse: collapse;
 	margin-top: 18px;
+	border-radius: 12px;
 }
 
 th, td {
@@ -83,7 +94,7 @@ th, td {
 }
 
 thead {
-	background: linear-gradient(90deg, #38bdf8, #f97316);
+	background: #2B90C6;
     color: #f8fafc;
 }
 
@@ -92,25 +103,32 @@ table th, table td {
 }
 
 .filters {
-	margin-left:10%;
-	width:80%;
+	margin-left:5%;
+	width:90%;
 	display:flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-top: 30px;
-}
+	background: white;
+	border-radius: 12px;
+	padding: 16px;
+	border: 0.5px solid #2B90C6;
+} 
 </style>
 
 <body>
 	<section class="side-bar">
-		<div>
+		<div style="border-bottom: thin solid white; padding: 8px 10px">
 			<h1 style="font-weight: 500;">TechShop</h1>
 			<p>Technical Manager</p>
 		</div>
 
 		<div
-			style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border-top: thin solid grey; align-items: center">
-			<a href="task-list-page">Task List</a> <a>Staff List</a> <a>Device List</a> <a>Report</a>
+			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
+			<a href="task-list-page" class="active">Task List</a>
+			<a>Staff List</a>
+			<a>Device List</a>
+			<a>Report</a>
 		</div>
 
 	</section>
@@ -137,7 +155,7 @@ table th, table td {
 			</div>
 		</form>
 
-		<table style="margin-left: 5%; width: 90%">
+		<table style="margin-left: 6.5%; width: 90%">
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -160,8 +178,8 @@ table th, table td {
 						<%-- <td>${task.status}</td> --%>
 						<td>
 						<div style="display: flex; gap: 6px;">
-							<a href="task-detail?id=${task.id}">Xem</a>
-							<a href="task-form?id=${task.id}">Chỉnh sửa</a>
+							<a href="task-detail?id=${task.id}" style="background:white" title="View Task Detail"><i class="fa-solid fa-eye" style="color:#0d6efd;"></i></a>
+							<a href="task-form?id=${task.id}"  style="background:white" title="Update Task"><i class="fa-solid fa-pen" style="color:#2ecc71;"></i></a>
 						</div>
 							
 						</td>
@@ -171,9 +189,9 @@ table th, table td {
 			</tbody>
 		</table>
 		<div class="pagination"
-			style="display: flex; justify-content: center; position: relative; top: 10%">
-			<button style="padding: 6px">1</button>
-			<button style="padding: 6px">2</button>
+			style="display: flex; justify-content: center; position: relative; top: 10%; gap: 4px;">
+			<button style="padding: 8px 12px; border-radius: 8px; border:none">1</button>
+			<button style="padding: 8px 12px; border-radius: 8px; border:none">2</button>
 		</div>
 	</section>
 </body>
