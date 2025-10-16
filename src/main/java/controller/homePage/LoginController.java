@@ -18,6 +18,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        String email = request.getParameter("email");
     	String path = req.getServletPath();
         switch (path) {
             case "/login":
@@ -46,13 +47,17 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
     	String email = request.getParameter("email");
         String password = request.getParameter("password");
-
         User user = userDAO.getUserByLogin(email, password);
 
         if (user != null) {
             HttpSession session = request.getSession();
-            session.setAttribute("user", user);
-            response.sendRedirect("home");
+            session.setAttribute("account", user);
+            if (user.getRoleId() == 1) {
+                response.sendRedirect(request.getContextPath() + "/account");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/home");
+            }
+
         } else {
             request.setAttribute("error", "Email hoặc mật khẩu không đúng!");
             request.getRequestDispatcher("/view/authentication/login.jsp").forward(request, response);

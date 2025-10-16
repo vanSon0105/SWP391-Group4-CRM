@@ -13,6 +13,40 @@ import model.Device;
 import model.DeviceSerial;
 
 public class DeviceDAO extends DBContext {
+	public List<Device> getRelatedDevicesWithOffset(int deviceId, int categoryId, int offset, int limit) {
+	    List<Device> list = new ArrayList<>();
+	    String sql = "SELECT * FROM devices WHERE category_id = ? AND id <> ? LIMIT ?, ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, categoryId);
+	        ps.setInt(2, deviceId);
+	        ps.setInt(3, offset);
+	        ps.setInt(4, limit);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                Category c = new Category();
+	                c.setId(rs.getInt("category_id"));
+	                Device d = new Device(
+	                    rs.getInt("id"),
+	                    c,
+	                    rs.getString("name"),
+	                    rs.getDouble("price"),
+	                    rs.getString("unit"),
+	                    rs.getString("image_url"),
+	                    rs.getString("description"),
+	                    rs.getTimestamp("created_at"),
+	                    rs.getBoolean("is_featured")
+	                );
+	                list.add(d);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
 	
 	public List<Device> getRelatedDevices(int deviceId, int categoryId, int limit) {
 	    List<Device> list = new ArrayList<>();

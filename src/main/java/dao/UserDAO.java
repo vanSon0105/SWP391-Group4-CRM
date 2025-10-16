@@ -23,16 +23,18 @@ public class UserDAO {
 
     public boolean registerUser(User user) {
         String checkSql = "SELECT * FROM users WHERE username = ? OR email = ?";
-        String sql = "INSERT INTO users (username, password, email, image_url, full_name, phone, role_id, status) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users (username, password, email, image_url, full_name, phone, gender, birthday, role_id, status) "
+                   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try {
-            PreparedStatement checkStmt = conn.prepareStatement(checkSql);
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+
             checkStmt.setString(1, user.getUsername());
             checkStmt.setString(2, user.getEmail());
             ResultSet rs = checkStmt.executeQuery();
+
             if (rs.next()) {
-                return false; 
+                return false;
             }
 
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -42,11 +44,28 @@ public class UserDAO {
             stmt.setString(4, user.getImageUrl());
             stmt.setString(5, user.getFullName());
             stmt.setString(6, user.getPhone());
-            stmt.setInt(7, user.getRoleId());
-            stmt.setString(8, user.getStatus());
-
+            stmt.setString(7, user.getGender());
+            stmt.setDate(8, user.getBirthday());
+            stmt.setInt(9, user.getRoleId());
+            stmt.setString(10, user.getStatus());
             stmt.executeUpdate();
             return true;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean hasChangedUsername(int userId) {
+        String sql = "SELECT username_changed FROM users WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getBoolean("username_changed");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,6 +93,45 @@ public class UserDAO {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    private User extractUser(ResultSet rs) throws SQLException {
+        User u = new User();
+        u.setId(rs.getInt("id"));
+        u.setUsername(rs.getString("username"));
+        u.setPassword(rs.getString("password"));
+        u.setEmail(rs.getString("email"));
+        u.setImageUrl(rs.getString("image_url"));
+        u.setFullName(rs.getString("full_name"));
+        u.setPhone(rs.getString("phone"));
+        u.setGender(rs.getString("gender"));
+        u.setBirthday(rs.getDate("birthday"));
+        u.setRoleId(rs.getInt("role_id"));
+        u.setStatus(rs.getString("status"));
+        u.setCreatedAt(rs.getTimestamp("created_at"));
+        u.setLastLoginAt(rs.getTimestamp("last_login_at"));
+        try {
+            u.setUsernameChanged(rs.getBoolean("username_changed"));
+        } catch (SQLException ignore) {
+            u.setUsernameChanged(false);
+        }
+        return u;
+    }
+    
+    public boolean updateUsername(int userId, String newUsername) {
+        String sql = "UPDATE users SET username = ?, username_changed = TRUE "
+                   + "WHERE id = ? AND username_changed = FALSE";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, newUsername);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     
     public boolean existsByUsername(String username) {
@@ -123,9 +181,9 @@ public class UserDAO {
     }
     
     public void updatePassword(String email, String newPassword) {
-        try {
-            PreparedStatement ps = conn.prepareStatement(
-                "UPDATE account SET password = ? WHERE email = ?");
+        String sql = "UPDATE users SET password = ? WHERE email = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newPassword);
             ps.setString(2, email);
             ps.executeUpdate();
@@ -133,23 +191,25 @@ public class UserDAO {
             e.printStackTrace();
         }
     }
-    public User getUserById(int userId) {
-        String sql = "SELECT * FROM users WHERE id = ?";
+    
+    public User getUserById(int id) {
+        String sql = "SELECT * FROM users WHERE id=?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
+
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 User u = new User();
                 u.setId(rs.getInt("id"));
+                u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
+                u.setPhone(rs.getString("phone"));
+                u.setImageUrl(rs.getString("image_url"));
+                u.setGender(rs.getString("gender"));
+                u.setBirthday(rs.getDate("birthday"));
                 u.setUsername(rs.getString("username"));
                 u.setPassword(rs.getString("password"));
-                u.setEmail(rs.getString("email"));
-                u.setImageUrl(rs.getString("image_url"));
-                u.setFullName(rs.getString("full_name"));
-                u.setPhone(rs.getString("phone"));
-                u.setRoleId(rs.getInt("role_id"));
-                u.setStatus(rs.getString("status"));
                 return u;
             }
         } catch (SQLException e) {
@@ -157,22 +217,66 @@ public class UserDAO {
         }
         return null;
     }
+    
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt("id"));
+                u.setUsername(rs.getString("username"));
+                u.setEmail(rs.getString("email"));
+                u.setFullName(rs.getString("full_name"));
+                u.setPhone(rs.getString("phone"));
+                u.setRoleId(rs.getInt("role_id"));
+                u.setStatus(rs.getString("status"));
+                u.setImageUrl(rs.getString("image_url"));
+                list.add(u);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     public boolean updateUserProfile(User u) {
-        String sql = "UPDATE users SET full_name=?, phone=?, email=?, image_url=? WHERE id=?";
+        String sql = "UPDATE users SET full_name=?, phone=?, email=?, image_url=?, gender=?, birthday=? WHERE id=?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            System.out.println("Updating user ID: " + u.getId());
+            System.out.println("FullName: " + u.getFullName());
+            System.out.println("Phone: " + u.getPhone());
+            System.out.println("Email: " + u.getEmail());
+            System.out.println("ImageUrl: " + u.getImageUrl());
+            System.out.println("Gender: " + u.getGender());
+            System.out.println("Birthday: " + u.getBirthday());
+
             ps.setString(1, u.getFullName());
             ps.setString(2, u.getPhone());
             ps.setString(3, u.getEmail());
             ps.setString(4, u.getImageUrl());
-            ps.setInt(5, u.getId());
-            return ps.executeUpdate() > 0;
+            ps.setString(5, u.getGender());
+            if (u.getBirthday() != null) {
+                ps.setDate(6, u.getBirthday());
+            } else {
+                ps.setNull(6, java.sql.Types.DATE);
+            }
+            ps.setInt(7, u.getId());
+
+            int rows = ps.executeUpdate();
+            System.out.println("Rows affected: " + rows);
+            return rows > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
-
-    
 }
