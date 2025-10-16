@@ -110,7 +110,6 @@ body {
 <section class="side-bar">
 		<div style="border-bottom: thin solid white; padding: 8px 10px">
 			<h1 style="font-weight: 500;">TechShop</h1>
-			<p>Technical Manager</p>
 		</div>
 
 		<div
@@ -126,7 +125,7 @@ body {
 
     <div class="head">
         <h2>Task Detail</h2>
-        <a href="task-list-page" class="btn btn-secondary">Quay lại</a>
+        <a href="task-list" class="btn btn-secondary">Quay lại</a>
     </div>
 
 
@@ -135,7 +134,7 @@ body {
         <div class="task-meta">
             <b>Mô tả:</b> ${task.description}<br>
             <b>Manager:</b> ${task.managerId}<br>
-            <b>Customer Issue:</b> Issue #${customerIssueId}<br>
+            <b>Customer Issue:</b> Issue #${task.customerIssueId}<br>
             <b>Số nhân viên tham gia:</b> 1<br>
             <b>Trạng thái chung:</b> <span style="color: #0ea5e9">Đang xử lý</span>
         </div>

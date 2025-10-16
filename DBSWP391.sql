@@ -127,6 +127,7 @@ CREATE TABLE tasks (
   foreign key (customer_issue_id) references customer_issues(id)
 );
 
+
 CREATE TABLE task_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
   task_id INT NOT NULL,
@@ -137,6 +138,23 @@ CREATE TABLE task_details (
   foreign key (task_id) references tasks(id),
   foreign key (technical_staff_id) references users(id)
 );
+
+CREATE VIEW task_with_status AS
+SELECT t.id, t.title, t.description, t.manager_id, t.customer_issue_id,
+    CASE
+        WHEN COUNT(td.id) = 0 THEN 'pending' 
+        WHEN SUM(td.status = 'in_progress') > 0 THEN 'in_progress'
+        WHEN SUM(td.status = 'pending') = COUNT(td.id) THEN 'pending'
+        WHEN SUM(td.status = 'completed') = COUNT(td.id) THEN 'completed'
+        WHEN SUM(td.status = 'cancelled') = COUNT(td.id) THEN 'cancelled'
+        ELSE 'in_progress'
+    END AS status 
+FROM tasks t
+LEFT JOIN task_details td ON t.id = td.task_id
+GROUP BY t.id, t.title, t.description, t.manager_id, t.customer_issue_id;
+-- select * from tasks;
+-- select * from task_details;
+-- select * from tasks where id = 1;
 
 CREATE TABLE customer_issue_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -251,6 +269,9 @@ INSERT INTO users (username, password, email, image_url, full_name, phone, role_
 ('admin01', '123456', 'admin@example.com', NULL, 'System Admin', '0901234567', 1, 'active'),
 ('manager01', '123456', 'manager@example.com', NULL, 'Van Son', '0902345678', 2, 'active'),
 ('techstaff01', '123456', 'staff01@example.com', NULL, 'Duc Nguyen', '0903456789', 3, 'active'),
+('techstaff02', '123456', 'staff02@example.com', NULL, 'Duc Nguye', '0903456786', 3, 'active'),
+('techstaff03', '123456', 'staff03@example.com', NULL, 'Duc Nguy', '0903456787', 3, 'active'),
+('techstaff04', '123456', 'staff04@example.com', NULL, 'Duc Ngu', '0903456788', 3, 'active'),
 ('spstaff01', '123456', 'spstaff01@example.com', NULL, 'Xuan Bac', '0904567890', 4, 'active'),
 ('storekeeper01', '123456', 'storekeeper@example.com', NULL, 'Hai Dang', '0905678901', 5, 'active'),
 ('customer01', '123456', 'customer01@example.com', NULL, 'Hieu Pham', '0906789012', 6, 'active'),

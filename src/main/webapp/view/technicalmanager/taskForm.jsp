@@ -89,7 +89,7 @@ form {
 }
 
 button {
-	padding: 6px 8px;
+	padding: 8px 10px;
 	width: 80px;
 	border-radius: 6px;
 	background: #3b82f6;
@@ -113,21 +113,20 @@ form a {
 	<section class="side-bar">
 		<div style="border-bottom: thin solid white; padding: 8px 10px">
 			<h1 style="font-weight: 500;">TechShop</h1>
-			<p>Technical Manager</p>
 		</div>
 
 		<div
 			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
-			<a href="task-list-page" class="active">Task List</a> <a>Staff
+			<a href="task-list" class="active">Task List</a> <a>Staff
 				List</a> <a>Device List</a> <a>Report</a>
 		</div>
 
 	</section>
-	<form action="task-form" method="get">
+	<form action="task-form" method="post">
 
 		<div class="container">
 			<div class="head">
-				<h2>Add/Update Task</h2>
+				<h2>${task != null ? "Update Task" : "Add Task"}</h2>
 			</div>
 			<div class="task-form">
 				<input type="hidden" name="id" value="${task.id}" /> <label>Title:</label>
@@ -151,7 +150,7 @@ form a {
 				<label>Deadline</label> <input type="date" name="deadline"
 					value="${taskDetail[0].deadline}" />
 				<div>
-					<a href="task-list-page">Back</a>
+					<a href="task-list">Back</a>
 					<button type="submit" style="margin-left: 10px">Submit</button>
 
 				</div>
