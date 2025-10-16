@@ -29,13 +29,12 @@ public class ProfileController extends HttpServlet {
         User freshUser = userDAO.getUserById(currentUser.getId());
 
         if (freshUser != null) {
-            session.setAttribute("account", freshUser); // cập nhật session
+            session.setAttribute("account", freshUser); 
             request.setAttribute("user", freshUser);
         } else {
             request.setAttribute("user", currentUser);
         }
 
-        // Lấy message từ session nếu có
         String message = (String) session.getAttribute("profileMessage");
         if (message != null) {
             request.setAttribute("message", message);
@@ -58,10 +57,9 @@ public class ProfileController extends HttpServlet {
 
         User currentUser = (User) session.getAttribute("account");
 
-        // Lấy dữ liệu từ form
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
-        String gender = request.getParameter("gender"); // male/female/other
+        String gender = request.getParameter("gender"); 
         String birthdayStr = request.getParameter("birthday");
 
         Date birthday = null;
@@ -73,7 +71,6 @@ public class ProfileController extends HttpServlet {
             }
         }
 
-        // Upload avatar
         String imageUrl = currentUser.getImageUrl();
         try {
             Part imagePart = request.getPart("imageUrl");
@@ -88,8 +85,6 @@ public class ProfileController extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        // Cập nhật thông tin user
         currentUser.setFullName(fullName);
         currentUser.setPhone(phone);
         currentUser.setGender(gender);
@@ -98,20 +93,17 @@ public class ProfileController extends HttpServlet {
 
         boolean success = userDAO.updateUserProfile(currentUser);
 
-        // Cập nhật session
         User updatedUser = userDAO.getUserById(currentUser.getId());
         if (updatedUser != null) {
             session.setAttribute("account", updatedUser);
         }
 
-        // Thêm message
         if (success) {
             session.setAttribute("profileMessage", "Cập nhật hồ sơ thành công!");
         } else {
             session.setAttribute("profileMessage", "Cập nhật hồ sơ thất bại.");
         }
 
-        // Redirect để tránh form resubmission
         response.sendRedirect(request.getContextPath() + "/profile");
     }
 }

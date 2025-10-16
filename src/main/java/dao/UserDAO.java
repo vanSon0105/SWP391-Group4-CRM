@@ -20,6 +20,28 @@ public class UserDAO {
             e.printStackTrace();
         }
     }
+    
+    public List<User> getUsersByRole(int roleId) {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM users WHERE role_id = ? AND status='active'";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, roleId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt("id"));
+                u.setUsername(rs.getString("username"));
+                u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
+                u.setRoleId(rs.getInt("role_id")); 
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
 
     public boolean registerUser(User user) {
         String checkSql = "SELECT * FROM users WHERE username = ? OR email = ?";
@@ -161,23 +183,27 @@ public class UserDAO {
     }
     
     public List<User> getAllTechnicalStaff() {
-    	List<User> list = new ArrayList<>();
-    	String sql = "select id, username from users where role_id = 3";
-    	
-    	try (Connection conn = DBContext.getConnection();
-    		 PreparedStatement pre = conn.prepareStatement(sql);
-    		 ResultSet rs = pre.executeQuery()){
-			while(rs.next()) {
-				list.add(new User(
-						rs.getInt("id"),
-						rs.getString("username")
-						));
-			}
-    		
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-    	return list;
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT id, username, full_name, email FROM users WHERE role_id = 3";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement pre = conn.prepareStatement(sql);
+             ResultSet rs = pre.executeQuery()) {
+
+            while (rs.next()) {
+                User u = new User();
+                u.setId(rs.getInt("id"));
+                u.setUsername(rs.getString("username"));
+                u.setFullName(rs.getString("full_name"));
+                u.setEmail(rs.getString("email"));
+                list.add(u);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
     
     public void updatePassword(String email, String newPassword) {
@@ -221,6 +247,7 @@ public class UserDAO {
     public List<User> getAllUsers() {
         List<User> list = new ArrayList<>();
         String sql = "SELECT * FROM users";
+
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -232,18 +259,24 @@ public class UserDAO {
                 u.setEmail(rs.getString("email"));
                 u.setFullName(rs.getString("full_name"));
                 u.setPhone(rs.getString("phone"));
+                u.setGender(rs.getString("gender"));
+                u.setBirthday(rs.getDate("birthday"));
+                u.setImageUrl(rs.getString("image_url"));
                 u.setRoleId(rs.getInt("role_id"));
                 u.setStatus(rs.getString("status"));
-                u.setImageUrl(rs.getString("image_url"));
+                u.setCreatedAt(rs.getTimestamp("created_at"));
+                u.setLastLoginAt(rs.getTimestamp("last_login_at"));
+                u.setUsernameChanged(rs.getBoolean("username_changed"));
+
                 list.add(u);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return list;
     }
-
 
     public boolean updateUserProfile(User u) {
         String sql = "UPDATE users SET full_name=?, phone=?, email=?, image_url=?, gender=?, birthday=? WHERE id=?";
