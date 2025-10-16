@@ -179,11 +179,10 @@ public class UserDAO {
 		}
     	return list;
     }
-    
     public void updatePassword(String email, String newPassword) {
-        String sql = "UPDATE users SET password = ? WHERE email = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try {
+            PreparedStatement ps = conn.prepareStatement(
+                "UPDATE users SET password = ? WHERE email = ?");
             ps.setString(1, newPassword);
             ps.setString(2, email);
             ps.executeUpdate();
