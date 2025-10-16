@@ -11,6 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>NovaCare Shop - Chi tiết sản phẩm</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/shop.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
 .left-column {
@@ -259,6 +260,57 @@
 .warranty {
     grid-column: span 2;
 }
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    list-style: none;
+    padding-left: 0;
+    margin-top: 24px;
+    gap: 4px;
+}
+
+.page-item {
+    display: inline-block;
+}
+
+.page-item .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    color: #007bff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background-color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s ease-in-out;
+}
+
+.page-item .page-link:hover {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+    background-color: #f8f9fa;
+    color: #aaa;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+}
+
+.page-link {
+    text-decoration: none !important;
+}
 
 .cta a.order-btn {
     display: inline-flex;
@@ -406,30 +458,76 @@
 	</div>
     <c:if test="${not empty relatedDevices}">
       <section class="related-products">
-        <h2>Sản phẩm liên quan</h2>
-        <div class="related-grid">
-          <c:forEach var="rel" items="${relatedDevices}">
-	            <div class="hero-card" style="padding:16px; border:1px solid #ddd; border-radius:12px; text-align:center;">
-		              <c:choose>
-			                <c:when test="${not empty rel.imageUrl}">
-			                  <img src="${rel.imageUrl}" alt="${rel.name}" />
-			                </c:when>
-			                <c:otherwise>
-			                  <img src="<%=request.getContextPath()%>/assets/images/no-image.png" alt="No image" />
-			                </c:otherwise>
-		              </c:choose>
-		              <h3 style="font-size:18px; color:#0066b3; margin:8px 0;">${rel.name}</h3>
-		              <p style="font-size:16px; color:#ff6600; font-weight:700; margin:4px 0;">
-		                <fmt:formatNumber value="${rel.price}" type="number" maxFractionDigits="0"/> đ
-		              </p>
-		              <div class="cta-inline">
-			                <a href="device-detail?id=${rel.id}" class="buy-now"><i class="fa-solid fa-eye"></i> Xem chi tiết</a>
-			                <a href="add-to-cart?id=${rel.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
-		              </div>
-	            </div>
-          </c:forEach>
+  <h2>Sản phẩm liên quan</h2>
+  <div class="related-grid">
+    <c:forEach var="rel" items="${relatedDevices}">
+      <div class="hero-card" style="padding:16px; border:1px solid #ddd; border-radius:12px; text-align:center;">
+        <c:choose>
+          <c:when test="${not empty rel.imageUrl}">
+            <img src="${rel.imageUrl}" alt="${rel.name}" />
+          </c:when>
+          <c:otherwise>
+            <img src="<%=request.getContextPath()%>/assets/images/no-image.png" alt="No image" />
+          </c:otherwise>
+        </c:choose>
+        <h3 style="font-size:18px; color:#0066b3; margin:8px 0;">${rel.name}</h3>
+        <p style="font-size:16px; color:#ff6600; font-weight:700; margin:4px 0;">
+          <fmt:formatNumber value="${rel.price}" type="number" maxFractionDigits="0"/> đ
+        </p>
+        <div class="cta-inline">
+          <a href="device-detail?id=${rel.id}" class="buy-now"><i class="fa-solid fa-eye"></i> Xem chi tiết</a>
+          <a href="add-to-cart?id=${rel.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
         </div>
-      </section>
+      </div>
+    </c:forEach>
+  </div>
+
+  <!-- PHÂN TRANG -->
+  <c:if test="${totalPages > 1}">
+    <nav aria-label="Page navigation" style="margin-top:24px;">
+      <ul class="pagination justify-content-center">
+
+        <!-- Nút Trước -->
+        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+          <a class="page-link"
+             href="device-detail?id=${device.id}&page=${currentPage - 1}">
+            Trước
+          </a>
+        </li>
+
+        <!-- Hiển thị tối đa 5 trang -->
+        <c:set var="startPage" value="${currentPage - 2}" />
+        <c:set var="endPage" value="${currentPage + 2}" />
+        <c:if test="${startPage < 1}">
+          <c:set var="endPage" value="${endPage + (1 - startPage)}" />
+          <c:set var="startPage" value="1" />
+        </c:if>
+        <c:if test="${endPage > totalPages}">
+          <c:set var="startPage" value="${startPage - (endPage - totalPages)}" />
+          <c:set var="endPage" value="${totalPages}" />
+        </c:if>
+        <c:if test="${startPage < 1}">
+          <c:set var="startPage" value="1" />
+        </c:if>
+
+        <c:forEach var="i" begin="${startPage}" end="${endPage}">
+          <li class="page-item ${i == currentPage ? 'active' : ''}">
+            <a class="page-link" href="device-detail?id=${device.id}&page=${i}">${i}</a>
+          </li>
+        </c:forEach>
+
+        <!-- Nút Tiếp -->
+        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+          <a class="page-link"
+             href="device-detail?id=${device.id}&page=${currentPage + 1}">
+            Tiếp
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+  </c:if>
+</section>
     </c:if>
 
   </c:when>

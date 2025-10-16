@@ -13,6 +13,40 @@ import model.Device;
 import model.DeviceSerial;
 
 public class DeviceDAO extends DBContext {
+	public List<Device> getRelatedDevicesWithOffset(int deviceId, int categoryId, int offset, int limit) {
+	    List<Device> list = new ArrayList<>();
+	    String sql = "SELECT * FROM devices WHERE category_id = ? AND id <> ? LIMIT ?, ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, categoryId);
+	        ps.setInt(2, deviceId);
+	        ps.setInt(3, offset);
+	        ps.setInt(4, limit);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                Category c = new Category();
+	                c.setId(rs.getInt("category_id"));
+	                Device d = new Device(
+	                    rs.getInt("id"),
+	                    c,
+	                    rs.getString("name"),
+	                    rs.getDouble("price"),
+	                    rs.getString("unit"),
+	                    rs.getString("image_url"),
+	                    rs.getString("description"),
+	                    rs.getTimestamp("created_at"),
+	                    rs.getBoolean("is_featured")
+	                );
+	                list.add(d);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
 	
 	public List<Device> getRelatedDevices(int deviceId, int categoryId, int limit) {
 	    List<Device> list = new ArrayList<>();
@@ -337,68 +371,106 @@ public class DeviceDAO extends DBContext {
 	}
 	
 //	Device - Admin
-	public List<Device> findAllDevices() {
-		List<Device> list = new ArrayList<>();
-		String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price,\r\n"
-				+ "    COALESCE(stock.quantity, 0) AS 'inventory',\r\n"
-				+ "    CASE\r\n"
-				+ "        WHEN COALESCE(stock.quantity, 0) > 0 THEN 'Còn hàng'\r\n"
-				+ "        ELSE 'Hết hàng'\r\n"
-				+ "    END AS 'status'\r\n"
-				+ "FROM devices AS d\r\n"
-				+ "JOIN categories AS c ON d.category_id = c.id\r\n"
-				+ "LEFT JOIN\r\n"
-				+ "    (SELECT device_id, COUNT(id) AS quantity\r\n"
-				+ "     FROM  device_serials\r\n"
-				+ "     WHERE status = 'in_stock'\r\n"
-				+ "     GROUP BY device_id	\r\n"
-				+ "    ) AS stock ON d.id = stock.device_id;";
+	public List<Device> getDevicesByPage(String key, int offset, int recordsEachPage, int categoryId) {
+	    List<Device> list = new ArrayList<>();
+	    String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price, "
+	            + "COALESCE(stock.quantity, 0) AS inventory, d.status "
+	            + "FROM devices AS d "
+	            + "JOIN categories AS c ON d.category_id = c.id "
+	            + "LEFT JOIN ( "
+	            + "     SELECT device_id, COUNT(id) AS quantity "
+	            + "     FROM device_serials "
+	            + "     WHERE status = 'in_stock' "
+	            + "     GROUP BY device_id "
+	            + ") AS stock ON d.id = stock.device_id "
+	            +"WHERE 1=1 ";
+	    
+	    if (key != null && !key.trim().isEmpty()) {
+	    	sql += "AND (d.name LIKE ? OR CAST(d.id AS CHAR) LIKE ?)";
+	    }
+	    
+	    if (categoryId > 0) {
+	        sql += ("AND d.category_id = ? ");
+	    }
 
-		try (Connection connection = getConnection();
-				PreparedStatement pre = connection.prepareStatement(sql);
-				ResultSet rs = pre.executeQuery()) {
+	    sql += "ORDER BY d.id DESC LIMIT ?, ?;";
 
-			while (rs.next()) {
-				Category c = new Category();
-            	c.setName(rs.getString("category_name"));
-				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
-						rs.getDouble("price"), rs.getString("image_url"),rs.getInt("inventory"),rs.getString("status")));
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-
-		return list;
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	    	int index = 1;
+	        if (key != null && !key.trim().isEmpty()) {
+	            String keyword = "%" + key + "%";
+	            ps.setString(index++, keyword);
+	            ps.setString(index++, keyword);
+	        }
+	        
+	        if (categoryId > 0) {
+	            ps.setInt(index++, categoryId);
+	        }
+	        
+	        ps.setInt(index++, offset);
+	        ps.setInt(index, recordsEachPage);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                Category c = new Category();
+	                c.setName(rs.getString("category_name"));
+	                Device d = new Device(
+	                    rs.getInt("id"),
+	                    c,
+	                    rs.getString("name"),
+	                    rs.getDouble("price"),
+	                    rs.getString("image_url"),
+	                    rs.getInt("inventory"),
+	                    rs.getString("status")
+	                );
+	                list.add(d);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
 	}
+
 	
-	public List<DeviceSerial> getAllDeviceSerials(int id){
-		List<DeviceSerial> list = new ArrayList<DeviceSerial>();
-		String sql = "\r\n"
-				+ "SELECT id, serial_no, status, import_date \r\n"
-				+ "FROM device_serials \r\n"
-				+ "WHERE device_id = ?;";
-		try {
-			Connection connection = getConnection();
-			PreparedStatement ps = connection.prepareStatement(sql);
-			ps.setInt(1, id);
-			ResultSet rs = ps.executeQuery();
-			while(rs.next()) {
-				DeviceSerial ds = new DeviceSerial();
-				ds.setId(rs.getInt("id"));
-				ds.setSerial_no(rs.getString("serial_no"));
-				ds.setStatus(rs.getString("status"));
-				ds.setImport_date(rs.getTimestamp("import_date"));
-				list.add(ds);
-			}
-			
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return list;
+	public int getTotalDevices(String key, int categoryId) {
+	    String sql = "SELECT COUNT(*) FROM devices AS d WHERE 1=1 ";
+	    
+	    if (key != null && !key.trim().isEmpty()) {
+	        sql += "AND (d.name LIKE ? OR CAST(d.id AS CHAR) LIKE ?)";
+	    }
+	    
+	    if (categoryId > 0) {
+	        sql += ("AND d.category_id = ? ");
+	    }
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)){
+	    	
+	    	int index = 1;
+	    	if (key != null && !key.trim().isEmpty()) {
+	            String keyword = "%" + key + "%";
+	            ps.setString(index++, keyword);
+	            ps.setString(index++, keyword);
+	        }
+	    	
+	    	if (categoryId > 0) {
+	            ps.setInt(index++, categoryId);
+	        }
+	    	
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return 0;
 	}
+
+	
 	
 	public Device getDeviceDetail(int id) {
-	    String sql = "SELECT d.id, d.name, c.category_name, d.price, d.unit, d.description, d.created_at, d.image_url, (SELECT COUNT(ds.id) FROM device_serials ds WHERE ds.device_id = d.id AND ds.status = 'in_stock') AS stock_quantity\r\n"
+	    String sql = "SELECT d.id, c.category_name, d.name, d.price, d.unit, d.description, d.image_url, d.created_at, d.is_featured, (SELECT COUNT(ds.id) FROM device_serials ds WHERE ds.device_id = d.id AND ds.status = 'in_stock') AS stock_quantity\r\n"
 	    		+ "FROM devices AS d\r\n"
 	    		+ "JOIN categories AS c ON d.category_id = c.id\r\n"
 	    		+ "WHERE d.id = ?;";
@@ -415,10 +487,11 @@ public class DeviceDAO extends DBContext {
 	                    c,
 	                    rs.getString("name"),
 	                    rs.getDouble("price"),
-	                    rs.getString("image_url"),
 	                    rs.getString("unit"),
 	                    rs.getString("description"),
+	                    rs.getString("image_url"),
 	                    rs.getTimestamp("created_at"),
+	                    rs.getBoolean("is_featured"),
 	                    rs.getInt("stock_quantity")
 	                );
 	            }
@@ -430,7 +503,7 @@ public class DeviceDAO extends DBContext {
 	}
 	
 	public boolean updateDevice(Device deviceUpdate) {
-	    String sql = "UPDATE devices SET name = ?, category_id = ?, price = ?, unit = ?, description = ?, image_url=? WHERE id = ?;";
+	    String sql = "UPDATE devices SET name = ?, category_id = ?, price = ?, unit = ?, description = ?, image_url=?, is_featured = ? WHERE id = ?;";
 	    boolean update = false;
 	    
 	    try (Connection connection = getConnection();
@@ -442,7 +515,8 @@ public class DeviceDAO extends DBContext {
 	        ps.setString(4, deviceUpdate.getUnit());
 	        ps.setString(5, deviceUpdate.getDesc());
 	        ps.setString(6, deviceUpdate.getImageUrl());
-	        ps.setInt(7, deviceUpdate.getId());
+	        ps.setBoolean(7, deviceUpdate.getIsFeatured());
+	        ps.setInt(8, deviceUpdate.getId());
 	        
 	        update = ps.executeUpdate() > 0;
 	        
@@ -465,7 +539,7 @@ public class DeviceDAO extends DBContext {
 	        ps.setString(4, device.getUnit());
 	        ps.setString(5, device.getImageUrl());
 	        ps.setString(6, device.getDesc());
-	        ps.setBoolean(7, device.isIs_featured());
+	        ps.setBoolean(7, device.getIsFeatured());
 	        
 	        add = ps.executeUpdate() > 0;
 	        
@@ -473,6 +547,41 @@ public class DeviceDAO extends DBContext {
 	        e.printStackTrace();
 	    }
 	    return add;
+	}
+	
+	public boolean deleteDevice(int id) {
+	    String sql = "UPDATE devices SET status = 'discontinued' WHERE id = ?;";
+	    
+	    String sql1 = "UPDATE device_serials " +
+                "SET status = 'discontinued' " +
+                "WHERE device_id = ? AND (stock_status = 'in_stock' OR stock_status = 'out_stock')";
+
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql);
+	         PreparedStatement ps1 = connection.prepareStatement(sql1)) {
+	        ps.setInt(1, id);
+	        ps.executeUpdate();
+	        ps1.setInt(1, id);
+	        ps1.executeUpdate();
+	        
+	        return true;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+	
+	public boolean activeDevice(int id) {
+	    String sql = "UPDATE devices SET status = 'active' WHERE id = ?;";
+	 
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setInt(1, id);        
+	        return ps.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
 
 }

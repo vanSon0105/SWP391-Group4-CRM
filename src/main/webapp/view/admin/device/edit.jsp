@@ -43,24 +43,18 @@
                     </div>
                     <div class="form-field">
                         <label for="price">Giá bán (₫)</label>
-                        <input id="price" name="price" type="number" min="0" step="1000" value="${device.price}">
+                        <input id="price" name="price" type="number" min="0" value="${device.price}">
                     </div>
 					
 					<div class="form-field">
-                        <label for="unit">Đơn vị</label>
-                        <input id="unit" name="unit" value="${device.unit}">
-                    </div>
+					    <label for="isFeatured">Nổi bật</label>
+					    <input type="hidden" name="isFeatured" value="false">
+					    <input style="margin-bottom: 7px;width: 35px;" type="checkbox" id="isFeatured" name="isFeatured" value="true"
+					           <c:if test="${device.isFeatured}">checked</c:if>>
+					</div>
 
-                    <%-- 
-                    <div class="form-field">
-                        <label for="status">Trạng thái</label>
-                        <select id="status" name="status" required>
-                            <option selected>Đang bán</option>
-                            <option>Ngừng bán</option>
-                            <option>Hết hàng</option>
-                        </select>
-                    </div>
-                    --%>
+
+                    
                     <div class="form-field file-image">
 					    <label for="image">Ảnh</label>
 					    <input type="file" id="image" name="image" accept="image/*">
@@ -74,7 +68,6 @@
                 <div class="form-actions form-actions--spread">
                     <div>
                         <a id="view-link" class="btn ghost" href="device-view?id=${device.id}">Xem</a>
-                        <a id="delete-link" class="btn danger" href="device-remove?id=${device.id}">Xóa</a>
                     </div>
                     <div>
                         <a class="btn ghost" href="device-show#table-panel">Hủy</a>

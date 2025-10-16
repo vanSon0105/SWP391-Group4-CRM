@@ -6,6 +6,33 @@ import model.DeviceSerial;
 
 
 public class DeviceSerialDAO extends dal.DBContext {
+	
+	public List<DeviceSerial> getAllDeviceSerials(int id){
+		List<DeviceSerial> list = new ArrayList<DeviceSerial>();
+		String sql = "\r\n"
+				+ "SELECT * \r\n"
+				+ "FROM device_serials \r\n"
+				+ "WHERE device_id = ?;";
+		try {
+			Connection connection = getConnection();
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			while(rs.next()) {
+				DeviceSerial ds = new DeviceSerial();
+				ds.setId(rs.getInt("id"));
+				ds.setSerial_no(rs.getString("serial_no"));
+				ds.setStock_status(rs.getString("stock_status")); 
+				ds.setStatus(rs.getString("status"));
+				ds.setImport_date(rs.getTimestamp("import_date"));
+				list.add(ds);
+			}
+			
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return list;
+	}
 
     public List<DeviceSerial> getSerialsByDeviceId(int deviceId) {
         List<DeviceSerial> list = new ArrayList<>();
@@ -20,8 +47,9 @@ public class DeviceSerialDAO extends dal.DBContext {
                     ds.setId(rs.getInt("id"));
                     ds.setDevice_id(rs.getInt("device_id"));
                     ds.setSerial_no(rs.getString("serial_no"));
-                    ds.setStatus(rs.getString("status")); 
+                    ds.setStock_status(rs.getString("stock_status")); 
                     ds.setImport_date(rs.getTimestamp("import_date"));
+                    ds.setStatus(rs.getString("status")); 
                     list.add(ds);
                 }
             }
@@ -30,6 +58,29 @@ public class DeviceSerialDAO extends dal.DBContext {
         }
 
         return list;
+    }
+    
+    public DeviceSerial getDeviceSerial(int id) {
+    	DeviceSerial ds = new DeviceSerial();
+    	String sql = "SELECT * FROM device_serials WHERE id = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);;
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ds.setId(rs.getInt("id"));
+                    ds.setDevice_id(rs.getInt("device_id"));
+                    ds.setSerial_no(rs.getString("serial_no"));
+                    ds.setStatus(rs.getString("status")); 
+                    ds.setImport_date(rs.getTimestamp("import_date"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return ds;
     }
 
     public boolean addSerial(DeviceSerial ds) {
@@ -60,23 +111,17 @@ public class DeviceSerialDAO extends dal.DBContext {
         }
     }
 
-    public boolean deleteSerial(int serialId) {
-        String sql = "DELETE FROM device_serials WHERE id = ?";
+    public boolean statusSerial(int id, String mess) {
+        String sql = "UPDATE device_serials SET status = ? WHERE id = ?;";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, serialId);
+        	ps.setString(1, mess);
+            ps.setInt(2, id);
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
         }
+        return false;
     }
-
-    public static void main(String[] args) {
-        DeviceSerialDAO dao = new DeviceSerialDAO();
-        List<DeviceSerial> serials = dao.getSerialsByDeviceId(1);
-        for (DeviceSerial ds : serials) {
-            System.out.println(ds.getSerial_no() + " - " + ds.getStatus());
-        }
-    }
+    
 }

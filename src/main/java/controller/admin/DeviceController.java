@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.Part;
 import model.Category;
 import model.Device;
@@ -17,24 +18,25 @@ import java.util.List;
 
 import dao.CategoryDAO;
 import dao.DeviceDAO;
+import dao.DeviceSerialDAO;
 
 /**
  * Servlet implementation class DeviceController
  */
-@WebServlet({"/device-show", "/device-view", "/device-serials", "/device-update", "/device-add"})
+@WebServlet({"/device-show", "/device-view", "/device-update", "/device-add", "/device-delete", "/device-active"})
 @MultipartConfig
 public class DeviceController extends HttpServlet {
 	public DeviceDAO dao = new DeviceDAO();
 	public CategoryDAO cdao = new CategoryDAO();
+	public DeviceSerialDAO dsdao = new DeviceSerialDAO();
+	private final int recordsEachPage = 10;
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
         switch (path) {
-            case "/device-show":
-                showDeviceList(request, response);
+            case "/device-delete":
+                deleteDevice(request, response);
                 break;
-            case "/device-serials":
-            	viewDeviceSerialList(request, response);
-            	break;
             case "/device-view":
             	viewDeviceDetails(request, response);
             	break;
@@ -44,7 +46,11 @@ public class DeviceController extends HttpServlet {
             case "/device-add":
             	addDevice(request, response);
             	break;
-            
+            case "/device-active":
+            	activeDevice(request, response);
+            	break;
+            default:
+            	showDeviceList(request, response);
         }
 	}
 	
@@ -57,35 +63,37 @@ public class DeviceController extends HttpServlet {
             case "/device-add":
             	addDeviceDoPost(request, response);
             	break;
-            
+            case "/device-delete":
+            	deleteDeviceDoPost(request, response);
+            	break;
         }
     }
 	
 	public void showDeviceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Device> listDevices = dao.findAllDevices();
+		String page = request.getParameter("page");
+		String key = request.getParameter("key");
+		String categoryIdParam = request.getParameter("categoryId");
+		
+		int categoryId = (categoryIdParam != null) ? Integer.parseInt(categoryIdParam) : 0;
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		
+		int offset = (currentPage - 1) * recordsEachPage;
+		List<Category> listCategories = cdao.getAllCategories();
+		List<Device> listDevices = dao.getDevicesByPage(key, offset, recordsEachPage, categoryId);
+		
+		int totalDevices = dao.getTotalDevices(key, categoryId);
+		int totalPages = (int) Math.ceil((double) totalDevices / recordsEachPage);
+		
+		request.setAttribute("listCategories", listCategories);
+		request.setAttribute("currentPage", currentPage);
+		request.setAttribute("totalPages", totalPages);
 		request.setAttribute("listDevices", listDevices);
 		request.getRequestDispatcher("view/admin/device/show.jsp").forward(request, response);
 	}
 	
-	public void viewDeviceSerialList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = 0;
-		try {
-			id = Integer.parseInt(request.getParameter("id"));			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		List<DeviceSerial> listDeviceSerials = dao.getAllDeviceSerials(id);
-		request.setAttribute("listDeviceSerials", listDeviceSerials);
-		request.getRequestDispatcher("view/admin/device/show.jsp").forward(request, response);
-	}
-	
 	public void viewDeviceDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = 0;
-		try {
-			id = Integer.parseInt(request.getParameter("id"));			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		int id = Integer.parseInt(request.getParameter("id"));			
+
 		
 		Device d = dao.getDeviceDetail(id);
 		request.setAttribute("deviceDetail", d);
@@ -93,12 +101,8 @@ public class DeviceController extends HttpServlet {
 	}
 	
 	public void updateDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = 0;
-		try {
-			id = Integer.parseInt(request.getParameter("id"));			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		int id = Integer.parseInt(request.getParameter("id"));			
+
 		
 		Device getDevice = dao.getDeviceById(id);
 		List<Category> listCategory = cdao.getAllCategories();
@@ -109,16 +113,9 @@ public class DeviceController extends HttpServlet {
 	
 	public void updateDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String name = request.getParameter("name");
-        int id = 0;
-        int categoryId = 0;
-        Double price = 0.0;
-		try {
-			categoryId = Integer.parseInt(request.getParameter("categoryId"));
-			id = Integer.parseInt(request.getParameter("id"));			
-			price = Double.parseDouble(request.getParameter("price")); 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        int id = Integer.parseInt(request.getParameter("id"));
+        int categoryId = Integer.parseInt(request.getParameter("categoryId"));	
+        Double price = Double.parseDouble(request.getParameter("price"));
 		
 		Part filePart = request.getPart("image");
         String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -126,10 +123,15 @@ public class DeviceController extends HttpServlet {
         Category c = cdao.getCategoryById(categoryId);
         String unit = request.getParameter("unit");
         String description = request.getParameter("description");
+        Boolean isFeatured = Boolean.parseBoolean(request.getParameter("isFeatured"));
         
-        Device device = new Device(id, c, name, price, fileName, unit, description);
-        dao.updateDevice(device);
-        response.sendRedirect("device-show");
+        Device device = new Device(id, c, name, price, fileName, unit, description, isFeatured);
+        boolean check = dao.updateDevice(device);
+        String mess = check ? "Update device thành công" : "Update device thất bại";
+		HttpSession session = request.getSession();
+		session.removeAttribute("mess");
+	    session.setAttribute("mess", mess);
+	    response.sendRedirect("device-show");
 	}
 	
 	public void addDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -155,8 +157,8 @@ public class DeviceController extends HttpServlet {
         Category c = cdao.getCategoryById(categoryId);
         String unit = request.getParameter("unit");
         String description = request.getParameter("description");
-		
-		boolean isFeatured = request.getParameter("isFeatured") != null;
+        Boolean isFeatured =Boolean.parseBoolean(request.getParameter("isFeatured"));
+        
         Device d = new Device();
         d.setCategory(c);
         d.setName(name);
@@ -164,10 +166,47 @@ public class DeviceController extends HttpServlet {
         d.setUnit(unit);
         d.setImageUrl(fileName);
         d.setDesc(description);
-        d.setIs_featured(isFeatured);
+        d.setIsFeatured(isFeatured);
         
-        dao.addDevice(d);
-        response.sendRedirect("device-show");
+        boolean check = dao.addDevice(d);
+        String mess = check ? "Add device thành công" : "Add device thất bại";
+		HttpSession session = request.getSession();
+		session.removeAttribute("mess");
+	    session.setAttribute("mess", mess);
+	    response.sendRedirect("device-show");
+	}
+
+	public void deleteDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));			
+
+		Device getDevice = dao.getDeviceById(id);
+		List<DeviceSerial> listDeviceSerials = dsdao.getAllDeviceSerials(getDevice.getId());
+		request.setAttribute("listDeviceSerials", listDeviceSerials);
+		request.setAttribute("device", getDevice);
+		request.getRequestDispatcher("view/admin/device/delete.jsp").forward(request, response);
+	}
+	
+	
+	public void deleteDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));			
+
+		boolean check = dao.deleteDevice(id);
+		String mess = check ? "Delete device thành công" : "Delete device thất bại";
+		HttpSession session = request.getSession();
+		session.removeAttribute("mess");
+	    session.setAttribute("mess", mess);
+	    response.sendRedirect("device-show");
+	}
+	
+	public void activeDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));			
+		boolean check = dao.activeDevice(id);
+		String mess = check ? "Active device thành công" : "Active device thất bại";
+		HttpSession session = request.getSession();
+		session.removeAttribute("mess");
+	    session.setAttribute("mess", mess);
+	    response.sendRedirect("device-show");
+		
 	}
 
 }
