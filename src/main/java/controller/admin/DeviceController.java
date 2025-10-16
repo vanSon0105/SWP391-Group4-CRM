@@ -85,7 +85,6 @@ public class DeviceController extends HttpServlet {
 		int totalPages = (int) Math.ceil((double) totalDevices / recordsEachPage);
 		
 		request.setAttribute("listCategories", listCategories);
-		request.setAttribute("selectedCategory", categoryId);
 		request.setAttribute("currentPage", currentPage);
 		request.setAttribute("totalPages", totalPages);
 		request.setAttribute("listDevices", listDevices);

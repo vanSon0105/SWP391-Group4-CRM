@@ -13,42 +13,46 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.device-btn{
-    color: black !important;
-}
-.device-management .pagination-pills {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
-
-.device-management .pagination-pills a {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	text-decoration: none;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.15);
-    background: rgba(255, 255, 255, 0.9);
-    color: #1f2937;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.device-management .pagination-pills a.active {
-    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-    color: #f8fafc;
-    border-color: transparent;
-    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-}
-
-.device-management .pagination-pills a:hover {
-    transform: translateY(-2px);
-}
+	.device-btn{
+	    color: black !important;
+	}
+	.device-management .pagination-pills {
+	    display: flex;
+	    justify-content: center;
+	    gap: 10px;
+	}
+	
+	.device-management .pagination-pills a {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+	    width: 44px;
+	    height: 44px;
+	    padding: 0;
+	    border-radius: 16px;
+	    border: 1px solid rgba(15, 23, 42, 0.15);
+	    background: rgba(255, 255, 255, 0.9);
+	    color: #1f2937;
+	    font-weight: 600;
+	    cursor: pointer;
+	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	}
+	
+	.device-management .pagination-pills a.active {
+	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	}
+	
+	.device-management .pagination-pills a:hover {
+	    transform: translateY(-2px);
+	}
+	
+	body .panel h2{
+		margin-bottom: 0 !important;
+	}
 }
 </style>
 </head>
@@ -67,13 +71,6 @@
                     <form class="device-search" action="category-show" method="get">
 		                <label for="category-search" class="sr-only"></label>
 		                <input id="category-search" name="key" type="search" placeholder="Tìm theo tên danh mục . . ." value="${param.key}">
-		                
-		                <select class="btn device-btn" name="categoryId">
-					        <option value="0">Tất cả danh mục</option>
-					        <c:forEach var="c" items="${listCategories}">
-					            <option value="${c.id}" ${selectedCategory == c.id ? 'selected' : ''}>${c.name}</option>
-					        </c:forEach>
-					    </select>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
 		            </form>
@@ -105,7 +102,13 @@
 		                                <c:if test="${!s.hasDevice}">
 			                                <td class="device-show-actions" style="display: inline-block;width: 100%;">
 		                                    	<a class="btn device-btn" href="category-update?id=${s.id}">Sửa</a>
-		                                    	<a class="btn device-remove" href="category-delete?id=${s.id}">Xóa</a>
+		                                    	<a onsubmit="return confirm('Bạn chắc chắn muốn xóa category này?');" class="btn device-remove" href="category-delete?id=${s.id}">Xóa</a>
+			                                </td>
+		                                </c:if>
+		                                
+		                                <c:if test="${s.hasDevice}">
+			                                <td class="device-show-actions" style="display: inline-block;width: 100%;">
+		                                    	<span>Có liên kết thiết bị</span>
 			                                </td>
 		                                </c:if>
 		                            </tr>
