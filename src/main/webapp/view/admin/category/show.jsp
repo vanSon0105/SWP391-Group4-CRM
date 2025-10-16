@@ -59,14 +59,14 @@
             <section class="panel">
                 <div class="device-toolbar">
                     <div class="device-toolbar-actions">
-                        <a class="btn btn-add" href="device-add">
+                        <a class="btn btn-add" href="category-add">
                             <i class="fa-solid fa-plus"></i>
-                            <span>Thêm thiết bị</span>
+                            <span>Thêm Danh Mục</span>
                         </a>
                     </div>
-                    <form class="device-search" action="device-show" method="get">
-		                <label for="device-search" class="sr-only"></label>
-		                <input id="device-search" name="key" type="search" placeholder="Tìm theo mã, tên thiết bị . . ." value="${param.key}">
+                    <form class="device-search" action="category-show" method="get">
+		                <label for="category-search" class="sr-only"></label>
+		                <input id="category-search" name="key" type="search" placeholder="Tìm theo tên danh mục . . ." value="${param.key}">
 		                
 		                <select class="btn device-btn" name="categoryId">
 					        <option value="0">Tất cả danh mục</option>
@@ -82,102 +82,55 @@
 
             <section class="panel" id="table-panel">
             	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-	                <h2>Danh sách thiết bị</h2>
+	                <h2>Danh sách danh mục</h2>
 	                <c:if test="${not empty mess}">
 	                	<span style="color: red;font-size: 1.5rem;">${mess}</span>	
 	                </c:if>	
-
-	                <c:if test="${not empty listDeviceSerials || empty listDevices}">
-	                	<a class="btn device-btn" href="device-show#table-panel">Quay lại</a>       
-	                </c:if>	     
-  
             	</div>
                 <div class="table-wrapper">
-                    <c:if test="${not empty listDevices}"> 
+                    <c:if test="${not empty listCategories}"> 
 	                    <table class="device-table">
 	                        <thead>
 	                            <tr>
 	                                <th>ID</th>
-	                                <th>Ảnh</th>
-	                                <th>Tên thiết bị</th>
-	                                <th>Danh mục</th>
-	                                <th>Giá</th>
-	                                <th>Tồn kho</th>
-	                                <th>Trạng thái</th>
+	                                <th>Name</th>
 	                                <th>Thao tác</th>
 	                            </tr>
 	                        </thead>
 	                        <tbody>
-	                        	<c:forEach items="${listDevices}" var="s">
-		                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
+	                        	<c:forEach items="${listCategories}" var="s">
+		                            <tr>
 		                            	<td>${s.id}</td>
-		                                <td><img class="device-thumb" src="../assets/img/${s.imageUrl}" alt=""></td>
 		                                <td>${s.name}</td>
-		                                <td>${s.category.name}</td>
-		                                <td>
-		                                	<fmt:formatNumber value="${s.price}" type="number"/> VNĐ
-		                                </td>
-		                                <td>${s.device_inventory}</td>
-		                                <td><span class="device-status"></i>${s.status}</span></td>
-		                                <td class="device-show-actions">
-		                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
-		                                    <a class="btn device-btn" href="device-serials?id=${s.id}#device-serial">Xem Serials</a>
-		                                    <c:if test="${s.status == 'active'}">
-		                                    	<a class="btn device-btn" href="device-update?id=${s.id}">Sửa</a>
-		                                    	<a class="btn device-remove" href="device-delete?id=${s.id}">Xóa</a>
-		                                    </c:if>
-		                                    <c:if test="${s.status == 'discontinued'}">
-		                                    	<a class="btn device-remove" href="device-active?id=${s.id}">Active</a>
-		                                    </c:if>
-		                                </td>
+		                                <c:if test="${!s.hasDevice}">
+			                                <td class="device-show-actions" style="display: inline-block;width: 100%;">
+		                                    	<a class="btn device-btn" href="category-update?id=${s.id}">Sửa</a>
+		                                    	<a class="btn device-remove" href="category-delete?id=${s.id}">Xóa</a>
+			                                </td>
+		                                </c:if>
 		                            </tr>
 		                          </c:forEach>
 	                        </tbody>
 	                    </table>
                    </c:if>
                    
-                   <c:if test="${empty listDevices && empty listDeviceSerials}">
+                   <c:if test="${empty listCategories}">
 	                   <table class="device-table"> 
 	                   		<tbody>
 		                   		<tr>
 							        <td colspan="7" style="text-align: center; border: none;">
-							            Không tìm thấy thiết bị
+							            Không tìm thấy danh mục
 							        </td>
 							    </tr>
 						    </tbody>
 						</table>
-                   </c:if>
-                   
-                   <c:if test="${not empty listDeviceSerials}"> 
-                    <table class="device-table" id="device-serial">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Serial No</th>
-                                <th>Stock Status</th>
-                                <th>Status</th>
-                                <th>Import Date</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        	<c:forEach items="${listDeviceSerials}" var="s">
-	                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
-	                            	<td>${s.id}</td>
-	                                <td>${s.serial_no}</td>
-	                                <td>${s.stock_status}</td>
-	                                <td>${s.status}</td>
-	                                <td>${s.import_date}</td>
-	                            </tr>
-	                          </c:forEach>
-                        </tbody>
-                    </table>
                    </c:if>
                 </div>
              </section>
                <div class="pagination-pills">
 	           	<c:choose>
 			        <c:when test="${currentPage > 1}">
-			            <a href="device-show?page=${currentPage - 1}&key=${param.key}&categoryId=${selectedCategory}#table-panel">&#10094;</a>
+			            <a href="category-show?page=${currentPage - 1}#table-panel">&#10094;</a>
 			        </c:when>
 			        <c:otherwise>
 			            <a class="disabled">&#10094;</a>
@@ -197,18 +150,18 @@
 				  </c:if>
 				
 				  <c:if test="${start > 1}">
-				    <a href="device-show?page=1#&key=${param.key}&categoryId=${selectedCategory}#table-panel">1</a>
+				    <a href="category-show?page=1#&key=${param.key}#table-panel">1</a>
 				    <span>…</span>
 				  </c:if>
 				
 				  <c:forEach var="i" begin="${start}" end="${end}">
-				    <a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}#table-panel"
+				    <a href="category-show?page=${i}&key=${param.key}#table-panel"
 				       class="${i == currentPage ? 'active' : ''}">${i}</a>
 				  </c:forEach>
 				
 				  <c:if test="${end < totalPages}">
 				    <span>…</span>
-				    <a href="device-show?page=${totalPages}&key=${param.key}&categoryId=${selectedCategory}#table-panel">
+				    <a href="category-show?page=${totalPages}&key=${param.key}#table-panel">
 				      ${totalPages}
 				    </a>
 				  </c:if>
@@ -216,14 +169,14 @@
             	
             	<c:if test="${totalPages < 10}">
 	            	<c:forEach var="i" begin="1" end="${totalPages}">
-	            		<a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}#table-panel"
+	            		<a href="category-show?page=${i}&key=${param.key}#table-panel"
 	               		class="${i == currentPage ? 'active' : ''}">${i}</a>
 	        		</c:forEach>           	
             	</c:if>
             	
             	<c:choose>
 	                <c:when test="${currentPage < totalPages}">
-	                	<a href = "device-show?page=${currentPage + 1}&key=${param.key}&categoryId=${selectedCategory}#table-panel">&#10095;</a>            	
+	                	<a href = "category-show?page=${currentPage + 1}&key=${param.key}#table-panel">&#10095;</a>            	
 	            	</c:when>
 	            	<c:otherwise>
 			            <a class="disabled">&#10095;</a>

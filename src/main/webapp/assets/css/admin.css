@@ -7,6 +7,15 @@ body {
     margin: 0;
 }
 
+html {
+    font-size: 62.5%;
+}
+
+body {
+	margin: 0;
+    font-size: 1.8rem;
+}
+
 body,
 html {
     scrollbar-width: none;
@@ -434,6 +443,12 @@ body:not(.sidebar-collapsed) .sidebar-main {
     gap: 24px;
 }
 
+.management-page.device-management .panel a,
+.management-page.device-management button  {
+	font-size: 1.5rem;
+}
+
+
 body.sidebar-collapsed .management-page.device-management .sidebar-main {
     margin-left: 0;
 }
@@ -449,7 +464,7 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 }
 
 .management-page.device-management .panel h2 {
-	margin-bottom: 20px;
+	margin-bottom: 50px;
     font-size: 22px;
     font-weight: 700;
     color: #1d4ed8;
@@ -470,8 +485,11 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 }
 
 .management-page.device-management .device-search {
+	display: flex;
+	gap: 20px;
     position: relative;
     min-width: 260px;
+    height: 40px;
 }
 
 .management-page.device-management .device-search input[type="search"] {
@@ -483,12 +501,13 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     font-size: 15px;
     background: rgba(255, 255, 255, 0.88);
     color: #0f172a;
+    outline: none;
 }
 
 .management-page.device-management .device-search i {
     position: absolute;
-    left: 14px;
-    top: 50%;
+    left: 34px;
+    top: 55%;
     transform: translateY(-50%);
     color: #64748b;
 }
@@ -509,9 +528,9 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     cursor: pointer;
 }
 
-.management-page.device-management .btn:hover,
-.management-page.device-management button.btn:hover {
-    transform: translateY(-1px);
+.management-page.device-management .btn:hover
+,.management-page.device-management button.btn:hover {
+    /*transform: translateY(-1px);*/
     box-shadow: 0 12px 24px rgba(99, 102, 241, 0.18);
 }
 
@@ -760,7 +779,7 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     color: #475569;
 }
 
-.management-page.device-management .device-remove {
+.management-page.device-management .device-remove-container {
     display: grid;
     gap: 20px;
 }
@@ -770,6 +789,12 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     color: #475569;
 }
 
+
+.management-page.device-management .device-remove-container .device-infor{
+	display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
 
 

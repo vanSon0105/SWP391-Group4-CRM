@@ -12,6 +12,7 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body class="shop-page login-page">
+<jsp:include page="../common/header.jsp"></jsp:include>
     <section class="card">
         <h1>Đăng nhập NovaCare</h1>
         <p>Truy cập đơn hàng, bảo hành, lịch sửa chữa và ưu đãi dành riêng cho bạn.</p>
