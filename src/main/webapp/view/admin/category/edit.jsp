@@ -24,7 +24,7 @@
         <section class="panel">
             <h2>Cập nhật thông tin</h2>
             <c:if test="${not empty category}">
-            <form class="device-form" action="device-update" method="post" enctype="multipart/form-data">
+            <form class="device-form" action="category-update" method="post">
                 <div class="form-grid">
                     <input type="hidden" name="id" value="${category.id}">
                     <div class="form-field">
@@ -34,11 +34,10 @@
                 </div>
                 <div class="form-actions form-actions--spread">
                     <div>
-                        <a id="view-link" class="btn ghost" href="device-view?id=${category.id}">Xem</a>
                         <a id="delete-link" class="btn danger" href="device-remove?id=${category.id}">Xóa</a>
                     </div>
                     <div>
-                        <a class="btn ghost" href="device-show#table-panel">Hủy</a>
+                        <a class="btn ghost" href="category-show#table-panel">Hủy</a>
                         <button class="btn primary" type="submit">Lưu thay đổi</button>
                     </div>
                 </div>

@@ -434,7 +434,7 @@ public class DeviceDAO extends DBContext {
 
 	
 	public int getTotalDevices(String key, int categoryId) {
-	    String sql = "SELECT COUNT(*) FROM devices AS d WHERE 1=1";
+	    String sql = "SELECT COUNT(*) FROM devices AS d WHERE 1=1 ";
 	    
 	    if (key != null && !key.trim().isEmpty()) {
 	        sql += "AND (d.name LIKE ? OR CAST(d.id AS CHAR) LIKE ?)";
