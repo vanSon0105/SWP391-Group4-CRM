@@ -52,6 +52,10 @@
 	                        <td id="device-price">${deviceDetail.unit}</td>
 	                    </tr>
 	                    <tr>
+	                        <th>Nổi bật</th>
+	                        <td id="device-price">${deviceDetail.isFeatured}</td>
+	                    </tr>
+	                    <tr>
 	                        <th>Mô tả</th>
 	                        <td id="device-stock">${deviceDetail.desc}</td>
 	                    </tr>

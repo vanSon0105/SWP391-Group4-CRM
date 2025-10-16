@@ -215,9 +215,10 @@ ul {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    width: 40px;
-    height: 45px;
+    border-radius: 6px;
+    width: 70px;
+    height: 35px;
+    font-size: 1.5rem;
 }
 
 .order-btn:hover {
@@ -464,6 +465,7 @@ ul {
     flex: 0 0 calc((100% - 72px) / 4);
     grid-template-rows: auto auto 1fr auto;
     transition: transform 0.5s ease;
+    height: 100%;
 }
 
 .home-page .device-card:hover {
@@ -496,6 +498,12 @@ ul {
 .home-page .device-card h4 {
     font-size: 18px;
     color: #b45309;
+}
+
+.home-page .device-card p{
+	max-width: 280px;
+  white-space: normal; 
+  overflow-wrap: anywhere;
 }
 
 .home-page .device-card span {
@@ -764,7 +772,6 @@ ul {
 
 .footer {
     padding: 72px 0 95px;
-    margin-top: 52px;
     background: #143C3C;
     position: relative;
 }
@@ -1843,7 +1850,7 @@ body.shop-page.customer-portal-page footer {
     margin-top: 20px;
 }
 
-/* ========================================= login.html, register.html, forgot-password.html */
+/* ========================================= login.html, register.html, forgot-password.html 
 body.shop-page.login-page,
 body.shop-page.register-page,
 body.shop-page.forgot-page {
@@ -1851,11 +1858,21 @@ body.shop-page.forgot-page {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
 }
 
+*/
+
 body.shop-page.login-page {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
     background: linear-gradient(135deg, #bfdbfe, #f0f9ff 45%, #fef3c7);
+    height: 100vh;
+}
+
+body.shop-page.login-page .header{
+	margin-bottom: 20px; 
+	width: 100%;
 }
 
 body.shop-page.register-page {
@@ -1865,6 +1882,7 @@ body.shop-page.register-page {
 body.shop-page.forgot-page {
     background: linear-gradient(135deg, #cffafe, #e0f2fe 45%, #ede9fe);
 }
+
 
 body.shop-page.login-page .card,
 body.shop-page.register-page .card,
@@ -1926,8 +1944,7 @@ body.shop-page.forgot-page label {
     color: #0ea5e9;
 }
 
-body.shop-page.login-page input,
-body.shop-page.register-page input,
+body.shop-page.login-page .card input,
 body.shop-page.register-page select,
 body.shop-page.forgot-page input {
     padding: 12px 14px;
@@ -1947,18 +1964,13 @@ body.shop-page.forgot-page input {
     border-color: rgba(56, 189, 248, 0.35);
 }
 
-body.shop-page.login-page button,
-body.shop-page.register-page button,
-body.shop-page.forgot-page button {
-    padding: 12px 28px;
+body.shop-page.login-page .card button{
+	padding: 12px 28px;
     border-radius: 999px;
     border: none;
     color: #f8fafc;
     font-weight: 600;
     cursor: pointer;
-}
-
-body.shop-page.login-page button {
     background: linear-gradient(90deg, #2563eb, #38bdf8);
     box-shadow: 0 18px 36px rgba(37, 99, 235, 0.28);
 }

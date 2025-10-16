@@ -8,6 +8,7 @@
 <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/error.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -28,6 +29,13 @@
                     <a href="checkout.jsp">Thanh toán</a>
                     <a href="order-tracking.jsp">Đơn hàng</a>
                     <a href="customer-portal.jsp">Lịch sử</a>
+                    <c:if test="${sessionScope.user != null}">
+					    <form action="logout" method="post" style="display:inline;">
+					        <button type="submit" class="order-btn logout-btn">
+					            <i class="fa-solid fa-right-from-bracket"></i> Logout
+					        </button>
+					    </form>
+					</c:if>
                 </div>
             </div>
             <form class="search-bar" action="device-page" method="get">
@@ -37,11 +45,21 @@
             </form>
         </div>
         <div class="header-bottom">
-            <form action="login" method="post" style="display:inline;">
-			    <button type="submit" class="order-btn login-btn">
-			        <i class="fa-solid fa-user"></i>
-			    </button>
-			</form>
+        	<c:if test="${sessionScope.user == null}">
+	            <form action="login" method="post" style="display:inline;">
+				    <button type="submit" class="order-btn login-btn">
+				        Login
+				    </button>
+				</form>
+			</c:if>
+			
+			<c:if test="${sessionScope.user != null}">
+			    <a href="account" class="order-btn account-btn">
+		            <i class="fa-solid fa-user"></i>
+		        </a>
+			</c:if>
+			
+			
             <a href="cart" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
         </div>
     </header>

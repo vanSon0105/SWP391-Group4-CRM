@@ -12,13 +12,13 @@ public class Device {
 	private int total_sold;
 	private String desc;
 	private Timestamp created_at;
-	private boolean is_featured;
+	private Boolean isFeatured;
 	private int device_inventory;
 	private String status;
 
 	public Device() {}
 
-	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc, Timestamp created_at, boolean is_featured) {
+	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc, Timestamp created_at, Boolean is_featured) {
 		this.id = id;
 		this.category = category;
 		this.name = name;
@@ -27,7 +27,7 @@ public class Device {
 		this.imageUrl = imageUrl;
 		this.desc = desc;
 		this.created_at = created_at;
-		this.is_featured = is_featured;
+		this.isFeatured = is_featured;
 	}
 	
 	
@@ -70,15 +70,46 @@ public class Device {
 		this.unit = unit;
 		this.desc = desc;
 	}
+	
+	
 
-	public boolean isIs_featured() {
-		return is_featured;
+	public Device(int id, Category category, String name, double price, String imageUrl, String unit, String desc,
+			Boolean is_featured) {
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.unit = unit;
+		this.imageUrl = imageUrl;
+		this.desc = desc;
+		this.isFeatured = is_featured;
+	}
+	
+	
+
+	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc,
+			Timestamp created_at, Boolean is_featured, int device_inventory) {
+		super();
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.unit = unit;
+		this.imageUrl = imageUrl;
+		this.desc = desc;
+		this.created_at = created_at;
+		this.isFeatured = is_featured;
+		this.device_inventory = device_inventory;
+		this.status = status;
 	}
 
-	public void setIs_featured(boolean is_featured) {
-		this.is_featured = is_featured;
+	public Boolean getIsFeatured() {
+		return isFeatured;
 	}
 
+	public void setIsFeatured(Boolean isFeatured) {
+		this.isFeatured = isFeatured;
+	}
 
 	public int getTotal_sold() {
 		return total_sold;
