@@ -58,6 +58,38 @@ public class TaskFormController extends HttpServlet {
 
 	}
 	
+
+	
+	private void addNewTask(HttpServletRequest request, HttpServletResponse res) {
+		try {
+			String title = request.getParameter("title");
+			String description = request.getParameter("description");
+			String customerIssueIdStr = request.getParameter("customerIssueId");
+			int customerIssueId = Integer.parseInt(customerIssueIdStr);
+			String[] staffs = request.getParameterValues("technicalStaffIds");
+			int staffId = 0;
+			Timestamp deadline = null;
+			String deadlineStr = request.getParameter("deadline");
+			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
+			int managerId = 2;
+			String status = "pending";
+			
+			Task task = new Task();
+			task.setTitle(title);
+			task.setDescription(description);
+			task.setManagerId(managerId);
+			task.setCustomerIssueId(customerIssueId);
+			int taskId = taskDao.addNewTask(task);
+			for (String staff : staffs) { 
+				staffId = Integer.parseInt(staff);
+				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
+			}
+			res.sendRedirect("task-list");;
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
+	
 	private void updateTask(HttpServletRequest req, HttpServletResponse res) {
 		try {
 			int taskId = Integer.parseInt(req.getParameter("id"));
@@ -103,36 +135,6 @@ public class TaskFormController extends HttpServlet {
 			
 			res.sendRedirect("task-list");
 			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
-	
-	private void addNewTask(HttpServletRequest request, HttpServletResponse res) {
-		try {
-			String title = request.getParameter("title");
-			String description = request.getParameter("description");
-			String customerIssueIdStr = request.getParameter("customerIssueId");
-			int customerIssueId = Integer.parseInt(customerIssueIdStr);
-			String[] staffs = request.getParameterValues("technicalStaffIds");
-			int staffId = 0;
-			Timestamp deadline = null;
-			String deadlineStr = request.getParameter("deadline");
-			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
-			int managerId = 2;
-			String status = "pending";
-			
-			Task task = new Task();
-			task.setTitle(title);
-			task.setDescription(description);
-			task.setManagerId(managerId);
-			task.setCustomerIssueId(customerIssueId);
-			int taskId = taskDao.addNewTask(task);
-			for (String staff : staffs) { 
-				staffId = Integer.parseInt(staff);
-				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
-			}
-			res.sendRedirect("task-list");;
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
