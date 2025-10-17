@@ -51,7 +51,7 @@ public class TaskFormController extends HttpServlet {
 	        request.setAttribute("technicalStaffList", staffList);
 	        request.setAttribute("taskDetail", taskDetail);
 //	        request.setAttribute("assignedStaffIds", assignedStaffIds);
-			request.getRequestDispatcher("view/technicalmanager/taskForm.jsp").forward(request, response);
+			request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");
 		}

@@ -13,7 +13,7 @@
 <%-- <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/assets/css/shop.css"> --%>
 
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 <!-- Font Awesome -->
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
@@ -22,43 +22,10 @@
 </head>
 
 <style>
-body {
-	display: flex;
-	box-sizing: border-box;
-	font-family: 'Segoe UI', Tahoma, sans-serif;
-	margin: 0;
-	padding: 0;
-	background: linear-gradient(135deg, #f0fdfa, #eff6ff 45%, #fff5f5 100%);
-}
-
-.side-bar {
-	width: 15%;
-	height: 100vh;
-	color:white;
-	background-color: #4E74CA;
-}
-
-.side-bar a:hover {
-	cursor: pointer;
-	background: #2B90C6;
-}
-
-.side-bar a {
-	width: 80%;
-	border-radius: 8px;
-	padding: 8px 10px; 
-	color:white;
-	text-decoration: none;
-}
-
-.side-bar a.active {
-	background:#2B90C6;
-}
-
-
 .main-content {
-	width: 85%;
+	width: 90%;
 	height: 100vh;
+    margin: 0 auto;
 }
 
 
@@ -146,8 +113,6 @@ table a:hover {
 }
  
 .filters {
-	margin-left:5%;
-	width:90%;
 	display:flex;
 	align-items: center;
 	justify-content: space-between;
@@ -160,21 +125,10 @@ table a:hover {
 </style>
 
 <body>
-	<section class="side-bar">
-		<div style="border-bottom: thin solid white; padding: 8px 10px">
-			<h1 style="font-weight: 500;">TechShop</h1>
-		</div>
-
-		<div
-			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
-			<a href="task-list-page" class="active">Task List</a>
-			<a>Staff List</a>
-			<a>Device List</a>
-			<a>Report</a>
-		</div>
-
-	</section>
-
+	<jsp:include page="../common/header.jsp"></jsp:include>
+	<jsp:include page="../common/sidebar.jsp"></jsp:include>
+	<main class="sidebar-main">
+	
 	<section class="main-content">
 		<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Task List</h1>
 		<form action="task-list" method="get">
@@ -198,7 +152,7 @@ table a:hover {
 			</div>
 		</form>
 
-		<table style="margin-left: 6.5%; width: 90%">
+		<table>
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -238,5 +192,6 @@ table a:hover {
 			<button style="padding: 8px 12px; border-radius: 8px; border:none">2</button>
 		</div>
 	</section>
+	</main>
 </body>
 </html>
