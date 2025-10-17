@@ -1022,8 +1022,8 @@ body.shop-page.catalog-page select {
 }
 
 body.shop-page.catalog-page .product-grid {
-    display: flex;
-    flex-wrap:wrap;
+    grid-template-columns: repeat(3, 1fr);
+    display: grid;
     gap: 20px;
 }
 body.shop-page.catalog-page .sorts {
