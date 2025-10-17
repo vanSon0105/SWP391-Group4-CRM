@@ -80,25 +80,6 @@ public class TaskDAO extends DBContext {
 //	        }
 //	        return task;
 //	    }
-	public List<User> getAllTechnicalStaff() {
-	    List<User> list = new ArrayList<>();
-	    String sql = "SELECT * FROM users WHERE role_id = 3 AND status='active'";
-	    try (Connection conn = getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql);
-	         ResultSet rs = ps.executeQuery()) {
-	        while (rs.next()) {
-	            User u = new User();
-	            u.setId(rs.getInt("id"));
-	            u.setUsername(rs.getString("username"));
-	            u.setFullName(rs.getString("full_name"));
-	            u.setEmail(rs.getString("email"));
-	            list.add(u);
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    return list;
-	}
 
 	
 //	  public List<Task> getAllTasks() { List<Task> list = new ArrayList<>(); String
@@ -141,7 +122,7 @@ public class TaskDAO extends DBContext {
 		}
 		return task;
 	}
-	}		
+	
 
 
 	public int addNewTask(Task task) {
