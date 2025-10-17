@@ -13,42 +13,46 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.device-btn{
-    color: black !important;
-}
-.device-management .pagination-pills {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-}
+	.device-btn{
+	    color: black !important;
+	}
+	.device-management .pagination-pills {
+	    display: flex;
+	    justify-content: center;
+	    gap: 10px;
+	}
+	
+	.device-management .pagination-pills a {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+	    width: 44px;
+	    height: 44px;
+	    padding: 0;
+	    border-radius: 16px;
+	    border: 1px solid rgba(15, 23, 42, 0.15);
+	    background: rgba(255, 255, 255, 0.9);
+	    color: #1f2937;
+	    font-weight: 600;
+	    cursor: pointer;
+	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	}
+	
+	.device-management .pagination-pills a.active {
+	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	}
+	
+	.device-management .pagination-pills a:hover {
+	    transform: translateY(-2px);
+	}
 
-.device-management .pagination-pills a {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	text-decoration: none;
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    border-radius: 16px;
-    border: 1px solid rgba(15, 23, 42, 0.15);
-    background: rgba(255, 255, 255, 0.9);
-    color: #1f2937;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-}
-
-.device-management .pagination-pills a.active {
-    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-    color: #f8fafc;
-    border-color: transparent;
-    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-}
-
-.device-management .pagination-pills a:hover {
-    transform: translateY(-2px);
-}
+	body .panel h2{
+		margin-bottom: 0 !important;
+	}
 }
 </style>
 </head>
@@ -73,6 +77,16 @@
 					        <c:forEach var="c" items="${listCategories}">
 					            <option value="${c.id}" ${selectedCategory == c.id ? 'selected' : ''}>${c.name}</option>
 					        </c:forEach>
+					    </select>
+					    
+					    <select class="btn device-btn" name="sortBy">
+					        <option value="id" ${param.sortBy == 'id' ? 'selected' : ''}>Sắp xếp theo ID</option>
+					        <option value="price" ${param.sortBy == 'price' ? 'selected' : ''}>Sắp xếp theo giá</option>
+					    </select>
+					
+					    <select class="btn device-btn" name="order">
+					        <option value="asc" ${param.order == 'asc' ? 'selected' : ''}>Tăng dần</option>
+					        <option value="desc" ${param.order == 'desc' ? 'selected' : ''}>Giảm dần</option>
 					    </select>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
@@ -177,7 +191,7 @@
                <div class="pagination-pills">
 	           	<c:choose>
 			        <c:when test="${currentPage > 1}">
-			            <a href="device-show?page=${currentPage - 1}&key=${param.key}&categoryId=${selectedCategory}#table-panel">&#10094;</a>
+			            <a href="device-show?page=${currentPage - 1}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">&#10094;</a>
 			        </c:when>
 			        <c:otherwise>
 			            <a class="disabled">&#10094;</a>
@@ -197,18 +211,18 @@
 				  </c:if>
 				
 				  <c:if test="${start > 1}">
-				    <a href="device-show?page=1#&key=${param.key}&categoryId=${selectedCategory}#table-panel">1</a>
+				    <a href="device-show?page=1#&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">1</a>
 				    <span>…</span>
 				  </c:if>
 				
 				  <c:forEach var="i" begin="${start}" end="${end}">
-				    <a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}#table-panel"
+				    <a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel"
 				       class="${i == currentPage ? 'active' : ''}">${i}</a>
 				  </c:forEach>
 				
 				  <c:if test="${end < totalPages}">
 				    <span>…</span>
-				    <a href="device-show?page=${totalPages}&key=${param.key}&categoryId=${selectedCategory}#table-panel">
+				    <a href="device-show?page=${totalPages}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">
 				      ${totalPages}
 				    </a>
 				  </c:if>
@@ -216,14 +230,14 @@
             	
             	<c:if test="${totalPages < 10}">
 	            	<c:forEach var="i" begin="1" end="${totalPages}">
-	            		<a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}#table-panel"
+	            		<a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel"
 	               		class="${i == currentPage ? 'active' : ''}">${i}</a>
 	        		</c:forEach>           	
             	</c:if>
             	
             	<c:choose>
 	                <c:when test="${currentPage < totalPages}">
-	                	<a href = "device-show?page=${currentPage + 1}&key=${param.key}&categoryId=${selectedCategory}#table-panel">&#10095;</a>            	
+	                	<a href = "device-show?page=${currentPage + 1}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">&#10095;</a>            	
 	            	</c:when>
 	            	<c:otherwise>
 			            <a class="disabled">&#10095;</a>

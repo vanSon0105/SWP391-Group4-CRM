@@ -337,7 +337,7 @@ public class DeviceDAO extends DBContext {
 	}
 	
 //	Device - Admin
-	public List<Device> getDevicesByPage(String key, int offset, int recordsEachPage, int categoryId) {
+	public List<Device> getDevicesByPage(String key, int offset, int recordsEachPage, int categoryId, String sortBy, String order) {
 	    List<Device> list = new ArrayList<>();
 	    String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price, "
 	            + "COALESCE(stock.quantity, 0) AS inventory, d.status "
@@ -358,8 +358,20 @@ public class DeviceDAO extends DBContext {
 	    if (categoryId > 0) {
 	        sql += ("AND d.category_id = ? ");
 	    }
+	    
+	    String sortColumn = "d.id";
+        if ("price".equalsIgnoreCase(sortBy)) {
+            sortColumn = "d.price";
+        } else if ("name".equalsIgnoreCase(sortBy)) {
+            sortColumn = "d.name";
+        }
+        
+        String sortOrder = "ASC";
+        if ("desc".equalsIgnoreCase(order)) {
+            sortOrder = "DESC";
+        }
 
-	    sql += "ORDER BY d.id DESC LIMIT ?, ?;";
+	    sql += "ORDER BY " + sortColumn + " " + sortOrder + " LIMIT ?, ?;";
 
 	    try (Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -373,6 +385,8 @@ public class DeviceDAO extends DBContext {
 	        if (categoryId > 0) {
 	            ps.setInt(index++, categoryId);
 	        }
+	        
+	        
 	        
 	        ps.setInt(index++, offset);
 	        ps.setInt(index, recordsEachPage);
@@ -399,7 +413,7 @@ public class DeviceDAO extends DBContext {
 	}
 
 	
-	public int getTotalDevices(String key, int categoryId) {
+	public int getTotalDevices(String key, int categoryId, String sortBy, String order) {
 	    String sql = "SELECT COUNT(*) FROM devices AS d WHERE 1=1 ";
 	    
 	    if (key != null && !key.trim().isEmpty()) {
