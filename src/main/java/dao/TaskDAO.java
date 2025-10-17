@@ -7,6 +7,7 @@ import dal.DBContext;
 import model.User;
 
 public class TaskDAO extends DBContext {
+	public List<Task> getFilteredTasksWithStatus(String status, String search) {
 	
 	 
 	    public Task getTaskById(int id) {
@@ -55,14 +56,22 @@ public class TaskDAO extends DBContext {
 
 	public List<Task> getAllTasks() {
 		List<Task> list = new ArrayList<>();
-		String sql = "select * from tasks";
-
+		String sql = "select * from task_with_status WHERE 1 = 1 ";
+		
+		if(status != null && !status.isEmpty()) {
+			sql += " and status = '" + status + "' ";
+		}
+		
+		if(search != null && !search.isEmpty()) {
+			sql += " and ( title LIKE '%" + search + "%' OR description LIKE '%" + search + "%') ";
+		}
+		
 		try (Connection conn = getConnection();
 				PreparedStatement pre = conn.prepareStatement(sql);
 				ResultSet rs = pre.executeQuery()) {
 			while (rs.next()) {
 				list.add(new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
-						rs.getInt("manager_id"), rs.getInt("customer_issue_id")));
+						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status")));
 
 			}
 
@@ -72,7 +81,23 @@ public class TaskDAO extends DBContext {
 
 		return list;
 	}
+	
 
+	public Task getTaskById(int id) {
+		Task task = null;
+		String sql = "select * from task_with_status where id = ?";
+
+		try (Connection conn = getConnection(); PreparedStatement pre = conn.prepareStatement(sql)) {
+			pre.setInt(1, id);
+			ResultSet rs = pre.executeQuery();
+			if (rs.next()) {
+				task = new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
+						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status"));
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 
 
 	public int addNewTask(Task task) {
@@ -128,7 +153,7 @@ public class TaskDAO extends DBContext {
 
 	public static void main(String[] args) {
 		TaskDAO dao = new TaskDAO();
-		List<Task> list = dao.getAllTasks();
+		List<Task> list = dao.getFilteredTasksWithStatus("no", "no");
 
 		for (Task task : list) {
 			System.out.print(task.getId() + " ");

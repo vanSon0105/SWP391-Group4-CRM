@@ -6,4 +6,5 @@
 *.iml
 .vscode/
 /bin/
+"bin/" 
 /.metadata/

@@ -10,8 +10,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/css/shop.css">
+<%-- <link rel="stylesheet"
+	href="<%=request.getContextPath()%>/assets/css/shop.css"> --%>
 
 
 <!-- Font Awesome -->
@@ -34,16 +34,25 @@ body {
 .side-bar {
 	width: 15%;
 	height: 100vh;
-	background-color: white;
+	color:white;
+	background-color: #4E74CA;
 }
 
 .side-bar a:hover {
 	cursor: pointer;
-	background: grey;
+	background: #2B90C6;
 }
 
 .side-bar a {
 	width: 80%;
+	border-radius: 8px;
+	padding: 8px 10px; 
+	color:white;
+	text-decoration: none;
+}
+
+.side-bar a.active {
+	background:#2B90C6;
 }
 
 
@@ -53,16 +62,20 @@ body {
 }
 
 
-.main-content a { 
-	padding: 4px 6px;
+.main-content form a { 
+	padding: 6px 8px;
 	border-radius:6px ;
 	background-color: #0d6efd;
 	color: white;
 	font-size:16px;
+	text-decoration: none; 
+	transition: background 0.2s ease-in-out;
 }
 
+
+
 .search-button { 
-	padding: 4px 6px;
+	padding: 6px 8px;
 	border-radius:6px ;
 	background-color: #0d6efd;
 	color: white;
@@ -74,43 +87,90 @@ table {
 	width: 100%;
 	border-collapse: collapse;
 	margin-top: 18px;
+	border-radius: 12px;
 }
 
-th, td {
-	padding: 10px;
-	border: 1px solid #999;
+th {
+	padding: 12px;
 	text-align: center;
+	font-weight: 600;
+}
+
+td {
+	padding: 12px;
+	text-align: center;
+	border-top: 1px solid #e5e7eb;
 }
 
 thead {
-	background: linear-gradient(90deg, #38bdf8, #f97316);
-    color: #f8fafc;
+	background: #2B90C6;
+	color: #fff;
+	border-radius: 12px;
 }
+
+tbody tr {
+	background: #ffffff;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	transition: all 0.2s ease-in-out;
+}
+
 
 table th, table td {
 	text-align: center;
 }
 
+table button {
+	padding: 6px 8px;
+	border-radius: 6px;
+	background-color: white;
+	font-size: 16px;
+	border: none;
+	cursor: pointer;
+}
+
+table a {
+	padding: 6px 8px;
+	border-radius: 6px;
+	background-color: white;
+	font-size: 16px;
+	text-decoration: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s ease-in-out;
+}
+
+table button:hover,
+table a:hover {
+	background: #f2f2f2;
+}
+ 
 .filters {
-	margin-left:10%;
-	width:80%;
+	margin-left:5%;
+	width:90%;
 	display:flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-top: 30px;
-}
+	background: white;
+	border-radius: 12px;
+	padding: 16px;
+	border: 0.5px solid #2B90C6;
+} 
 </style>
 
 <body>
 	<section class="side-bar">
-		<div>
+		<div style="border-bottom: thin solid white; padding: 8px 10px">
 			<h1 style="font-weight: 500;">TechShop</h1>
-			<p>Technical Manager</p>
 		</div>
 
 		<div
-			style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 10px; border-top: thin solid grey; align-items: center">
-			<a href="task-list-page">Task List</a> <a>Staff List</a> <a>Device List</a> <a>Report</a>
+			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
+			<a href="task-list-page" class="active">Task List</a>
+			<a>Staff List</a>
+			<a>Device List</a>
+			<a>Report</a>
 		</div>
 
 	</section>
@@ -119,25 +179,26 @@ table th, table td {
 		<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Task List</h1>
 		<form action="task-list" method="get">
 			<div class="filters">
-				<select id="status" name="status" style="border-radius: 6px; padding: 6px 8px">
-					<option value="">All status</option>
-					<option value="">Pending</option>
-					<option value="">In progress</option>
-					<option value="">Completed</option>
-					<option value="">Cancelled</option>
+				<select id="status" name="status" style="border-radius: 6px; padding: 8px 10px" onchange="this.form.submit()">
+					<option value="" ${empty param.status ? 'selected' : ''}>All status</option>
+					<option value="pending" ${param.status == 'pending' ? 'selected' : ''}>Pending</option>
+					<option value="in_progress" ${param.status == 'in_progress' ? 'selected' : ''}>In progress</option>
+					<option value="completed" ${param.status == 'completed' ? 'selected' : ''}>Completed</option>
+					<option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}>Cancelled</option>
 				</select>
 				<div>
 				
 				<input type="search" name="search"
 					placeholder="Enter keywords to search..."
-					style="border-radius: 6px; padding: 6px 8px; border:1px solid #000" />
+					value="${param.search}"
+					style="border-radius: 7px; padding: 8px 16px; border:1px solid #000" />
 				<button type="submit" class="search-button">Search</button></div>
 				 
 				<a href="task-form">Add Task</a>
 			</div>
 		</form>
 
-		<table style="margin-left: 5%; width: 90%">
+		<table style="margin-left: 6.5%; width: 90%">
 			<thead>
 				<tr>
 					<th>ID</th>
@@ -145,7 +206,7 @@ table th, table td {
 					<th>Description</th>
 					<th>Manager ID</th>
 					<th>Customer Issue ID</th>
-					<!-- <th>Status</th> -->
+					<th>Status</th>
 					<th>Actions</th>
 				</tr>
 			</thead>
@@ -157,11 +218,12 @@ table th, table td {
 						<td>${task.description}</td>
 						<td>${task.managerId}</td>
 						<td>${task.customerIssueId}</td>
-						<%-- <td>${task.status}</td> --%>
+						<td>${task.status}</td>
 						<td>
 						<div style="display: flex; gap: 6px;">
-							<a href="task-detail?id=${task.id}">Xem</a>
-							<a href="task-form?id=${task.id}">Chỉnh sửa</a>
+							<a href="task-detail?id=${task.id}" title="View Task Detail"><i class="fa-solid fa-eye" style="color:#0d6efd;"></i></a>
+							<a href="task-form?id=${task.id}"  title="Update Task"><i class="fa-solid fa-pen" style="color:#2ecc71;"></i></a>
+							<button><i class="fa-solid fa-trash" style="color:red;"></i></button>
 						</div>
 							
 						</td>
@@ -171,9 +233,9 @@ table th, table td {
 			</tbody>
 		</table>
 		<div class="pagination"
-			style="display: flex; justify-content: center; position: relative; top: 10%">
-			<button style="padding: 6px">1</button>
-			<button style="padding: 6px">2</button>
+			style="display: flex; justify-content: center; position: relative; top: 10%; gap: 4px;">
+			<button style="padding: 8px 12px; border-radius: 8px; border:none">1</button>
+			<button style="padding: 8px 12px; border-radius: 8px; border:none">2</button>
 		</div>
 	</section>
 </body>
