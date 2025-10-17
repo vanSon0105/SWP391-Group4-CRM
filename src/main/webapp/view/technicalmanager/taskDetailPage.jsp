@@ -163,7 +163,7 @@ body {
             <tr>
             	<td>${taskDetail.id}</td>
                 <td>${taskDetail.technicalStaffId}</td>
-                <td>${taskDetail.assignAt}</td>
+                <td>${taskDetail.assignedAt}</td>
                 <td>${taskDetail.deadline}</td>
                 <td>${taskDetail.status}</td>
                 <td><button class="btn btn-secondary">Cập nhật</button></td>

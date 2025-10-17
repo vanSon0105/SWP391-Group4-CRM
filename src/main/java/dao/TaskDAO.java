@@ -55,6 +55,74 @@ public class TaskDAO extends DBContext {
 		return list;
 	}
 	
+	 
+//	    public Task getTaskById(int id) {
+//	        Task task = null;
+//	        String sql = "SELECT * FROM task_with_status WHERE id=?";
+//	        try (Connection conn = getConnection();
+//	             PreparedStatement ps = conn.prepareStatement(sql)) {
+//
+//	            ps.setInt(1, id);
+//	            try (ResultSet rs = ps.executeQuery()) {
+//	                if (rs.next()) {
+//	                    task = new Task(
+//	                            rs.getInt("id"),
+//	                            rs.getString("title"),
+//	                            rs.getString("description"),
+//	                            rs.getInt("manager_id"),
+//	                            rs.getInt("customer_issue_id"),
+//	                            rs.getString("status"));
+//	                }
+//	            }
+//
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	        }
+//	        return task;
+//	    }
+	public List<User> getAllTechnicalStaff() {
+	    List<User> list = new ArrayList<>();
+	    String sql = "SELECT * FROM users WHERE role_id = 3 AND status='active'";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            User u = new User();
+	            u.setId(rs.getInt("id"));
+	            u.setUsername(rs.getString("username"));
+	            u.setFullName(rs.getString("full_name"));
+	            u.setEmail(rs.getString("email"));
+	            list.add(u);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
+	
+//	  public List<Task> getAllTasks() { List<Task> list = new ArrayList<>(); String
+//	  sql = "select * from task_with_status WHERE 1 = 1 ";
+//	  
+//	  if(status != null && !status.isEmpty()) { sql += " and status = '" + status +
+//	  "' "; }
+//	  
+//	  if(search != null && !search.isEmpty()) { sql += " and ( title LIKE '%" +
+//	  search + "%' OR description LIKE '%" + search + "%') "; }
+//	  
+//	  try (Connection conn = getConnection(); PreparedStatement pre =
+//	  conn.prepareStatement(sql); ResultSet rs = pre.executeQuery()) { while
+//	  (rs.next()) { list.add(new Task(rs.getInt("id"), rs.getString("title"),
+//	  rs.getString("description"), rs.getInt("manager_id"),
+//	  rs.getInt("customer_issue_id"), rs.getString("status")));
+//	  
+//	  }
+//	  
+//	  } catch (Exception e) { System.out.print("Error"); }
+//	  
+//	  return list; }
+	 
+	
 
 	public Task getTaskById(int id) {
 		Task task = null;
@@ -73,6 +141,7 @@ public class TaskDAO extends DBContext {
 		}
 		return task;
 	}
+	}		
 
 
 	public int addNewTask(Task task) {
