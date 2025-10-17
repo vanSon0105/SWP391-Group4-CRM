@@ -4,8 +4,55 @@ import java.util.*;
 import java.sql.*;
 import model.Task;
 import dal.DBContext;
+import model.User;
 
 public class TaskDAO extends DBContext {
+	
+	 
+	    public Task getTaskById(int id) {
+	        Task task = null;
+	        String sql = "SELECT * FROM tasks WHERE id=?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, id);
+	            try (ResultSet rs = ps.executeQuery()) {
+	                if (rs.next()) {
+	                    task = new Task(
+	                            rs.getInt("id"),
+	                            rs.getString("title"),
+	                            rs.getString("description"),
+	                            rs.getInt("manager_id"),
+	                            rs.getInt("customer_issue_id")
+	                    );
+	                }
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return task;
+	    }
+	public List<User> getAllTechnicalStaff() {
+	    List<User> list = new ArrayList<>();
+	    String sql = "SELECT * FROM users WHERE role_id = 3 AND status='active'";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            User u = new User();
+	            u.setId(rs.getInt("id"));
+	            u.setUsername(rs.getString("username"));
+	            u.setFullName(rs.getString("full_name"));
+	            u.setEmail(rs.getString("email"));
+	            list.add(u);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
 	public List<Task> getAllTasks() {
 		List<Task> list = new ArrayList<>();
 		String sql = "select * from tasks";
@@ -26,24 +73,7 @@ public class TaskDAO extends DBContext {
 		return list;
 	}
 
-	public Task getTaskById(int id) {
-		Task task = null;
-		String sql = "select * from tasks where id = ?";
 
-		try (Connection conn = getConnection(); PreparedStatement pre = conn.prepareStatement(sql)) {
-			pre.setInt(1, id);
-			ResultSet rs = pre.executeQuery();
-			if (rs.next()) {
-				task = new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
-						rs.getInt("manager_id"), rs.getInt("customer_issue_id"));
-			}
-
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-
-		return task;
-	}
 
 	public int addNewTask(Task task) {
 		String sql = "INSERT INTO tasks (title, description, manager_id, customer_issue_id) VALUES (?, ?, ?, ?)";

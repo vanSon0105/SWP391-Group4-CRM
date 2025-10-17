@@ -19,15 +19,9 @@ public class User {
     private Timestamp lastLoginAt;
     private boolean usernameChanged;
 
-    public User() {
-    }
+    public User() {}
 
-    public User(int id, String username) {
-        this.id = id;
-        this.username = username;
-    }
-
-    public User(int id, String username, String email, String fullName, String phone, String gender, Date birthday, String imageUrl) {
+    public User(int id, String username, String email, String fullName, String phone, String gender, Date birthday, String imageUrl, int roleId) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -36,118 +30,59 @@ public class User {
         this.gender = gender;
         this.birthday = birthday;
         this.imageUrl = imageUrl;
-    }
-
-    // === Getter & Setter ===
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
         this.roleId = roleId;
     }
 
-    public String getStatus() {
-        return status;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public Timestamp getLastLoginAt() {
-        return lastLoginAt;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public void setLastLoginAt(Timestamp lastLoginAt) {
-        this.lastLoginAt = lastLoginAt;
-    }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
 
-    public boolean isUsernameChanged() {
-        return usernameChanged;
-    }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
-    public void setUsernameChanged(boolean usernameChanged) {
-        this.usernameChanged = usernameChanged;
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public Date getBirthday() { return birthday; }
+    public void setBirthday(Date birthday) { this.birthday = birthday; }
+
+    public int getRoleId() { return roleId; }
+    public void setRoleId(int roleId) { this.roleId = roleId; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
+
+    public Timestamp getLastLoginAt() { return lastLoginAt; }
+    public void setLastLoginAt(Timestamp lastLoginAt) { this.lastLoginAt = lastLoginAt; }
+
+    public boolean isUsernameChanged() { return usernameChanged; }
+    public void setUsernameChanged(boolean usernameChanged) { this.usernameChanged = usernameChanged; }
+
+    public String getRole() {
+        switch (this.roleId) {
+            case 1: return "admin";
+            case 2: return "technical_staff";
+            case 3: return "customer_support";
+            case 4: return "storekeeper";
+            case 5: return "customer";
+            default: return "unknown";
+        }
     }
 }
