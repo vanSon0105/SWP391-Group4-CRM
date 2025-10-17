@@ -29,7 +29,7 @@ public class TaskListPageController extends HttpServlet {
 			
 			
 			request.setAttribute("listTask", listTask);
-			request.getRequestDispatcher("view/technicalmanager/taskListPage.jsp").forward(request, response);
+			request.getRequestDispatcher("view/admin/technicalmanager/taskListPage.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");
 		}

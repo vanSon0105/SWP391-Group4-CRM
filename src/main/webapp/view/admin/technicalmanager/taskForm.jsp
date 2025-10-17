@@ -11,44 +11,9 @@
 </head>
 
 <style>
-body {
-	display: flex;
-	box-sizing: border-box;
-	font-family: 'Segoe UI', Tahoma, sans-serif;
-	margin: 0;
-	padding: 0;
-	background: linear-gradient(135deg, #f0fdfa, #eff6ff 45%, #fff5f5 100%);
-}
-
-.side-bar {
-	width: 15%;
-	height: 100vh;
-	color: white;
-	background-color: #4E74CA;
-}
-
-.side-bar a:hover {
-	cursor: pointer;
-	background: #2B90C6;
-}
-
-.side-bar a {
-	width: 80%;
-	border-radius: 8px;
-	padding: 8px 10px;
-	color: white;
-	text-decoration: none;
-}
-
-.side-bar a.active {
-	background: #2B90C6;
-}
-
-form {
-	width: 80%;
-	margin-left: 2%;
-	display: flex;
-	justify-content: center;
+body form {
+	margin: 0 auto;
+	width: 90%;
 }
 
 .container {
@@ -110,20 +75,10 @@ form a {
 </style>
 
 <body>
-	<section class="side-bar">
-		<div style="border-bottom: thin solid white; padding: 8px 10px">
-			<h1 style="font-weight: 500;">TechShop</h1>
-		</div>
-
-		<div
-			style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-top: 20px; align-items: center">
-			<a href="task-list" class="active">Task List</a> <a>Staff
-				List</a> <a>Device List</a> <a>Report</a>
-		</div>
-
-	</section>
+<jsp:include page="../common/header.jsp"></jsp:include>
+<jsp:include page="../common/sidebar.jsp"></jsp:include>
+<main class="sidebar-main">
 	<form action="task-form" method="post">
-
 		<div class="container">
 			<div class="head">
 				<h2>${task != null ? "Update Task" : "Add Task"}</h2>
@@ -157,8 +112,6 @@ form a {
 			</div>
 		</div>
 	</form>
-
-
-
+</main>
 </body>
 </html>
