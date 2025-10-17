@@ -7,33 +7,6 @@ import dal.DBContext;
 import model.User;
 
 public class TaskDAO extends DBContext {
-	public List<Task> getFilteredTasksWithStatus(String status, String search) {
-	
-	 
-	    public Task getTaskById(int id) {
-	        Task task = null;
-	        String sql = "SELECT * FROM tasks WHERE id=?";
-	        try (Connection conn = getConnection();
-	             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-	            ps.setInt(1, id);
-	            try (ResultSet rs = ps.executeQuery()) {
-	                if (rs.next()) {
-	                    task = new Task(
-	                            rs.getInt("id"),
-	                            rs.getString("title"),
-	                            rs.getString("description"),
-	                            rs.getInt("manager_id"),
-	                            rs.getInt("customer_issue_id")
-	                    );
-	                }
-	            }
-
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        return task;
-	    }
 	public List<User> getAllTechnicalStaff() {
 	    List<User> list = new ArrayList<>();
 	    String sql = "SELECT * FROM users WHERE role_id = 3 AND status='active'";
@@ -54,7 +27,7 @@ public class TaskDAO extends DBContext {
 	    return list;
 	}
 
-	public List<Task> getAllTasks() {
+	public List<Task> getFilteredTasksWithStatus(String status, String search) {
 		List<Task> list = new ArrayList<>();
 		String sql = "select * from task_with_status WHERE 1 = 1 ";
 		
@@ -87,17 +60,19 @@ public class TaskDAO extends DBContext {
 		Task task = null;
 		String sql = "select * from task_with_status where id = ?";
 
-		try (Connection conn = getConnection(); PreparedStatement pre = conn.prepareStatement(sql)) {
+		try {Connection conn = getConnection(); 
+			PreparedStatement pre = conn.prepareStatement(sql);
 			pre.setInt(1, id);
 			ResultSet rs = pre.executeQuery();
 			if (rs.next()) {
 				task = new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
 						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status"));
 			}
-
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
+		return task;
+	}
 
 
 	public int addNewTask(Task task) {

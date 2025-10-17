@@ -12,7 +12,6 @@ import model.User;
 @WebServlet("/profile")
 @MultipartConfig(maxFileSize = 1024 * 1024 * 5) // 5MB
 public class ProfileController extends HttpServlet {
-
     private UserDAO userDAO = new UserDAO();
 
     @Override
