@@ -140,7 +140,7 @@ body.shop-page.catalog-page .product-grid {
 							<img alt="" style="width: 100%; height: 100%; object-fit: cover;"
 								src="<%=request.getContextPath()%>/assets/img/laptop.jpg" />
 							<h3>${device.name}</h3>
-							<p>Laptop mỏng nhẹ, màn 15'' 2K, pin 12 giờ.</p>
+							<p>${device.desc}</p>
 							<strong> <fmt:formatNumber value="${device.price + 0}"
 									type="number" />
 							</strong> <a href="device-detail?id=${device.id}">Xem chi tiết</a>

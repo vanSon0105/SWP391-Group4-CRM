@@ -34,13 +34,13 @@ public class TaskFormController extends HttpServlet {
 		try {
 			String idParam = request.getParameter("id");
 			Task task = null;
-//			Set<Integer> assignedStaffIds = null;
+			Set<Integer> assignedStaffIds = null;
 			List<TaskDetail> taskDetail = new ArrayList<>();
 			if (idParam != null && !idParam.isEmpty()) {
 	            int taskId = Integer.parseInt(idParam);
 	            task = taskDao.getTaskById(taskId);
 	            taskDetail = taskDetailDao.getTaskDetail(taskId);
-//	            assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
+	            assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
 	        }
 			
 			List<CustomerIssue> issueList = issueDao.getAllIssues();
@@ -50,7 +50,7 @@ public class TaskFormController extends HttpServlet {
 	        request.setAttribute("customerIssues", issueList);
 	        request.setAttribute("technicalStaffList", staffList);
 	        request.setAttribute("taskDetail", taskDetail);
-//	        request.setAttribute("assignedStaffIds", assignedStaffIds);
+	        request.setAttribute("assignedStaffIds", assignedStaffIds);
 			request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");
@@ -80,10 +80,13 @@ public class TaskFormController extends HttpServlet {
 			task.setManagerId(managerId);
 			task.setCustomerIssueId(customerIssueId);
 			int taskId = taskDao.addNewTask(task);
-			for (String staff : staffs) { 
-				staffId = Integer.parseInt(staff);
-				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
+			if(staffs.length != 0) {
+				for (String staff : staffs) { 
+					staffId = Integer.parseInt(staff);
+					taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
+				}
 			}
+			
 			res.sendRedirect("task-list");;
 		} catch (Exception e) {
 			// TODO: handle exception
