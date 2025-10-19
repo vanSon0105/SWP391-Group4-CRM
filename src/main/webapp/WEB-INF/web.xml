@@ -17,6 +17,26 @@
   	<description></description>
   	<servlet-class>controller.homePage.RegisterServlet</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>PaymentController</servlet-name>
+  	<display-name>PaymentController</display-name>
+  	<description></description>
+  	<servlet-class>controller.homePage.PaymentController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>CheckoutController</servlet-name>
+  	<display-name>CheckoutController</display-name>
+  	<description></description>
+  	<servlet-class>controller.homePage.CheckoutController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>PaymentController</servlet-name>
+  	<url-pattern>/PaymentController</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>CheckoutController</servlet-name>
+  	<url-pattern>/CheckoutController</url-pattern>
+  </servlet-mapping>
 
   <welcome-file-list>
     <welcome-file>home</welcome-file>
