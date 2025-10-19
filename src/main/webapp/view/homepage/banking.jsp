@@ -56,7 +56,6 @@
 </style>
 
 <body class="shop-page">
-	<% double finalPrice = (double)session.getAttribute("finalPrice"); %>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<section class="main-content">
 		<div class="panel">
