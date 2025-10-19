@@ -25,7 +25,7 @@ CREATE TABLE users (
 
 CREATE TABLE categories (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  category_name VARCHAR(100) NOT NULL,
+  category_name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE devices (

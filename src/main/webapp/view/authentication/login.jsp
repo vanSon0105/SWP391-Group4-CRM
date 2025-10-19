@@ -29,8 +29,8 @@
             </div>
 
             <div class="links">
-                <a href="../authentication/forgot-password.jsp">Quên mật khẩu?</a>
-                <a href="../authentication/register.jsp">Đăng ký tài khoản</a>
+                 <a href="${pageContext.request.contextPath}/view/authentication/forgot-password.jsp">Quên mật khẩu?</a>
+    			<a href="${pageContext.request.contextPath}/view/authentication/register.jsp">Đăng ký tài khoản</a>
             </div>
 
             <button type="submit">Đăng nhập</button>

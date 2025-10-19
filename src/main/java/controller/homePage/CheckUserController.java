@@ -26,14 +26,12 @@ public class CheckUserController extends HttpServlet {
 
 	        boolean exists = false;
 
-	        // 🔍 Kiểm tra username hoặc email có tồn tại không
 	        if (username != null && !username.isEmpty()) {
 	            exists = userDAO.existsByUsername(username);
 	        } else if (email != null && !email.isEmpty()) {
 	            exists = userDAO.existsByEmail(email);
 	        }
 
-	        // 🔧 Gửi JSON về client
 	        response.setContentType("application/json");
 	        response.setCharacterEncoding("UTF-8");
 	        response.getWriter().write("{\"exists\": " + exists + "}");
