@@ -5,6 +5,39 @@ import model.Payment;
 import dal.DBContext;
 
 public class PaymentDAO extends DBContext {
+	
+	public List<Payment> getAllPayment() {
+		List<Payment> list = new ArrayList<>();
+		String sql = "select * from payments";
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql);
+			 ResultSet rs = pre.executeQuery()){
+			
+			while(rs.next()) {
+				list.add(new Payment(
+						rs.getInt("id"),
+						rs.getInt("order_id"),
+						rs.getString("payment_url"),
+						rs.getString("payment_method"),
+						rs.getDouble("amount"),
+						rs.getString("full_name"),
+						rs.getString("phone"),
+						rs.getString("address"),
+						rs.getString("delivery_time"),
+						rs.getString("technical_note"),
+						rs.getString("status"),
+						rs.getTimestamp("created_at"),
+						rs.getTimestamp("paid_at")
+						));
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return list;
+	}
+	
 	public int addNewPayment(Payment payment) {
 		String sql = "INSERT INTO payments \r\n"
 				+ "(order_id, payment_url, payment_method, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
