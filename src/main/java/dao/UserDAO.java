@@ -256,17 +256,15 @@ public class UserDAO {
                 User u = new User();
                 u.setId(rs.getInt("id"));
                 u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
                 u.setEmail(rs.getString("email"));
                 u.setFullName(rs.getString("full_name"));
                 u.setPhone(rs.getString("phone"));
-                u.setGender(rs.getString("gender"));
-                u.setBirthday(rs.getDate("birthday"));
                 u.setImageUrl(rs.getString("image_url"));
                 u.setRoleId(rs.getInt("role_id"));
                 u.setStatus(rs.getString("status"));
                 u.setCreatedAt(rs.getTimestamp("created_at"));
                 u.setLastLoginAt(rs.getTimestamp("last_login_at"));
-                u.setUsernameChanged(rs.getBoolean("username_changed"));
 
                 list.add(u);
             }
