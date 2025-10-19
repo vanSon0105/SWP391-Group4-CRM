@@ -11,6 +11,10 @@ import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterController extends HttpServlet {
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		req.getRequestDispatcher("view/authentication/register.jsp").forward(req, resp);
+	}
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -33,7 +37,7 @@ public class RegisterController extends HttpServlet {
                 roleId = 3;
                 break;
             default:
-                roleId = 1; // Khách hàng cá nhân
+                roleId = 1;
                 break;
         }
 

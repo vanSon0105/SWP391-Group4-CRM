@@ -72,7 +72,7 @@
                 </strong></span>
             </div>
             <div class="cta">
-                <a href="checkout.html">Tiến hành thanh toán</a>
+                <a href="checkout">Tiến hành thanh toán</a>
                 <a href="device-page">Tiếp tục mua sắm</a>
             </div>
         </section>

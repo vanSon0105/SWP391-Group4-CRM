@@ -171,17 +171,8 @@ public class TaskDAO extends DBContext {
 					set.add(rs.getInt("technical_staff_id"));
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return set;
-	}
-
-	public static void main(String[] args) {
-		TaskDAO dao = new TaskDAO();
-		List<Task> list = dao.getFilteredTasksWithStatus("no", "no");
-
-		for (Task task : list) {
-			System.out.print(task.getId() + " ");
-		}
 	}
 }
