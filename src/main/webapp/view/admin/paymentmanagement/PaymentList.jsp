@@ -31,18 +31,17 @@
 	box-sizing: border-box;
 }
 
-
 .table-container {
-	width: 100%;
-	overflow-x: auto; 
-	margin-bottom: 20px;
-	border-radius:16px;
+	width: 90%;
+	overflow-x: auto;
+	/* margin-bottom: 50px; */
+	margin-left: 5%;
+	border-radius: 10px;
 }
-
 
 table {
 	width: 100%;
-	min-width: 1000px; 
+	min-width: 1000px;
 	border-collapse: collapse;
 	font-family: Arial, sans-serif;
 }
@@ -51,14 +50,14 @@ th, td {
 	border: 1px solid #ccc;
 	padding: 10px;
 	text-align: left;
-	white-space: nowrap; 
+	white-space: nowrap;
 }
 
 th {
 	background-color: #4B9CD3;
 	font-weight: bold;
 	position: sticky;
-	top: 0; 
+	top: 0;
 	z-index: 2;
 }
 
@@ -76,7 +75,7 @@ tbody tr {
 
 table th, table td {
 	text-align: center;
-	padding: 8px 10px; 
+	padding: 8px 10px;
 }
 
 button {
@@ -93,8 +92,22 @@ button:hover {
 	background-color: #218838;
 }
 
-button{
+button {
 	padding: 10px 12px !important;
+}
+
+.container-paging {
+	margin-top: 10px;
+	margin-left:45%;
+}
+
+.container-paging a {
+	padding: 6px 12px;
+	text-decoration: none;
+	border:none;
+	color:white !important;
+	background: #3b82f6;
+	border-radius: 10px;
 }
 </style>
 
@@ -147,9 +160,16 @@ button{
 				</table>
 
 			</div>
-
+			<div class="container-paging">
+				<c:forEach var="i" begin="1" end="${totalPages}">
+					<a
+						class="pagination ${(param.page == null && i == 1) || param.page == i ? 'active' : ''}"
+						href="payment-list?page=${i}">${i}</a>
+				</c:forEach>
+			</div>
 
 		</section>
+
 	</main>
 </body>
 </html>

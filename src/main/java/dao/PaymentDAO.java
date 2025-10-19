@@ -6,14 +6,16 @@ import dal.DBContext;
 
 public class PaymentDAO extends DBContext {
 	
-	public List<Payment> getAllPayment() {
+	public List<Payment> getAllPayment(int limit, int offset) {
 		List<Payment> list = new ArrayList<>();
-		String sql = "select * from payments";
+		String sql = "select * from payments LIMIT ? OFFSET ?";
 		
 		try (Connection conn = getConnection();
 			 PreparedStatement pre = conn.prepareStatement(sql);
-			 ResultSet rs = pre.executeQuery()){
-			
+			 ){
+			pre.setInt(1, limit);
+			pre.setInt(2, offset);
+			ResultSet rs = pre.executeQuery();
 			while(rs.next()) {
 				list.add(new Payment(
 						rs.getInt("id"),
@@ -36,6 +38,24 @@ public class PaymentDAO extends DBContext {
 		}
 		
 		return list;
+	}
+	
+	public int getPaymentCount() {
+		int count = 0;
+		String sql = "select COUNT(payments.id) as total from payments";
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql);
+			 ResultSet rs = pre.executeQuery()){
+			
+			while(rs.next()) {
+				count = rs.getInt("total");
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return count;
 	}
 	
 	public int addNewPayment(Payment payment) {

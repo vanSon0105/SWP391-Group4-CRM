@@ -21,12 +21,24 @@ import dao.DeviceSerialDAO;
  */
 @WebServlet("/payment-list")
 public class PaymentController extends HttpServlet {
+	private static int PAYMENT_PER_PAGE = 4;
 	PaymentDAO paymentDao = new PaymentDAO();
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		List<Payment> paymentList = paymentDao.getAllPayment();
+		String pageParam = req.getParameter("page");
+		int page = 1;
+		if(pageParam != null) {
+			page = Integer.parseInt(pageParam);
+		}
 		
+		int totalPayments = paymentDao.getPaymentCount();
+		int totalPages = (int) Math.ceil((double) totalPayments / PAYMENT_PER_PAGE);
+		int offset = (page - 1) * PAYMENT_PER_PAGE;
+		
+		List<Payment> paymentList = paymentDao.getAllPayment(PAYMENT_PER_PAGE, offset);
+		
+		req.setAttribute("totalPages", totalPages);
 		req.setAttribute("paymentList", paymentList);
 		req.getRequestDispatcher("view/admin/paymentmanagement/PaymentList.jsp").forward(req, resp);
 	}

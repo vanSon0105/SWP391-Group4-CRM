@@ -33,7 +33,7 @@ body.shop-page.catalog-page .product-grid {
 
 .container-paging {
 	text-align: center;
-	margin-top:10px;
+	margin-top: 10px;
 	margin-bottom: 30px;
 }
 
@@ -42,14 +42,17 @@ body.shop-page.catalog-page .product-grid {
 	background: white;
 	padding: 10px 14px;
 	border-radius: 10px;
-	text-align: center; 
+	text-align: center;
 }
 
 .container-paging .active {
 	background-color: #22A1EB;
-	color:white;
+	color: white !important;
 }
 
+.pagination:visited {
+  color: #333;
+}
 </style>
 
 <body class="shop-page catalog-page">
@@ -148,18 +151,67 @@ body.shop-page.catalog-page .product-grid {
 					</c:forEach>
 
 				</section>
-			</section> 
+			</section>
 
 
 
 		</main>
 	</form>
+
 	<div class="container-paging">
-		<c:forEach var="i" begin="1" end="${totalPages}">
-		<a class="pagination ${(param.page == null && i == 1) || param.page == i ? 'active' : ''}" href="device-page?page=${i}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">${i}</a>
-	</c:forEach>
+		<c:choose>
+			<c:when test="${currentPage > 1}">
+				<a class="pagination"
+					href="device-page?page=${currentPage - 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					&#10094;</a>
+			</c:when>
+			<c:otherwise>
+				<span class="pagination disabled">&#10094;</span>
+			</c:otherwise>
+		</c:choose>
+
+		
+		<c:if test="${totalPages > 0}">
+			<c:if test="${startPage > 1}">
+				<a class="pagination"
+					href="device-page?page=1&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					1 </a>
+				<c:if test="${startPage > 2}">
+					<span>...</span>
+				</c:if>
+			</c:if>
+
+			
+			<c:forEach var="i" begin="${startPage}" end="${endPage}">
+				<a class="pagination ${i == currentPage ? 'active' : ''}"
+					href="device-page?page=${i}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					${i} </a>
+			</c:forEach>  
+
+			
+			<c:if test="${endPage < totalPages}">
+				<c:if test="${endPage < totalPages - 1}">
+					<span>...</span>
+				</c:if>
+				<a class="pagination"
+					href="device-page?page=${totalPages}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					${totalPages} </a>
+			</c:if>
+		</c:if>
+
+		
+		<c:choose>
+			<c:when test="${currentPage < totalPages}">
+				<a class="pagination"
+					href="device-page?page=${currentPage + 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					&#10095; </a>
+			</c:when>
+			<c:otherwise>
+				<span class="pagination disabled">&#10095;</span>
+			</c:otherwise>
+		</c:choose>
 	</div>
-	
+
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 
