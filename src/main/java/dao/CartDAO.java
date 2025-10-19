@@ -11,13 +11,17 @@ import dal.DBContext;
 import model.Cart;
 import model.CartDetail;
 import model.Device;
+import model.User;
 
 
 public class CartDAO extends DBContext {
+	private UserDAO uDao = new UserDAO();
+	private DeviceDAO dDao = new DeviceDAO();
+	private CartDetailDao cdDao = new CartDetailDao();
 	public Cart getCartByUserId(int userId) {
         String sql = "SELECT * FROM carts WHERE user_id = ?";
         try (
-        		Connection connection = DBContext.getConnection();
+        		Connection connection = getConnection();
         		PreparedStatement ps = connection.prepareStatement(sql)) {
                 ps.setInt(1, userId);
                 ResultSet rs = ps.executeQuery();
@@ -25,7 +29,7 @@ public class CartDAO extends DBContext {
 	                Cart cart = new Cart();
 	                cart.setId(rs.getInt("id"));
 	                cart.setSum(rs.getInt("sum"));
-	                cart.setUser_id(rs.getInt("user_id"));
+	                cart.setUserId(rs.getInt("user_id"));
 	                return cart;
 	            }
 	        } catch (SQLException e) {
@@ -42,7 +46,7 @@ public class CartDAO extends DBContext {
 				+ "WHERE cd.cart_id = ?;";
 
 		try { 
-			Connection connection = DBContext.getConnection();
+			Connection connection = getConnection();
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1, cartID);
 			ResultSet rs = ps.executeQuery();
@@ -58,7 +62,7 @@ public class CartDAO extends DBContext {
                 cd.setId(rs.getInt("id"));
                 cd.setPrice(rs.getDouble("cart_price"));
                 cd.setQuantity(rs.getInt("quantity"));
-                cd.setCart_id(rs.getInt("cart_id"));
+                cd.setCartId(rs.getInt("cart_id"));
                 cd.setDevice(d);
                 cd.setTotalPrice(cd.getPrice() * cd.getQuantity());
                 
@@ -79,7 +83,7 @@ public class CartDAO extends DBContext {
 				+ "WHERE cd.id = ?;";
 
 		try { 
-			Connection connection = DBContext.getConnection();
+			Connection connection = getConnection();
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
@@ -95,7 +99,7 @@ public class CartDAO extends DBContext {
                 cd.setId(rs.getInt("id"));
                 cd.setPrice(rs.getDouble("cart_price"));
                 cd.setQuantity(rs.getInt("quantity"));
-                cd.setCart_id(rs.getInt("cart_id"));
+                cd.setCartId(rs.getInt("cart_id"));
                 cd.setDevice(d);
                 cd.setTotalPrice(cd.getPrice() * cd.getQuantity());
                 
@@ -108,23 +112,10 @@ public class CartDAO extends DBContext {
 		return null;
 	}
 	
-	public void updateCartQuantity(int cartDetailId, int quantity) {
-	    String sql = "UPDATE cart_details SET quantity = ? WHERE id = ?";
-	    try (
-	    		Connection connection = DBContext.getConnection();
-		        PreparedStatement ps = connection.prepareStatement(sql)) {
-		        ps.setInt(1, quantity);
-		        ps.setInt(2, cartDetailId);
-		        ps.executeUpdate();
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	}
-	
 	public boolean deleteCartDetail(int id) {
 	    String sql = "DELETE FROM cart_details WHERE id = ?";
 	    try (
-	    		Connection connection = DBContext.getConnection();
+	    		Connection connection = getConnection();
 	            PreparedStatement ps = connection.prepareStatement(sql)) {
 	            ps.setInt(1, id);
 	            return ps.executeUpdate() > 0;
@@ -138,7 +129,7 @@ public class CartDAO extends DBContext {
 		String sql = "SELECT * FROM carts\r\n"
 				+ "WHERE id = ?;";
 	    try (
-	    		Connection connection = DBContext.getConnection();
+	    		Connection connection = getConnection();
 	            PreparedStatement ps = connection.prepareStatement(sql)) {
 	            ps.setInt(1, id);
 	            ResultSet rs = ps.executeQuery();
@@ -157,7 +148,7 @@ public class CartDAO extends DBContext {
 	
 	public void updateCartSum(int cartId, double sum) {
 	    String sql = "UPDATE carts SET sum = ? WHERE id = ?;";
-	    try (Connection connection = DBContext.getConnection();
+	    try (Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql)) {
 
 	        ps.setDouble(1, sum);
@@ -167,5 +158,99 @@ public class CartDAO extends DBContext {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
+	}
+	
+	public boolean addCart(Cart c) {
+        String sql = "INSERT INTO carts (sum, user_id) VALUES (?, ?)";
+
+        try (Connection con = getConnection();
+        	 PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setDouble(1, c.getSum());
+            ps.setInt(2, c.getUserId());
+            
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+	
+	public Cart getOrCreateCart(int id) {
+		Cart cart = getCartByUserId(id);
+		if (cart != null) {
+			return cart;
+		}
+		
+		String sql = "INSERT INTO carts (sum, user_id) VALUES (0, ?)";
+		try (Connection connection = getConnection();
+			 PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setInt(1, id);
+			ps.executeUpdate();
+			try (ResultSet rs = ps.getGeneratedKeys()) {
+				if (rs.next()) {
+					int cartId = rs.getInt(1);
+					Cart newCart = new Cart();
+					newCart.setId(cartId);
+					newCart.setSum(0);
+					newCart.setUserId(id);
+					return newCart;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public double calculateCartSum(int cartId) {
+	    double sum = 0;
+	    String sql = "SELECT SUM(cd.price * cd.quantity) AS total_sum FROM cart_details cd WHERE cd.cart_id = ?";
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setInt(1, cartId);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            sum = rs.getDouble("total_sum");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return sum;
+	}
+
+	
+	public boolean addDeviceToCart(int id, int deviceId) {
+		User user = uDao.getUserById(id);
+        if (user != null) {
+            Cart cart = getCartByUserId(user.getId());
+            if (cart == null) {
+                Cart newCart = new Cart();
+                newCart.setUserId(user.getId());
+                newCart.setSum(0);
+                addCart(newCart);
+            }
+            Device d = dDao.getDeviceById(deviceId);
+            if (d != null) {
+            	CartDetail cartDetail = cdDao.getCartDetailByDevice(cart.getId(), deviceId);
+                if (cartDetail == null) {
+                    cartDetail = new CartDetail();
+                    cartDetail.setCartId(cart.getId());
+                    cartDetail.setDevice(d);
+                    cartDetail.setPrice(d.getPrice());
+                    cartDetail.setQuantity(1); 
+                    cdDao.addCartDetail(cartDetail);
+                } else {
+                    cartDetail.setQuantity(cartDetail.getQuantity() + 1);
+                    cdDao.updateCartDetailQuantity(cartDetail);
+                }
+
+                double newSum = calculateCartSum(cart.getId());
+                updateCartSum(cart.getId(), newSum);
+
+            }else {
+            	return false;
+            }
+        }
+        return true;
 	}
 }

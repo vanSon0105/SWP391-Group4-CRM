@@ -3,52 +3,73 @@ import java.sql.*;
 
 public class CustomerIssue {
 	private int id;
-	private int customer_id;
-	private String issue_code;
+	private int customerId;
+	private String issueCode;
 	private String title;
 	private String description;
 	private int warrantyCardId;
 	private Timestamp createdAt;
-	public CustomerIssue() {
-		super();
-	}
+	private int supportStaffId;
+	private String supportStatus;
 	
+	public CustomerIssue() {}
 	
-	public CustomerIssue(int id, String title) {
-		super();
+	public CustomerIssue(int id, int customerId, String issueCode, String title, String description, int warrantyCardId,
+			Timestamp createdAt, int supportStaffId, String supportStatus) {
 		this.id = id;
-		this.title = title;
-	}
-
-
-	public CustomerIssue(int id, int customer_id, String issue_code, String title, String description,
-			int warrantyCardId, Timestamp createdAt) {
-		super();
-		this.id = id;
-		this.customer_id = customer_id;
-		this.issue_code = issue_code;
+		this.customerId = customerId;
+		this.issueCode = issueCode;
 		this.title = title;
 		this.description = description;
 		this.warrantyCardId = warrantyCardId;
 		this.createdAt = createdAt;
+		this.supportStaffId = supportStaffId;
+		this.supportStatus = supportStatus;
 	}
+	
+	public CustomerIssue(int id, String title) {
+		this.id = id;
+		this.title = title;
+	}
+
+
+	public int getSupportStaffId() {
+		return supportStaffId;
+	}
+
+
+	public void setSupportStaffId(int supportStaffId) {
+		this.supportStaffId = supportStaffId;
+	}
+
+
+	public String getSupportStatus() {
+		return supportStatus;
+	}
+
+
+	public void setSupportStatus(String supportStatus) {
+		this.supportStatus = supportStatus;
+	}
+	
+
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getCustomer_id() {
-		return customer_id;
+	public int getCustomerId() {
+		return customerId;
 	}
-	public void setCustomer_id(int customer_id) {
-		this.customer_id = customer_id;
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
 	}
-	public String getIssue_code() {
-		return issue_code;
+	public String getIssueCode() {
+		return issueCode;
 	}
-	public void setIssue_code(String issue_code) {
-		this.issue_code = issue_code;
+	public void setIssueCode(String issueCode) {
+		this.issueCode = issueCode;
 	}
 	public String getTitle() {
 		return title;
@@ -76,7 +97,7 @@ public class CustomerIssue {
 	}
 	@Override
 	public String toString() {
-		return "CustomerIssue [id=" + id + ", customer_id=" + customer_id + ", issue_code=" + issue_code + ", title="
+		return "CustomerIssue [id=" + id + ", customer_id=" + customerId + ", issue_code=" + issueCode + ", title="
 				+ title + ", description=" + description + ", warrantyCardId=" + warrantyCardId + ", createdAt="
 				+ createdAt + "]";
 	}

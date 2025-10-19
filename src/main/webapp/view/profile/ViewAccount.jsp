@@ -8,8 +8,6 @@
   <meta charset="UTF-8" />
   <title>Quản lý người dùng | NovaCare</title>
 
-  <!-- KHÔNG dùng CDN/framework nào -->
-
   <style>
     :root{
       --primary:#2563eb; --primary-hover:#1d4ed8;

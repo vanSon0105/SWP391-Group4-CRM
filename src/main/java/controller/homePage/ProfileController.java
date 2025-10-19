@@ -20,7 +20,7 @@ public class ProfileController extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+            response.sendRedirect("login");
             return;
         }
 
@@ -50,7 +50,7 @@ public class ProfileController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+            response.sendRedirect("login");
             return;
         }
 

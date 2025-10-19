@@ -29,7 +29,6 @@ public class HomePageController extends HttpServlet {
             case "/home":
             	listDevices(req, resp);
             	break;
-
         }
 	}
 	
