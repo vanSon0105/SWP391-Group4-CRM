@@ -310,4 +310,21 @@ public class UserDAO {
             return false;
         }
     }
+    
+    public void addUser(User u) {
+        String sql = "INSERT INTO users(username, email, password, full_name, phone, role_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, u.getUsername());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getPassword());
+            ps.setString(4, u.getFullName());
+            ps.setString(5, u.getPhone());
+            ps.setInt(6, u.getRoleId());
+            ps.setString(7, u.getStatus());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
