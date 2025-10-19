@@ -95,7 +95,7 @@ table tbody tr td {
 						<tbody>
 							<c:forEach var="cart" items="${listCart}">
 								<tr>
-									<td>${cart.device.name}x ${cart.quantity}</td>
+									<td>${cart.device.name} x ${cart.quantity}</td>
 									<td><fmt:formatNumber value="${cart.totalPrice}"
 											type="number" /></td>
 								</tr>

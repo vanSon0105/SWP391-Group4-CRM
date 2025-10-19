@@ -14,18 +14,19 @@ import model.CartDetail;
 import model.Category;
 import model.Supplier;
 import model.User;
-import dao.DeviceDAO;
-import dao.CategoryDAO;
-import dao.SupplierDAO;
+import dao.PaymentDAO;
 import dao.CartDAO;
+import dao.OrderDAO;
+import model.Cart;
+import model.Payment;
+import model.Order;
 
 @WebServlet("/checkout")
 public class CheckoutController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	DeviceDAO deviceDao = new DeviceDAO();
-	CategoryDAO categoryDao = new CategoryDAO();
-	SupplierDAO supplierDao = new SupplierDAO();
 	CartDAO cartDao = new CartDAO();
+	PaymentDAO paymentDao = new PaymentDAO();
+	OrderDAO orderDao = new OrderDAO();
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -34,45 +35,26 @@ public class CheckoutController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		User user = (User)session.getAttribute("user");
-		int userId = 1;
-		List<CartDetail> list = cartDao.getCartDetail(userId);
-		int cartId = -1;
-		double totalPrice = 0;
-		double discount = 0;
-		double finalPrice = 0;
-		
-		if(list != null && !list.isEmpty()) {
-			for(CartDetail cart : list) {
-				totalPrice += cart.getTotalPrice();
-			}
-			
-			if (totalPrice >= 3000000) {
-				double potentialDiscount = totalPrice * 0.10;
-				discount = Math.min(potentialDiscount, 150000);
-			}else if(totalPrice >= 1000000 && totalPrice < 3000000) {
-				double potentialDiscount = totalPrice * 0.05;
-				discount = Math.min(potentialDiscount, 100000);
-			}else {
-				discount = 0;
-			}
+		User user = (User) session.getAttribute("account");
+		if (user == null) {
+		    response.sendRedirect("view/authentication/login.jsp");
+		    return;
 		}
-		finalPrice = totalPrice - discount;
-		
-		session.setAttribute("finalPrice", finalPrice); 
-		request.setAttribute("finalPrice", finalPrice);
-		request.setAttribute("discount", discount);
-		request.setAttribute("totalPrice", totalPrice);
-		request.setAttribute("listCart", list);
+
+		loadCheckoutData(request, response);
 		request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
 	}
 	
-	private void loadCheckoutData(HttpServletRequest request, HttpServletResponse response) {
+	private void loadCheckoutData(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		HttpSession session = request.getSession();
-		User user = (User)session.getAttribute("user");
-		int userId = 1;
-		List<CartDetail> list = cartDao.getCartDetail(userId);
-		int cartId = -1;
+		User user = (User) session.getAttribute("account");
+		if (user == null) {
+		    response.sendRedirect("login.jsp");
+		    return;
+		}
+		
+		Cart c = cartDao.getCartByUserId(user.getId());
+		List<CartDetail> list = cartDao.getCartDetail(c.getId());
 		double totalPrice = 0;
 		double discount = 0;
 		double finalPrice = 0;
@@ -104,6 +86,7 @@ public class CheckoutController extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("account");
 		double finalPrice = (double)session.getAttribute("finalPrice");
 		
 		String fullName = request.getParameter("fullname");
@@ -134,6 +117,22 @@ public class CheckoutController extends HttpServlet {
 			request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
 			return;
 		}
+		
+		int orderId = orderDao.addNewOrder(user.getId(), finalPrice, 0);
+		
+		Payment payment = new Payment();
+		payment.setOrderId(orderId);
+		payment.setFullName(fullName);
+		payment.setPhone(phone);
+		payment.setAddress(address);
+		payment.setAmount(finalPrice);
+		payment.setDeliveryTime(time);
+		payment.setPaymentMethod(method);
+		payment.setTechnicalNote(note);
+//		payment.setCreatedAt(Timestamp.);
+		payment.setPaidAt(null);
+		
+		paymentDao.addNewPayment(payment);
 		
 		
 		session.setAttribute("finalPrice", finalPrice);

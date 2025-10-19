@@ -26,10 +26,14 @@ public class CartController extends HttpServlet {
 		public CartDAO cdao = new CartDAO();
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		User u = (User) session.getAttribute("user");
-//        int userId = u.getId();
-		int userId = 2;
-		List<CartDetail> list = cdao.getCartDetail(userId);
+		User user = (User) session.getAttribute("account");
+		if (user == null) {
+		    response.sendRedirect("login.jsp");
+		    return;
+		}
+		
+		Cart c = cdao.getCartByUserId(user.getId());
+		List<CartDetail> list = cdao.getCartDetail(c.getId());
 		int cartId = -1;
 		double cartTotal = 0;
 		double discount = 0;
