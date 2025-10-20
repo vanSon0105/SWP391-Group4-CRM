@@ -63,6 +63,10 @@ CREATE TABLE inventories (
   foreign key (device_id) references devices(id)
 );
 
+DELETE FROM cart_details WHERE cart_id = 1;
+DELETE FROM carts WHERE id = 1;
+select * from cart_details;
+select * from carts;
 CREATE TABLE orders (
   id INT PRIMARY KEY AUTO_INCREMENT,
   customer_id INT NOT NULL,
@@ -828,17 +832,17 @@ INSERT INTO order_details (order_id, device_id, device_serial_id, quantity, pric
 (70, 13, 135, 1, 890000, 135);
 
 INSERT INTO payments 
-(order_id, payment_url, payment_method, transaction_id, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at) VALUES
-(1, NULL, 'cod', NULL, 350000, 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', '2025-09-16 10:00', NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
-(2, NULL, 'cod', NULL, 420000, 'Tran Thi B', '0905123456', '45 Nguyen Trai, HCM', '2025-09-17 15:00', NULL, 'pending', '2025-09-16 09:12:00', NULL),
-(3, NULL, 'bank_transfer', 'TXN0003', 515000, 'Le Hoang C', '0977123456', '88 Bach Dang, Da Nang', '2025-09-13 09:00', NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
-(4, NULL, 'cod', NULL, 290000, 'Pham Quynh D', '0988654321', '12 Tran Hung Dao, Hai Phong', '2025-09-15 18:30', 'Giao buổi tối', 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
-(5, NULL, 'cod', NULL, 810000, 'Do Minh E', '0911222333', '34 Nguyen Van Cu, Can Tho', '2025-09-18 09:20', NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
-(6, NULL, 'cod', NULL, 460000, 'Bui Anh F', '0922233444', '56 Vo Van Tan, Da Nang', '2025-09-21 10:00', NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
-(7, NULL, 'cod', NULL, 320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', '2025-09-23 11:00', NULL, 'pending', '2025-09-22 16:05:00', NULL),
-(8, NULL, 'bank_transfer', 'TXN0008', 575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', '2025-09-24 18:15', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
-(9, NULL, 'cod', NULL, 640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', '2025-09-25 09:00', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
-(10, NULL, 'cod', NULL, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', '2025-09-27 08:00', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
+(order_id, payment_url, payment_method, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at) VALUES
+(1, NULL, 'cod', 350000, 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', '2025-09-16 10:00', NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(2, NULL, 'cod', 420000, 'Tran Thi B', '0905123456', '45 Nguyen Trai, HCM', '2025-09-17 15:00', NULL, 'pending', '2025-09-16 09:12:00', NULL),
+(3, NULL, 'bank_transfer', 515000, 'Le Hoang C', '0977123456', '88 Bach Dang, Da Nang', '2025-09-13 09:00', NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
+(4, NULL, 'cod', 290000, 'Pham Quynh D', '0988654321', '12 Tran Hung Dao, Hai Phong', '2025-09-15 18:30', 'Giao buổi tối', 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(5, NULL, 'cod', 810000, 'Do Minh E', '0911222333', '34 Nguyen Van Cu, Can Tho', '2025-09-18 09:20', NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
+(6, NULL, 'cod', 460000, 'Bui Anh F', '0922233444', '56 Vo Van Tan, Da Nang', '2025-09-21 10:00', NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
+(7, NULL, 'cod', 320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', '2025-09-23 11:00', NULL, 'pending', '2025-09-22 16:05:00', NULL),
+(8, NULL, 'bank_transfer', 575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', '2025-09-24 18:15', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
+(9, NULL, 'cod', 640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', '2025-09-25 09:00', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
+(10, NULL, 'cod', 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', '2025-09-27 08:00', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
 
 
 INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES
