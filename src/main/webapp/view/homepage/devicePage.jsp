@@ -62,7 +62,7 @@ body.shop-page.catalog-page .product-grid {
 	<form action="device-page" method="get" id="filter-form">
 		<main>
 
-			<section class="toolbar" style="max-width: 184px; max-height: 500px">
+			<section class="toolbar" style="max-width: 200px; max-height: 500px">
 
 
 				<div class="filters">
@@ -98,7 +98,7 @@ body.shop-page.catalog-page .product-grid {
 					</div>
 					<div>
 						<label for="price">Mức giá</label> <select id="price"
-							onchange="this.form.submit()" name="price">
+							onchange="this.form.submit()"  name="price">
 							<option value="" ${empty param.price ? 'selected' : ''}>Mọi
 								mức giá</option>
 							<option value="under5"
@@ -162,7 +162,7 @@ body.shop-page.catalog-page .product-grid {
 		<c:choose>
 			<c:when test="${currentPage > 1}">
 				<a class="pagination"
-					href="device-page?page=${currentPage - 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					href="device-page?page=${currentPage - 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					&#10094;</a>
 			</c:when>
 			<c:otherwise>
@@ -174,7 +174,7 @@ body.shop-page.catalog-page .product-grid {
 		<c:if test="${totalPages > 0}">
 			<c:if test="${startPage > 1}">
 				<a class="pagination"
-					href="device-page?page=1&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					href="device-page?page=1&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					1 </a>
 				<c:if test="${startPage > 2}">
 					<span>...</span>
@@ -184,7 +184,7 @@ body.shop-page.catalog-page .product-grid {
 			
 			<c:forEach var="i" begin="${startPage}" end="${endPage}">
 				<a class="pagination ${i == currentPage ? 'active' : ''}"
-					href="device-page?page=${i}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					href="device-page?page=${i}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					${i} </a>
 			</c:forEach>  
 
@@ -194,7 +194,7 @@ body.shop-page.catalog-page .product-grid {
 					<span>...</span>
 				</c:if>
 				<a class="pagination"
-					href="device-page?page=${totalPages}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					href="device-page?page=${totalPages}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					${totalPages} </a>
 			</c:if>
 		</c:if>
@@ -203,10 +203,10 @@ body.shop-page.catalog-page .product-grid {
 		<c:choose>
 			<c:when test="${currentPage < totalPages}">
 				<a class="pagination"
-					href="device-page?page=${currentPage + 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">
+					href="device-page?page=${currentPage + 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					&#10095; </a>
 			</c:when>
-			<c:otherwise>
+			<c:otherwise> 
 				<span class="pagination disabled">&#10095;</span>
 			</c:otherwise>
 		</c:choose>

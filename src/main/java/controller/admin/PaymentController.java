@@ -32,7 +32,7 @@ import java.util.logging.*;
  */
 @WebServlet("/payment-list")
 public class PaymentController extends HttpServlet {
-	private static int PAYMENT_PER_PAGE = 6;
+	private static int PAYMENT_PER_PAGE = 10;
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
 	UserDAO userDao = new UserDAO();
