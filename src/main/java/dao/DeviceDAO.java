@@ -135,7 +135,8 @@ public class DeviceDAO extends DBContext {
 		return list;
 	}
 
-	public List<Device> getFilteredDevices(Integer categoryId, Integer supplierId, String priceRange, String sortPrice) {
+	public List<Device> getFilteredDevices(Integer categoryId, Integer supplierId, String priceRange, String sortPrice,
+			int offset, int limit) {
 		List<Device> list = new ArrayList<>();
 		String sql = "select distinct d.* from devices d "
 				+ "left join supplier_details sd on d.id = sd.device_id where 1 = 1 ";
@@ -165,11 +166,11 @@ public class DeviceDAO extends DBContext {
 				break;
 			default:
 				break;
-			
+
 			}
 		}
-		
-		if(sortPrice != null) {
+
+		if (sortPrice != null) {
 			switch (sortPrice) {
 			case "asc":
 				sql += " order by d.price asc ";
@@ -180,22 +181,80 @@ public class DeviceDAO extends DBContext {
 			default:
 				break;
 			}
+		} else {
+			sql += " order by d.id asc ";
 		}
-		
+
+		sql += " LIMIT ? OFFSET ? ";
+
 		try (Connection conn = getConnection();
 				PreparedStatement pre = conn.prepareStatement(sql);
-				ResultSet rs = pre.executeQuery()){
-			while(rs.next()) {
-				Category c = new Category();
-            	c.setId(rs.getInt("category_id"));
-				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
-						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
-			}
+				) {
 			
+			pre.setInt(1, limit);
+			pre.setInt(2, offset);
+			
+			ResultSet rs = pre.executeQuery();
+			while (rs.next()) {
+				Category c = new Category();
+				c.setId(rs.getInt("category_id"));
+				list.add(new Device(rs.getInt("id"), c, rs.getString("name"), rs.getDouble("price"),
+						rs.getString("unit"), rs.getString("image_url"), rs.getString("description"),
+						rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public int getFilteredDevicesCount(Integer categoryId, Integer supplierId, String priceRange) {
+		int count = 0;
+		String sql = "select COUNT(distinct d.id) as total from devices d "
+				+ "LEFT JOIN supplier_details sd on d.id = sd.device_id where 1 = 1 ";
+		
+		if(categoryId != null) {
+			sql += " and d.category_id = " + categoryId + " ";
+		}
+		
+		if(supplierId != null) {
+			sql += " and sd.supplier_id = " + supplierId + " ";
+		}
+		
+		if (priceRange != null) {
+			switch (priceRange) {
+			case "under5":
+				sql += " and d.price < 5000000 ";
+				break;
+			case "5to15":
+				sql += " and d.price between 5000000 and 15000000 ";
+				break;
+
+			case "15to30":
+				sql += " and d.price between 15000000 and 30000000 ";
+				break;
+			case "over30":
+				sql += " and d.price > 30000000 ";
+				break;
+			default:
+				break;
+
+			}
+		}
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql);
+			 ResultSet rs = pre.executeQuery()){
+			
+			while(rs.next()) {
+				count = rs.getInt("total");
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return count;
 	}
 	
 //	Device - Homepage
@@ -371,7 +430,7 @@ public class DeviceDAO extends DBContext {
 	}
 	
 //	Device - Admin
-	public List<Device> getDevicesByPage(String key, int offset, int recordsEachPage, int categoryId) {
+	public List<Device> getDevicesByPage(String key, int offset, int recordsEachPage, int categoryId, String sortBy, String order) {
 	    List<Device> list = new ArrayList<>();
 	    String sql = "SELECT d.image_url, d.id, d.name, c.category_name, d.price, "
 	            + "COALESCE(stock.quantity, 0) AS inventory, d.status "
@@ -392,8 +451,20 @@ public class DeviceDAO extends DBContext {
 	    if (categoryId > 0) {
 	        sql += ("AND d.category_id = ? ");
 	    }
+	    
+	    String sortColumn = "d.id";
+        if ("price".equalsIgnoreCase(sortBy)) {
+            sortColumn = "d.price";
+        } else if ("name".equalsIgnoreCase(sortBy)) {
+            sortColumn = "d.name";
+        }
+        
+        String sortOrder = "ASC";
+        if ("desc".equalsIgnoreCase(order)) {
+            sortOrder = "DESC";
+        }
 
-	    sql += "ORDER BY d.id DESC LIMIT ?, ?;";
+	    sql += "ORDER BY " + sortColumn + " " + sortOrder + " LIMIT ?, ?;";
 
 	    try (Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -407,6 +478,8 @@ public class DeviceDAO extends DBContext {
 	        if (categoryId > 0) {
 	            ps.setInt(index++, categoryId);
 	        }
+	        
+	        
 	        
 	        ps.setInt(index++, offset);
 	        ps.setInt(index, recordsEachPage);
@@ -433,8 +506,8 @@ public class DeviceDAO extends DBContext {
 	}
 
 	
-	public int getTotalDevices(String key, int categoryId) {
-	    String sql = "SELECT COUNT(*) FROM devices AS d WHERE 1=1";
+	public int getTotalDevices(String key, int categoryId, String sortBy, String order) {
+	    String sql = "SELECT COUNT(*) FROM devices AS d WHERE 1=1 ";
 	    
 	    if (key != null && !key.trim().isEmpty()) {
 	        sql += "AND (d.name LIKE ? OR CAST(d.id AS CHAR) LIKE ?)";

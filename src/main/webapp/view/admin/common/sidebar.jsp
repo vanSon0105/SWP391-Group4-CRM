@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 </head>
 <body>
 	<aside class="sidebar" aria-label="Chức năng quản trị">

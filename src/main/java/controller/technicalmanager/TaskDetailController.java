@@ -17,25 +17,23 @@ public class TaskDetailController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	TaskDetailDAO taskDetailDao = new TaskDetailDAO();
 	TaskDAO taskDao = new TaskDAO();
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		int id = 0;
 		try {
-			int id = Integer.parseInt(request.getParameter("id"));
-			
-			List<TaskDetail> listTaskDetail = taskDetailDao.getTaskDetail(id);
-			Task task = taskDao.getTaskById(id);
-			
-			request.setAttribute("task", task);
-			request.setAttribute("listTaskDetail", listTaskDetail);
-			request.getRequestDispatcher("view/technicalmanager/taskDetailPage.jsp").forward(request, response);
+			id = Integer.parseInt(request.getParameter("id"));
 		} catch (Exception e) {
 			System.out.print("Error");
 		}
+			
+		List<TaskDetail> listTaskDetail = taskDetailDao.getTaskDetail(id);
+		Task task = taskDao.getTaskById(id);
+		
+		request.setAttribute("task", task);
+		request.setAttribute("listTaskDetail", listTaskDetail);
+		request.getRequestDispatcher("view/admin/technicalmanager/taskDetailPage.jsp").forward(request, response);
+		
 
 	}
 

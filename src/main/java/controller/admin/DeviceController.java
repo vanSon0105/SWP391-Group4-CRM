@@ -70,25 +70,36 @@ public class DeviceController extends HttpServlet {
     }
 	
 	public void showDeviceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+	    String mess = (String) session.getAttribute("mess");
+	    if (mess != null) {
+	        request.setAttribute("mess", mess);
+	        session.removeAttribute("mess");
+	    }
+	    
 		String page = request.getParameter("page");
 		String key = request.getParameter("key");
 		String categoryIdParam = request.getParameter("categoryId");
+		String sortBy = request.getParameter("sortBy");
+	    String order = request.getParameter("order");
 		
 		int categoryId = (categoryIdParam != null) ? Integer.parseInt(categoryIdParam) : 0;
 		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
 		
 		int offset = (currentPage - 1) * recordsEachPage;
 		List<Category> listCategories = cdao.getAllCategories();
-		List<Device> listDevices = dao.getDevicesByPage(key, offset, recordsEachPage, categoryId);
+		List<Device> listDevices = dao.getDevicesByPage(key, offset, recordsEachPage, categoryId, sortBy, order);
 		
-		int totalDevices = dao.getTotalDevices(key, categoryId);
+		int totalDevices = dao.getTotalDevices(key, categoryId, sortBy, order);
 		int totalPages = (int) Math.ceil((double) totalDevices / recordsEachPage);
 		
 		request.setAttribute("listCategories", listCategories);
-		request.setAttribute("selectedCategory", categoryId);
 		request.setAttribute("currentPage", currentPage);
 		request.setAttribute("totalPages", totalPages);
 		request.setAttribute("listDevices", listDevices);
+		request.setAttribute("selectedCategory", categoryId);
+		request.setAttribute("sortBy", sortBy);
+	    request.setAttribute("order", order);
 		request.getRequestDispatcher("view/admin/device/show.jsp").forward(request, response);
 	}
 	

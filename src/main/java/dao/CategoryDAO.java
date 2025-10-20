@@ -61,17 +61,27 @@ public class CategoryDAO extends dal.DBContext {
 		return false;
 	}
 	
-	public List<Category> getCategoriesByPage(int offset, int recordsEachPage) {
+	public List<Category> getCategoriesByPage(int offset, int recordsEachPage, String key) {
 		List<Category> list = new ArrayList<>();
 		String sql = "SELECT c.id, c.category_name, (SELECT COUNT(d.id) FROM devices d WHERE d.category_id = c.id) AS device_count\r\n"
-				+ "FROM categories c\r\n"
-				+ "ORDER BY c.id DESC\r\n"
-				+ "LIMIT ? OFFSET ?;";
+				+ "FROM categories c WHERE 1=1 ";
+				
+		if (key != null && !key.trim().isEmpty()) {
+	        sql += ("AND c.category_name LIKE ? ");
+	    }
+	    
+	    sql += ("ORDER BY c.id DESC LIMIT ?, ?;");
 
 		try {Connection connection = getConnection();
 			 PreparedStatement ps = connection.prepareStatement(sql);
-			 ps.setInt(1, recordsEachPage);
-			 ps.setInt(2, offset);
+			 
+			 int index = 1;
+			 if (key != null && !key.trim().isEmpty()) {
+		        ps.setString(index++, "%" + key + "%");
+		     }
+	         ps.setInt(index++, offset);
+			 ps.setInt(index, recordsEachPage);
+			 
 			 ResultSet rs = ps.executeQuery();
 			
 			while(rs.next()) {
@@ -84,10 +94,20 @@ public class CategoryDAO extends dal.DBContext {
 		return list;
 	}
 	
-	public int getTotalCategories() {
-	    String sql = "SELECT COUNT(*) FROM categories";
+	public int getTotalCategories(String key) {
+	    String sql = "SELECT COUNT(*) FROM categories c WHERE 1=1 ";
+	    
+	    if (key != null && !key.trim().isEmpty()) {
+	        sql += ("AND c.category_name LIKE ? ");
+	    }
 	    try {Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql);
+	         
+	         int index = 1;
+			 if (key != null && !key.trim().isEmpty()) {
+		        ps.setString(index++, "%" + key + "%");
+		     }
+	         
 	         ResultSet rs = ps.executeQuery();
 	        if (rs.next()) {
 	            return rs.getInt(1);
@@ -109,4 +129,31 @@ public class CategoryDAO extends dal.DBContext {
 	    }
 	    return false;
 	}
+	
+	public boolean deleteCategory(int id) {
+		String sql = "DELETE FROM categories WHERE id = ?;";
+		try {Connection c = getConnection();
+		PreparedStatement ps = c.prepareStatement(sql);
+		ps.setInt(1, id);
+		return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean updateCategory(int id, String name) {
+		String sql = "UPDATE categories SET category_name = ? WHERE id = ?;";
+		try {Connection c = getConnection();
+		PreparedStatement ps = c.prepareStatement(sql);
+		ps.setString(1, name);
+		ps.setInt(2, id);
+		return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	
 }

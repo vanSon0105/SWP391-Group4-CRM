@@ -30,6 +30,26 @@
 body.shop-page.catalog-page .product-grid {
 	margin-top: 20px;
 }
+
+.container-paging {
+	text-align: center;
+	margin-top:10px;
+	margin-bottom: 30px;
+}
+
+.pagination {
+	text-decoration: none;
+	background: white;
+	padding: 10px 14px;
+	border-radius: 10px;
+	text-align: center; 
+}
+
+.container-paging .active {
+	background-color: #22A1EB;
+	color:white;
+}
+
 </style>
 
 <body class="shop-page catalog-page">
@@ -39,7 +59,7 @@ body.shop-page.catalog-page .product-grid {
 	<form action="device-page" method="get" id="filter-form">
 		<main>
 
-			<section class="toolbar" style="max-width: 184px">
+			<section class="toolbar" style="max-width: 184px; max-height: 500px">
 
 
 				<div class="filters">
@@ -128,17 +148,18 @@ body.shop-page.catalog-page .product-grid {
 					</c:forEach>
 
 				</section>
-			</section>
+			</section> 
 
 
 
 		</main>
 	</form>
-	<nav
-		style="display: flex; justify-content: center; align-items: center; gap: 2px">
-		<button style="padding: 8px; border-radius: 8px">1</button>
-		<button style="padding: 8px; border-radius: 8px">2</button>
-	</nav>
+	<div class="container-paging">
+		<c:forEach var="i" begin="1" end="${totalPages}">
+		<a class="pagination ${(param.page == null && i == 1) || param.page == i ? 'active' : ''}" href="device-page?page=${i}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}">${i}</a>
+	</c:forEach>
+	</div>
+	
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 

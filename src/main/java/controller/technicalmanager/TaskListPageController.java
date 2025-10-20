@@ -10,7 +10,7 @@ import java.util.*;
 import dao.TaskDAO;
 import model.Task;
 
-@WebServlet("/task-list-page")
+@WebServlet("/task-list")
 public class TaskListPageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	TaskDAO taskDao = new TaskDAO();
@@ -22,11 +22,14 @@ public class TaskListPageController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		try {
-			List<Task> listTask = taskDao.getAllTasks();
+			String status = request.getParameter("status");
+			String search = request.getParameter("search");
+
+			List<Task> listTask = taskDao.getFilteredTasksWithStatus(status, search);
 			
 			
 			request.setAttribute("listTask", listTask);
-			request.getRequestDispatcher("view/technicalmanager/taskListPage.jsp").forward(request, response);
+			request.getRequestDispatcher("view/admin/technicalmanager/taskListPage.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");
 		}

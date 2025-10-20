@@ -18,7 +18,7 @@ public class LoginController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        String email = request.getParameter("email");
+        String email = req.getParameter("email");
     	String path = req.getServletPath();
         switch (path) {
             case "/login":
@@ -53,7 +53,8 @@ public class LoginController extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("account", user);
             if (user.getRoleId() == 1) {
-                response.sendRedirect(request.getContextPath() + "/admin/account");
+                response.sendRedirect(request.getContextPath() + "/account");
+                response.sendRedirect(request.getContextPath() + "/supplier");
             } else {
                 response.sendRedirect(request.getContextPath() + "/home");
             }

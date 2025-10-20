@@ -252,6 +252,9 @@
                     <div class="submenu">
    <a href="/swp391/profile"
    class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
+
+        <a href="/swp391/account?action=list"
+           class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
 </div>
                 </div>
 
