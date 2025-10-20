@@ -4,12 +4,27 @@ import java.sql.Timestamp;
 
 public class WarrantyCard {
 	private int id;
+	private int deviceSerialId;
 	private DeviceSerial device_serial;
+	private int customerId;
 	private Customer customer;
 	private Timestamp start_at;
 	private Timestamp end_at;
 	
 	public WarrantyCard() {}
+	
+	
+	
+	public WarrantyCard(int id, int deviceSerialId, int customerId, Timestamp start_at, Timestamp end_at) {
+		super();
+		this.id = id;
+		this.deviceSerialId = deviceSerialId;
+		this.customerId = customerId;
+		this.start_at = start_at;
+		this.end_at = end_at;
+	}
+
+
 
 	public WarrantyCard(int id, DeviceSerial device_serial, Customer customer, Timestamp start_at, Timestamp end_at) {
 		super();
@@ -19,6 +34,8 @@ public class WarrantyCard {
 		this.start_at = start_at;
 		this.end_at = end_at;
 	}
+	
+	
 
 	public int getId() {
 		return id;
