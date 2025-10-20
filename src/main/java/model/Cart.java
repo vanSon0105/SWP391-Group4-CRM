@@ -3,15 +3,15 @@ package model;
 public class Cart {
 	private int id;
 	private int sum;
-	private int user_id;
+	private int userId;
 	
 	public Cart() {}
 
-	public Cart(int id, int sum, int user_id) {
+	public Cart(int id, int sum, int userId) {
 		super();
 		this.id = id;
 		this.sum = sum;
-		this.user_id = user_id;
+		this.userId = userId;
 	}
 
 	public int getId() {
@@ -30,12 +30,12 @@ public class Cart {
 		this.sum = sum;
 	}
 
-	public int getUser_id() {
-		return user_id;
+	public int getUserId() {
+		return userId;
 	}
 
-	public void setUser_id(int user_id) {
-		this.user_id = user_id;
+	public void setUserId(int userId) {
+		this.userId = userId;
 	}
 	
 	

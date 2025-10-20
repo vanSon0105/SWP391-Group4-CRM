@@ -1,6 +1,9 @@
-@charset "UTF-8";
 :root {
     color-scheme: light;
+}
+
+*{
+	box-sizing: border-box;
 }
 
 body,
@@ -13,17 +16,16 @@ html {
 }
 
 body {
-    /* user-select: none; */
-    caret-color: transparent;
     font-size: 1.8rem;
 }
 
 body * {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+               "Liberation Mono", "Courier New", monospace;
     margin: 0;
     padding: 0;
 }
+
 
 .shop-page.error-404-page,
 .shop-page.error-403-page,

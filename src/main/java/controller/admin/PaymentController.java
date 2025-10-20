@@ -10,12 +10,15 @@ import model.Category;
 import model.Device;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 import model.Payment;
 import dao.PaymentDAO;
 import dao.DeviceSerialDAO;
 import dao.OrderDAO;
+import dao.UserDAO;
+import dao.CartDAO;
 
 /**
  * Servlet implementation class CategoryController
@@ -25,6 +28,8 @@ public class PaymentController extends HttpServlet {
 	private static int PAYMENT_PER_PAGE = 6;
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
+	UserDAO userDao = new UserDAO();
+	CartDAO cartDao = new CartDAO();
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -53,12 +58,19 @@ public class PaymentController extends HttpServlet {
 		String action = req.getParameter("action");
 	
 		
-		paymentDao.updateStatus(Integer.parseInt(id), action);
+		
 		if("success".equals(action)) {
+			paymentDao.updateStatus(Integer.parseInt(id), action);
 			orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(Integer.parseInt(id)), "confirmed");
+			int orderId = orderDao.getOrderByPaymentId(Integer.parseInt(id));
+			int userId = userDao.getUserIdByOrderId(orderId);
+			int cartId = cartDao.getCartIdByUserId(userId);
+			cartDao.deleteCart(cartId);
 		} else if ("failed".equals(action)) {
+			paymentDao.updateStatus(Integer.parseInt(id), action);
 			orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(Integer.parseInt(id)), "canceled");
 		} else {
+			paymentDao.updateStatus(Integer.parseInt(id), action);
 			orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(Integer.parseInt(id)), "pending");
 		}
 		 

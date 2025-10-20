@@ -28,11 +28,6 @@ public class AccountController extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
 
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
-            return;
-        }
-
         User currentUser = (User) session.getAttribute("account");
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");

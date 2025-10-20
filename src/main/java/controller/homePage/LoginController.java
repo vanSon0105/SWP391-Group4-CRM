@@ -12,8 +12,13 @@ import java.io.IOException;
 
 @WebServlet({"/login","/logout"})
 public class LoginController extends HttpServlet {
-
     private UserDAO userDAO = new UserDAO();
+    private static final int SESSION_TIMEOUT_SECONDS = 4 * 60 * 60;
+    
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getRequestDispatcher("/view/authentication/login.jsp").forward(req, resp);
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -28,7 +33,7 @@ public class LoginController extends HttpServlet {
             	logoutPage(req, resp);
             	break;
             default:
-            	resp.sendRedirect("home");
+            	resp.sendRedirect(req.getContextPath() + "/home");
         }
         
         
@@ -40,24 +45,20 @@ public class LoginController extends HttpServlet {
         if (session != null) {
             session.invalidate(); 
         }
-        response.sendRedirect("home"); 	
+        response.sendRedirect(request.getContextPath() + "/home"); 	
     }
     
     private void loginPage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	HttpSession session = request.getSession();
+    	session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
     	String email = request.getParameter("email");
         String password = request.getParameter("password");
         User user = userDAO.getUserByLogin(email, password);
 
         if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("account", user);
-            if (user.getRoleId() == 1) {
-                response.sendRedirect(request.getContextPath() + "/account");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/home");
-            }
-
+		    session.setAttribute("account", user);
+		    response.sendRedirect(request.getContextPath() + "/home");
         } else {
             request.setAttribute("error", "Email hoặc mật khẩu không đúng!");
             request.getRequestDispatcher("/view/authentication/login.jsp").forward(request, response);

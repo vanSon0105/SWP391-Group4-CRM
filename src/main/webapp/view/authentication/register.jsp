@@ -79,7 +79,7 @@
 </form>
        
         
-        <p class="login">Đã có tài khoản? <a href="login.jsp">Đăng nhập</a></p>
+        <p class="login">Đã có tài khoản? <a href="login">Đăng nhập</a></p>
         
         <% if (request.getAttribute("error") != null) { %>
         <p style="color:red;"><%= request.getAttribute("error") %></p>

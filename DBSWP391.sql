@@ -10,17 +10,20 @@ CREATE TABLE roles (
 
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
-  username varchar(50) UNIQUE,
-  password varchar(255),
-  email varchar(100) UNIQUE,
-  image_url varchar(255),
-  full_name varchar(100),
-  phone varchar(20),
-  role_id int,
-  status enum('active','inactive') DEFAULT 'active',
-  created_at timestamp default current_timestamp,
-  last_login_at timestamp,
-  foreign key (role_id) references roles(id)
+  username VARCHAR(50) UNIQUE,
+  password VARCHAR(255),
+  email VARCHAR(100) UNIQUE,
+  image_url VARCHAR(255),
+  full_name VARCHAR(100),
+  phone VARCHAR(20),
+  gender ENUM('male', 'female', 'other') DEFAULT 'other',
+  birthday DATE,
+  role_id INT,
+  status ENUM('active', 'inactive') DEFAULT 'active',
+  username_changed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  last_login_at TIMESTAMP,
+  FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 CREATE TABLE categories (
@@ -98,8 +101,7 @@ CREATE TABLE payments (
   id INT PRIMARY KEY AUTO_INCREMENT,
   order_id INT UNIQUE NOT NULL,
   payment_url VARCHAR(255),
-  payment_method ENUM('payos','credit_card','bank_transfer','cod') DEFAULT 'payos',
-  transaction_id VARCHAR(100),
+  payment_method ENUM('payos','credit_card','bank_transfer','cod') DEFAULT 'bank_transfer',
   amount DECIMAL(14,0) NOT NULL,
   full_name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
@@ -120,9 +122,12 @@ CREATE TABLE customer_issues (
   title VARCHAR(100) NOT NULL,
   description TEXT,
   warranty_card_id INT,
+  support_staff_id INT,
+  support_status ENUM('new','in_progress','submitted', 'awaiting_customer') DEFAULT 'new',
   created_at TIMESTAMP default current_timestamp,
   foreign key (customer_id) references users(id),
-  foreign key (warranty_card_id) references warranty_cards(id)
+  foreign key (warranty_card_id) references warranty_cards(id),
+  foreign key (support_staff_id) references users(id)
 );
 
 CREATE TABLE tasks (
@@ -160,19 +165,22 @@ SELECT t.id, t.title, t.description, t.manager_id, t.customer_issue_id,
 FROM tasks t
 LEFT JOIN task_details td ON t.id = td.task_id
 GROUP BY t.id, t.title, t.description, t.manager_id, t.customer_issue_id;
-select * from tasks;
-select * from task_details;
--- select * from tasks where id = 1;
+
 
 CREATE TABLE customer_issue_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
   issue_id INT NOT NULL,
-  staff_id INT NOT NULL,
-  role ENUM('main','assistant') DEFAULT 'assistant',
-  status ENUM('pending','in_progress','resolved','cancelled') DEFAULT 'pending',
-  updated_at timestamp default current_timestamp,
+  support_staff_id INT NOT NULL,
+  customer_full_name VARCHAR(100),
+  contact_email VARCHAR(100),
+  contact_phone VARCHAR(20),
+  device_serial VARCHAR(100),
+  summary TEXT,
+  forward_to_manager BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   foreign key (issue_id) references customer_issues(id),
-  foreign key (staff_id) references users(id)
+  foreign key (support_staff_id) references users(id)
 );
 
 CREATE TABLE suppliers (
@@ -981,11 +989,18 @@ INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
 (101, 1, 5), (101, 3, 10), (101, 13, 50),
 (102, 2, 3), (102, 11, 10), (102, 14, 100);
 
-INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, created_at) VALUES
-(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, '2025-10-01 10:00:00'),
-(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, '2025-10-02 11:00:00'),
-(10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, '2025-10-03 09:30:00'),
-(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, '2025-10-04 16:45:00');
+INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, support_staff_id, support_status, created_at) VALUES
+(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, 'submitted', '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, 'submitted', '2025-10-02 11:00:00'),
+(10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, 7, 'submitted', '2025-10-03 09:30:00'),
+(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, 7, 'submitted', '2025-10-04 16:45:00');
+
+INSERT INTO customer_issue_details (issue_id, support_staff_id, customer_full_name, contact_email, contact_phone, device_serial, summary, forward_to_manager) VALUES
+(1, 7, 'Hieu Pham', 'customer01@example.com', '0906789012', 'IP15-SN0001','Khách hàng phản ánh máy nóng khi sạc. Đã kiểm tra sơ bộ và xác nhận hiện tượng.', TRUE),
+(2, 7, 'Customer', 'customer02@example.com', '0907890123', 'IP15-SN0002','Khách hàng báo pin yếu, đã hướng dẫn backup dữ liệu và đề xuất thay pin.', TRUE),
+(3, 7, 'Le Chi', 'customer05@example.com', '0908000005', 'HP404-SN0002','Kiểm tra máy in kẹt giấy, đã làm sạch nhưng vẫn cần kỹ thuật kiểm tra cơ cấu truyền giấy.', TRUE),
+(4, 7, 'Pham Duong', 'customer06@example.com', '0908000006', 'IPAD-AIR-SN0001','Xác nhận màn hình xuất hiện sọc, khách yêu cầu xử lý sớm.', TRUE);
+
 
 INSERT INTO tasks (id, title, description, manager_id, customer_issue_id) VALUES
 (1, 'Kiểm tra iPhone 15 nóng', 'Khách hàng Hieu Pham (ID 6) báo máy nóng khi sạc.', 2, 1),

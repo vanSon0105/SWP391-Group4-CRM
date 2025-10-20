@@ -2,6 +2,10 @@
     color-scheme: light;
 }
 
+*{
+	box-sizing: border-box;
+}
+
 body,
 html {
     scrollbar-width: none;
@@ -17,10 +21,20 @@ body {
 }
 
 body * {
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, sans-serif;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+               "Liberation Mono", "Courier New", monospace;
     margin: 0;
     padding: 0;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+input, textarea {
+    caret-color: black;
+    outline: none;
 }
 
 /* ==============================================Common */
@@ -54,6 +68,7 @@ ul {
 */
 /* ==============================================homepage.html */
 .home-page {
+	padding: 0;
     margin: 0;
     min-height: 100vh;
     background: radial-gradient(circle at top, #f0f9ff, #fff7ed 45%, #fef2f2);
@@ -511,6 +526,30 @@ ul {
     font-weight: 600;
     align-self: end;
     grid-row: 4;
+}
+
+.home-page .device-card .device-buy-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f97316, #fbbf24);
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 10px 20px rgba(249, 115, 22, 0.24);
+}
+
+.home-page .device-card .device-buy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(249, 115, 22, 0.32);
+}
+
+.home-page .device-card .device-buy-btn:focus-visible {
+    outline: 2px solid rgba(249, 115, 22, 0.6);
+    outline-offset: 3px;
 }
 
 .home-page .device-list .categories {
@@ -1858,8 +1897,9 @@ body.shop-page.customer-portal-page footer {
     margin-top: 20px;
 }
 
-/* ========================================= login.html, register.html, forgot-password.html /*  */
- body.shop-page.login-page,
+
+/* ========================================= login.html, register.html, forgot-password.html */
+
 body.shop-page.register-page,
 body.shop-page.forgot-page {
     min-height: 100vh;
@@ -1867,6 +1907,7 @@ body.shop-page.forgot-page {
     align-items: center;
     justify-content: center;
 }
+
 
 body.shop-page.login-page {
 	display: flex;
@@ -1951,6 +1992,7 @@ body.shop-page.forgot-page label {
 }
 
 body.shop-page.login-page .card input,
+body.shop-page.register-page input,
 body.shop-page.register-page select,
 body.shop-page.forgot-page input {
     padding: 12px 14px;
@@ -1959,6 +2001,7 @@ body.shop-page.forgot-page input {
     background: rgba(255, 255, 255, 0.98);
     font-size: 15px;
     color: #0f172a;
+    caret-color: black;
 }
 
 body.shop-page.register-page input,
@@ -1970,7 +2013,8 @@ body.shop-page.forgot-page input {
     border-color: rgba(56, 189, 248, 0.35);
 }
 
-body.shop-page.login-page .card button{
+body.shop-page.login-page .card button,
+body.shop-page.register-page button{
 	padding: 12px 28px;
     border-radius: 999px;
     border: none;
@@ -1982,6 +2026,7 @@ body.shop-page.login-page .card button{
 }
 
 body.shop-page.register-page button {
+	width: 100%;
     background: linear-gradient(90deg, #ec4899, #a855f7);
     box-shadow: 0 18px 36px rgba(168, 85, 247, 0.28);
 }

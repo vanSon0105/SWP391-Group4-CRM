@@ -251,7 +251,7 @@ public class DeviceDAO extends DBContext {
 				count = rs.getInt("total");
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 		return count;

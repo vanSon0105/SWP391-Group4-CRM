@@ -7,19 +7,6 @@ import dal.DBContext;
 
 public class UserDAO {
     private Connection conn;
-
-//    public UserDAO() {
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            conn = DriverManager.getConnection(
-//                "jdbc:mysql://localhost:3306/swp391",
-//                "root",
-//                "123123"
-//            );
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
     
     public List<User> getUsersByRole(int roleId) {
         List<User> list = new ArrayList<>();
@@ -236,6 +223,7 @@ public class UserDAO {
                 u.setBirthday(rs.getDate("birthday"));
                 u.setUsername(rs.getString("username"));
                 u.setPassword(rs.getString("password"));
+                u.setRoleId(rs.getInt("role_id"));
                 return u;
             }
         } catch (SQLException e) {
@@ -310,4 +298,21 @@ public class UserDAO {
             return false;
         }
     }
+    
+    public int getUserIdByOrderId(int orderId) {
+        int userId = -1;
+        String sql = "SELECT customer_id FROM orders WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("customer_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+
 }
