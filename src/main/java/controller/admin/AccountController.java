@@ -101,7 +101,7 @@ public class AccountController extends HttpServlet {
 	
 	        try {
 	            int userId = Integer.parseInt(idParam);
-	            User userDetail = userDAO.getUserById(userId);
+	            User userDetail = userDAO.getUserDetailsById(userId);
 	
 	            if (userDetail == null) {
 	                request.setAttribute("error", "Không tìm thấy người dùng!");
@@ -199,6 +199,8 @@ public class AccountController extends HttpServlet {
             request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
         }
     }
+    
+    
     
     
 }
