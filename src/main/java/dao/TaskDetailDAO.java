@@ -16,11 +16,12 @@ public class TaskDetailDAO extends DBContext{
                      "JOIN tasks t ON td.task_id = t.id " +
                      "LEFT JOIN customer_issues ci ON t.customer_issue_id = ci.id " +
                      "WHERE td.task_id = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, taskId);
-            ps.setInt(2, staffId);
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 TaskDetail td = new TaskDetail();
@@ -38,27 +39,32 @@ public class TaskDetailDAO extends DBContext{
                 td.setIssueCode(rs.getString("issue_code"));
                 td.setIssueTitle(rs.getString("issue_title"));
 
-            if (deadline != null) ps.setTimestamp(4, deadline);
-            else ps.setNull(4, Types.TIMESTAMP);
+                list.add(td);
+            }
 
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return list;
     }
+
     
-    public void assignStaffToTask(int taskId, int staffId, Timestamp deadline) {
-        String sql = "INSERT INTO task_details (task_id, technical_staff_id, deadline) VALUES (?, ?, ?)";
+	public void assignStaffToTask(int taskId, int staffId, Integer assignedBy, Timestamp deadline) {
+        String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_by, deadline) " +
+                     "VALUES (?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, taskId);
             ps.setInt(2, staffId);
-            ps.setTimestamp(3, deadline);
+            if (assignedBy != null) ps.setInt(3, assignedBy);
+            else ps.setNull(3, Types.INTEGER);
+            if (deadline != null) ps.setTimestamp(4, deadline);
+            else ps.setNull(4, Types.TIMESTAMP);
             ps.executeUpdate();
 
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -152,7 +158,7 @@ public class TaskDetailDAO extends DBContext{
             e.printStackTrace();
         }
     }
-    public List<TaskDetail> getTaskDetailWithStaffInfo(int taskId) throws SQLException {
+    public List<TaskDetail> getTaskDetailWithStaffInfo3(int taskId) throws SQLException {
         List<TaskDetail> list = new ArrayList<>();
         String sql = """
             SELECT td.*, u.full_name AS technicalStaffName, ub.full_name AS assignedByName
@@ -292,5 +298,71 @@ public class TaskDetailDAO extends DBContext{
         }
         return false;
     }
+    
+    public List<TaskDetail> getTaskDetail(int taskId) {
+		List<TaskDetail> list = new ArrayList<>();
+		String sql = "select * from task_details where task_id = ?";
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql)){
+			pre.setInt(1, taskId);
+			ResultSet rs = pre.executeQuery();
+			
+			while(rs.next()) {
+				list.add(new TaskDetail(
+						rs.getInt("id"),
+						rs.getInt("task_id"),
+						rs.getInt("technical_staff_id"),
+						rs.getTimestamp("assigned_at"),
+						rs.getTimestamp("deadline"),
+						rs.getString("status")
+						));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+    
+    public void insertStaffToTask(int taskId, int staffId, Timestamp deadline) {
+		String sql = "INSERT INTO task_details (task_id, technical_staff_id, deadline) VALUES (?, ?, ?)";
+		try(Connection conn = getConnection();
+			PreparedStatement pre = conn.prepareStatement(sql)) {
+			pre.setInt(1, taskId);
+			pre.setInt(2, staffId);
+			pre.setTimestamp(3, deadline);
+			pre.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+    
+    public void deleteStaffFromTask(int taskId, int staffId)  {
+        String sql = "DELETE FROM task_details WHERE task_id=? AND technical_staff_id=?";
+        try (Connection conn = getConnection();
+        	 PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.setInt(2, staffId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void updateDeadlineForTask(int taskId, Timestamp deadline) {
+        String sql = "UPDATE task_details SET deadline=? WHERE task_id=?";
+        try (Connection conn = getConnection();
+        	PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setTimestamp(1, deadline);
+            ps.setInt(2, taskId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+
 
 }

@@ -250,24 +250,7 @@ public class TaskDAO extends DBContext {
         return list;
     }
 
-    public Set<Integer> getAssignedStaffIds(int taskId) {
-        Set<Integer> set = new HashSet<>();
-        String sql = "SELECT technical_staff_id FROM task_details WHERE task_id=?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, taskId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    set.add(rs.getInt("technical_staff_id"));
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return set;
-    }
+    
 	public Set<Integer> getAssignedStaffIds(int taskId) {
 		Set<Integer> set = new HashSet<>();
 		String sql = "SELECT technical_staff_id FROM task_details WHERE task_id=?";
@@ -281,5 +264,69 @@ public class TaskDAO extends DBContext {
 			e.printStackTrace();
 		}
 		return set;
+	}
+	
+	public List<Task> getFilteredTasksWithStatus(String status, String search) {
+		List<Task> list = new ArrayList<>();
+		String sql = "select * from task_with_status WHERE 1 = 1 ";
+		
+		if(status != null && !status.isEmpty()) {
+			sql += " and status = '" + status + "' ";
+		}
+		
+		if(search != null && !search.isEmpty()) {
+			sql += " and ( title LIKE '%" + search + "%' OR description LIKE '%" + search + "%') ";
+		}
+		
+		try (Connection conn = getConnection();
+				PreparedStatement pre = conn.prepareStatement(sql);
+				ResultSet rs = pre.executeQuery()) {
+			while (rs.next()) {
+				list.add(new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
+						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status")));
+
+			}
+
+		} catch (Exception e) {
+			System.out.print("Error");
+		}
+
+		return list;
+	}
+	
+	public void updateTask(int id, String title, String desc, int managerId, int issueId) {
+		String sql = "UPDATE tasks SET title=?, description=?, manager_id=?, customer_issue_id=? WHERE id=?";
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, title);
+			ps.setString(2, desc);
+			ps.setInt(3, managerId);
+			ps.setInt(4, issueId);
+			ps.setInt(5, id);
+			ps.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public int addNewTask(Task task) {
+		String sql = "INSERT INTO tasks (title, description, manager_id, customer_issue_id) VALUES (?, ?, ?, ?)";
+
+		try (Connection conn = getConnection();
+				PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+			pre.setString(1, task.getTitle());
+			pre.setString(2, task.getDescription());
+			pre.setInt(3, task.getManagerId());
+			pre.setInt(4, task.getCustomerIssueId());
+			pre.executeUpdate();
+			ResultSet rs = pre.getGeneratedKeys();
+
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+
+		} catch (Exception e) {
+			System.out.print("Error connection");
+		}
+		return -1;
 	}
 }
