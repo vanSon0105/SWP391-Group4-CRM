@@ -18,6 +18,7 @@ public class CartDAO extends DBContext {
 	private UserDAO uDao = new UserDAO();
 	private DeviceDAO dDao = new DeviceDAO();
 	private CartDetailDao cdDao = new CartDetailDao();
+	
 	public Cart getCartByUserId(int userId) {
         String sql = "SELECT * FROM carts WHERE user_id = ?";
         try (
@@ -28,7 +29,7 @@ public class CartDAO extends DBContext {
 	            if (rs.next()) {
 	                Cart cart = new Cart();
 	                cart.setId(rs.getInt("id"));
-	                cart.setSum(rs.getInt("sum"));
+	                cart.setSum(rs.getDouble("sum"));
 	                cart.setUserId(rs.getInt("user_id"));
 	                return cart;
 	            }
@@ -135,7 +136,7 @@ public class CartDAO extends DBContext {
 	            ResultSet rs = ps.executeQuery();
 	            if(rs.next()) {
 	            	int cartId = rs.getInt("id");
-	                int sum = rs.getInt("sum");
+	                double sum = rs.getDouble("sum");
 	                int userId = rs.getInt("user_id");
 	                
 	                return new Cart(cartId, sum, userId);
@@ -183,18 +184,19 @@ public class CartDAO extends DBContext {
 		
 		String sql = "INSERT INTO carts (sum, user_id) VALUES (0, ?)";
 		try (Connection connection = getConnection();
-			 PreparedStatement ps = connection.prepareStatement(sql)) {
+			 PreparedStatement ps = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 			ps.setInt(1, id);
 			ps.executeUpdate();
-			try (ResultSet rs = ps.getGeneratedKeys()) {
-				if (rs.next()) {
-					int cartId = rs.getInt(1);
-					Cart newCart = new Cart();
-					newCart.setId(cartId);
-					newCart.setSum(0);
-					newCart.setUserId(id);
-					return newCart;
-				}
+			int affected = ps.executeUpdate();
+	        if (affected == 0) throw new SQLException("Insert cart failed, no rows affected.");
+			ResultSet rs = ps.getGeneratedKeys();
+			if (rs.next()) {
+				int cartId = rs.getInt(1);
+				Cart newCart = new Cart();
+				newCart.setId(cartId);
+				newCart.setSum(0);
+				newCart.setUserId(id);
+				return newCart;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -221,36 +223,33 @@ public class CartDAO extends DBContext {
 	
 	public boolean addDeviceToCart(int id, int deviceId) {
 		User user = uDao.getUserById(id);
-        if (user != null) {
-            Cart cart = getCartByUserId(user.getId());
-            if (cart == null) {
-                Cart newCart = new Cart();
-                newCart.setUserId(user.getId());
-                newCart.setSum(0);
-                addCart(newCart);
-            }
-            Device d = dDao.getDeviceById(deviceId);
-            if (d != null) {
-            	CartDetail cartDetail = cdDao.getCartDetailByDevice(cart.getId(), deviceId);
-                if (cartDetail == null) {
-                    cartDetail = new CartDetail();
-                    cartDetail.setCartId(cart.getId());
-                    cartDetail.setDevice(d);
-                    cartDetail.setPrice(d.getPrice());
-                    cartDetail.setQuantity(1); 
-                    cdDao.addCartDetail(cartDetail);
-                } else {
-                    cartDetail.setQuantity(cartDetail.getQuantity() + 1);
-                    cdDao.updateCartDetailQuantity(cartDetail);
-                }
-
-                double newSum = calculateCartSum(cart.getId());
-                updateCartSum(cart.getId(), newSum);
-
-            }else {
-            	return false;
-            }
+        if (user == null) {
+        	return false;
         }
+        Cart cart = getOrCreateCart(id);
+        if (cart == null) {
+            return false;
+        }
+        Device d = dDao.getDeviceById(deviceId);
+        if (d == null) {
+        	return false;
+        }
+        
+    	CartDetail cartDetail = cdDao.getCartDetailByDevice(cart.getId(), deviceId);
+        if (cartDetail == null) {
+            cartDetail = new CartDetail();
+            cartDetail.setCartId(cart.getId());
+            cartDetail.setDevice(d);
+            cartDetail.setPrice(d.getPrice());
+            cartDetail.setQuantity(1); 
+            cdDao.addCartDetail(cartDetail);
+        } else {
+            cartDetail.setQuantity(cartDetail.getQuantity() + 1);
+            cdDao.updateCartDetailQuantity(cartDetail);
+        }
+
+        double newSum = calculateCartSum(cart.getId());
+        updateCartSum(cart.getId(), newSum);
         return true;
 	}
 	

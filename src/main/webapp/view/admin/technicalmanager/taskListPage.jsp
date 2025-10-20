@@ -10,8 +10,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
-<%-- <link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/css/shop.css"> --%>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 <!-- Font Awesome -->
@@ -53,7 +51,6 @@
 table {
 	width: 100%;
 	border-collapse: collapse;
-	margin-top: 18px;
 	border-radius: 12px;
 }
 
@@ -118,7 +115,6 @@ table a:hover {
 	justify-content: space-between;
 	margin-top: 30px;
 	background: white;
-	border-radius: 12px;
 	padding: 16px;
 	border: 0.5px solid #2B90C6;
 } 
@@ -127,7 +123,7 @@ table a:hover {
 <body>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
-	<main class="sidebar-main">
+	<main class="sidebar-main" style="padding: 32px; font-size: 1.4rem;">
 	
 	<section class="main-content">
 		<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Task List</h1>
@@ -135,10 +131,10 @@ table a:hover {
 			<div class="filters">
 				<select id="status" name="status" style="border-radius: 6px; padding: 8px 10px" onchange="this.form.submit()">
 					<option value="" ${empty param.status ? 'selected' : ''}>All status</option>
-					<option value="pending" ${param.status == 'pending' ? 'selected' : ''}>Pending</option>
-					<option value="in_progress" ${param.status == 'in_progress' ? 'selected' : ''}>In progress</option>
-					<option value="completed" ${param.status == 'completed' ? 'selected' : ''}>Completed</option>
-					<option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}>Cancelled</option>
+					<option value="pending" ${param.status == 'pending' ? 'selected' : ''}>Chưa bắt đầu</option>
+					<option value="in_progress" ${param.status == 'in_progress' ? 'selected' : ''}>Đang thực hiện</option>
+					<option value="completed" ${param.status == 'completed' ? 'selected' : ''}>Đã hoàn tất</option>
+					<option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
 				</select>
 				<div>
 				
@@ -172,7 +168,14 @@ table a:hover {
 						<td>${task.description}</td>
 						<td>${task.managerId}</td>
 						<td>${task.customerIssueId}</td>
-						<td>${task.status}</td>
+						<td style="white-space: nowrap;">
+                            <c:choose>
+                                <c:when test="${task.status == 'pending'}">Chưa bắt đầu</c:when>
+                                <c:when test="${task.status == 'in_progress'}">Đang thực hiện</c:when>
+                                <c:when test="${task.status == 'completed'}">Đã hoàn tất</c:when>
+                                <c:otherwise>Đã hủy</c:otherwise>
+                            </c:choose>
+						</td>
 						<td>
 						<div style="display: flex; gap: 6px;">
 							<a href="task-detail?id=${task.id}" title="View Task Detail"><i class="fa-solid fa-eye" style="color:#0d6efd;"></i></a>

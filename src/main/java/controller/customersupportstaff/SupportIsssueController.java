@@ -107,7 +107,18 @@ public class SupportIsssueController extends HttpServlet {
 		CustomerIssueDetail d = dDao.getByIssueId(issueId);
 		req.setAttribute("issue", issue);
 		req.setAttribute("issueDetail", d);
-		req.setAttribute("awaitingCustomer", "awaiting_customer".equalsIgnoreCase(issue.getSupportStatus()));
+		
+		String status = issue.getSupportStatus();
+		boolean managerRejected = "manager_rejected".equalsIgnoreCase(status);
+		boolean managerApproved = "manager_approved".equalsIgnoreCase(status);
+		boolean managerPending = "manager_review".equalsIgnoreCase(status);
+		boolean taskLocked = isLockedForSupport(status);
+		
+		req.setAttribute("managerRejected", managerRejected);
+		req.setAttribute("managerApproved", managerApproved);
+		req.setAttribute("lockedForSupport", taskLocked);
+		req.setAttribute("managerPending", managerPending);
+		req.setAttribute("lockedForSupport", taskLocked);
 		req.getRequestDispatcher("view/admin/supportstaff/issueReviewPage.jsp").forward(req, resp);
 	}
 	
@@ -122,6 +133,11 @@ public class SupportIsssueController extends HttpServlet {
 		CustomerIssue issue = iDao.getIssueById(issueId);
 		if (issue == null) {
 			resp.sendRedirect("support-issues?notfound=1");
+			return;
+		}
+		
+		if (isLockedForSupport(issue.getSupportStatus())) {
+			resp.sendRedirect("support-issues?locked=1");
 			return;
 		}
 
@@ -157,7 +173,8 @@ public class SupportIsssueController extends HttpServlet {
 		d.setForwardToManager(forward);
 
 		dDao.saveIssueDetail(d);
-		iDao.updateSupportStatus(issueId, staff.getId(), forward ? "submitted" : "in_progress");
+		String nextStatus = forward ? "manager_review" : "in_progress";
+		boolean check = iDao.updateSupportStatus(issueId, staff.getId(), nextStatus);
 		resp.sendRedirect("support-issues?saved=1");
 	}
 	
@@ -182,6 +199,11 @@ public class SupportIsssueController extends HttpServlet {
 			resp.sendRedirect("support-issues?notfound=1");
 			return;
 		}
+		
+		if (isLockedForSupport(issue.getSupportStatus())) {
+			resp.sendRedirect("support-issues?locked=1");
+			return;
+		}
 
 		if (issue.getSupportStaffId() == 0) {
 			iDao.assignIssueIfAvailable(issueId, staff.getId());
@@ -192,6 +214,21 @@ public class SupportIsssueController extends HttpServlet {
 
 		iDao.updateSupportStatus(issueId, staff.getId(), "awaiting_customer");
 		resp.sendRedirect("support-issues?action=review&id=" + issueId + "&requested=1");
+	}
+	
+	private boolean isLockedForSupport(String status) {
+		if (status == null) {
+			return false;
+		}
+		switch (status.toLowerCase()) {
+		case "manager_approved":
+		case "task_created":
+		case "tech_in_progress":
+		case "resolved":
+			return true;
+		default:
+			return false;
+		}
 	}
 
 }

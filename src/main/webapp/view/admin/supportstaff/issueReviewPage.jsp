@@ -119,6 +119,11 @@
             background: #e0f2fe;
             color: #0c4a6e;
         }
+        
+        .alert-warning {
+            background: #fef3c7;
+            color: #b45309;
+        }
 
         pre {
             background: #f8fafc;
@@ -126,6 +131,24 @@
             border-radius: 8px;
             white-space: pre-wrap;
             word-wrap: break-word;
+        }
+        
+        .readonly-block {
+            margin-top: 16px;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 16px;
+            border: 1px dashed #cbd5f5;
+        }
+
+        .readonly-block h3 {
+            margin-top: 0;
+            color: #1e293b;
+        }
+
+        .readonly-block p {
+            margin: 8px 0;
+            color: #475569;
         }
     </style>
 </head>
@@ -158,19 +181,47 @@
 		            <c:if test="${awaitingCustomer}">
 		                <div class="alert alert-info">Đang chờ khách hàng phản hồi. Bạn có thể gửi lại form nếu cân nhắc.</div>
 		            </c:if>
+		            
+		            <c:if test="${managerRejected}">
+					    <div class="alert alert-warning">Quản lý kỹ thuật đã từ chối yêu cầu. Bạn hãy bổ sung thông tin và gửi lại.</div>
+					</c:if>
+					<c:if test="${managerApproved}">
+					    <div class="alert alert-info">Quản lý kỹ thuật đã chấp thuận thông tin. Đang chờ tạo task kỹ thuật.</div>
+					</c:if>
+					<c:if test="${lockedForSupport}">
+					    <div classD="alert alert-info">Task kỹ thuật đã được tạo. Bạn chỉ có thể xem thông tin đã gửi.</div>
+					</c:if>
+		
+		            <c:if test="${not lockedForSupport}">
+	                    <form method="post" action="support-issues">
+	                        <input type="hidden" name="action" value="request_details">
+	                        <input type="hidden" name="issueId" value="${issue.id}">
+	                        <button type="submit" class="btn btn-secondary">
+			                    <c:choose>
+			                        <c:when test="${awaitingCustomer}">Gửi lại yêu cầu</c:when>
+			                        <c:otherwise>Gửi yêu cầu cho khách hàng</c:otherwise>
+			                    </c:choose>
+			                </button>
+			            </form>
+		            </c:if>
 
-                    <form method="post" action="support-issues">
-                        <input type="hidden" name="action" value="request_details">
-                        <input type="hidden" name="issueId" value="${issue.id}">
-                        <button type="submit" class="btn btn-secondary">
-		                    <c:choose>
-		                        <c:when test="${awaitingCustomer}">Gửi lại yêu cầu</c:when>
-		                        <c:otherwise>Gửi yêu cầu cho khách hàng</c:otherwise>
-		                    </c:choose>
-		                </button>
-		            </form>
-
-                    <c:if test="${not awaitingCustomer or not empty issueDetail}">
+                    <c:if test="${lockedForSupport}">
+		                <c:if test="${issueDetail != null}">
+		                    <div class="readonly-block">
+		                        <h3>Thông tin đã gửi</h3>
+		                        <p><strong>Tên khách hàng:</strong> ${issueDetail.customerFullName}</p>
+		                        <p><strong>Email:</strong> ${issueDetail.contactEmail}</p>
+		                        <p><strong>Số điện thoại:</strong> ${issueDetail.contactPhone}</p>
+		                        <p><strong>Serial thiết bị:</strong> ${issueDetail.deviceSerial}</p>
+		                        <p><strong>Tổng hợp:</strong> ${issueDetail.summary}</p>
+		                    </div>
+		                </c:if>
+		                <div class="actions">
+		                    <a class="btn btn-secondary" href="support-issues">Quay lại</a>
+		                </div>
+		            </c:if>
+		
+		            <c:if test="${not lockedForSupport and (not awaitingCustomer or not empty issueDetail)}">
 					    <form method="post" action="support-issues">
 					        <input type="hidden" name="action" value="save">
 					        <input type="hidden" name="issueId" value="${issue.id}">
@@ -207,7 +258,7 @@
 					    </form>
 					</c:if>
 					
-					<c:if test="${awaitingCustomer and empty form}">
+					<c:if test="${not lockedForSupport and awaitingCustomer and empty issueDetail}">
 					    <div class="actions">
 					        <a class="btn btn-secondary" href="support-issues">Quay lại</a>
 					    </div>

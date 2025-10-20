@@ -12,6 +12,11 @@ public class TaskDetail {
 
     private String staffName;
     private String staffEmail;
+    private String taskTitle;
+    private String taskDescription;
+    private Integer customerIssueId;
+    private String issueCode;
+    private String issueTitle;
 
     public TaskDetail() {}
 
@@ -47,4 +52,44 @@ public class TaskDetail {
 
     public String getStaffEmail() { return staffEmail; }
     public void setStaffEmail(String staffEmail) { this.staffEmail = staffEmail; }
+
+    public String getTaskTitle() {
+        return taskTitle;
+    }
+
+    public void setTaskTitle(String taskTitle) {
+        this.taskTitle = taskTitle;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+    public void setTaskDescription(String taskDescription) {
+        this.taskDescription = taskDescription;
+    }
+
+    public Integer getCustomerIssueId() {
+        return customerIssueId;
+    }
+
+    public void setCustomerIssueId(Integer customerIssueId) {
+        this.customerIssueId = customerIssueId;
+    }
+
+    public String getIssueCode() {
+        return issueCode;
+    }
+
+    public void setIssueCode(String issueCode) {
+        this.issueCode = issueCode;
+    }
+
+    public String getIssueTitle() {
+        return issueTitle;
+    }
+
+    public void setIssueTitle(String issueTitle) {
+        this.issueTitle = issueTitle;
+    }
 }
