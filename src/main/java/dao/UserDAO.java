@@ -299,6 +299,22 @@ public class UserDAO {
         }
     }
     
+    public int getUserIdByOrderId(int orderId) {
+        int userId = -1;
+        String sql = "SELECT customer_id FROM orders WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("customer_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+
     public void addUser(User u) {
         String sql = "INSERT INTO users(username, email, password, full_name, phone, role_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection();

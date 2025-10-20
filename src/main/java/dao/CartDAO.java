@@ -253,4 +253,43 @@ public class CartDAO extends DBContext {
         }
         return true;
 	}
+	
+	public int getCartIdByUserId(int userId) {
+	    int cartId = -1;
+	    String sql = "SELECT id FROM carts WHERE user_id = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, userId);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            cartId = rs.getInt("id");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return cartId;
+	}
+	
+	public void deleteCart(int cartId) {
+	    String sql1 = "DELETE FROM cart_details WHERE cart_id = ?";
+	    String sql2 = "DELETE FROM carts WHERE id = ?";
+	    try (Connection conn = DBContext.getConnection()) {
+	        conn.setAutoCommit(false);
+	        try (PreparedStatement ps1 = conn.prepareStatement(sql1);
+	             PreparedStatement ps2 = conn.prepareStatement(sql2)) {
+	            ps1.setInt(1, cartId);
+	            ps1.executeUpdate();
+	            ps2.setInt(1, cartId);
+	            ps2.executeUpdate();
+	            conn.commit();
+	        } catch (Exception e) {
+	            conn.rollback();
+	            throw e;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+
+
 }

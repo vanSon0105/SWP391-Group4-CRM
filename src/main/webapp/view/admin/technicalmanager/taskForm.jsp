@@ -75,43 +75,47 @@ form a {
 </style>
 
 <body>
-<jsp:include page="../common/header.jsp"></jsp:include>
-<jsp:include page="../common/sidebar.jsp"></jsp:include>
-<main class="sidebar-main">
-	<form action="task-form" method="post">
-		<div class="container">
-			<div class="head">
-				<h2>${task != null ? "Update Task" : "Add Task"}</h2>
-			</div>
-			<div class="task-form">
-				<input type="hidden" name="id" value="${task.id}" /> <label>Title:</label>
-				<input type="text" name="title" value="${task.title}" /> <label>Description:</label>
-				<input type="text" name="description" value="${task.description}" />
-				<label>Customer Issue ID:</label> <select name="customerIssueId">
-					<c:forEach var="issue" items="${customerIssues}">
-						<option value="${issue.id}"
-							${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
-					</c:forEach>
-				</select> <label>Technical Staff:</label>
-				<div class="checkbox-group">
-					<c:forEach var="staff" items="${technicalStaffList}">
-						<p>
-							<input type="checkbox" name="technicalStaffIds"
-								value="${staff.id}"> ${staff.username}
-						</p>
-					</c:forEach>
+	<jsp:include page="../common/header.jsp"></jsp:include>
+	<jsp:include page="../common/sidebar.jsp"></jsp:include>
+	<main class="sidebar-main">
+		<form action="task-form" method="post">
+			<div class="container">
+				<div class="head">
+					<h2>${task != null ? "Update Task" : "Add Task"}</h2>
 				</div>
+				<div class="task-form">
+					<input type="hidden" name="id" value="${task.id}" /> <label>Title:</label>
+					<input type="text" name="title" value="${task.title}" required /> <label>Description:</label>
+					<input type="text" name="description" value="${task.description}" />
+					<label>Customer Issue ID:</label> <select name="customerIssueId">
+						<c:forEach var="issue" items="${customerIssues}">
+							<option value="${issue.id}"
+								${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
+						</c:forEach>
+					</select> <label>Technical Staff:</label>
+					<div class="checkbox-group">
+						<c:forEach var="staff" items="${technicalStaffList}">
+							<p>
+								<input type="checkbox" name="technicalStaffIds"
+									value="${staff.id}"
+									${assignedStaffIds != null && assignedStaffIds.contains(staff.id) ? 'checked' : ''}>
+								${staff.username}
+							</p>
+						</c:forEach>
+					</div>
 
-				<label>Deadline</label> <input type="date" name="deadline"
-					value="${taskDetail[0].deadline}" />
-				<div>
-					<a href="task-list">Back</a>
-					<button type="submit" style="margin-left: 10px">Submit</button>
+					<label>Deadline</label> <input type="date" name="deadline"
+						value="<fmt:formatDate value='${taskDetail[0].deadline}' pattern='yyyy-MM-dd' />"
+						${task.id == null ? 'required' : ''} />
 
+					<div>
+						<a href="task-list">Back</a>
+						<button type="submit" style="margin-left: 10px">Submit</button>
+
+					</div>
 				</div>
 			</div>
-		</div>
-	</form>
-</main>
+		</form>
+	</main>
 </body>
 </html>

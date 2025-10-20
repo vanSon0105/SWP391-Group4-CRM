@@ -17,7 +17,7 @@ import dao.SupplierDAO;
 @WebServlet("/device-page")
 public class DevicePageController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	public static final int DEVICE_PER_PAGE = 9;
+	public static final int DEVICE_PER_PAGE = 6; 
 	DeviceDAO deviceDao = new DeviceDAO();
 	CategoryDAO categoryDao = new CategoryDAO();
 	SupplierDAO supplierDao = new SupplierDAO();
@@ -71,6 +71,23 @@ public class DevicePageController extends HttpServlet {
 			int totalPages = (int) Math.ceil((double) totalDevices / DEVICE_PER_PAGE);
 			int offset = (page - 1) * DEVICE_PER_PAGE;
 			
+			page = Math.max(1, Math.min(page, totalPages));
+			
+			int maxPagesToShow = 3; 
+            int startPage = 1;  
+            int endPage = 1;
+            if (totalPages > 0) {
+                startPage = Math.max(1, page - 1);
+                endPage = Math.min(totalPages, page + 1);
+                if (endPage - startPage + 1 < maxPagesToShow) {
+                    if (startPage == 1) {
+                        endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+                    } else if (endPage == totalPages) {
+                        startPage = Math.max(1, totalPages - maxPagesToShow + 1);
+                    }
+                }
+            }
+			
 			List<Device> listDevice = null;
 			if(keyword != null) {
 				listDevice = deviceDao.searchDevice(keyword);
@@ -78,6 +95,8 @@ public class DevicePageController extends HttpServlet {
 				listDevice = deviceDao.getFilteredDevices(categoryId, supplierId, price, sortPrice, offset, DEVICE_PER_PAGE);				
 			}
 			
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("endPage", endPage);
 			request.setAttribute("totalPages", totalPages);
 			request.setAttribute("currentPage", page);
 			request.setAttribute("totalDevices", totalDevices);

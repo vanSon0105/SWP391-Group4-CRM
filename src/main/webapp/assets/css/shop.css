@@ -1507,12 +1507,13 @@ body.shop-page.checkout-page main {
 }
 
 body.shop-page.checkout-page .checkout-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    display: flex;
+    align-items:flex-start;
     gap: 24px;
 }
 
 body.shop-page.checkout-page .panel {
+	width: 65%;
     background: rgba(255, 255, 255, 0.95);
     border-radius: 26px;
     padding: 28px;
@@ -1549,12 +1550,12 @@ body.shop-page.checkout-page textarea {
 }
 
 body.shop-page.checkout-page .summary {
+	width: 35%;
     background: rgba(255, 255, 255, 0.94);
     border-radius: 26px;
     padding: 30px;
     border: 1px solid rgba(14, 165, 233, 0.28);
     box-shadow: 0 22px 48px rgba(14, 165, 233, 0.22);
-    display: grid;
     gap: 12px;
 }
 
@@ -1575,14 +1576,21 @@ body.shop-page.checkout-page .cta {
     gap: 14px;
 }
 
-body.shop-page.checkout-page .cta a {
+body.shop-page.checkout-page .cta a,
+body.shop-page.checkout-page .cta button {
     padding: 12px 26px;
     border-radius: 999px;
     background: linear-gradient(90deg, #14b8a6, #22d3ee);
     color: #ecfeff;
     font-weight: 600;
     text-decoration: none;
+    font-size:16px;
+    border:none;
     box-shadow: 0 18px 36px rgba(14, 165, 233, 0.28);
+}
+
+body.shop-page.checkout-page .cta button:hover {
+	cursor: pointer;
 }
 
 body.shop-page.checkout-page .cta a:nth-child(2) {
@@ -1889,7 +1897,9 @@ body.shop-page.customer-portal-page footer {
     margin-top: 20px;
 }
 
+
 /* ========================================= login.html, register.html, forgot-password.html */
+
 body.shop-page.register-page,
 body.shop-page.forgot-page {
     min-height: 100vh;
@@ -1897,7 +1907,6 @@ body.shop-page.forgot-page {
     align-items: center;
     justify-content: center;
 }
-
 
 
 body.shop-page.login-page {

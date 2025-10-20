@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
     <%@ page isELIgnored="false" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
+<!DOCTYPE link PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/error.css">
