@@ -13,7 +13,7 @@
 </head>
 <body class="shop-page login-page">
 <jsp:include page="../common/header.jsp"></jsp:include>
-    <section class="card">
+    <section class="card" style="margin: auto 0;">
         <h1>Đăng nhập NovaCare</h1>
         <p>Truy cập đơn hàng, bảo hành, lịch sửa chữa và ưu đãi dành riêng cho bạn.</p>
         
@@ -29,8 +29,8 @@
             </div>
 
             <div class="links">
-                <a href="../authentication/forgot-password.jsp">Quên mật khẩu?</a>
-                <a href="../authentication/register.jsp">Đăng ký tài khoản</a>
+                 <a href="${pageContext.request.contextPath}/view/authentication/forgot-password.jsp">Quên mật khẩu?</a>
+    			<a href="${pageContext.request.contextPath}/view/authentication/register.jsp">Đăng ký tài khoản</a>
             </div>
 
             <button type="submit">Đăng nhập</button>
@@ -40,7 +40,7 @@
             <p style="color:red;"><%= request.getAttribute("error") %></p>
         <% } %>
 
-        <p class="register">Chưa có tài khoản? <a href="register.jsp">Tạo tài khoản ngay</a></p>
+        <p class="register">Chưa có tài khoản? <a href="register">Tạo tài khoản ngay</a></p>
     </section>
 </body>
 </html>

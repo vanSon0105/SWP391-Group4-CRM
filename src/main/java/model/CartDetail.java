@@ -6,17 +6,17 @@ public class CartDetail {
 	private double price;
 	private int quantity;
 	private Device device;
-    private int cart_id;
+    private int cartId;
     private double totalPrice;
     
     public CartDetail() {}
 
-	public CartDetail(int id, double price, int quantity, Device device, int cart_id, double totalPrice) {
+	public CartDetail(int id, double price, int quantity, Device device, int cartId, double totalPrice) {
 		this.id = id;
 		this.price = price;
 		this.quantity = quantity;
 		this.device = device;
-		this.cart_id = cart_id;
+		this.cartId = cartId;
 		this.totalPrice = totalPrice;
 	}
 
@@ -60,18 +60,18 @@ public class CartDetail {
 		this.device = device;
 	}
 
-	public int getCart_id() {
-		return cart_id;
+	public int getCartId() {
+		return cartId;
 	}
 
-	public void setCart_id(int cart_id) {
-		this.cart_id = cart_id;
+	public void setCartId(int cartId) {
+		this.cartId = cartId;
 	}
 
 	@Override
 	public String toString() {
 		return "CartDetail [id=" + id + ", price=" + price + ", quantity=" + quantity + ", device=" + device
-				+ ", cart_id=" + cart_id + ", totalPrice=" + totalPrice + "]";
+				+ ", cart_id=" + cartId + ", totalPrice=" + totalPrice + "]";
 	}
 	
 	

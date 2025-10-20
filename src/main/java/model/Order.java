@@ -8,18 +8,30 @@ public class Order {
 	private int id;
 	private Customer customer_id;
 	private double total_amount;
+	private double discount;
 	private String status;
 	private Timestamp date;
 	
 	public Order() {}
 
-	public Order(int id, Customer customer_id, double total_amount, String status, Timestamp date) {
+	public Order(int id, Customer customer_id, double total_amount,double discount, String status, Timestamp date) {
 		super();
 		this.id = id;
 		this.customer_id = customer_id;
 		this.total_amount = total_amount;
+		this.discount = discount;
 		this.status = status;
 		this.date = date;
+	}
+	
+	
+
+	public double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(double discount) {
+		this.discount = discount;
 	}
 
 	public int getId() {

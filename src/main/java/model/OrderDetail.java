@@ -3,13 +3,28 @@ import java.sql.Timestamp;
 public class OrderDetail {
 	private int id;              
     private int orderId;        
-    private int deviceId;       
+    private int deviceId;  
+    private int deviceSerialId;
     private int quantity;        
     private double price;        
-    private int discount;      
+    private int discount;    
+    private int warrantyCardId;
     private Timestamp warrantyDate; 
     
-    public OrderDetail(int orderId, int deviceId, int quantity, double price, int discount, Timestamp warrantyDate) {
+    
+    public OrderDetail(int id, int orderId, int deviceId, int deviceSerialId, int quantity, double price,
+			int warrantyCardId) {
+		super();
+		this.id = id;
+		this.orderId = orderId;
+		this.deviceId = deviceId;
+		this.deviceSerialId = deviceSerialId;
+		this.quantity = quantity;
+		this.price = price;
+		this.warrantyCardId = warrantyCardId;
+	}
+
+	public OrderDetail(int orderId, int deviceId, int quantity, double price, int discount, Timestamp warrantyDate) {
         this.orderId = orderId;
         this.deviceId = deviceId;
         this.quantity = quantity;
@@ -73,8 +88,26 @@ public class OrderDetail {
     public void setWarrantyDate(Timestamp warrantyDate) {
         this.warrantyDate = warrantyDate;
     }
+    
+    
 
-    @Override
+    public int getDeviceSerialId() {
+		return deviceSerialId;
+	}
+
+	public void setDeviceSerialId(int deviceSerialId) {
+		this.deviceSerialId = deviceSerialId;
+	}
+
+	public int getWarrantyCardId() {
+		return warrantyCardId;
+	}
+
+	public void setWarrantyCardId(int warrantyCardId) {
+		this.warrantyCardId = warrantyCardId;
+	}
+
+	@Override
     public String toString() {
         return "OrderDetail [id=" + id + ", orderId=" + orderId + ", deviceId=" + deviceId + ", quantity=" + quantity
                 + ", price=" + price + ", discount=" + discount + ", warrantyDate=" + warrantyDate + "]";

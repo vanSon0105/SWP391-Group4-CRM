@@ -268,4 +268,18 @@ public class TaskDAO extends DBContext {
         }
         return set;
     }
+	public Set<Integer> getAssignedStaffIds(int taskId) {
+		Set<Integer> set = new HashSet<>();
+		String sql = "SELECT technical_staff_id FROM task_details WHERE task_id=?";
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, taskId);
+			try (ResultSet rs = ps.executeQuery()) {
+				while (rs.next())
+					set.add(rs.getInt("technical_staff_id"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return set;
+	}
 }

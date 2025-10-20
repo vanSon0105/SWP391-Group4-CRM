@@ -66,7 +66,7 @@
                 <span class="shortcut-icon">📱</span>
                 <span class="shortcut-label">Điện Thoại</span>
             </a>
-            <a class="shortcut-card" href="device-catalog.jsp#accessories">
+            <a class="shortcut-card" href="create-issue">
                 <span class="shortcut-icon">🔧</span>
                 <span class="shortcut-label">Bảo Hành</span>
             </a>
@@ -111,6 +111,7 @@
 	                            <h4>${s.getName()}</h4>
 	                            <p>${s.getDesc()}</p>
 	                            <span>Giá: ${s.getPrice()}Đ</span>
+	                            <a class="device-buy-btn" href="cart-add?id=${s.id}#featured-devices">Mua san pham</a>
 	                        </div>
                         </a>
                     </c:forEach>
@@ -145,6 +146,7 @@
 	                        <h4>${s.getName()}</h4>
 	                        <p>${s.getDesc()}</p>
 	                        <span>Giá: ${s.getPrice()}Đ</span>
+	                        <a class="device-buy-btn" href="cart-add?id=${s.id}#new-devices">Mua san pham</a>
 	                    </div>
                     </a>
                 </c:forEach>
@@ -233,6 +235,7 @@
 	                            <h4>${s.getName()}</h4>
 	                        	<p>${s.getDesc()}</p>
 	                        	<span>Giá: ${s.getPrice()}Đ</span>
+	                        	<a class="device-buy-btn" href="cart-add?id=${s.id}#best-sellers">Mua san pham</a>
 	                        </div>
                         </a>
                     </c:forEach>

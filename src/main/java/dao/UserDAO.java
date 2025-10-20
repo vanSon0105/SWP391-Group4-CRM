@@ -7,19 +7,6 @@ import dal.DBContext;
 
 public class UserDAO {
     private Connection conn;
-
-//    public UserDAO() {
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//            conn = DriverManager.getConnection(
-//                "jdbc:mysql://localhost:3306/swp391",
-//                "root",
-//                "123123"
-//            );
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
     
     public List<User> getUsersByRole(int roleId) {
         List<User> list = new ArrayList<>();
@@ -232,10 +219,9 @@ public class UserDAO {
                 u.setEmail(rs.getString("email"));
                 u.setPhone(rs.getString("phone"));
                 u.setImageUrl(rs.getString("image_url"));
-                u.setGender(rs.getString("gender"));
-                u.setBirthday(rs.getDate("birthday"));
                 u.setUsername(rs.getString("username"));
                 u.setPassword(rs.getString("password"));
+                u.setRoleId(rs.getInt("role_id"));
                 return u;
             }
         } catch (SQLException e) {
@@ -256,17 +242,15 @@ public class UserDAO {
                 User u = new User();
                 u.setId(rs.getInt("id"));
                 u.setUsername(rs.getString("username"));
+                u.setPassword(rs.getString("password"));
                 u.setEmail(rs.getString("email"));
                 u.setFullName(rs.getString("full_name"));
                 u.setPhone(rs.getString("phone"));
-                u.setGender(rs.getString("gender"));
-                u.setBirthday(rs.getDate("birthday"));
                 u.setImageUrl(rs.getString("image_url"));
                 u.setRoleId(rs.getInt("role_id"));
                 u.setStatus(rs.getString("status"));
                 u.setCreatedAt(rs.getTimestamp("created_at"));
                 u.setLastLoginAt(rs.getTimestamp("last_login_at"));
-                u.setUsernameChanged(rs.getBoolean("username_changed"));
 
                 list.add(u);
             }
@@ -312,4 +296,74 @@ public class UserDAO {
             return false;
         }
     }
+    
+    public int getUserIdByOrderId(int orderId) {
+        int userId = -1;
+        String sql = "SELECT customer_id FROM orders WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                userId = rs.getInt("customer_id");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return userId;
+    }
+
+    public void addUser(User u) {
+        String sql = "INSERT INTO users(username, email, password, full_name, phone, role_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, u.getUsername());
+            ps.setString(2, u.getEmail());
+            ps.setString(3, u.getPassword());
+            ps.setString(4, u.getFullName());
+            ps.setString(5, u.getPhone());
+            ps.setInt(6, u.getRoleId());
+            ps.setString(7, u.getStatus());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public User getUserDetailsById(int id) {
+    	String sql = 
+    		    "SELECT u.*, r.role_name " +
+    		    "FROM users u " +
+    		    "LEFT JOIN roles r ON u.role_id = r.id " +
+    		    "WHERE u.id = ?";
+    	    try (Connection conn = DBContext.getConnection();
+    	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+    	        ps.setInt(1, id);
+    	        ResultSet rs = ps.executeQuery();
+
+    	        if (rs.next()) {
+    	            User u = new User();
+    	            u.setId(rs.getInt("id"));
+    	            u.setFullName(rs.getString("full_name"));
+    	            u.setEmail(rs.getString("email"));
+    	            u.setPhone(rs.getString("phone"));
+    	            u.setImageUrl(rs.getString("image_url"));
+    	            u.setRoleId(rs.getInt("role_id"));
+    	            u.setUsername(rs.getString("username"));
+    	            u.setPassword(rs.getString("password"));
+    	            u.setStatus(rs.getString("status"));
+    	            u.setCreatedAt(rs.getTimestamp("created_at"));
+    	            u.setLastLoginAt(rs.getTimestamp("last_login_at")); 
+    	            return u;
+    	        }
+
+    	    } catch (SQLException e) {
+    	        e.printStackTrace();
+    	    }
+    	    return null;
+    }
+
+    
+    
 }

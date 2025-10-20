@@ -23,7 +23,7 @@
 
 <style>
 .main-content {
-	width: 90%;
+	width: 100wh - 220px;
 	height: 100vh;
     margin: 0 auto;
 }
