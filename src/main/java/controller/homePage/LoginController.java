@@ -60,15 +60,6 @@ public class LoginController extends HttpServlet {
         User user = userDAO.getUserByLogin(email, password);
 
         if (user != null) {
-            HttpSession session = request.getSession();
-            session.setAttribute("account", user);
-            if (user.getRoleId() == 1) {
-                response.sendRedirect(request.getContextPath() + "/account");
-                response.sendRedirect(request.getContextPath() + "/supplier");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/home");
-            }
-
 		    session.setAttribute("account", user);
 		    response.sendRedirect(request.getContextPath() + "/home");
         } else {
