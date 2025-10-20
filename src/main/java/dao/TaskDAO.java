@@ -27,7 +27,7 @@ public class TaskDAO extends DBContext {
 	    return list;
 	}
 
-	public List<Task> getFilteredTasksWithStatus(String status, String search) {
+	public List<Task> getFilteredTasksWithStatus(String status, String search, int limit, int offset) {
 		List<Task> list = new ArrayList<>();
 		String sql = "select * from task_with_status WHERE 1 = 1 ";
 		
@@ -39,9 +39,14 @@ public class TaskDAO extends DBContext {
 			sql += " and ( title LIKE '%" + search + "%' OR description LIKE '%" + search + "%') ";
 		}
 		
+		sql += " limit ? offset ? ";
+		
 		try (Connection conn = getConnection();
 				PreparedStatement pre = conn.prepareStatement(sql);
-				ResultSet rs = pre.executeQuery()) {
+				) {
+			pre.setInt(1, limit);
+			pre.setInt(2, offset);
+			ResultSet rs = pre.executeQuery();
 			while (rs.next()) {
 				list.add(new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
 						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status")));
@@ -53,6 +58,32 @@ public class TaskDAO extends DBContext {
 		}
 
 		return list;
+	}
+	
+	public int getFilteredTasksCount(String status, String search) {
+		int count = 0;
+		String sql = "select count(id) as total from task_with_status where 1=1 ";
+		
+		if (status != null && !status.isEmpty()) {
+	        sql += " AND status = '" + status + "' ";
+	    }
+		
+		if (search != null && !search.isEmpty()) {
+	        sql += " AND (title LIKE + '%" + search + "%' OR description LIKE '%" + search + "%') ";
+	    }
+
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql);
+			 ResultSet rs = pre.executeQuery();){
+			
+			if(rs.next()) {
+				count = rs.getInt("total");
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return count;
 	}
 	
 	 

@@ -20,107 +20,122 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-    .container {
-        width: 80%;
-        margin: 0 auto;
-        padding: 20px;
-    }
-    .head {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-    .task-box {
-        background: white;
-        padding: 18px;
-        margin-top: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    .task-title {
-        font-size: 22px;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-    .task-meta {
-        color: #555;
-        line-height: 1.6;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 18px;
-    }
-    th, td {
-        padding: 10px;
-        border: 1px solid #ddd;
-        text-align: center;
-    }
-    th {
-        background: #f3f4f6;
-    }
-    .btn {
-        padding: 6px 12px;
-        border: none;
-        background: #2563eb;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-    }
-    .btn-secondary {
-        background: #6b7280;
-    }
+.container {
+	width: 80%;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.head {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.task-box {
+	background: white;
+	padding: 18px;
+	margin-top: 20px;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-title {
+	font-size: 22px;
+	font-weight: 600;
+	margin-bottom: 10px;
+}
+
+.task-meta {
+	color: #555;
+	line-height: 1.6;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 18px;
+}
+
+th, td {
+	padding: 10px;
+	border: 1px solid #ddd;
+	text-align: center;
+}
+
+th {
+	background: #f3f4f6;
+}
+
+.btn-gr .btn, .btn-gr a, .head a {
+	padding: 6px 12px;
+	border: none;
+	background: #2563eb;
+	color: white;
+	border-radius: 4px;
+	cursor: pointer;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+.btn-secondary {
+	background: #6b7280;
+}
 </style>
 </head>
 <body>
-<jsp:include page="../common/header.jsp"></jsp:include>
+	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
 		<div class="container">
-		    <div class="head">
-		        <h2>Task Detail</h2>
-		        <a href="task-list" class="btn btn-secondary">Quay lại</a>
-		    </div>
-		    <div class="task-box">
-		        <div class="task-title">#${task.id} - ${task.title}</div>
-		        <div class="task-meta">
-		            <b>Mô tả:</b> ${task.description}<br>
-		            <b>Manager:</b> ${task.managerId}<br>
-		            <b>Customer Issue:</b> Issue #${task.customerIssueId}<br>
-		            <b>Số nhân viên tham gia:</b> 1<br>
-		            <b>Trạng thái chung:</b> <span style="color: #0ea5e9">Đang xử lý</span>
-		        </div>
-		    </div>
-		    <div style="margin-top: 14px; display:flex; gap:10px;">
-		        <button class="btn">+ Thêm nhân viên</button>
-		        <button class="btn btn-secondary">Đánh dấu hoàn thành Task</button>
-		    </div>
-		    <table>
-		        <thead>
-		            <tr>
-		            	<th>ID</th>
-		                <th>Staff</th>
-		                <th>Assigned At</th>
-		                <th>Deadline</th>
-		                <th>Status</th>
-		                <th>Action</th>
-		            </tr>
-		        </thead>
-		        <c:forEach var="taskDetail" items="${listTaskDetail}">
-		        	<tbody>
-		            <tr>
-		            	<td>${taskDetail.id}</td>
-		                <td>${taskDetail.technicalStaffId}</td>
-		                <td>${taskDetail.assignedAt}</td>
-		                <td>${taskDetail.deadline}</td>
-		                <td>${taskDetail.status}</td>
-		                <td><button class="btn btn-secondary">Cập nhật</button></td>
-		            </tr>
-		        </tbody>
-		        </c:forEach>
-		    </table>
+			<div class="head">
+				<h2>Task Detail</h2>
+				<a href="task-list" class="btn btn-secondary">Quay lại</a>
+			</div>
+			<div class="task-box">
+				<div class="task-title">#${task.id} - ${task.title}</div>
+				<div class="task-meta">
+					<b>Mô tả:</b> ${task.description}<br> <b>Manager:</b>
+					${task.managerId}<br> <b>Customer Issue:</b> Issue
+					#${task.customerIssueId}<br> <b>Số nhân viên tham gia:</b> 1<br>
+					<b>Trạng thái chung:</b> <span style="color: #0ea5e9">Đang
+						xử lý</span>
+				</div>
+			</div>
+			<div class="btn-gr"
+				style="margin-top: 14px; display: flex; gap: 10px;">
+				<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
+				<form action="task-detail" method="post" style="display: inline;">
+					<input type="hidden" name="taskId" value="${task.id}" />
+					<button type="submit" class="btn btn-secondary">Đánh dấu
+						hoàn thành Task</button>
+				</form>
+			</div>
+			<table>
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Staff</th>
+						<th>Assigned At</th>
+						<th>Deadline</th>
+						<th>Status</th>
+						<!-- <th>Action</th> -->
+					</tr>
+				</thead>
+				<c:forEach var="taskDetail" items="${listTaskDetail}">
+					<tbody>
+						<tr>
+							<td>${taskDetail.id}</td>
+							<td>${taskDetail.technicalStaffId}</td>
+							<td>${taskDetail.assignedAt}</td>
+							<td>${taskDetail.deadline}</td>
+							<td>${taskDetail.status}</td>
+							<!-- <td><button class="btn btn-secondary">Cập nhật</button></td> -->
+						</tr>
+					</tbody>
+				</c:forEach>
+			</table>
 		</div>
-</main>
+	</main>
 </body>
 </html>

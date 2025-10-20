@@ -184,6 +184,18 @@ public class TaskDetailDAO extends DBContext{
             e.printStackTrace();
         }
     }
+    
+    public void cancelTask(int taskId) {
+        String sql = "UPDATE tasks SET is_cancelled = TRUE WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+			// TODO: handle exception
+		}
+    }
+
 
     public void updateDeadline(int taskId, int staffId, Timestamp deadline) {
         String sql = "UPDATE task_details SET deadline=? WHERE task_id=? AND technical_staff_id=?";
@@ -195,6 +207,19 @@ public class TaskDetailDAO extends DBContext{
             ps.setInt(3, staffId);
             ps.executeUpdate();
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void completeTaskDetails(int taskId) {
+        String sql = "UPDATE task_details SET status=? WHERE task_id=?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, "completed");
+            ps.setInt(2, taskId);
+            ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }

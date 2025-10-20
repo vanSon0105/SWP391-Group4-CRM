@@ -27,7 +27,12 @@ public class TaskFormController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		loadData(request, response);
+	
+
+	}
+	
+	private void loadData(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String idParam = request.getParameter("id");
 			Task task = null;
@@ -52,10 +57,7 @@ public class TaskFormController extends HttpServlet {
 		} catch (Exception e) {
 			System.out.print("Error");
 		}
-
 	}
-	
-
 	
 	private void addNewTask(HttpServletRequest request, HttpServletResponse res) {
 		try {
@@ -64,12 +66,26 @@ public class TaskFormController extends HttpServlet {
 			String customerIssueIdStr = request.getParameter("customerIssueId");
 			int customerIssueId = Integer.parseInt(customerIssueIdStr);
 			String[] staffs = request.getParameterValues("technicalStaffIds");
-			int staffId = 0;
+
 			Timestamp deadline = null;
 			String deadlineStr = request.getParameter("deadline");
 			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
 			int managerId = 2;
-			String status = "pending";
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			
+			if(title == null || title.trim().isEmpty()) {
+				request.setAttribute("errorTitle", "Không được để trống trường này");
+				loadData(request, res);
+				request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, res);
+				return;
+			}
+			
+			if(deadline.before(now) || deadline.equals(now)) {
+				request.setAttribute("errorDeadline", "Deadline phải hơn ngày hôm nay");
+				loadData(request, res);
+				request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, res);
+				return;
+			}
 			
 			Task task = new Task();
 			task.setTitle(title);
@@ -77,12 +93,13 @@ public class TaskFormController extends HttpServlet {
 			task.setManagerId(managerId);
 			task.setCustomerIssueId(customerIssueId);
 			int taskId = taskDao.addNewTask(task);
-			if(staffs.length != 0) {
-				for (String staff : staffs) { 
-					staffId = Integer.parseInt(staff);
-					taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
-				}
+			if (staffs != null && staffs.length != 0) {
+			    for (String staff : staffs) {
+			        int staffId = Integer.parseInt(staff);
+			        taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
+			    }
 			}
+
 			
 			res.sendRedirect("task-list");;
 		} catch (Exception e) {
