@@ -62,7 +62,16 @@ public class AccountController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        String action = request.getParameter("action");
+        if ("add".equals(action)) {
+            addUser(request, response);
+        } else {
+            doGet(request, response);
+        }
     }
 
     private void listAllUsers(HttpServletRequest request, HttpServletResponse response, User currentUser)
@@ -156,4 +165,35 @@ public class AccountController extends HttpServlet {
         		response.sendRedirect("account");
         }
     }
+    
+    private void addUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String username = request.getParameter("username");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            String fullName = request.getParameter("fullName");
+            String phone = request.getParameter("phone");
+            int roleId = Integer.parseInt(request.getParameter("roleId"));
+            String status = request.getParameter("status");
+
+            User user = new User();
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPassword(password);
+            user.setFullName(fullName);
+            user.setPhone(phone);
+            user.setRoleId(roleId);
+            user.setStatus(status);
+
+            userDAO.addUser(user);
+            response.sendRedirect(request.getContextPath() + "/account");
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Thêm người dùng thất bại!");
+            request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+        }
+    }
+    
+    
 }
