@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.*;
+
 import java.util.*;
 import model.DeviceSerial;
 
@@ -122,6 +123,32 @@ public class DeviceSerialDAO extends dal.DBContext {
             e.printStackTrace();
         }
         return false;
+    }
+    
+    public DeviceSerial getInStockSerialId(int deviceId) {
+    	String sql = "select * from device_serials where device_id = ? and stock_status = 'in_stock' limit 1";
+    	
+    	try (Connection conn = getConnection();
+    		 PreparedStatement pre = conn.prepareStatement(sql)){
+    		pre.setInt(1, deviceId);
+    		ResultSet rs = pre.executeQuery();
+    		
+    		if(rs.next()) {
+    			return new DeviceSerial(
+    					rs.getInt("id"),
+    					rs.getInt("order_id"),
+    					rs.getString("serial_no"),
+    					rs.getString("stock_status"),
+    					rs.getTimestamp("import_date"),
+    					rs.getString("status")
+    					);
+    		}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+    	
+    	return null;
     }
     
 }
