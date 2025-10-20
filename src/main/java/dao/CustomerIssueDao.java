@@ -167,4 +167,62 @@ public class CustomerIssueDao extends DBContext{
 		}
 		return false;
 	}
+	
+	public List<CustomerIssue> getIssuesBySupportStatus(String status) {
+		return getIssuesBySupportStatuses(new String[] { status });
+	}
+	
+	public List<CustomerIssue> getIssuesBySupportStatuses(String[] statuses) {
+		List<CustomerIssue> list = new ArrayList<>();
+		if (statuses == null || statuses.length == 0) {
+			return list;
+		}
+
+		String sql = "SELECT * FROM customer_issues WHERE support_status IN (";
+		for (int i = 0; i < statuses.length; i++) {
+			if (i > 0) {
+				sql += (',');
+			}
+			sql += ('?');
+		}
+		sql += (") ORDER BY created_at ASC");
+
+		try (Connection c = getConnection();
+			 PreparedStatement ps = c.prepareStatement(sql)) {
+			 for (int i = 0; i < statuses.length; i++) {
+				ps.setString(i + 1, statuses[i]);
+			 }
+			 ResultSet rs = ps.executeQuery();
+			 while (rs.next()) {
+				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
+						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status")));
+			 }
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+	
+	
+	public boolean updateSupportStatus(int issueId, String status) {
+		String sql = "UPDATE customer_issues SET support_status = ? WHERE id = ?";
+		try (Connection conn = getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, status);
+			ps.setInt(2, issueId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public List<CustomerIssue> getIssuesReadyForManager() {
+		return getIssuesBySupportStatuses(new String[] { "manager_approved" });
+	}
+	
+	public List<CustomerIssue> getIssuesAwaitingManagerReview() {
+		return getIssuesBySupportStatuses(new String[] { "submitted", "manager_review" });
+	}
 }

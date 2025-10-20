@@ -1,5 +1,9 @@
 package controller.homePage;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -8,9 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
-import java.io.IOException;
 
-@WebServlet({"/login","/logout"})
+@WebServlet({ "/login", "/logout" })
 public class LoginController extends HttpServlet {
     private UserDAO userDAO = new UserDAO();
     private static final int SESSION_TIMEOUT_SECONDS = 4 * 60 * 60;

@@ -107,6 +107,32 @@
             background: #dcfce7;
             color: #047857;
         }
+        
+        .status-manager_rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-manager_approved {
+            background: #cffafe;
+            color: #0f766e;
+        }
+
+        .status-task_created {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .status-tech_in_progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-resolved {
+            background: #dcfce7;
+            color: #15803d;
+        }
+        
 
         .empty-state {
             text-align: center;
@@ -166,6 +192,11 @@
                                     <c:when test="${status == 'awaiting_customer'}">Chờ bổ sung</c:when>
                                     <c:when test="${status == 'submitted'}">Đã chuyển kỹ thuật</c:when>
                                     <c:when test="${status == 'in_progress'}">Đang xử lý</c:when>
+                                    <c:when test="${status == 'manager_rejected'}">Cần bổ sung thông tin</c:when>
+                                    <c:when test="${status == 'manager_approved'}">Đã duyệt tạo task</c:when>
+                                    <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
+                                    <c:when test="${status == 'tech_in_progress'}">Đang thực hiện</c:when>
+                                    <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
                             </span>
