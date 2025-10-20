@@ -219,8 +219,6 @@ public class UserDAO {
                 u.setEmail(rs.getString("email"));
                 u.setPhone(rs.getString("phone"));
                 u.setImageUrl(rs.getString("image_url"));
-                u.setGender(rs.getString("gender"));
-                u.setBirthday(rs.getDate("birthday"));
                 u.setUsername(rs.getString("username"));
                 u.setPassword(rs.getString("password"));
                 u.setRoleId(rs.getInt("role_id"));
@@ -331,4 +329,41 @@ public class UserDAO {
             e.printStackTrace();
         }
     }
+    
+    public User getUserDetailsById(int id) {
+    	String sql = 
+    		    "SELECT u.*, r.role_name " +
+    		    "FROM users u " +
+    		    "LEFT JOIN roles r ON u.role_id = r.id " +
+    		    "WHERE u.id = ?";
+    	    try (Connection conn = DBContext.getConnection();
+    	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+    	        ps.setInt(1, id);
+    	        ResultSet rs = ps.executeQuery();
+
+    	        if (rs.next()) {
+    	            User u = new User();
+    	            u.setId(rs.getInt("id"));
+    	            u.setFullName(rs.getString("full_name"));
+    	            u.setEmail(rs.getString("email"));
+    	            u.setPhone(rs.getString("phone"));
+    	            u.setImageUrl(rs.getString("image_url"));
+    	            u.setRoleId(rs.getInt("role_id"));
+    	            u.setUsername(rs.getString("username"));
+    	            u.setPassword(rs.getString("password"));
+    	            u.setStatus(rs.getString("status"));
+    	            u.setCreatedAt(rs.getTimestamp("created_at"));
+    	            u.setLastLoginAt(rs.getTimestamp("last_login_at")); 
+    	            return u;
+    	        }
+
+    	    } catch (SQLException e) {
+    	        e.printStackTrace();
+    	    }
+    	    return null;
+    }
+
+    
+    
 }
