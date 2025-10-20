@@ -54,6 +54,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("account", user);
             if (user.getRoleId() == 1) {
                 response.sendRedirect(request.getContextPath() + "/account");
+                response.sendRedirect(request.getContextPath() + "/supplier");
             } else {
                 response.sendRedirect(request.getContextPath() + "/home");
             }
