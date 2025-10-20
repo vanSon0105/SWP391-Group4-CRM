@@ -76,6 +76,7 @@ public class CheckoutController extends HttpServlet {
 		}
 		finalPrice = totalPrice - discount;
 		
+		session.setAttribute("discount", discount);
 		session.setAttribute("finalPrice", finalPrice); 
 		request.setAttribute("finalPrice", finalPrice);
 		request.setAttribute("discount", discount);
@@ -88,6 +89,7 @@ public class CheckoutController extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("account");
 		double finalPrice = (double)session.getAttribute("finalPrice");
+		double discount = (double)session.getAttribute("discount");
 		
 		String fullName = request.getParameter("fullname");
 		String phone = request.getParameter("phone");
@@ -118,7 +120,7 @@ public class CheckoutController extends HttpServlet {
 			return;
 		}
 		
-		int orderId = orderDao.addNewOrder(user.getId(), finalPrice, 0);
+		int orderId = orderDao.addNewOrder(user.getId(), finalPrice, discount);
 		
 		Payment payment = new Payment();
 		payment.setOrderId(orderId);

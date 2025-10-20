@@ -87,4 +87,26 @@ public class PaymentDAO extends DBContext {
 		}
 		return -1;
 	}
+	
+	public void updateStatus(int id, String status) {
+		String sql = null;
+
+	    if ("success".equals(status)) {
+	        sql = "UPDATE payments SET status = ?, paid_at = NOW() WHERE id = ?";
+	    } else if ("failed".equals(status)) {
+	        sql = "UPDATE payments SET status = ?, paid_at = NULL WHERE id = ?";
+	    } else {
+	        sql = "UPDATE payments SET status = ? WHERE id = ?";
+	    }
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql)) {
+			
+			pre.setString(1, status);
+			pre.setInt(2, id);
+			pre.executeUpdate();
+		} catch (Exception e) { 
+			// TODO: handle exception
+		}
+	}
+	
 }

@@ -115,13 +115,14 @@ button {
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
-
+	
 		<section class="main-content">
 			<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Payment
 				List</h1>
 			<div class="table-container">
 				<table>
 					<thead>
+					
 						<tr>
 							<th>ID</th>
 							<th>FullName</th>
@@ -139,6 +140,7 @@ button {
 					<tbody>
 						<c:forEach var="p" items="${paymentList}">
 							<tr>
+							<form action="payment-list" method="post">
 								<td>${p.id}</td>
 								<td>${p.fullName}</td>
 								<td>${p.phone}</td>
@@ -150,9 +152,11 @@ button {
 								<td>${p.createdAt}</td>
 								<td>${p.paidAt}</td>
 								<td>
-									<button style="background-color: #1976D2">Confirm</button>
-									<button style="background-color: #E70043">Deny</button>
+									<input type="hidden" name="paymentId" value="${p.id}" />
+									<button style="background-color: #1976D2" name="action" type="submit" value="success">Confirm</button>
+									<button style="background-color: #E70043" name="action" type="submit" value="failed">Deny</button>
 								</td>
+							</form>
 							</tr>
 						</c:forEach>
 
@@ -169,7 +173,9 @@ button {
 			</div>
 
 		</section>
-
+		
+	
+		
 	</main>
 </body>
 </html>

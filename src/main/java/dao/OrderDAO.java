@@ -26,4 +26,36 @@ public class OrderDAO extends DBContext{
 		}
 		return -1;
 	}
+	
+	public void updateOrderStatus(int id, String status) {
+		String sql = "UPDATE orders set status = ? where id = ?";
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement pre = conn.prepareStatement(sql)){
+			
+			pre.setString(1, status);
+			pre.setInt(2, id);
+			pre.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	} 
+	
+	public int getOrderByPaymentId(int paymentId) {
+		String sql = "select order_id from payments where id = ?";
+		
+		try (Connection conn = getConnection();
+			PreparedStatement pre = conn.prepareStatement(sql)){
+			pre.setInt(1, paymentId);
+			ResultSet rs = pre.executeQuery();
+			
+			if(rs.next()) {
+				return rs.getInt("order_id");
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return -1;
+	}
 }
