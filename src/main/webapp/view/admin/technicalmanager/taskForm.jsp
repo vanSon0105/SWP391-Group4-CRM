@@ -91,7 +91,7 @@ form button {
 					<label>Customer Issue ID:</label> <select name="customerIssueId">
 						<c:forEach var="issue" items="${customerIssues}">
 							<option value="${issue.id}"
-								${task != null && task.customerIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
+								${selectedIssueId != null && selectedIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
 						</c:forEach>
 					</select> <label>Technical Staff:</label>
 					<div class="checkbox-group">

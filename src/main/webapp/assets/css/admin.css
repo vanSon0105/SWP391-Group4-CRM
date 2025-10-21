@@ -13,6 +13,7 @@ html {
 }
 
 body {
+	height: 100vh;
 	margin: 0;
     font-size: 1.8rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
@@ -23,6 +24,10 @@ body {
 
 * {
     box-sizing: border-box;
+}
+
+a{
+ 	text-decoration: none;
 }
 
 /* -----------------------------------dashboard.html */
@@ -264,6 +269,7 @@ body {
 }
 
 .sidebar-main {
+	height: 100%;
     margin-top: 50px;
 }
 

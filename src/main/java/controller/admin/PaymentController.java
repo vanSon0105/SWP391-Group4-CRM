@@ -27,6 +27,7 @@ import dao.CartDetailDao;
 import dao.WarrantyCardDao;
 
 import java.util.logging.*;
+
 /**
  * Servlet implementation class CategoryController
  */
@@ -83,29 +84,34 @@ public class PaymentController extends HttpServlet {
 			Timestamp end = new Timestamp(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
 
 			for (CartDetail cd : orderItems) {
-				DeviceSerial ds = dsDao.getInStockSerialId(cd.getDevice().getId());
-				if (ds == null) {
-				    continue; 
-				}
-				
-				dsDao.updateStatus(ds.getId(), "sold");
-				WarrantyCard wc = wcDao.getBySerialId(ds.getId());
-				
-				if(wc == null) {
-					try {
-					    wcDao.addWarrantyCard(ds.getId(), userId, now, end);
-					} catch (SQLException e) {
-					    e.printStackTrace();
+				for (int i = 0; i < cd.getQuantity(); i++) {
+					DeviceSerial ds = dsDao.getInStockSerialId(cd.getDevice().getId());
+					if (ds == null) {
+						continue;
 					}
 
-				} else {
-				    wcDao.updateWarrantyDates(wc.getId(), now, end);
+					WarrantyCard wc = wcDao.getBySerialId(ds.getId());
+					int wcId;
+
+					if (wc == null) {
+						try {
+							wcId = wcDao.addWarrantyCard(ds.getId(), userId, now, end);
+						} catch (SQLException e) {
+							e.printStackTrace();
+							continue;
+						}
+
+						if (wcId <= 0) {
+							continue;
+						}
+					} else {
+						wcDao.updateWarrantyDates(wc.getId(), now, end);
+						wcId = wc.getId();
+					}
+
+					odDao.addOrderDetail(orderId, cd.getDevice().getId(), ds.getId(), 1, cd.getPrice(), wcId);
+					dsDao.updateStatus(ds.getId(), "sold");
 				}
-
-				odDao.addOrderDetail(orderId, cd.getDevice().getId(), ds.getId(), cd.getQuantity(), cd.getPrice(),
-						wc.getId());
-
-				dsDao.updateStatus(ds.getId(), "sold");
 			}
 
 			cartDao.deleteCart(cartId);

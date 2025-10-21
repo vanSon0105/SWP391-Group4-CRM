@@ -10,8 +10,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
-<%-- <link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/css/shop.css"> --%>
 
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/assets/css/admin.css">
@@ -126,7 +124,6 @@ table button:hover, table a:hover {
 	justify-content: space-between;
 	margin-top: 30px;
 	background: white;
-	border-radius: 12px;
 	padding: 16px;
 	border: 0.5px solid #2B90C6;
 }
@@ -153,6 +150,20 @@ table button:hover, table a:hover {
 			<h1 style="font-weight: 500; text-align: center">Task
 				List</h1>
 			<form action="task-list" method="get">
+	<main class="sidebar-main" style="padding: 32px; font-size: 1.4rem;">
+	
+	<section class="main-content">
+		<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Task List</h1>
+		<form action="task-list" method="get">
+<!-- 			<div class="filters">
+				<select id="status" name="status" style="border-radius: 6px; padding: 8px 10px" onchange="this.form.submit()">
+					<option value="" ${empty param.status ? 'selected' : ''}>All status</option>
+					<option value="pending" ${param.status == 'pending' ? 'selected' : ''}>Chưa bắt đầu</option>
+					<option value="in_progress" ${param.status == 'in_progress' ? 'selected' : ''}>Đang thực hiện</option>
+					<option value="completed" ${param.status == 'completed' ? 'selected' : ''}>Đã hoàn tất</option>
+					<option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+				</select>
+				<div> -->
 				
 				<div class="filters">
 					

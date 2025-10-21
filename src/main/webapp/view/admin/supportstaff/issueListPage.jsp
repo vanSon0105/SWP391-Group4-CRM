@@ -93,6 +93,31 @@
             background: #bbf7d0;
             color: #047857;
         }
+        
+        .badge-manager_rejected {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-manager_approved {
+            background: #cffafe;
+            color: #0f766e;
+        }
+
+        .badge-task_created {
+            background: #ede9fe;
+            color: #6d28d9;
+        }
+
+        .badge-tech_in_progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-resolved {
+            background: #dcfce7;
+            color: #15803d;
+        }
 
         .alert {
             padding: 12px 16px;
@@ -212,6 +237,11 @@
                                                     phản hồi</c:when>
                                                 <c:when test="${status == 'in_progress'}">Đang thu thập
                                                 </c:when>
+                                                <c:when test="${status == 'manager_rejected'}">Quản lý từ chối</c:when>
+	                                            <c:when test="${status == 'manager_approved'}">Quản lý đã duyệt</c:when>
+	                                            <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
+	                                            <c:when test="${status == 'tech_in_progress'}">Đang xử lí kỹ thuật</c:when>
+	                                            <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
                                                 <c:otherwise>Chưa tiếp nhận</c:otherwise>
                                             </c:choose>
                                         </span>

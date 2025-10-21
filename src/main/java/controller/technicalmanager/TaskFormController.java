@@ -34,8 +34,9 @@ public class TaskFormController extends HttpServlet {
 	private void loadData(HttpServletRequest request, HttpServletResponse response) {
 		try {
 			String idParam = request.getParameter("id");
+			String issueIdParam = request.getParameter("issueId");
 			Task task = null;
-			Set<Integer> assignedStaffIds = null;
+//			Set<Integer> assignedStaffIds = null;
 			List<TaskDetail> taskDetail = new ArrayList<>();
 			if (idParam != null && !idParam.isEmpty()) {
 				int taskId = Integer.parseInt(idParam);

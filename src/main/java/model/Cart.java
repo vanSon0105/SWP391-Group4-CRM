@@ -2,12 +2,12 @@ package model;
 
 public class Cart {
 	private int id;
-	private int sum;
+	private double sum;
 	private int userId;
 	
 	public Cart() {}
 
-	public Cart(int id, int sum, int userId) {
+	public Cart(int id, double sum, int userId) {
 		super();
 		this.id = id;
 		this.sum = sum;
@@ -22,11 +22,11 @@ public class Cart {
 		this.id = id;
 	}
 
-	public int getSum() {
+	public double getSum() {
 		return sum;
 	}
 
-	public void setSum(int sum) {
+	public void setSum(double sum) {
 		this.sum = sum;
 	}
 
