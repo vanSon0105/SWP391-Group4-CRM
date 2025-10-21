@@ -136,7 +136,7 @@ public class DeviceDAO extends DBContext {
 	}
 
 	public List<Device> getFilteredDevices(Integer categoryId, Integer supplierId, String priceRange, String sortPrice,
-			int offset, int limit) {
+			int offset, int limit, String keyword) {
 		List<Device> list = new ArrayList<>();
 		String sql = "select distinct d.* from devices d "
 				+ "left join supplier_details sd on d.id = sd.device_id where 1 = 1 ";
@@ -169,7 +169,11 @@ public class DeviceDAO extends DBContext {
 
 			}
 		}
-
+		
+		if (keyword != null && !keyword.trim().isEmpty()) {
+	        sql += " AND d.name LIKE '%"+ keyword +"%' or d.description LIKE '%"+ keyword +"%' " ;
+	    }
+		
 		if (sortPrice != null) {
 			switch (sortPrice) {
 			case "asc":
@@ -209,7 +213,7 @@ public class DeviceDAO extends DBContext {
 		return list;
 	}
 	
-	public int getFilteredDevicesCount(Integer categoryId, Integer supplierId, String priceRange) {
+	public int getFilteredDevicesCount(Integer categoryId, Integer supplierId, String priceRange, String keyword) {
 		int count = 0;
 		String sql = "select COUNT(distinct d.id) as total from devices d "
 				+ "LEFT JOIN supplier_details sd on d.id = sd.device_id where 1 = 1 ";
@@ -243,6 +247,9 @@ public class DeviceDAO extends DBContext {
 			}
 		}
 		
+		if (keyword != null && !keyword.trim().isEmpty()) {
+	        sql += " AND d.name LIKE '%"+ keyword +"%' or d.description LIKE '%"+ keyword +"%' " ;
+	    }
 		try (Connection conn = getConnection();
 			 PreparedStatement pre = conn.prepareStatement(sql);
 			 ResultSet rs = pre.executeQuery()){

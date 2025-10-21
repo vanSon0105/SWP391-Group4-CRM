@@ -153,8 +153,9 @@ CREATE TABLE task_details (
 );
 
 CREATE VIEW task_with_status AS
-SELECT t.id, t.title, t.description, t.manager_id, t.customer_issue_id,
+SELECT t.id, t.title, t.description, t.manager_id, t.customer_issue_id, t.is_cancelled,
     CASE
+		WHEN t.is_cancelled = true then 'cancelled'
         WHEN COUNT(td.id) = 0 THEN 'pending' 
         WHEN SUM(td.status = 'in_progress') > 0 THEN 'in_progress'
         WHEN SUM(td.status = 'pending') = COUNT(td.id) THEN 'pending'

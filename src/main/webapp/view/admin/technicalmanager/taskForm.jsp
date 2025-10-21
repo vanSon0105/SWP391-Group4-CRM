@@ -53,23 +53,21 @@ body form {
 	box-shadow: 0 0 4px rgba(33, 150, 243, 0.4);
 }
 
-button {
-	padding: 8px 10px;
-	width: 80px;
-	border-radius: 6px;
-	background: #3b82f6;
-	color: white;
-	border: none;
-	margin-left: auto;
+form a:hover,
+form button {
+	cursor:pointer;
 }
 
-form a {
-	padding: 5px 10px;
+form a,
+form button {
+	padding: 8px 10px;
 	border-radius: 6px;
 	background-color: #3b82f6;
+	font-weight:bold;
 	color: white;
 	font-size: 16px;
 	text-align: center;
+	border:none;
 	text-decoration: none;
 }
 </style>
@@ -84,8 +82,11 @@ form a {
 					<h2>${task != null ? "Update Task" : "Add Task"}</h2>
 				</div>
 				<div class="task-form">
-					<input type="hidden" name="id" value="${task.id}" /> <label>Title:</label>
-					<input type="text" name="title" value="${task.title}" required /> <label>Description:</label>
+					<input type="hidden" name="id" value="${task.id}" /> 
+					<label>Title:</label>
+					<input type="text" name="title" value="${task.title}" required /> 
+					<small style="color:red">${errorTitle}</small> 
+					<label>Description:</label>
 					<input type="text" name="description" value="${task.description}" />
 					<label>Customer Issue ID:</label> <select name="customerIssueId">
 						<c:forEach var="issue" items="${customerIssues}">
@@ -104,10 +105,12 @@ form a {
 						</c:forEach>
 					</div>
 
-					<label>Deadline</label> <input type="date" name="deadline"
+					<label>Deadline</label> 
+					<input type="date" name="deadline"
+						min="<%= java.time.LocalDate.now() %>"
 						value="<fmt:formatDate value='${taskDetail[0].deadline}' pattern='yyyy-MM-dd' />"
 						${task.id == null ? 'required' : ''} />
-
+					<small style="color:red">${errorDeadline}</small>
 					<div>
 						<a href="task-list">Back</a>
 						<button type="submit" style="margin-left: 10px">Submit</button>

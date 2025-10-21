@@ -33,8 +33,17 @@ public class TaskDetailController extends HttpServlet {
 		request.setAttribute("task", task);
 		request.setAttribute("listTaskDetail", listTaskDetail);
 		request.getRequestDispatcher("view/admin/technicalmanager/taskDetailPage.jsp").forward(request, response);
-		
 
 	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String taskIdParam = request.getParameter("taskId");
+        if(taskIdParam != null) {
+            int taskId = Integer.parseInt(taskIdParam);
+            taskDetailDao.completeTaskDetails(taskId);
+        }
+        response.sendRedirect("task-list");
+    }
 
 }
