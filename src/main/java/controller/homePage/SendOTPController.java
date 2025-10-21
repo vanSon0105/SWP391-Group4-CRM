@@ -34,10 +34,10 @@ public class SendOTPController extends HttpServlet {
 	        HttpSession session = request.getSession();
 	        session.setAttribute("otp", otp);
 	        session.setAttribute("email", email);
-	        session.setMaxInactiveInterval(5 * 60); // 5 phút
+	        session.setMaxInactiveInterval(5 * 60); 
 
-	        final String from = "techshop.corporation@gmail.com";  // thay bằng Gmail bạn
-	        final String pass = "uvatgwuvzzutcohc";         // App password Gmail
+	        final String from = "techshop.corporation@gmail.com"; 
+	        final String pass = "uvatgwuvzzutcohc";        
 	        
 
 	        Properties props = new Properties();
