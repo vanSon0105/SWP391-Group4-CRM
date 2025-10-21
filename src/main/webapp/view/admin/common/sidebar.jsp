@@ -17,6 +17,9 @@
         <a href="technical-manager-suite.html">Quản lý kỹ thuật</a>
         <a href="technical-staff-hub.html">Nhân viên kỹ thuật</a>
         <a href="technical-support-center.html">Hỗ trợ kỹ thuật</a>
+        
+        <a href="${pageContext.request.contextPath}/task-list">Task List</a>
+        <a href="${pageContext.request.contextPath}/payment-list">Payment List</a>
     </nav>
 </aside>
     

@@ -46,12 +46,21 @@
 }
 
 .panel a {
-	width: 50%;
+	width: 65%;
 	background: #0d6efd;
 	color:white;
 	padding: 10px 15px;
 	border-radius:16px;
 	margin-top: 18px;
+}
+
+.panel .back-to-home {
+	width: 45%;
+	background: #FFA500;
+	color:white;
+	padding: 10px 15px;
+	border-radius:16px;
+	margin-top:18px;
 }
 </style>
 
@@ -68,6 +77,7 @@
 					<p>Sau khi chuyển khoản thành công bạn có thể vào trang theo dõi đơn để xem tình trạng chuyển khoản</p>
 				</div>
 				<a href="oder-tracking.jsp">Tình trạng thanh toán <i class="fa-solid fa-arrow-right"></i></a>
+				<a class="back-to-home" href="<%=request.getContextPath()%>/"><i class="fa-solid fa-arrow-left"></i> Về trang chủ</a>
 			</div>
 			<div style="text-align: center;">
 				<h3>Quét mã QR để thanh toán</h3>
