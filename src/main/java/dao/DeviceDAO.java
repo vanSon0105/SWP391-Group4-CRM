@@ -634,7 +634,7 @@ public class DeviceDAO extends DBContext {
 	    
 	    String sql1 = "UPDATE device_serials " +
                 "SET status = 'discontinued' " +
-                "WHERE device_id = ? AND (stock_status = 'in_stock' OR stock_status = 'out_stock')";
+                "WHERE device_id = ? AND (status = 'in_stock' OR status = 'out_stock')";
 
 	    try (Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql);

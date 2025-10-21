@@ -375,7 +375,7 @@
 
     <!-- Right Column -->
     <div class="right-column">
-      <article class="hero-card" aria-label="Thông tin sản phẩm">
+      <article class="hero-card" aria-label="Thông tin sản phẩm" id="hero-card">
         <h2>${device.name}</h2>
         <p><strong>Loại:</strong> 
           <c:choose>
@@ -409,7 +409,7 @@
         </ul>
       
         <div class="cta-inline">
-          <a href="add-to-cart?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+          <a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
           <a href="checkout?id=${device.id}" class="buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
           <a href="device-page" class="back">← Quay lại</a>
         </div>

@@ -10,16 +10,13 @@
         <span>VanSon</span>
     </div>
     <nav>
-        <a href="revenue-dashboard.html" class="active">Dashboard</a>
-        <a href="admin-console.html">Bảng điều khiển</a>
-        <a href="order-tracking.html">Theo dõi đơn hàng</a>
-        <a href="storekeeper-dashboard.html">Kho & Nhân viên kho</a>
-        <a href="technical-manager-suite.html">Quản lý kỹ thuật</a>
-        <a href="technical-staff-hub.html">Nhân viên kỹ thuật</a>
-        <a href="technical-support-center.html">Hỗ trợ kỹ thuật</a>
-        
-        <a href="${pageContext.request.contextPath}/task-list">Task List</a>
-        <a href="${pageContext.request.contextPath}/payment-list">Payment List</a>
+        <a href="admin" class="active">Dashboard</a>
+        <a href="device-show">Thiết bị</a>
+        <a href="category-show">Danh mục</a>
+        <a href="account">Tài khoản</a>        
+        <a href="supplier">Nhà cung cấp</a> 
+        <a href="${pageContext.request.contextPath}/task-list">Danh sách task</a>
+        <a href="${pageContext.request.contextPath}/payment-list">Danh sách thanh toán</a>
     </nav>
 </aside>
     

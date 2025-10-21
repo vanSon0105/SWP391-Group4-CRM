@@ -144,12 +144,6 @@ table button:hover, table a:hover {
 <body>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
-	<main class="sidebar-main">
-
-		<section class="main-content">
-			<h1 style="font-weight: 500; text-align: center">Task
-				List</h1>
-			<form action="task-list" method="get">
 	<main class="sidebar-main" style="padding: 32px; font-size: 1.4rem;">
 	
 	<section class="main-content">

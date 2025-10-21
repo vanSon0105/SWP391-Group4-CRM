@@ -136,6 +136,7 @@ CREATE TABLE tasks (
   description TEXT,
   manager_id INT NOT NULL,
   customer_issue_id INT not null,
+  is_cancelled boolean default false,
   foreign key (manager_id) references users(id),
   foreign key (customer_issue_id) references customer_issues(id)
 );

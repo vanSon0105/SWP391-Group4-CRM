@@ -154,7 +154,6 @@ public class CartController extends HttpServlet {
 		int userId = u.getId();
 		cdao.addDeviceToCart(userId, deviceId);
 		resp.sendRedirect("home");
-//		resp.sendRedirect("cart");
 	}
 	
 
