@@ -70,7 +70,7 @@
                 <span class="shortcut-icon">🔧</span>
                 <span class="shortcut-label">Bảo Hành</span>
             </a>
-            <a class="shortcut-card" href="order-tracking.jsp">
+            <a class="shortcut-card" href="create-issue">
                 <span class="shortcut-icon">🛠️</span>
                 <span class="shortcut-label">Sửa Chữa</span>
             </a>

@@ -19,11 +19,6 @@
              font-family: 'Segoe UI', sans-serif;
          }
 
-         h1 {
-             margin: 0 0 24px 0;
-             color: #0f172a;
-         }
-
          .alert {
              padding: 12px 16px;
              border-radius: 8px;

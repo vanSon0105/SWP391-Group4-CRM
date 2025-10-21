@@ -7,26 +7,26 @@ import model.User;
 import dal.DBContext;
 
 public class TaskDAO extends DBContext {
-	public Task getTaskById(int id) {
-	    String sql = "SELECT * FROM tasks WHERE id = ?";
-	    try (Connection conn = getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
-	        ps.setInt(1, id);
-	        ResultSet rs = ps.executeQuery();
-	        if (rs.next()) {
-	            Task t = new Task();
-	            t.setId(rs.getInt("id"));
-	            t.setTitle(rs.getString("title"));
-	            t.setDescription(rs.getString("description"));
-	            t.setManagerId(rs.getInt("manager_id"));
-	            t.setCustomerIssueId(rs.getInt("customer_issue_id"));
-	            return t;
-	        }
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return null;
-	}
+//	public Task getTaskById(int id) {
+//	    String sql = "SELECT * FROM tasks WHERE id = ?";
+//	    try (Connection conn = getConnection();
+//	         PreparedStatement ps = conn.prepareStatement(sql)) {
+//	        ps.setInt(1, id);
+//	        ResultSet rs = ps.executeQuery();
+//	        if (rs.next()) {
+//	            Task t = new Task();
+//	            t.setId(rs.getInt("id"));
+//	            t.setTitle(rs.getString("title"));
+//	            t.setDescription(rs.getString("description"));
+//	            t.setManagerId(rs.getInt("manager_id"));
+//	            t.setCustomerIssueId(rs.getInt("customer_issue_id"));
+//	            return t;
+//	        }
+//	    } catch (SQLException e) {
+//	        e.printStackTrace();
+//	    }
+//	    return null;
+//	}
     public List<Task> filterTasks(String status, String priority, String technicianId,
                                   String fromDate, String toDate, String searchText) {
         List<Task> list = new ArrayList<>();
@@ -153,7 +153,7 @@ public class TaskDAO extends DBContext {
             ps.setString(2, task.getDescription());
             ps.setInt(3, task.getId());
 
-	public List<Task> getFilteredTasksWithStatus(String status, String search, int limit, int offset) {
+	
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -266,8 +266,7 @@ public class TaskDAO extends DBContext {
 		}
 		return set;
 	}
-	
-	public List<Task> getFilteredTasksWithStatus(String status, String search) {
+	public List<Task> getFilteredTasksWithStatus(String status, String search, int limit, int offset) {
 		List<Task> list = new ArrayList<>();
 		String sql = "select * from task_with_status WHERE 1 = 1 ";
 		
@@ -327,30 +326,30 @@ public class TaskDAO extends DBContext {
 	}
 	
 	 
-//	    public Task getTaskById(int id) {
-//	        Task task = null;
-//	        String sql = "SELECT * FROM task_with_status WHERE id=?";
-//	        try (Connection conn = getConnection();
-//	             PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//	            ps.setInt(1, id);
-//	            try (ResultSet rs = ps.executeQuery()) {
-//	                if (rs.next()) {
-//	                    task = new Task(
-//	                            rs.getInt("id"),
-//	                            rs.getString("title"),
-//	                            rs.getString("description"),
-//	                            rs.getInt("manager_id"),
-//	                            rs.getInt("customer_issue_id"),
-//	                            rs.getString("status"));
-//	                }
-//	            }
-//
-//	        } catch (Exception e) {
-//	            e.printStackTrace();
-//	        }
-//	        return task;
-//	    }
+	    public Task getTaskById(int id) {
+	        Task task = null;
+	        String sql = "SELECT * FROM task_with_status WHERE id=?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, id);
+	            try (ResultSet rs = ps.executeQuery()) {
+	                if (rs.next()) {
+	                    task = new Task(
+	                            rs.getInt("id"),
+	                            rs.getString("title"),
+	                            rs.getString("description"),
+	                            rs.getInt("manager_id"),
+	                            rs.getInt("customer_issue_id"),
+	                            rs.getString("status"));
+	                }
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return task;
+	    }
 
 	
 //	  public List<Task> getAllTasks() { List<Task> list = new ArrayList<>(); String
@@ -376,18 +375,18 @@ public class TaskDAO extends DBContext {
 	 
 	
 
-	public Task getTaskById(int id) {
-		Task task = null;
-		String sql = "select * from task_with_status where id = ?";
-
-		try {Connection conn = getConnection(); 
-			PreparedStatement pre = conn.prepareStatement(sql);
-			pre.setInt(1, id);
-			ResultSet rs = pre.executeQuery();
-			if (rs.next()) {
-				task = new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
-						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status"));
-			}
+//	public Task getTaskById(int id) {
+//		Task task = null;
+//		String sql = "select * from task_with_status where id = ?";
+//
+//		try {Connection conn = getConnection(); 
+//			PreparedStatement pre = conn.prepareStatement(sql);
+//			pre.setInt(1, id);
+//			ResultSet rs = pre.executeQuery();
+//			if (rs.next()) {
+//				task = new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
+//						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status"));
+//			}
 	public void updateTask(int id, String title, String desc, int managerId, int issueId) {
 		String sql = "UPDATE tasks SET title=?, description=?, manager_id=?, customer_issue_id=? WHERE id=?";
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

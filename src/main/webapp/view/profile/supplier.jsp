@@ -79,7 +79,9 @@
   </style>
 </head>
 <body>
-<jsp:include page="../common/header.jsp"></jsp:include>
+<jsp:include page="../admin/common/header.jsp"></jsp:include>
+<jsp:include page="../admin/common/sidebar.jsp"></jsp:include>
+<main class="sidebar-main">
 
 <div class="container-main">
   <h2>Quản lý nhà cung cấp</h2>
@@ -178,6 +180,6 @@
   </p>
 </div>
 
-<jsp:include page="../common/footer.jsp"></jsp:include>
+</main>
 </body>
 </html>

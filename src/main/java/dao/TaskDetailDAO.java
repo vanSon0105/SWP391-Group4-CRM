@@ -365,28 +365,28 @@ public class TaskDetailDAO extends DBContext{
     }
 
 
-            ps.setInt(1, taskId);
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    TaskDetail td = new TaskDetail();
-                    td.setId(rs.getInt("id"));
-                    td.setTaskId(rs.getInt("task_id"));
-                    td.setTechnicalStaffId(rs.getInt("technical_staff_id"));
-                    td.setAssignedAt(rs.getTimestamp("assigned_at"));
-                    td.setDeadline(rs.getTimestamp("deadline"));
-                    td.setStatus(rs.getString("status"));
-                    td.setStaffName(rs.getString("full_name"));
-                    td.setStaffEmail(rs.getString("email"));
-                    list.add(td);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
+//            ps.setInt(1, taskId);
+//            try (ResultSet rs = ps.executeQuery()) {
+//                while (rs.next()) {
+//                    TaskDetail td = new TaskDetail();
+//                    td.setId(rs.getInt("id"));
+//                    td.setTaskId(rs.getInt("task_id"));
+//                    td.setTechnicalStaffId(rs.getInt("technical_staff_id"));
+//                    td.setAssignedAt(rs.getTimestamp("assigned_at"));
+//                    td.setDeadline(rs.getTimestamp("deadline"));
+//                    td.setStatus(rs.getString("status"));
+//                    td.setStaffName(rs.getString("full_name"));
+//                    td.setStaffEmail(rs.getString("email"));
+//                    list.add(td);
+//                }
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return list;
+//    }
 
     public void assignStaffToTask(int taskId, int staffId, Timestamp deadline) {
         String sql = "INSERT INTO task_details (task_id, technical_staff_id, deadline) VALUES (?, ?, ?)";
@@ -396,20 +396,6 @@ public class TaskDetailDAO extends DBContext{
             ps.setInt(1, taskId);
             ps.setInt(2, staffId);
             ps.setTimestamp(3, deadline);
-            ps.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void unassignStaffFromTask(int taskId, int staffId) {
-        String sql = "DELETE FROM task_details WHERE task_id=? AND technical_staff_id=?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, taskId);
-            ps.setInt(2, staffId);
             ps.executeUpdate();
 
         } catch (Exception e) {
@@ -429,21 +415,6 @@ public class TaskDetailDAO extends DBContext{
     }
 
 
-    public void updateDeadline(int taskId, int staffId, Timestamp deadline) {
-        String sql = "UPDATE task_details SET deadline=? WHERE task_id=? AND technical_staff_id=?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setTimestamp(1, deadline);
-            ps.setInt(2, taskId);
-            ps.setInt(3, staffId);
-            ps.executeUpdate();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
     public void completeTaskDetails(int taskId) {
         String sql = "UPDATE task_details SET status=? WHERE task_id=?";
         
