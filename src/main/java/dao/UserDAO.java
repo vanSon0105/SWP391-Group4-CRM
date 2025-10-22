@@ -104,30 +104,7 @@ public class UserDAO {
         }
         return null;
     }
-    
-    private User extractUser(ResultSet rs) throws SQLException {
-        User u = new User();
-        u.setId(rs.getInt("id"));
-        u.setUsername(rs.getString("username"));
-        u.setPassword(rs.getString("password"));
-        u.setEmail(rs.getString("email"));
-        u.setImageUrl(rs.getString("image_url"));
-        u.setFullName(rs.getString("full_name"));
-        u.setPhone(rs.getString("phone"));
-        u.setGender(rs.getString("gender"));
-        u.setBirthday(rs.getDate("birthday"));
-        u.setRoleId(rs.getInt("role_id"));
-        u.setStatus(rs.getString("status"));
-        u.setCreatedAt(rs.getTimestamp("created_at"));
-        u.setLastLoginAt(rs.getTimestamp("last_login_at"));
-        try {
-            u.setUsernameChanged(rs.getBoolean("username_changed"));
-        } catch (SQLException ignore) {
-            u.setUsernameChanged(false);
-        }
-        return u;
-    }
-    
+        
     public boolean updateUsername(int userId, String newUsername) {
         String sql = "UPDATE users SET username = ?, username_changed = TRUE "
                    + "WHERE id = ? AND username_changed = FALSE";
@@ -363,6 +340,28 @@ public class UserDAO {
     	    }
     	    return null;
     }
+    
+    public boolean updateUser(User u) {
+        String sql = "UPDATE users SET email = ?, full_name = ?, phone = ?, role_id = ?, status = ? WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, u.getEmail());
+            ps.setString(2, u.getFullName());
+            ps.setString(3, u.getPhone());
+            ps.setInt(4, u.getRoleId());
+            ps.setString(5, u.getStatus());
+            ps.setInt(6, u.getId());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     
     
