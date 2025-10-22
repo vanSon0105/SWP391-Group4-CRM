@@ -28,13 +28,25 @@ public class AccountController extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
 
         HttpSession session = request.getSession(false);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+            return;
+        }
+
         User currentUser = (User) session.getAttribute("account");
         if (currentUser == null) {
             response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
             return;
         }
 
+        // Chỉ Admin mới được truy cập trang này
+        if (currentUser.getRoleId() != 1) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
+            return;
+        }
 
+
+        // Chỉ Admin mới được truy cập trang này
         if (currentUser.getRoleId() != 1) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
             return;
@@ -46,6 +58,9 @@ public class AccountController extends HttpServlet {
         switch (action) {
             case "detail":
                 showUserDetail(request, response);
+                break;
+            case "edit":
+                showEditForm(request, response);
                 break;
             case "search":
                 searchUsers(request, response);
@@ -69,14 +84,16 @@ public class AccountController extends HttpServlet {
         String action = request.getParameter("action");
         if ("add".equals(action)) {
             addUser(request, response);
+        } else if ("update".equals(action)) {
+            updateUser(request, response);
         } else {
             doGet(request, response);
         }
     }
 
+    
     private void listAllUsers(HttpServletRequest request, HttpServletResponse response, User currentUser)
             throws ServletException, IOException {
-
         List<User> users = userDAO.getAllUsers();
         request.setAttribute("account", currentUser);
         request.setAttribute("users", users);
@@ -85,31 +102,95 @@ public class AccountController extends HttpServlet {
         request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
     }
 
-	private void showUserDetail(HttpServletRequest request, HttpServletResponse response)
-	            throws ServletException, IOException {
-	        String idParam = request.getParameter("id");
-	
-	        if (idParam == null) {
-	            response.sendRedirect("account");
-	            return;
-	        }
-	
-	        try {
-	            int userId = Integer.parseInt(idParam);
-	            User userDetail = userDAO.getUserDetailsById(userId);
-	
-	            if (userDetail == null) {
-	                request.setAttribute("error", "Không tìm thấy người dùng!");
-	            } else {
-	                request.setAttribute("userDetail", userDetail);
-	            }
-	
-	            request.getRequestDispatcher("/view/profile/ViewAccountDetail.jsp").forward(request, response);
-	
-	        } catch (NumberFormatException e) {
-	            response.sendRedirect("account");
-	        }
-	    }
+    
+    private void showUserDetail(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idParam = request.getParameter("id");
+
+        if (idParam == null) {
+            response.sendRedirect("account");
+            return;
+        }
+
+        try {
+            int userId = Integer.parseInt(idParam);
+            User userDetail = userDAO.getUserDetailsById(userId);
+
+            if (userDetail == null) {
+                request.setAttribute("error", "Không tìm thấy người dùng!");
+            } else {
+                request.setAttribute("userDetail", userDetail);
+            }
+
+            request.getRequestDispatcher("/view/profile/ViewAccountDetail.jsp").forward(request, response);
+
+        } catch (NumberFormatException e) {
+            response.sendRedirect("account");
+        }
+    }
+
+   
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idParam = request.getParameter("id");
+
+        if (idParam == null) {
+            response.sendRedirect("account");
+            return;
+        }
+
+        try {
+            int userId = Integer.parseInt(idParam);
+            User user = userDAO.getUserById(userId);
+
+            if (user == null) {
+                request.setAttribute("error", "Không tìm thấy người dùng.");
+                request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+            } else {
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/view/profile/EditUser.jsp").forward(request, response);
+            }
+        } catch (NumberFormatException e) {
+            response.sendRedirect("account");
+        }
+    }
+
+    
+    private void updateUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String email = request.getParameter("email");
+            String fullName = request.getParameter("fullName");
+            String phone = request.getParameter("phone");
+            int roleId = Integer.parseInt(request.getParameter("roleId"));
+            String status = request.getParameter("status"); 
+
+
+            User user = new User();
+            user.setId(id);
+            user.setEmail(email);
+            user.setFullName(fullName);
+            user.setPhone(phone);
+            user.setRoleId(roleId);
+            user.setStatus(status);
+
+            boolean success = userDAO.updateUser(user);
+
+            if (success) {
+                response.sendRedirect(request.getContextPath() + "/account?msg=update_success");
+            } else {
+                request.setAttribute("error", "Cập nhật thất bại. Vui lòng thử lại.");
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/view/admin/edit-user.jsp").forward(request, response);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Đã xảy ra lỗi trong quá trình cập nhật.");
+            request.getRequestDispatcher("/view/admin/edit-user.jsp").forward(request, response);
+        }
+    }
 
     private void searchUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -125,8 +206,8 @@ public class AccountController extends HttpServlet {
 
         for (User u : allUsers) {
             if ((u.getUsername() != null && u.getUsername().toLowerCase().contains(keyword.toLowerCase()))
-                || (u.getFullName() != null && u.getFullName().toLowerCase().contains(keyword.toLowerCase()))
-                || (u.getEmail() != null && u.getEmail().toLowerCase().contains(keyword.toLowerCase()))) {
+                    || (u.getFullName() != null && u.getFullName().toLowerCase().contains(keyword.toLowerCase()))
+                    || (u.getEmail() != null && u.getEmail().toLowerCase().contains(keyword.toLowerCase()))) {
                 filtered.add(u);
             }
         }
@@ -137,6 +218,7 @@ public class AccountController extends HttpServlet {
         request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
     }
 
+    
     private void filterByRole(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -161,11 +243,12 @@ public class AccountController extends HttpServlet {
             request.setAttribute("filterRole", roleId);
             request.setAttribute("total", filtered.size());
             request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
-        	} catch (NumberFormatException e) {
-        		response.sendRedirect("account");
+        } catch (NumberFormatException e) {
+            response.sendRedirect("account");
         }
     }
-    
+
+
     private void addUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
@@ -194,8 +277,4 @@ public class AccountController extends HttpServlet {
             request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
         }
     }
-    
-    
-    
-    
 }

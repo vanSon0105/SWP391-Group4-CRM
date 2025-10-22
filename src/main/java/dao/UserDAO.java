@@ -363,6 +363,28 @@ public class UserDAO extends DBContext{
     	    }
     	    return null;
     }
+    
+    public boolean updateUser(User u) {
+        String sql = "UPDATE users SET email = ?, full_name = ?, phone = ?, role_id = ?, status = ? WHERE id = ?";
+
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, u.getEmail());
+            ps.setString(2, u.getFullName());
+            ps.setString(3, u.getPhone());
+            ps.setInt(4, u.getRoleId());
+            ps.setString(5, u.getStatus());
+            ps.setInt(6, u.getId());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
 
     
     
