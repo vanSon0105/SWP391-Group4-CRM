@@ -663,5 +663,40 @@ public class DeviceDAO extends DBContext {
 	    }
 	    return false;
 	}
+	
+	public List<Device> getBannerDevices(){
+		List<Device> list = new ArrayList<Device>();
+		String sql = "WITH BannerDevices AS (\r\n"
+				+ "    SELECT \r\n"
+				+ "        d.*, c.category_name,\r\n"
+				+ "        ROW_NUMBER() OVER(\r\n"
+				+ "            PARTITION BY d.category_id\r\n"
+				+ "            ORDER BY d.id ASC \r\n"
+				+ "        ) AS row_num\r\n"
+				+ "    FROM devices d\r\n"
+				+ "    JOIN categories c ON d.category_id = c.id\r\n"
+				+ ")\r\n"
+				+ "SELECT * FROM BannerDevices\r\n"
+				+ "WHERE row_num = 1;";
+		try (Connection connection = getConnection();
+		     PreparedStatement ps = connection.prepareStatement(sql)) {
+			 ResultSet rs = ps.executeQuery();
+			 while (rs.next()) {
+				Category c = new Category();
+				c.setName(rs.getString("category_name"));
+				Device d = new Device();
+				d.setId(rs.getInt("id"));
+				d.setCategory(c);
+				d.setName(rs.getString("name"));
+				d.setDesc(rs.getString("description"));
+				d.setPrice(rs.getDouble("price"));
+				d.setWarrantyMonth(rs.getInt("warrantyMonth"));
+				list.add(d);
+			}
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
+		    return list;
+	}
 
 }

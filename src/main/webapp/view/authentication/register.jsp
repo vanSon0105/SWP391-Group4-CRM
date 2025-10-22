@@ -64,7 +64,7 @@
          <small class="error"></small>
   </div>
 
-  <div style="display:grid; gap:8px; text-align:left;">
+ <%--  <div style="display:grid; gap:8px; text-align:left;">
       <label for="role">Mục đích sử dụng</label>
       <select id="role" name="role" required>
         <option value="">-- Chọn mục đích --</option>
@@ -73,7 +73,7 @@
           <option>Đăng ký dịch vụ sửa chữa</option>
       </select>
          <small class="error"></small>
-  </div>
+  </div>--%>
 
   <button type="submit">Đăng ký</button>
 </form>

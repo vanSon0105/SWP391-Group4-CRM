@@ -15,6 +15,7 @@ public class Device {
 	private Boolean isFeatured;
 	private int device_inventory;
 	private String status;
+	private int warrantyMonth;
 
 	public Device() {}
 
@@ -101,6 +102,35 @@ public class Device {
 		this.isFeatured = is_featured;
 		this.device_inventory = device_inventory;
 		this.status = status;
+	}
+	
+	
+
+	public Device(int id, Category category, String name, double price, String unit, String imageUrl, int total_sold,
+			String desc, Timestamp created_at, Boolean isFeatured, int device_inventory, String status,
+			int warrantyMonth) {
+		super();
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.unit = unit;
+		this.imageUrl = imageUrl;
+		this.total_sold = total_sold;
+		this.desc = desc;
+		this.created_at = created_at;
+		this.isFeatured = isFeatured;
+		this.device_inventory = device_inventory;
+		this.status = status;
+		this.warrantyMonth = warrantyMonth;
+	}
+
+	public int getWarrantyMonth() {
+		return warrantyMonth;
+	}
+
+	public void setWarrantyMonth(int warrantyMonth) {
+		this.warrantyMonth = warrantyMonth;
 	}
 
 	public Boolean getIsFeatured() {

@@ -1,12 +1,13 @@
 package dao;
 
 import model.User;
+import utils.PasswordUtils;
+
 import java.sql.*;
 import java.util.*;
 import dal.DBContext;
 
-public class UserDAO {
-    private Connection conn;
+public class UserDAO extends DBContext{
     
     public List<User> getUsersByRole(int roleId) {
         List<User> list = new ArrayList<>();
@@ -48,7 +49,7 @@ public class UserDAO {
 
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, user.getUsername());
-            stmt.setString(2, user.getPassword());
+            stmt.setString(2, PasswordUtils.hashPassword(user.getPassword()));
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getImageUrl());
             stmt.setString(5, user.getFullName());
@@ -82,17 +83,16 @@ public class UserDAO {
     }
     
     public User getUserByLogin(String email, String password) {
-        String sql = "SELECT * FROM Users WHERE email = ? AND password = ?";
+        String sql = "SELECT * FROM Users WHERE email = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, email);
-            ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
+            if (rs.next() && PasswordUtils.verifyPassword(password, rs.getString("password"))) {
                 User u = new User();
                 u.setId(rs.getInt("id"));
                 u.setUsername(rs.getString("username"));
-                u.setPassword(rs.getString("password"));
+                u.setPassword(null);
                 u.setEmail(rs.getString("email"));             
                 u.setPhone(rs.getString("phone"));
                 u.setStatus(rs.getString("status"));
@@ -105,28 +105,28 @@ public class UserDAO {
         return null;
     }
     
-    private User extractUser(ResultSet rs) throws SQLException {
-        User u = new User();
-        u.setId(rs.getInt("id"));
-        u.setUsername(rs.getString("username"));
-        u.setPassword(rs.getString("password"));
-        u.setEmail(rs.getString("email"));
-        u.setImageUrl(rs.getString("image_url"));
-        u.setFullName(rs.getString("full_name"));
-        u.setPhone(rs.getString("phone"));
-        u.setGender(rs.getString("gender"));
-        u.setBirthday(rs.getDate("birthday"));
-        u.setRoleId(rs.getInt("role_id"));
-        u.setStatus(rs.getString("status"));
-        u.setCreatedAt(rs.getTimestamp("created_at"));
-        u.setLastLoginAt(rs.getTimestamp("last_login_at"));
-        try {
-            u.setUsernameChanged(rs.getBoolean("username_changed"));
-        } catch (SQLException ignore) {
-            u.setUsernameChanged(false);
-        }
-        return u;
-    }
+//    private User extractUser(ResultSet rs) throws SQLException {
+//        User u = new User();
+//        u.setId(rs.getInt("id"));
+//        u.setUsername(rs.getString("username"));
+//        u.setPassword(null);
+//        u.setEmail(rs.getString("email"));
+//        u.setImageUrl(rs.getString("image_url"));
+//        u.setFullName(rs.getString("full_name"));
+//        u.setPhone(rs.getString("phone"));
+//        u.setGender(rs.getString("gender"));
+//        u.setBirthday(rs.getDate("birthday"));
+//        u.setRoleId(rs.getInt("role_id"));
+//        u.setStatus(rs.getString("status"));
+//        u.setCreatedAt(rs.getTimestamp("created_at"));
+//        u.setLastLoginAt(rs.getTimestamp("last_login_at"));
+//        try {
+//            u.setUsernameChanged(rs.getBoolean("username_changed"));
+//        } catch (SQLException ignore) {
+//            u.setUsernameChanged(false);
+//        }
+//        return u;
+//    }
     
     public boolean updateUsername(int userId, String newUsername) {
         String sql = "UPDATE users SET username = ?, username_changed = TRUE "
@@ -193,11 +193,12 @@ public class UserDAO {
 
         return list;
     }
+    
     public void updatePassword(String email, String newPassword) {
-        try {
-            PreparedStatement ps = conn.prepareStatement(
-                "UPDATE users SET password = ? WHERE email = ?");
-            ps.setString(1, newPassword);
+        String sql = "UPDATE users SET password = ? WHERE email = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, PasswordUtils.hashPassword(newPassword));
             ps.setString(2, email);
             ps.executeUpdate();
         } catch (SQLException e) {
@@ -220,7 +221,6 @@ public class UserDAO {
                 u.setPhone(rs.getString("phone"));
                 u.setImageUrl(rs.getString("image_url"));
                 u.setUsername(rs.getString("username"));
-                u.setPassword(rs.getString("password"));
                 u.setRoleId(rs.getInt("role_id"));
                 return u;
             }

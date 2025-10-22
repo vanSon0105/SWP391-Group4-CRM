@@ -7,6 +7,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
 
 @WebServlet("/register")
@@ -20,26 +22,27 @@ public class RegisterController extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-
+        HttpSession session = request.getSession();
+        session.setAttribute("mss", "Đăng Ký Tài Khoản Thành Công");
         String name = request.getParameter("name");
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
-        String role = request.getParameter("role");
+        int roleId = 6;
 
-        int roleId;
-        switch (role) {
-            case "Doanh nghiệp":
-                roleId = 2;
-                break;
-            case "Đăng ký dịch vụ sửa chữa":
-                roleId = 3;
-                break;
-            default:
-                roleId = 1;
-                break;
-        }
+//        int roleId;
+//        switch (role) {
+//            case "Doanh nghiệp":
+//                roleId = 2;
+//                break;
+//            case "Đăng ký dịch vụ sửa chữa":
+//                roleId = 3;
+//                break;
+//            default:
+//                roleId = 1;
+//                break;
+//        }
 
         User user = new User();
         user.setFullName(name);
@@ -55,10 +58,11 @@ public class RegisterController extends HttpServlet {
         boolean success = dao.registerUser(user);
 
         if (success) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+        	session.setAttribute("mss", "Đăng Ký Tài Khoản Thành Công");
+            response.sendRedirect("login");
         } else {
             request.setAttribute("error", "Tên đăng nhập hoặc email đã tồn tại!");
-            request.getRequestDispatcher("/view/authentication/register.jsp").forward(request, response);
+            response.sendRedirect("register");
         }
     }
 }

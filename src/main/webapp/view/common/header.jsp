@@ -42,7 +42,7 @@
                 </div>
                 <div class="header-bottom">
                     <c:if test="${sessionScope.account == null}">
-                        <form action="login" method="post" style="display:inline;">
+                        <form action="login" method="get" style="display:inline;">
                             <button type="submit" class="order-btn login-btn">
                                 Login
                             </button>

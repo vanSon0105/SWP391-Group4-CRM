@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -15,8 +16,10 @@
 
     <section class="card">
         <h1>Xác nhận mã OTP</h1>
-        <p>Nhập mã OTP đã được gửi đến email của bạn và đặt lại mật khẩu mới.</p>
-
+        <c:if test="${sessionScope.mss != null}">
+        	<p style="color: green;">${sessionScope.mss}</p>
+        </c:if>
+        	
         <form action="VerifyOTPController" method="post" style="display:grid; gap:12px;">
             <div style="display:grid; gap:8px; text-align:left;">
                 <label for="otp">Mã OTP</label>
@@ -31,7 +34,7 @@
             <button type="submit">Xác nhận</button>
         </form>
 
-        <a href="login.jsp" style="margin-top:10px; display:inline-block;">Quay về đăng nhập</a>
+        <a href="login" style="margin-top:10px; display:inline-block;">Quay về đăng nhập</a>
 
         <p style="color:red; text-align:center;">
             ${error != null ? error : ""}

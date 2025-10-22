@@ -56,11 +56,12 @@ public class SendOTPController extends HttpServlet {
 	            Message message = new MimeMessage(mailSession);
 	            message.setFrom(new InternetAddress(from));
 	            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
-	            message.setSubject("NovaCare - Mã OTP đặt lại mật khẩu");
+	            message.setSubject("TechShop - Mã OTP đặt lại mật khẩu");
 	            message.setText("Xin chào,\n\nMã OTP đặt lại mật khẩu của bạn là: " + otp +
 	                    "\nMã này có hiệu lực trong 5 phút.\n\nTrân trọng,\nĐội ngũ TechShop");
 
 	            Transport.send(message);
+	            session.setAttribute("mss", "Đã gửi mã OTP thành công - Nhập mã OTP đã được gửi đến email của bạn và đặt lại mật khẩu mới");
 	            request.getRequestDispatcher("/view/authentication/verifyOTP.jsp").forward(request, response);
 	        } catch (MessagingException e) {
 	            e.printStackTrace();

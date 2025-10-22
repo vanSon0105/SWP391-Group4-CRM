@@ -41,6 +41,7 @@ CREATE TABLE devices (
   description text,
   created_at timestamp default current_timestamp,
   is_featured BOOLEAN DEFAULT FALSE,
+  warrantyMonth int,
   status ENUM('active', 'discontinued') DEFAULT 'active',
   foreign key (category_id) references categories(id)
 );
@@ -306,21 +307,53 @@ INSERT INTO categories (category_name) VALUES
 ('Printer'),
 ('Spare Parts');
 
-INSERT INTO devices (category_id, name, price, unit, image_url, description) VALUES
-(1, 'Dell XPS 13', 27990000, 'pcs', NULL, '13" ultrabook, Intel Core, 16GB RAM, 512GB SSD, ~1.2kg; phù hợp di động/doanh nhân.'),
-(1, 'MacBook Pro 14', 54990000, 'pcs', NULL, '14" laptop Apple Silicon, màn Liquid Retina XDR, thời lượng pin dài; máy trạm sáng tạo.'),
-(2, 'iPhone 15', 24990000, 'pcs', NULL, 'Smartphone 6.1", chip A16, camera cải thiện, sạc USB-C; flagship cân bằng hiệu năng.'),
-(2, 'Samsung Galaxy S24', 21990000, 'pcs', NULL, 'Flagship 6.2", màn AMOLED 120Hz, Exynos/Snapdragon, AI features; chụp ảnh mạnh.'),
-(4, 'Laptop Charger 65W', 490000, 'pcs', NULL, 'Sạc laptop 65W (DC/USB-C tuỳ mẫu), bảo vệ quá dòng/quá nhiệt; phù hợp đa số ultrabook.'),
-(4, 'iPhone Case', 290000, 'pcs', NULL, 'Ốp bảo vệ silicon/TPU, chống trầy xước, bám tay tốt; viền nhô bảo vệ camera/màn hình.'),
-(3, 'HP LaserJet Pro M404', 8490000, 'pcs', NULL, 'Máy in laser đơn sắc A4, ~38 ppm, kết nối USB/Ethernet; in văn phòng bền bỉ.'),
-(3, 'Canon Pixma G3020', 5990000, 'pcs', NULL, 'Máy in phun bình mực liên tục (G-Series), in màu, Wi-Fi, copy/scan; chi phí trang thấp.'),
-(1, 'Lenovo ThinkPad X1 Carbon', 42990000, 'pcs', NULL, '14" business ultralight, khung carbon, bàn phím ThinkPad, nhiều cổng; bền đạt chuẩn MIL-STD.'),
-(1, 'ASUS ROG Zephyrus G14', 45990000, 'pcs', NULL, '14" gaming mỏng nhẹ, Ryzen + GeForce RTX, màn 120–165Hz; cân bằng game/đồ hoạ.'),
-(2, 'Samsung Galaxy Tab S9', 19990000, 'pcs', NULL, 'Tablet AMOLED ~11", S Pen kèm, DeX, IP68; ghi chú và giải trí tốt.'),
-(2, 'iPad Air (5th Gen)', 14990000, 'pcs', NULL, 'Tablet 10.9" chip M1, Apple Pencil/Keyboard, màn Liquid Retina; tối ưu học tập/sáng tạo.'),
-(4, 'Printer Toner Cartridge', 890000, 'pcs', NULL, 'Hộp mực laser tương thích M404, năng suất ~3.000 trang; dễ thay thế, mực đều.'),
-(4, 'USB-C Cable 1m', 199000, 'pcs', NULL, 'Cáp USB-C to C 1m, sạc đến 60W/3A, truyền dữ liệu; lõi bền, đầu nối chắc.');
+INSERT INTO devices (category_id, name, price, unit, image_url, description, warrantyMonth) VALUES
+(1, 'Dell XPS 13', 27990000, 'pcs', NULL, '13" ultrabook, Intel Core, 16GB RAM, 512GB SSD, ~1.2kg; phù hợp di động/doanh nhân.', 12),
+(1, 'MacBook Pro 14', 54990000, 'pcs', NULL, '14" laptop Apple Silicon, màn Liquid Retina XDR, thời lượng pin dài; máy trạm sáng tạo.', 24),
+(2, 'iPhone 15', 24990000, 'pcs', NULL, 'Smartphone 6.1", chip A16, camera cải thiện, sạc USB-C; flagship cân bằng hiệu năng.', 12),
+(2, 'Samsung Galaxy S24', 21990000, 'pcs', NULL, 'Flagship 6.2", màn AMOLED 120Hz, Exynos/Snapdragon, AI features; chụp ảnh mạnh.', 24),
+(4, 'Laptop Charger 65W', 490000, 'pcs', NULL, 'Sạc laptop 65W (DC/USB-C tuỳ mẫu), bảo vệ quá dòng/quá nhiệt; phù hợp đa số ultrabook.', 6),
+(4, 'iPhone Case', 290000, 'pcs', NULL, 'Ốp bảo vệ silicon/TPU, chống trầy xước, bám tay tốt; viền nhô bảo vệ camera/màn hình.', 6),
+(3, 'HP LaserJet Pro M404', 8490000, 'pcs', NULL, 'Máy in laser đơn sắc A4, ~38 ppm, kết nối USB/Ethernet; in văn phòng bền bỉ.', 24),
+(3, 'Canon Pixma G3020', 5990000, 'pcs', NULL, 'Máy in phun bình mực liên tục (G-Series), in màu, Wi-Fi, copy/scan; chi phí trang thấp.', 12),
+(1, 'Lenovo ThinkPad X1 Carbon', 42990000, 'pcs', NULL, '14" business ultralight, khung carbon, bàn phím ThinkPad, nhiều cổng; bền đạt chuẩn MIL-STD.', 24),
+(1, 'ASUS ROG Zephyrus G14', 45990000, 'pcs', NULL, '14" gaming mỏng nhẹ, Ryzen + GeForce RTX, màn 120–165Hz; cân bằng game/đồ hoạ.', 24),
+(2, 'Samsung Galaxy Tab S9', 19990000, 'pcs', NULL, 'Tablet AMOLED ~11", S Pen kèm, DeX, IP68; ghi chú và giải trí tốt.', 12),
+(2, 'iPad Air (5th Gen)', 14990000, 'pcs', NULL, 'Tablet 10.9" chip M1, Apple Pencil/Keyboard, màn Liquid Retina; tối ưu học tập/sáng tạo.', 24),
+(4, 'Printer Toner Cartridge', 890000, 'pcs', NULL, 'Hộp mực laser tương thích M404, năng suất ~3.000 trang; dễ thay thế, mực đều.', 6),
+(4, 'USB-C Cable 1m', 199000, 'pcs', NULL, 'Cáp USB-C to C 1m, sạc đến 60W/3A, truyền dữ liệu; lõi bền, đầu nối chắc.', 6);
+
+INSERT INTO devices (category_id, name, price, unit, image_url, description, warrantyMonth) VALUES
+(1, 'Dell XPS 15', 48990000, 'pcs', NULL, '15.6" OLED, Intel Core Ultra 9, NVIDIA RTX 40-series; máy trạm sáng tạo mạnh mẽ.', 24),
+(1, 'Lenovo Yoga 9i 14', 38990000, 'pcs', NULL, '14" 2-in-1, màn hình OLED 4K, Bowers & Wilkins soundbar; thiết kế xoay gập cao cấp.', 24),
+(1, 'HP Envy x360 15', 24990000, 'pcs', NULL, '15.6" 2-in-1, AMD Ryzen 7, màn cảm ứng; laptop linh hoạt cho công việc và giải trí.', 12),
+(1, 'Acer Swift Go 14', 21990000, 'pcs', NULL, '14" OLED, Intel Core Ultra 7, siêu mỏng nhẹ; tối ưu cho di động và hiệu năng.', 12),
+(1, 'ASUS Zenbook Duo', 51990000, 'pcs', NULL, 'Laptop 2 màn hình 14" OLED, bàn phím rời; trải nghiệm đa nhiệm đỉnh cao.', 24),
+(1, 'Samsung Galaxy Book4 Ultra', 59990000, 'pcs', NULL, '16" Dynamic AMOLED 2X, Intel Core Ultra 9, RTX 4070; hiệu năng cao trong hệ sinh thái Samsung.', 24),
+(1, 'Lenovo Legion 5 Pro', 39990000, 'pcs', NULL, '16" gaming, màn QHD+ 165Hz, AMD Ryzen + RTX; tản nhiệt hiệu quả, hiệu năng ổn định.', 24),
+(1, 'HP Omen 16', 41990000, 'pcs', NULL, '16.1" gaming, Intel Core i7, RTX 4060, tản nhiệt OMEN Tempest; thiết kế hiện đại.', 24),
+(1, 'Microsoft Surface Pro 9', 32990000, 'pcs', NULL, '13" 2-in-1, Intel Core i7, màn PixelSense 120Hz; kết hợp sức mạnh laptop và sự linh hoạt tablet.', 12),
+(1, 'Dell Inspiron 16', 19990000, 'pcs', NULL, '16" FHD+, Intel Core i5/i7, RAM DDR5; laptop văn phòng màn hình lớn, giá hợp lý.', 12),
+(1, 'Acer Predator Helios 300', 37990000, 'pcs', NULL, '15.6" QHD 165Hz, Intel Core i7, RTX 30-series; laptop gaming tầm trung phổ biến.', 24),
+(1, 'Lenovo IdeaPad Slim 5', 18990000, 'pcs', NULL, '14" OLED, AMD Ryzen 5, thiết kế mỏng nhẹ; lựa chọn tốt cho sinh viên, văn phòng.', 12),
+(1, 'ASUS Vivobook Pro 15 OLED', 28990000, 'pcs', NULL, '15.6" OLED, AMD Ryzen 9, NVIDIA RTX; dành cho nhà sáng tạo nội dung.', 12),
+(1, 'Framework Laptop 13', 29990000, 'pcs', NULL, '13.5" laptop module, cho phép tự nâng cấp và sửa chữa; bền vững và tùy biến cao.', 12),
+(1, 'MSI Katana 15', 25990000, 'pcs', NULL, '15.6" 144Hz, Intel Core i7, RTX 4050; laptop gaming nhập môn với bàn phím RGB.', 12),
+(2, 'Samsung Galaxy S24 Ultra', 33990000, 'pcs', NULL, 'Flagship 6.8", bút S Pen, khung Titan, camera 200MP; đỉnh cao nhiếp ảnh và Galaxy AI.', 24),
+(2, 'iPhone 15 Pro Max', 35990000, 'pcs', NULL, 'Smartphone 6.7", chip A17 Pro, camera tele 5x, pin tốt nhất; lựa chọn cao cấp nhất của Apple.', 12),
+(2, 'Google Pixel 9 Pro', 28990000, 'pcs', NULL, 'Flagship Google, chip Tensor G4, hệ thống camera chuyên nghiệp với tính năng AI độc quyền.', 12),
+(2, 'Samsung Galaxy Z Flip 5', 25990000, 'pcs', NULL, 'Điện thoại gập vỏ sò, màn hình ngoài Flex Window lớn; nhỏ gọn, thời trang và linh hoạt.', 12),
+(2, 'Xiaomi 14 Ultra', 32990000, 'pcs', NULL, 'Hệ thống camera Leica Summilux, cảm biến 1-inch, quay video 8K; smartphone chuyên chụp ảnh.', 24),
+(2, 'Sony Xperia 1 VI', 34990000, 'pcs', NULL, 'Màn hình 4K, camera tele zoom quang học thực, các tính năng chuyên nghiệp từ máy ảnh Alpha.', 12),
+(2, 'Nothing Phone (3)', 16990000, 'pcs', NULL, 'Thiết kế trong suốt độc đáo với giao diện Glyph, trải nghiệm Android tối giản và khác biệt.', 12),
+(2, 'Motorola Razr+', 24990000, 'pcs', NULL, 'Điện thoại gập vỏ sò, màn hình ngoài lớn nhất phân khúc, thiết kế da vegan cao cấp.', 12),
+(2, 'Oppo Find X7 Ultra', 30990000, 'pcs', NULL, 'Camera Hasselblad, hai camera tele tiềm vọng; khả năng zoom và chụp chân dung ấn tượng.', 12),
+(2, 'Vivo X100 Pro', 29990000, 'pcs', NULL, 'Camera ZEISS APO, chip Dimensity 9300, chuyên gia chụp ảnh thiếu sáng và tele.', 12),
+(2, 'Samsung Galaxy A55', 9990000, 'pcs', NULL, 'Smartphone tầm trung, khung kim loại, màn Super AMOLED 120Hz, kháng nước IP67; cân bằng tốt.', 12),
+(2, 'iPhone SE (4th Gen)', 12990000, 'pcs', NULL, 'Thiết kế giống iPhone 14, chip A-series mạnh mẽ, nút Action; lựa chọn iPhone giá rẻ nhất.', 12),
+(2, 'Google Pixel 8a', 13990000, 'pcs', NULL, 'Trải nghiệm AI của Google với giá tầm trung, camera chụp ảnh đẹp, cập nhật phần mềm lâu dài.', 12),
+(2, 'OnePlus Nord 4', 11990000, 'pcs', NULL, 'Hiệu năng mạnh mẽ trong tầm giá, sạc nhanh SUPERVOOC, màn hình mượt mà.', 12),
+(2, 'Xiaomi Redmi Note 14 Pro', 8990000, 'pcs', NULL, 'Smartphone tầm trung với camera 200MP, sạc nhanh 120W, màn hình AMOLED 120Hz.', 12);
 
 INSERT INTO device_serials (id, device_id, serial_no, status, import_date) VALUES
 (1, 3, 'IP15-SN0001', 'in_stock', '2025-09-01 00:00:00'),
@@ -1047,38 +1080,6 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 (5, 31), (5, 32), (5, 33), (5, 34);
 -- Customer
 INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 24), (6, 25), (6, 26), (6, 27), (6, 30), (6, 37);
-
-INSERT INTO devices (id, category_id, name, price, unit, image_url, description) VALUES
-(25, 1, 'Dell XPS 15', 48990000, 'pcs', NULL, '15.6" OLED, Intel Core Ultra 9, NVIDIA RTX 40-series; máy trạm sáng tạo mạnh mẽ.'),
-(26, 1, 'Lenovo Yoga 9i 14', 38990000, 'pcs', NULL, '14" 2-in-1, màn hình OLED 4K, Bowers & Wilkins soundbar; thiết kế xoay gập cao cấp.'),
-(27, 1, 'HP Envy x360 15', 24990000, 'pcs', NULL, '15.6" 2-in-1, AMD Ryzen 7, màn cảm ứng; laptop linh hoạt cho công việc và giải trí.'),
-(28, 1, 'Acer Swift Go 14', 21990000, 'pcs', NULL, '14" OLED, Intel Core Ultra 7, siêu mỏng nhẹ; tối ưu cho di động và hiệu năng.'),
-(29, 1, 'ASUS Zenbook Duo', 51990000, 'pcs', NULL, 'Laptop 2 màn hình 14" OLED, bàn phím rời; trải nghiệm đa nhiệm đỉnh cao.'),
-(30, 1, 'Samsung Galaxy Book4 Ultra', 59990000, 'pcs', NULL, '16" Dynamic AMOLED 2X, Intel Core Ultra 9, RTX 4070; hiệu năng cao trong hệ sinh thái Samsung.'),
-(31, 1, 'Lenovo Legion 5 Pro', 39990000, 'pcs', NULL, '16" gaming, màn QHD+ 165Hz, AMD Ryzen + RTX; tản nhiệt hiệu quả, hiệu năng ổn định.'),
-(32, 1, 'HP Omen 16', 41990000, 'pcs', NULL, '16.1" gaming, Intel Core i7, RTX 4060, tản nhiệt OMEN Tempest; thiết kế hiện đại.'),
-(33, 1, 'Microsoft Surface Pro 9', 32990000, 'pcs', NULL, '13" 2-in-1, Intel Core i7, màn PixelSense 120Hz; kết hợp sức mạnh laptop và sự linh hoạt tablet.'),
-(34, 1, 'Dell Inspiron 16', 19990000, 'pcs', NULL, '16" FHD+, Intel Core i5/i7, RAM DDR5; laptop văn phòng màn hình lớn, giá hợp lý.'),
-(35, 1, 'Acer Predator Helios 300', 37990000, 'pcs', NULL, '15.6" QHD 165Hz, Intel Core i7, RTX 30-series; laptop gaming tầm trung phổ biến.'),
-(36, 1, 'Lenovo IdeaPad Slim 5', 18990000, 'pcs', NULL, '14" OLED, AMD Ryzen 5, thiết kế mỏng nhẹ; lựa chọn tốt cho sinh viên, văn phòng.'),
-(37, 1, 'ASUS Vivobook Pro 15 OLED', 28990000, 'pcs', NULL, '15.6" OLED, AMD Ryzen 9, NVIDIA RTX; dành cho nhà sáng tạo nội dung.'),
-(38, 1, 'Framework Laptop 13', 29990000, 'pcs', NULL, '13.5" laptop module, cho phép tự nâng cấp và sửa chữa; bền vững và tùy biến cao.'),
-(39, 1, 'MSI Katana 15', 25990000, 'pcs', NULL, '15.6" 144Hz, Intel Core i7, RTX 4050; laptop gaming nhập môn với bàn phím RGB.'),
-(40, 2, 'Samsung Galaxy S24 Ultra', 33990000, 'pcs', NULL, 'Flagship 6.8", bút S Pen, khung Titan, camera 200MP; đỉnh cao nhiếp ảnh và Galaxy AI.'),
-(41, 2, 'iPhone 15 Pro Max', 35990000, 'pcs', NULL, 'Smartphone 6.7", chip A17 Pro, camera tele 5x, pin tốt nhất; lựa chọn cao cấp nhất của Apple.'),
-(42, 2, 'Google Pixel 9 Pro', 28990000, 'pcs', NULL, 'Flagship Google, chip Tensor G4, hệ thống camera chuyên nghiệp với tính năng AI độc quyền.'),
-(43, 2, 'Samsung Galaxy Z Flip 5', 25990000, 'pcs', NULL, 'Điện thoại gập vỏ sò, màn hình ngoài Flex Window lớn; nhỏ gọn, thời trang và linh hoạt.'),
-(44, 2, 'Xiaomi 14 Ultra', 32990000, 'pcs', NULL, 'Hệ thống camera Leica Summilux, cảm biến 1-inch, quay video 8K; smartphone chuyên chụp ảnh.'),
-(45, 2, 'Sony Xperia 1 VI', 34990000, 'pcs', NULL, 'Màn hình 4K, camera tele zoom quang học thực, các tính năng chuyên nghiệp từ máy ảnh Alpha.'),
-(46, 2, 'Nothing Phone (3)', 16990000, 'pcs', NULL, 'Thiết kế trong suốt độc đáo với giao diện Glyph, trải nghiệm Android tối giản và khác biệt.'),
-(47, 2, 'Motorola Razr+', 24990000, 'pcs', NULL, 'Điện thoại gập vỏ sò, màn hình ngoài lớn nhất phân khúc, thiết kế da vegan cao cấp.'),
-(48, 2, 'Oppo Find X7 Ultra', 30990000, 'pcs', NULL, 'Camera Hasselblad, hai camera tele tiềm vọng; khả năng zoom và chụp chân dung ấn tượng.'),
-(49, 2, 'Vivo X100 Pro', 29990000, 'pcs', NULL, 'Camera ZEISS APO, chip Dimensity 9300, chuyên gia chụp ảnh thiếu sáng và tele.'),
-(50, 2, 'Samsung Galaxy A55', 9990000, 'pcs', NULL, 'Smartphone tầm trung, khung kim loại, màn Super AMOLED 120Hz, kháng nước IP67; cân bằng tốt.'),
-(51, 2, 'iPhone SE (4th Gen)', 12990000, 'pcs', NULL, 'Thiết kế giống iPhone 14, chip A-series mạnh mẽ, nút Action; lựa chọn iPhone giá rẻ nhất.'),
-(52, 2, 'Google Pixel 8a', 13990000, 'pcs', NULL, 'Trải nghiệm AI của Google với giá tầm trung, camera chụp ảnh đẹp, cập nhật phần mềm lâu dài.'),
-(53, 2, 'OnePlus Nord 4', 11990000, 'pcs', NULL, 'Hiệu năng mạnh mẽ trong tầm giá, sạc nhanh SUPERVOOC, màn hình mượt mà.'),
-(54, 2, 'Xiaomi Redmi Note 14 Pro', 8990000, 'pcs', NULL, 'Smartphone tầm trung với camera 200MP, sạc nhanh 120W, màn hình AMOLED 120Hz.');
 
 UPDATE devices
 SET is_featured = TRUE

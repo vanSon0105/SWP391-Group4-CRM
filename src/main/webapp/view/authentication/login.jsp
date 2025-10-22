@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -14,10 +15,13 @@
 <body class="shop-page login-page">
 <jsp:include page="../common/header.jsp"></jsp:include>
     <section class="card" style="margin: auto 0;">
-        <h1>Đăng nhập NovaCare</h1>
+        <h1>Đăng nhập TechShop</h1>
         <p>Truy cập đơn hàng, bảo hành, lịch sửa chữa và ưu đãi dành riêng cho bạn.</p>
+        <c:if test="${sessionScope.mss != null}">
+		    <p style="color:green;">${sessionScope.mss}</p>
+		</c:if>
         
-        <form action="${pageContext.request.contextPath}/login" method="post">
+        <form action="login" method="post">
             <div style="display:grid; gap:10px; text-align:left;">
                 <label for="email">Email</label>
                 <input id="email" name="email" type="text" placeholder="Nhập email" required>
@@ -29,16 +33,17 @@
             </div>
 
             <div class="links">
-                 <a href="${pageContext.request.contextPath}/view/authentication/forgot-password.jsp">Quên mật khẩu?</a>
-    			<a href="${pageContext.request.contextPath}/view/authentication/register.jsp">Đăng ký tài khoản</a>
+                 <a href="forgot-password">Quên mật khẩu?</a>
+    			<a href="register">Đăng ký tài khoản</a>
             </div>
 
             <button type="submit">Đăng nhập</button>
         </form>
 
-        <% if (request.getAttribute("error") != null) { %>
-            <p style="color:red;"><%= request.getAttribute("error") %></p>
-        <% } %>
+        <c:if test="${sessionScope.error != null}">
+		    <p style="color:red;">${sessionScope.error}</p>
+		</c:if>
+
 
         <p class="register">Chưa có tài khoản? <a href="register">Tạo tài khoản ngay</a></p>
     </section>
