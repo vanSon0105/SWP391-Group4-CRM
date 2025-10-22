@@ -130,7 +130,7 @@ table tbody tr td {
 					<div class="cta" style="margin-top: 20px">
 						<button type="submit" class="cta-btn">Xác nhận
 							thanh toán</button> 
-						<a href="cart.jsp" class="cta-btn"
+						<a href="cart" class="cta-btn"
 							style="background: linear-gradient(90deg, #f97316, #fb7185); box-shadow: 0 18px 36px rgba(249, 115, 22, 0.28);">Quay
 							lại giỏ hàng</a>
 					</div>

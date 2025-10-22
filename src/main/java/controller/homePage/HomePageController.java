@@ -33,6 +33,9 @@ public class HomePageController extends HttpServlet {
 	}
 	
 	private void listDevices(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		//Banner Devices
+		List<Device> getBannerList = dao.getBannerDevices();
+		
 		//Best Selling Device
 		String bestSellingPagetring = req.getParameter("bpage");
 		int currentBestSellingPage = (bestSellingPagetring != null) ? Integer.parseInt(bestSellingPagetring) : 1;
@@ -43,7 +46,7 @@ public class HomePageController extends HttpServlet {
 		int currentNewPage = (newPageString != null) ? Integer.parseInt(newPageString) : 1;
 		int newOffset = (currentNewPage - 1) * recordsEachPage;
 		
-		//Best Selling Device
+		//Featured Device
 		String featuredPageString = req.getParameter("fpage");
 		int currentFeaturedPage = (featuredPageString != null) ? Integer.parseInt(featuredPageString) : 1;
 		int featuredOffset = (currentFeaturedPage - 1) * recordsEachPage;
@@ -60,6 +63,8 @@ public class HomePageController extends HttpServlet {
 		List<Device> getFeaturedDevicesList = dao.getFeaturedDevicesList(featuredOffset, recordsEachPage);
 		int totalFeaturedDevices = dao.getTotalFeaturedDevices();
 		int totalFeaturedDevicesPages = (int) Math.ceil((double) totalFeaturedDevices / recordsEachPage);
+		
+		req.setAttribute("bannerList", getBannerList);
 		
 		req.setAttribute("listFeatured", getFeaturedDevicesList);
 		req.setAttribute("currentFeaturedPage", currentFeaturedPage);

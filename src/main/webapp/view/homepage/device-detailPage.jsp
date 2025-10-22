@@ -476,18 +476,16 @@
         </p>
         <div class="cta-inline">
           <a href="device-detail?id=${rel.id}" class="buy-now"><i class="fa-solid fa-eye"></i> Xem chi tiết</a>
-          <a href="add-to-cart?id=${rel.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+          <a href="cart-add?id=${rel.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
         </div>
       </div>
     </c:forEach>
   </div>
 
-  <!-- PHÂN TRANG -->
   <c:if test="${totalPages > 1}">
     <nav aria-label="Page navigation" style="margin-top:24px;">
       <ul class="pagination justify-content-center">
 
-        <!-- Nút Trước -->
         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
           <a class="page-link"
              href="device-detail?id=${device.id}&page=${currentPage - 1}">
@@ -495,7 +493,6 @@
           </a>
         </li>
 
-        <!-- Hiển thị tối đa 5 trang -->
         <c:set var="startPage" value="${currentPage - 2}" />
         <c:set var="endPage" value="${currentPage + 2}" />
         <c:if test="${startPage < 1}">
@@ -538,7 +535,6 @@
 </c:choose>
 </main>
 
-<!-- Footer -->
 <jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>

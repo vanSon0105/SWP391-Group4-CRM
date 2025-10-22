@@ -19,10 +19,12 @@ public class VerifyOTPController extends HttpServlet {
 	    protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	            throws ServletException, IOException {
 
+	    	HttpSession session = request.getSession();
+	    	session.removeAttribute("mss");
+	    	
 	        String enteredOTP = request.getParameter("otp");
 	        String newPassword = request.getParameter("newPassword");
 
-	        HttpSession session = request.getSession();
 	        String sentOTP = (String) session.getAttribute("otp");
 	        String email = (String) session.getAttribute("email");
 
@@ -32,11 +34,11 @@ public class VerifyOTPController extends HttpServlet {
 
 	            session.removeAttribute("otp");
 	            session.removeAttribute("email");
-
-	            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+	            session.setAttribute("mss", "Đổi mật khẩu thành công");
+	            response.sendRedirect("login");
 	        } else {
 	            request.setAttribute("error", "Mã OTP không đúng hoặc đã hết hạn!");
-	            request.getRequestDispatcher("verifyOTP.jsp").forward(request, response);
+	            request.getRequestDispatcher("/view/authentication/verifyOTP.jsp").forward(request, response);
 	        }
 	    }
 

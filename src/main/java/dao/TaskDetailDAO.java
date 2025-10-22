@@ -160,13 +160,11 @@ public class TaskDetailDAO extends DBContext{
     }
     public List<TaskDetail> getTaskDetailWithStaffInfo3(int taskId) throws SQLException {
         List<TaskDetail> list = new ArrayList<>();
-        String sql = """
-            SELECT td.*, u.full_name AS technicalStaffName, ub.full_name AS assignedByName
-            FROM task_details td
-            JOIN users u ON td.technical_staff_id = u.id
-            LEFT JOIN users ub ON td.assigned_by = ub.id
-            WHERE td.task_id = ?
-        """;
+        String sql = "SELECT td.*, u.full_name AS technicalStaffName, ub.full_name AS assignedByName\r\n"
+        		+ "FROM task_details td\r\n"
+        		+ "JOIN users u ON td.technical_staff_id = u.id\r\n"
+        		+ "LEFT JOIN users ub ON td.assigned_by = ub.id\r\n"
+        		+ "WHERE td.task_id = ?;";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

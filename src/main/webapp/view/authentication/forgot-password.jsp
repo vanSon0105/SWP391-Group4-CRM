@@ -16,15 +16,15 @@
         <h1>Đặt lại mật khẩu</h1>
         <p>Nhập email để nhận mã OTP đặt lại mật khẩu.</p>
 
-		<form action="${pageContext.request.contextPath}/SendOTPController" method="post">
+		<form action="SendOTPController" method="post">
             <div style="display:grid; gap:8px; text-align:left;">
                 <label for="email">Email đã đăng ký</label>
                 <input id="email" name="email" type="email" placeholder="Nhập email đã đăng ký của bạn" required>
             </div>
-            <button type="submit" class="btn-primary">Gửi mã OTP</button>
+            <button type="submit" class="btn btn-primary">Gửi mã OTP</button>
         </form>
 
-        <a href="../authentication/login.jsp" style="margin-top:10px; display:inline-block;">Quay về đăng nhập</a>
+        <a href="login" style="margin-top:10px; display:inline-block;">Quay về đăng nhập</a>
     </section>
 </body>
 </html>
