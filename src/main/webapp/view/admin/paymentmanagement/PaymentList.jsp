@@ -11,10 +11,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
 
- <link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/css/admin.css"> 
- 
-<!-- Font Awesome -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
+
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
@@ -22,12 +20,12 @@
 </head>
 
 <style>
-.main-content {
+/* .main-content {
 	width: calc(100vw - 220px); 
 	min-height: 100vh;
 	padding: 20px;
 	box-sizing: border-box;
-}
+} */
 
 /* .table-container {
 	width: 90%;
@@ -141,7 +139,7 @@ button {
 	display:flex;
 	justify-content: space-around; 
 	align-items: center;
-} */
+} 
 .device-btn{
 	    color: black !important;
 	}
@@ -226,12 +224,12 @@ button {
      }
 </style>
 
-<body>
+<body class="management-page device-management">
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
 	
-		<section class="main-content">
+		<section class="panel" id="table-panel">
 			<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Payment
 				List</h1>
 			<div class="filters"> 
@@ -283,7 +281,7 @@ button {
 					</form>
 				</div>
 			<div class="table-wrapper">
-				<table>
+				<table class="device-table">
 					<thead>
 					
 						<tr>
