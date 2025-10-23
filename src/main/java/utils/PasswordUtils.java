@@ -19,6 +19,11 @@ public final class PasswordUtils {
         if (password == null || passwordDB == null || passwordDB.isEmpty()) {
             return false;
         }
+        
+        if (!passwordDB.startsWith("$2a$") && !passwordDB.startsWith("$2b$") && !passwordDB.startsWith("$2y$")) {
+            return password.equals(passwordDB);
+        }
+        
         try {
             return BCrypt.checkpw(password, passwordDB);
         } catch (IllegalArgumentException ex) {

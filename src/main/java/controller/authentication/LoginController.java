@@ -1,9 +1,10 @@
-package controller.homePage;
+package controller.authentication;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import dao.PermissionDAO;
 import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,10 +13,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet({ "/login", "/logout", "/forgot-password"})
 public class LoginController extends HttpServlet {
     private UserDAO userDAO = new UserDAO();
+    private PermissionDAO permissionDAO = new PermissionDAO();
     private static final int SESSION_TIMEOUT_SECONDS = 4 * 60 * 60;
     
     @Override
@@ -54,6 +57,7 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
     	HttpSession session = request.getSession(false);
         if (session != null) {
+        	AuthorizationUtils.clearPermissions(session);
             session.invalidate(); 
         }
         response.sendRedirect(request.getContextPath() + "/home"); 	
@@ -69,6 +73,7 @@ public class LoginController extends HttpServlet {
 
         if (user != null) {
 		    session.setAttribute("account", user);
+		    AuthorizationUtils.storePermissions(session, permissionDAO.getPermissionsForUser(user.getId()));
 		    response.sendRedirect(request.getContextPath() + "/home");
         } else {
         	session.removeAttribute("error");

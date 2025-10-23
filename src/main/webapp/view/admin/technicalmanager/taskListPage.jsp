@@ -1,246 +1,189 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ page isELIgnored="false"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core"%>
-<%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
-
+    pageEncoding="UTF-8"%>
+    <%@ page isELIgnored="false" %>
+	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TechShop</title>
-
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/css/admin.css">
-<!-- Font Awesome -->
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
-	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
-	crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-
+<title>Insert title here</title>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.main-content {
-	width: 100wh- 220px;
-	height: 100vh;
-	margin: 0 auto;
-}
-
-.main-content form a {
-	padding: 6px 8px;
-	border-radius: 6px;
-	background-color: #0d6efd;
-	color: white;
-	font-size: 16px;
-	text-decoration: none;
-	transition: background 0.2s ease-in-out;
-}
-
-.search-button {
-	padding: 6px 8px;
-	border-radius: 6px;
-	background-color: #0d6efd;
-	color: white;
-	font-size: 16px;
-	border: none;
-}
-
-.table-container {
-	width: 90%;
-	min-width: 1100px;
-	margin: 16px auto;
-	overflow: hidden;
-	border-radius: 12px;
-	margin-top: 16px;
-}
-
-table {
-	width: 100%;
-	min-width: 100%;
-	border-collapse: separate;
-	border-spacing: 0;
-}
-
-th {
-	padding: 12px;
-	text-align: center;
-	font-weight: 600;
-}
-
-td {
-	padding: 12px;
-	text-align: center;
-	border-top: 1px solid #e5e7eb;
-}
-
-thead {
-	background: #2B90C6;
-	color: #fff;
-	border-radius: 12px;
-}
-
-tbody tr {
-	background: #ffffff;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	transition: all 0.2s ease-in-out;
-}
-
-table th, table td {
-	text-align: center;
-}
-
-table button {
-	padding: 6px 8px;
-	border-radius: 6px;
-	background-color: white;
-	font-size: 16px;
-	border: none;
-	cursor: pointer;
-}
-
-table a {
-	padding: 6px 8px;
-	border-radius: 6px;
-	background-color: white;
-	font-size: 16px;
-	text-decoration: none;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	transition: background 0.2s ease-in-out;
-}
-
-table button:hover, table a:hover {
-	background: #f2f2f2;
-}
-
-.filters {
-	max-width: 1150px;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	margin: 16px auto;
-	justify-content: space-between;
-	margin-top: 30px;
-	background: white;
-	padding: 16px;
-	border: 0.5px solid #2B90C6;
-}
-
-.pagination {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-.pagination a {
-	padding: 12px 10px;
-	color: black;
-	text-decoration: none;
-}
-</style>
-
-<body>
-	<jsp:include page="../common/header.jsp"></jsp:include>
-	<jsp:include page="../common/sidebar.jsp"></jsp:include>
-	<main class="sidebar-main" style="padding: 32px; font-size: 1.4rem;">
+	.device-btn{
+	    color: black !important;
+	}
+	.device-management .pagination-pills {
+	    display: flex;
+	    justify-content: center;
+	    gap: 10px;
+	}
 	
-	<section class="main-content">
-		<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Task List</h1>
-		<form action="task-list" method="get">
-<!-- 			<div class="filters">
-				<select id="status" name="status" style="border-radius: 6px; padding: 8px 10px" onchange="this.form.submit()">
-					<option value="" ${empty param.status ? 'selected' : ''}>All status</option>
-					<option value="pending" ${param.status == 'pending' ? 'selected' : ''}>Chưa bắt đầu</option>
-					<option value="in_progress" ${param.status == 'in_progress' ? 'selected' : ''}>Đang thực hiện</option>
-					<option value="completed" ${param.status == 'completed' ? 'selected' : ''}>Đã hoàn tất</option>
-					<option value="cancelled" ${param.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
-				</select>
-				<div> -->
-				
-				<div class="filters">
-					
-					<select id="status" name="status"
-						style="border-radius: 6px; padding: 8px 10px"
-						onchange="this.form.submit()">
-						<option value="" ${empty param.status ? 'selected' : ''}>All
-							status</option>
-						<option value="pending"
-							${param.status == 'pending' ? 'selected' : ''}>Pending</option>
-						<option value="in_progress"
-							${param.status == 'in_progress' ? 'selected' : ''}>In
-							progress</option>
-						<option value="completed"
-							${param.status == 'completed' ? 'selected' : ''}>Completed</option>
-						<option value="cancelled"
-							${param.status == 'cancelled' ? 'selected' : ''}>Cancelled</option>
-					</select>
-					<div>
+	.device-management .pagination-pills a {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+	    width: 44px;
+	    height: 44px;
+	    padding: 0;
+	    border-radius: 16px;
+	    border: 1px solid rgba(15, 23, 42, 0.15);
+	    background: rgba(255, 255, 255, 0.9);
+	    color: #1f2937;
+	    font-weight: 600;
+	    cursor: pointer;
+	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	}
+	
+	.device-management .pagination-pills a.active {
+	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	}
+	
+	.device-management .pagination-pills a:hover {
+	    transform: translateY(-2px);
+	}
 
-						<input type="search" name="search"
-							placeholder="Enter keywords to search..." value="${param.search}"
-							style="border-radius: 7px; padding: 8px 16px; border: 1px solid #000" />
-						<button type="submit" class="search-button">Search</button>
-					</div>
+	body .panel h2{
+		margin-bottom: 0 !important;
+	}
+	
+	.pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-					<a href="task-form">Add Task</a>
-				</div>
-			</form>
-			<div class="table-container">
-				<table>
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Title</th>
-							<th>Description</th>
-							<th>Manager ID</th>
-							<th>Customer Issue ID</th>
-							<th>Status</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach var="task" items="${listTask}">
-							<tr>
-								<td>${task.id}</td>
-								<td>${task.title}</td>
-								<td>${task.description}</td>
-								<td>${task.managerId}</td>
-								<td>${task.customerIssueId}</td>
-								<td>${task.status}</td>
-								<td><c:if test="${task.status != 'cancelled'}">
-										<div style="display: flex; gap: 6px;">
-											<a href="task-detail?id=${task.id}" title="View Task Detail"><i
-												class="fa-solid fa-eye" style="color: #0d6efd;"></i></a> <a
-												href="task-form?id=${task.id}" title="Update Task"><i
-												class="fa-solid fa-pen" style="color: #2ecc71;"></i></a>
-											<form action="task-list" method="post"
-												style="display: inline;">
-												<input type="hidden" name="taskId" value="${task.id}" />
-												<button type="submit" title="Cancel Task">
-													<i class="fa-solid fa-trash" style="color: red;"></i>
-												</button>
-											</form>
-										</div>
-									</c:if></td>
-							</tr>
-						</c:forEach>
+    .pagination a {
+        padding: 12px 10px;
+        color: black;
+        text-decoration: none;
+    }
+</style>
+</head>
+<body class="management-page device-management">
+	<jsp:include page="../common/sidebar.jsp"></jsp:include>
+	<jsp:include page="../common/header.jsp"></jsp:include>
+	 <main class="sidebar-main">
+            <section class="panel">
+                <div class="device-toolbar">
+                    <div class="device-toolbar-actions">
+                        <a class="btn btn-add" href="task-form">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Thêm task</span>
+                        </a>
+                    </div>
+                    
+                        
+                    <form class="device-search" action="task-list" method="get">
+                    	<select id="status" name="status" style="border-radius: 6px; padding: 8px 10px"
+                            onchange="this.form.submit()">
+                            <option value="" ${empty param.status ? 'selected' : '' }>All
+                                status</option>
+                            <option value="pending" ${param.status=='pending' ? 'selected' : '' }>Pending
+                            </option>
+                            <option value="in_progress" ${param.status=='in_progress' ? 'selected' : '' }>In
+                                progress</option>
+                            <option value="completed" ${param.status=='completed' ? 'selected' : '' }>
+                                Completed</option>
+                            <option value="cancelled" ${param.status=='cancelled' ? 'selected' : '' }>
+                                Cancelled</option>
+                        </select>
+                                    
+		                <label for="task-list-search" class="sr-only"></label>
+		                <input id="task-list-search" name="search" type="search" placeholder="Tìm theo tên, email, số điện thoại..." value="${param.search}">
+		                <button type="submit" class="btn device-btn">Tìm</button>
+		            </form>
+                </div>
+            </section>
 
-					</tbody>
-				</table>
+            <section class="panel" id="table-panel">
+            	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+	                <h2>Danh sách task</h2>
+	                
+	                <c:if test="${not empty param.message}">
+                        <div class="message">${param.message}</div>
+                    </c:if>
+                    
+                    <c:if test="${not empty param.error}">
+                        <div class="error">${param.error}</div>
+                    </c:if>     
+            	</div>
+                <div class="table-wrapper">
+                    <c:if test="${not empty listTask}"> 
+	                    <table class="device-table">
+	                        <thead>
+	                            <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Manager ID</th>
+                                    <th>Customer Issue ID</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+	                        </thead>
+	                        <tbody>
+	                        	<c:forEach items="${listTask}" var="task">
+		                            <tr>
+		                            	<td>${task.id}</td>
+                                        <td>${task.title}</td>
+                                        <td>${task.description}</td>
+                                        <td>${task.managerId}</td>
+                                        <td>${task.customerIssueId}</td>
+                                        <td>${task.status}</td>
+                                        <td>
+                                        	<c:if test="${task.status != 'cancelled'}">
+	                                            
+	                                            <a href="task-detail?id=${task.id}" class="btn device-btn">
+	                                            	Xem</a>
+	                                                
+		                                    	<a class="btn device-btn" href="task-form?id=${task.id}">Sửa</a>
+		                                    
+		                                    	
+		                                    	<form action="task-list" method="post"
+                                                     class="btn device-remove">
+                                                     <input type="hidden" name="taskId" value="${task.id}" />
+                                                     <button onclick="return confirm('Bạn có chắc muốn dừng task này?');" type="submit" style="outline: none;background: none;border: none;color: #fff;padding: 0;font-weight: 600;">
+                                                         Xóa
+                                                     </button>
+                                                 </form>
+		                                    </c:if>
+                                        </td>
+		                            </tr>
+		                          </c:forEach>
+	                        </tbody>
+	                    </table>
+                   </c:if>
+                   
+                   <c:if test="${empty listTask}">
+	                   <table class="device-table"> 
+	                   		<tbody>
+		                   		<tr>
+							        <td colspan="7" style="text-align: center; border: none;">
+							            Không tìm thấy task
+							        </td>
+							    </tr>
+						    </tbody>
+						</table>
+                   </c:if>
+                   
+                </div>
+             </section>
+                   <div class="pagination">
+                       <c:forEach var="i" begin="1" end="${totalPages}">
+                           <a href="task-list?page=${i}&status=${param.status}&search=${param.search}"
+                               style="${i == currentPage ? 'font-weight:bold;color:#0d6efd;' : ''}">
+                               ${i} </a>
+                       </c:forEach>
 
-			</div>
-			<div class="pagination">
-				<c:forEach var="i" begin="1" end="${totalPages}">
-					<a
-						href="task-list?page=${i}&status=${param.status}&search=${param.search}"
-						style="${i == currentPage ? 'font-weight:bold;color:#0d6efd;' : ''}">
-						${i} </a>
-				</c:forEach>
-
-			</div>
-		</section>
-	</main>
+                   </div>
+        </main>
 </body>
 </html>

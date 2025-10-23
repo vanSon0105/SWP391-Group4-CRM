@@ -21,8 +21,10 @@
                         </button>
                         <div class="category-panel" data-category-panel>
                             <a href="device-page">Thiết bị</a>
-                            <a href="device-detail.jsp">Thông tin thiết bị</a>
                             <a href="create-issue">Bảo hành/Sửa chữa</a>
+                            <a href="${pageContext.request.contextPath}/profile">Thông tin cá nhân</a>
+                            <a href="checkout.jsp">Thanh toán</a>
+                            <a href="order-tracking.jsp">Đơn hàng</a>
                             <a href="issue">Lịch sử yêu cầu</a>
                             <c:if test="${sessionScope.account != null}">
                                 <form action="logout" method="post" style="display:inline;">

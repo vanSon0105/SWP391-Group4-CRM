@@ -24,6 +24,8 @@ import dao.OrderDetailDAO;
 import dao.UserDAO;
 import dao.CartDAO;
 import dao.CartDetailDao;
+import dao.CartDetailDao;
+import dao.WarrantyCardDao;
 import dao.WarrantyCardDao;
 
 import java.util.logging.*;

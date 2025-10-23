@@ -1,4 +1,4 @@
-package controller.homePage;
+package controller.authentication;
 
 import java.io.IOException;
 import java.util.Properties;

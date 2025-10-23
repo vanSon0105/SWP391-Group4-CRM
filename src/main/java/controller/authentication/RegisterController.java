@@ -1,4 +1,4 @@
-package controller.homePage;
+package controller.authentication;
 
 import dao.UserDAO;
 import model.User;
@@ -29,7 +29,7 @@ public class RegisterController extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
-        int roleId = 6;
+        int roleId = 1;
 
 //        int roleId;
 //        switch (role) {
