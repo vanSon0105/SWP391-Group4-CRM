@@ -35,6 +35,9 @@ public class AccountController extends HttpServlet {
         }
 
         switch (action) {
+        	case "activate":
+            activateUser(request, response);
+            break;
             case "detail":
                 showUserDetail(request, response);
                 break;
@@ -47,6 +50,9 @@ public class AccountController extends HttpServlet {
             case "filter":
                 filterByRole(request, response);
                 break;
+            case "delete":
+                softDelete(request, response);
+                break;   
             default:
                 listAllUsers(request, response, currentUser);
                 break;
@@ -306,4 +312,49 @@ public class AccountController extends HttpServlet {
             listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
         }
     }
+    
+    private void softDelete(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            boolean success = userDAO.softDeleteUser(id);
+
+            if (success) {
+                request.setAttribute("mess", "Đã khóa người dùng thành công!");
+            } else {
+                request.setAttribute("mess", "Không thể khóa người dùng!");
+            }
+
+            
+            User currentUser = (User) request.getSession().getAttribute("account");
+            listAllUsers(request, response, currentUser);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("mess", "Đã xảy ra lỗi trong quá trình khóa người dùng!");
+            User currentUser = (User) request.getSession().getAttribute("account");
+            listAllUsers(request, response, currentUser);
+        }
+    }
+
+    private void activateUser(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = Integer.parseInt(request.getParameter("id"));
+        boolean success = userDAO.activateUser(id);
+
+        if (success) {
+            request.setAttribute("mess", "Đã mở khóa tài khoản thành công!");
+        } else {
+            request.setAttribute("mess", "Không thể mở khóa tài khoản!");
+        }
+
+        HttpSession session = request.getSession(false);
+        User currentUser = (User) session.getAttribute("account");
+
+        listAllUsers(request, response, currentUser);
+    }
+
+    
 }
+
+

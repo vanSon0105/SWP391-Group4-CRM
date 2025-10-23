@@ -386,8 +386,30 @@ public class UserDAO extends DBContext{
         }
         return false;
     }
-
-
     
+    public boolean softDeleteUser(int id) {
+        String sql = "UPDATE users SET status = 'inactive' WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
+    public boolean activateUser(int id) {
+        String sql = "UPDATE users SET status = 'active' WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+        
 }
