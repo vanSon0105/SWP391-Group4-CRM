@@ -9,12 +9,13 @@ import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
 import model.User;
+import utils.AuthorizationUtils;
 
 import java.io.IOException;
 import java.util.List;
 
-import dao.CustomerIssueDao;
-import dao.CustomerIssueDetailDao;
+import dao.CustomerIssueDAO;
+import dao.CustomerIssueDetailDAO;
 
 /**
  * Servlet implementation class TechnicalManagerIssueController
@@ -22,8 +23,8 @@ import dao.CustomerIssueDetailDao;
 @WebServlet("/manager-issues")
 public class TechnicalManagerIssueController extends HttpServlet {
 
-	private CustomerIssueDao iDao = new CustomerIssueDao();
-	private CustomerIssueDetailDao dDao = new CustomerIssueDetailDao();
+	private CustomerIssueDAO iDao = new CustomerIssueDAO();
+	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User manager = getUser(request, response);
@@ -48,6 +49,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		request.getRequestDispatcher("view/admin/technicalmanager/issueListPage.jsp").forward(request, response);
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User manager = getUser(request, response);
 		if (manager == null) {
@@ -57,7 +59,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		String action = request.getParameter("action");
 		String issueIdParam = request.getParameter("issueId");
 		if (issueIdParam == null) {
-			response.sendRedirect(request.getContextPath() + "/manager/issues");
+			response.sendRedirect("manager-issues");
 			return;
 		}
 
@@ -81,23 +83,13 @@ public class TechnicalManagerIssueController extends HttpServlet {
 	}
 	
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			resp.sendRedirect("login");
-			return null;
-		}
-		User user = (User) session.getAttribute("account");
-		if (user == null || user.getRoleId() != 2) {
-			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
-			return null;
-		}
-		return user;
+		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES_MANAGEMENT");
 	}
 	
 	private void showReview(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String issueIdParam = req.getParameter("id");
 		if (issueIdParam == null) {
-			resp.sendRedirect(req.getContextPath() + "/manager/issues");
+			resp.sendRedirect("manager-issues");
 			return;
 		}
 
@@ -148,17 +140,4 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		iDao.updateSupportStatus(issueId, "manager_rejected");
 		resp.sendRedirect("manager-issues?rejected=1");
 	}
-	
-	public static void main(String[] args) {
-		CustomerIssueDao iDao = new CustomerIssueDao();
-		CustomerIssueDetailDao dDao = new CustomerIssueDetailDao();
-		List<CustomerIssue> pendingIssues = iDao.getIssuesAwaitingManagerReview();
-		List<CustomerIssue> approvedIssues = iDao.getIssuesBySupportStatuses(
-				new String[] { "manager_approved", "task_created", "tech_in_progress", "resolved" });
-		List<CustomerIssue> rejectedIssues = iDao.getIssuesBySupportStatus("manager_rejected");
-		for (CustomerIssue customerIssue : pendingIssues) {
-			System.out.println(customerIssue.toString());
-		}
-	}
-
 }

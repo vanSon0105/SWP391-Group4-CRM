@@ -1,4 +1,4 @@
-package controller.homePage;
+package controller.authentication;
 
 import dao.UserDAO;
 import model.User;

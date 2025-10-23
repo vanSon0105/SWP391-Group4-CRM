@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import dao.CustomerIssueDao;
+import dao.CustomerIssueDAO;
 import dao.TaskDetailDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,11 +14,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.TaskDetail;
 import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet(urlPatterns = { "/technical-issues" })
 public class TechnicalStaffController extends HttpServlet {
 	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
-	private CustomerIssueDao issueDao = new CustomerIssueDao();
+	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -75,17 +76,7 @@ public class TechnicalStaffController extends HttpServlet {
 	}
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			resp.sendRedirect("login");
-			return null;
-		}
-		User user = (User) session.getAttribute("account");
-		if (user == null || user.getRoleId() != 3) {
-			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
-			return null;
-		}
-		return user;
+		return AuthorizationUtils.requirePermission(req, resp, "VIEW_TASK_LIST");
 	}
 
 	private boolean isValidStatus(String status) {

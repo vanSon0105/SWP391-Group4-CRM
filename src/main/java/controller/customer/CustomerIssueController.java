@@ -3,8 +3,8 @@ package controller.customer;
 import java.io.IOException;
 import java.util.List;
 
-import dao.CustomerIssueDao;
-import dao.CustomerIssueDetailDao;
+import dao.CustomerIssueDAO;
+import dao.CustomerIssueDetailDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,11 +15,12 @@ import model.CustomerDevice;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
 import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet({"/issue", "/create-issue", "/issue-fill"})
 public class CustomerIssueController extends HttpServlet {
-	private CustomerIssueDao ciDao = new CustomerIssueDao();
-	private CustomerIssueDetailDao dDao = new CustomerIssueDetailDao();
+	private CustomerIssueDAO ciDao = new CustomerIssueDAO();
+	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,6 +40,7 @@ public class CustomerIssueController extends HttpServlet {
 			List<CustomerIssue> listIssue = ciDao.getIssuesByUserId(u.getId());
 			req.setAttribute("list", listIssue);
 			req.getRequestDispatcher("view/customer/issueListPage.jsp").forward(req, resp);
+			break;
 		}	
 	}
 	
@@ -59,22 +61,13 @@ public class CustomerIssueController extends HttpServlet {
 			break;
 		default:
 			resp.sendRedirect("issue");
+			break;
 		}
 	}
 	
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			resp.sendRedirect("login");
-			return null;
-		}
-		User user = (User) session.getAttribute("account");
-		if (user == null) {
-			resp.sendRedirect("login");
-			return null;
-		}
-		return user;
+		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES");
 	}
 
 	private void handleCreate(HttpServletRequest req, HttpServletResponse resp, User u)
@@ -94,7 +87,7 @@ public class CustomerIssueController extends HttpServlet {
 		int warrantyId = 0;
 		if (warrantyCardIdParam != null && !warrantyCardIdParam.trim().isEmpty()) {
 			try {
-				warrantyId = Integer.parseInt(warrantyCardIdParam);
+				warrantyId = Integer.parseInt(warrantyCardIdParam.trim());
 			} catch (NumberFormatException ex) {
 				req.setAttribute("error", "Mã bảo hành không hợp lệ.");
 				req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
@@ -115,7 +108,7 @@ public class CustomerIssueController extends HttpServlet {
 			throws ServletException, IOException {
 		String issueIdParam = req.getParameter("id");
 		if (issueIdParam == null) {
-			resp.sendRedirect(req.getContextPath() + "/issue");
+			resp.sendRedirect("issue");
 			return;
 		}
 
@@ -123,18 +116,18 @@ public class CustomerIssueController extends HttpServlet {
 		try {
 			issueId = Integer.parseInt(issueIdParam);
 		} catch (NumberFormatException ex) {
-			resp.sendRedirect(req.getContextPath() + "/issue?invalid=1");
+			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
 
 		CustomerIssue issue = ciDao.getIssueById(issueId);
 		if (issue == null || issue.getCustomerId() != customer.getId()) {
-			resp.sendRedirect(req.getContextPath() + "/issue?notfound=1");
+			resp.sendRedirect("issue?notfound=1");
 			return;
 		}
 
 		if (issue.getSupportStatus() == null || !"awaiting_customer".equalsIgnoreCase(issue.getSupportStatus())) {
-			resp.sendRedirect(req.getContextPath() + "/issue?invalid=1");
+			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
 
@@ -152,7 +145,7 @@ public class CustomerIssueController extends HttpServlet {
 			throws ServletException, IOException {
 		String issueIdParam = req.getParameter("issueId");
 		if (issueIdParam == null) {
-			resp.sendRedirect(req.getContextPath() + "/issue");
+			resp.sendRedirect("issue");
 			return;
 		}
 
@@ -160,18 +153,18 @@ public class CustomerIssueController extends HttpServlet {
 		try {
 			issueId = Integer.parseInt(issueIdParam);
 		} catch (NumberFormatException ex) {
-			resp.sendRedirect(req.getContextPath() + "/issue?invalid=1");
+			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
 
 		CustomerIssue issue = ciDao.getIssueById(issueId);
 		if (issue == null || issue.getCustomerId() != customer.getId()) {
-			resp.sendRedirect(req.getContextPath() + "/issue?notfound=1");
+			resp.sendRedirect("issue?notfound=1");
 			return;
 		}
 
 		if (issue.getSupportStatus() == null || !"awaiting_customer".equalsIgnoreCase(issue.getSupportStatus())) {
-			resp.sendRedirect(req.getContextPath() + "/issue?invalid=1");
+			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
 
@@ -220,7 +213,7 @@ public class CustomerIssueController extends HttpServlet {
 		dDao.saveIssueDetail(d);
 		ciDao.updateSupportStatus(issueId, staffId, "in_progress");
 
-		resp.sendRedirect(req.getContextPath() + "/issue?details=1");
+		resp.sendRedirect("issue?details=1");
 	}
 	
 }

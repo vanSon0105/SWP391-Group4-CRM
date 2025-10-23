@@ -10,7 +10,7 @@ import java.util.List;
 import dal.DBContext;
 import model.WarrantyCard;
 
-public class WarrantyCardDao extends DBContext{
+public class WarrantyCardDAO extends DBContext{
 	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	public WarrantyCard getBySerialId(int serialId) {
 	    String sql = "SELECT * FROM warranty_cards WHERE device_serial_id = ?";
