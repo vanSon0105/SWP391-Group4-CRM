@@ -29,6 +29,12 @@
   	<description></description>
   	<servlet-class>controller.homePage.CheckoutController</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>ImportExportOrderController</servlet-name>
+  	<display-name>ImportExportOrderController</display-name>
+  	<description></description>
+  	<servlet-class>controller.admin.ImportExportOrderController</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>PaymentController</servlet-name>
   	<url-pattern>/PaymentController</url-pattern>

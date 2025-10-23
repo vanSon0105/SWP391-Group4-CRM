@@ -101,18 +101,38 @@
 <main class="sidebar-main">
 <div class="container-main">
   <h2>Quản lý người dùng</h2>
+<c:if test="${not empty error}">
+  <div style="
+      background:#fee2e2;
+      border:1px solid #fca5a5;
+      color:#b91c1c;
+      padding:10px 16px;
+      border-radius:8px;
+      margin-bottom:15px;">
+    ⚠️ ${error}
+  </div>
+</c:if>
 
+<c:if test="${not empty msg}">
+  <div style="
+      background:#dcfce7;
+      border:1px solid #86efac;
+      color:#166534;
+      padding:10px 16px;
+      border-radius:8px;
+      margin-bottom:15px;">
+    ✅ ${msg}
+  </div>
+</c:if>
   <div class="filter-section">
     <a href="${pageContext.request.contextPath}/view/profile/AddUser.jsp" class="btn btn-primary">+ Thêm người dùng mới</a>
 
-    <!-- Tìm kiếm (server-side, giữ nguyên hành vi của bạn) -->
     <form action="${pageContext.request.contextPath}/account" method="get" class="inline-form">
       <input type="hidden" name="action" value="search">
       <input type="text" name="keyword" value="${param.keyword}" class="input" placeholder="Tìm theo tên, email, username...">
       <button type="submit" class="btn btn-success">Tìm</button>
     </form>
 
-    <!-- Lọc vai trò (server-side) -->
     <form action="${pageContext.request.contextPath}/account" method="get" class="inline-form">
       <input type="hidden" name="action" value="filter">
       <select name="roleId" class="select">
@@ -176,7 +196,26 @@
     </table>
   </div>
 
-  <p style="margin-top:12px; color:#6b7280">Tổng số người dùng: <strong>${total}</strong></p>
+  <p style="margin-top:12px;color:#6b7280">Tổng số người dùng: <strong>${total}</strong></p>
+  
+  <c:if test="${totalPages > 1}">
+  <div class="pager">
+    <span class="info">Trang ${currentPage} / ${totalPages}</span>
+
+    <c:if test="${currentPage > 1}">
+      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage - 1}">«</a>
+    </c:if>
+
+    <c:forEach var="i" begin="1" end="${totalPages}">
+      <a class="page-btn ${i == currentPage ? 'active' : ''}"
+         href="${pageContext.request.contextPath}/account?page=${i}">${i}</a>
+    </c:forEach>
+
+    <c:if test="${currentPage < totalPages}">
+      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage + 1}">»</a>
+    </c:if>
+  </div>
+</c:if>
 </div>
 
 </main>

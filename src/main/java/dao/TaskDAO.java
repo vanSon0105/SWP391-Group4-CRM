@@ -7,6 +7,32 @@ import model.User;
 import dal.DBContext;
 
 public class TaskDAO extends DBContext {
+	
+	public void assignTechnicalStaff(int taskId, int technicalStaffId, Timestamp deadline) {
+	    String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_at, deadline, status) VALUES (?, ?, CURRENT_TIMESTAMP, ?, 'pending')";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, taskId);
+	        ps.setInt(2, technicalStaffId);
+	        ps.setTimestamp(3, deadline);
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
+	public void unassignTechnicalStaff(int taskId, int technicalStaffId) {
+	    String sql = "DELETE FROM task_details WHERE task_id = ? AND technical_staff_id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, taskId);
+	        ps.setInt(2, technicalStaffId);
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 //	public Task getTaskById(int id) {
 //	    String sql = "SELECT * FROM tasks WHERE id = ?";
 //	    try (Connection conn = getConnection();

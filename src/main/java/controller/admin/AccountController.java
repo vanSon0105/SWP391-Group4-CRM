@@ -39,14 +39,11 @@ public class AccountController extends HttpServlet {
             return;
         }
 
-        // Chỉ Admin mới được truy cập trang này
         if (currentUser.getRoleId() != 1) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
             return;
         }
 
-
-        // Chỉ Admin mới được truy cập trang này
         if (currentUser.getRoleId() != 1) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
             return;
@@ -95,9 +92,25 @@ public class AccountController extends HttpServlet {
     private void listAllUsers(HttpServletRequest request, HttpServletResponse response, User currentUser)
             throws ServletException, IOException {
         List<User> users = userDAO.getAllUsers();
+        int pageSize = 10; 
+        int page = 1;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && pageParam.matches("\\d+")) {
+            page = Integer.parseInt(pageParam);
+        }
+
+        int totalUsers = users.size();
+        int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
+        int start = (page - 1) * pageSize;
+        int end = Math.min(start + pageSize, totalUsers);
+
+        List<User> pageList = users.subList(start, end);
+
         request.setAttribute("account", currentUser);
-        request.setAttribute("users", users);
-        request.setAttribute("total", users.size());
+        request.setAttribute("users", pageList);
+        request.setAttribute("total", totalUsers);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
 
         request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
     }
@@ -196,8 +209,25 @@ public class AccountController extends HttpServlet {
             throws ServletException, IOException {
 
         String keyword = request.getParameter("keyword");
-        if (keyword == null || keyword.trim().isEmpty()) {
-            response.sendRedirect("account");
+
+        if (keyword != null) {
+            keyword = keyword.replace("+", " ").trim();
+        }
+
+        if (keyword == null || keyword.isEmpty()) {
+            request.setAttribute("error", "Vui lòng nhập từ khóa tìm kiếm!");
+            listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
+            return;
+        }
+
+        if (keyword.length() > 50) {
+            request.setAttribute("error", "Từ khóa quá dài (tối đa 50 ký tự)!");
+            listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
+            return;
+        }
+        if (!keyword.matches("[a-zA-Z0-9@._\\p{L}\\s]+")) {
+            request.setAttribute("error", "Từ khóa chứa ký tự không hợp lệ!");
+            listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
             return;
         }
 

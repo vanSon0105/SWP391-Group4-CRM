@@ -48,7 +48,16 @@ public class TaskDetailDAO extends DBContext{
 
         return list;
     }
-
+    
+	public void deleteByTaskIdAndStaffId(int taskId, int staffId) throws SQLException {
+        String sql = "DELETE FROM task_details WHERE task_id = ? AND technical_staff_id = ?";
+        try (Connection conn =getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.setInt(2, staffId);
+            ps.executeUpdate();
+        }
+    }
     
 	public void assignStaffToTask(int taskId, int staffId, Integer assignedBy, Timestamp deadline) {
         String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_by, deadline) " +
@@ -411,7 +420,31 @@ public class TaskDetailDAO extends DBContext{
 			// TODO: handle exception
 		}
     }
-
+    public void deleteByTaskId(int taskId) {
+        String sql = "DELETE FROM task_details WHERE task_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, taskId);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void add(TaskDetail detail) {
+        String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_at, deadline, status) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, detail.getTaskId());
+            ps.setInt(2, detail.getTechnicalStaffId());
+            ps.setTimestamp(3, detail.getAssignedAt());
+            ps.setTimestamp(4, detail.getDeadline());
+            ps.setString(5, detail.getStatus());
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void completeTaskDetails(int taskId) {
         String sql = "UPDATE task_details SET status=? WHERE task_id=?";
