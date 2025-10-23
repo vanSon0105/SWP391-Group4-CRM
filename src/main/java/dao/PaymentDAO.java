@@ -6,58 +6,6 @@ import dal.DBContext;
 
 public class PaymentDAO extends DBContext {
 	
-	public List<Payment> getAllPayment(int limit, int offset) {
-		List<Payment> list = new ArrayList<>();
-		String sql = "select * from payments LIMIT ? OFFSET ?";
-		
-		try (Connection conn = getConnection();
-			 PreparedStatement pre = conn.prepareStatement(sql);
-			 ){
-			pre.setInt(1, limit);
-			pre.setInt(2, offset);
-			ResultSet rs = pre.executeQuery();
-			while(rs.next()) {
-				list.add(new Payment(
-						rs.getInt("id"),
-						rs.getInt("order_id"),
-						rs.getString("payment_url"),
-						rs.getString("payment_method"),
-						rs.getDouble("amount"),
-						rs.getString("full_name"),
-						rs.getString("phone"),
-						rs.getString("address"),
-						rs.getString("delivery_time"),
-						rs.getString("technical_note"),
-						rs.getString("status"),
-						rs.getTimestamp("created_at"),
-						rs.getTimestamp("paid_at")
-						));
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		return list;
-	}
-	
-	public int getPaymentCount() {
-		int count = 0;
-		String sql = "select COUNT(payments.id) as total from payments";
-		
-		try (Connection conn = getConnection();
-			 PreparedStatement pre = conn.prepareStatement(sql);
-			 ResultSet rs = pre.executeQuery()){
-			
-			while(rs.next()) {
-				count = rs.getInt("total");
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		return count;
-	}
-	
 	public int addNewPayment(Payment payment) {
 		String sql = "INSERT INTO payments \r\n"
 				+ "(order_id, payment_url, payment_method, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
@@ -108,5 +56,89 @@ public class PaymentDAO extends DBContext {
 			// TODO: handle exception
 		}
 	}
+	
+	public List<Payment> getFilteredPayments(String status, String sortCreatedAt, String sortPaidAt, String method, String search,
+			int limit, int offset) {
+		List<Payment> list = new ArrayList<>();
+		String sql = "select * from payments where 1=1 ";
+		
+		if(status != null && !status.trim().isEmpty()) {
+			sql += " and status = '" + status + "' ";
+		} 
+		
+		if (method != null && !method.trim().isEmpty()) {
+	        sql += " AND payment_method = '" + method + "' ";
+	    }
+		
+		if (search != null && !search.trim().isEmpty()) {
+	        sql += " AND (phone LIKE '%" + search + "%' OR full_name LIKE '%" + search + "%') ";
+	    }
+		
+		 List<String> orderClauses = new ArrayList<>();
+
+		    if (sortCreatedAt != null && !sortCreatedAt.trim().isEmpty()) {
+		        orderClauses.add("created_at " + sortCreatedAt);
+		    }
+
+		    if (sortPaidAt != null && !sortPaidAt.trim().isEmpty()) {
+		        orderClauses.add("paid_at " + sortPaidAt);
+		    }
+
+		    if (!orderClauses.isEmpty()) {
+		        sql += " ORDER BY " + String.join(", ", orderClauses);
+		    }
+		    
+		    sql += " LIMIT ? OFFSET ? ";
+		
+		    try (Connection conn = getConnection();
+					 PreparedStatement pre = conn.prepareStatement(sql);
+					 ){
+					pre.setInt(1, limit);
+					pre.setInt(2, offset);
+					ResultSet rs = pre.executeQuery();
+					while(rs.next()) {
+						list.add(new Payment(
+								rs.getInt("id"),
+								rs.getInt("order_id"),
+								rs.getString("payment_url"),
+								rs.getString("payment_method"),
+								rs.getDouble("amount"),
+								rs.getString("full_name"),
+								rs.getString("phone"),
+								rs.getString("address"),
+								rs.getString("delivery_time"),
+								rs.getString("technical_note"),
+								rs.getString("status"),
+								rs.getTimestamp("created_at"),
+								rs.getTimestamp("paid_at")
+								));
+					}
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
+		    
+		return list;
+	}
+	
+	public int getFilteredPaymentCount(String status, String method, String search) {
+	    String sql = "SELECT COUNT(*) FROM payments WHERE 1=1 ";
+	    if (status != null && !status.trim().isEmpty()) {
+	        sql += " AND status = '" + status + "'";
+	    }
+	    if (method != null && !method.trim().isEmpty()) {
+	        sql += " AND payment_method = '" + method + "'";
+	    }
+	    if (search != null && !search.trim().isEmpty()) {
+	        sql += " AND (full_name LIKE '%" + search + "%' OR phone LIKE '%" + search + "%')";
+	    }
+	    try (Connection conn = getConnection();
+	         PreparedStatement st = conn.prepareStatement(sql);
+	         ResultSet rs = st.executeQuery()) {
+	        if (rs.next()) return rs.getInt(1);
+	    } catch (Exception e) { e.printStackTrace(); }
+	    return 0;
+	}
+
 	
 }
