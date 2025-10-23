@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import dal.DBContext;
 import model.CartDetail;
 
-public class CartDetailDao extends DBContext {
+public class CartDetailDAO extends DBContext {
 	DeviceDAO dDao = new DeviceDAO();
 	
 	public CartDetail getCartDetailByDevice(int cartId, int deviceId) {

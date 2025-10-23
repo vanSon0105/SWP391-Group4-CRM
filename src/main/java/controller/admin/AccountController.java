@@ -8,6 +8,7 @@ import jakarta.servlet.http.*;
 
 import dao.UserDAO;
 import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet("/account")
 public class AccountController extends HttpServlet {
@@ -23,34 +24,15 @@ public class AccountController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
-            return;
-        }
-
-        User currentUser = (User) session.getAttribute("account");
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
-            return;
-        }
-
-        if (currentUser.getRoleId() != 1) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
-            return;
-        }
-
-        if (currentUser.getRoleId() != 1) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
+    	 User currentUser = AuthorizationUtils.requirePermission(request, response, "VIEW_ACCOUNT");
+         if (currentUser == null) {
             return;
         }
 
         String action = request.getParameter("action");
-        if (action == null) action = "list";
+        if (action == null) {
+        	action = "list";
+        }
 
         switch (action) {
             case "detail":
@@ -75,8 +57,10 @@ public class AccountController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
+    	User currentUser = AuthorizationUtils.requirePermission(request, response, "VIEW_ACCOUNT");
+        if (currentUser == null) {
+            return;
+        }
 
         String action = request.getParameter("action");
         if ("add".equals(action)) {
@@ -112,7 +96,7 @@ public class AccountController extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
 
-        request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/ViewAccount.jsp").forward(request, response);
     }
 
     
@@ -135,7 +119,7 @@ public class AccountController extends HttpServlet {
                 request.setAttribute("userDetail", userDetail);
             }
 
-            request.getRequestDispatcher("/view/profile/ViewAccountDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/account/ViewAccountDetail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
             response.sendRedirect("account");
@@ -145,6 +129,11 @@ public class AccountController extends HttpServlet {
    
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if (!AuthorizationUtils.hasPermission(request.getSession(false), "UPDATE_ACCOUNT")) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+    	
         String idParam = request.getParameter("id");
 
         if (idParam == null) {
@@ -158,10 +147,10 @@ public class AccountController extends HttpServlet {
 
             if (user == null) {
                 request.setAttribute("error", "Không tìm thấy người dùng.");
-                request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+                listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
             } else {
                 request.setAttribute("user", user);
-                request.getRequestDispatcher("/view/profile/EditUser.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/admin/account/EditUser.jsp").forward(request, response);
             }
         } catch (NumberFormatException e) {
             response.sendRedirect("account");
@@ -171,6 +160,11 @@ public class AccountController extends HttpServlet {
     
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if (!AuthorizationUtils.hasPermission(request.getSession(false), "UPDATE_ACCOUNT")) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+    	
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             String email = request.getParameter("email");
@@ -191,17 +185,17 @@ public class AccountController extends HttpServlet {
             boolean success = userDAO.updateUser(user);
 
             if (success) {
-                response.sendRedirect(request.getContextPath() + "/account?msg=update_success");
+                response.sendRedirect("account?msg=update_success");
             } else {
                 request.setAttribute("error", "Cập nhật thất bại. Vui lòng thử lại.");
                 request.setAttribute("user", user);
-                request.getRequestDispatcher("/view/admin/edit-user.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/admin/account/EditUser.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Đã xảy ra lỗi trong quá trình cập nhật.");
-            request.getRequestDispatcher("/view/admin/edit-user.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/account/EditUser.jsp").forward(request, response);
         }
     }
 
@@ -245,7 +239,7 @@ public class AccountController extends HttpServlet {
         request.setAttribute("users", filtered);
         request.setAttribute("keyword", keyword);
         request.setAttribute("total", filtered.size());
-        request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/ViewAccount.jsp").forward(request, response);
     }
 
     
@@ -272,7 +266,7 @@ public class AccountController extends HttpServlet {
             request.setAttribute("users", filtered);
             request.setAttribute("filterRole", roleId);
             request.setAttribute("total", filtered.size());
-            request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/account/ViewAccount.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             response.sendRedirect("account");
         }
@@ -281,6 +275,11 @@ public class AccountController extends HttpServlet {
 
     private void addUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CREATE_ACCOUNT")) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+    	
         try {
             String username = request.getParameter("username");
             String email = request.getParameter("email");
@@ -300,11 +299,11 @@ public class AccountController extends HttpServlet {
             user.setStatus(status);
 
             userDAO.addUser(user);
-            response.sendRedirect(request.getContextPath() + "/account");
+            response.sendRedirect("account");
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Thêm người dùng thất bại!");
-            request.getRequestDispatcher("/view/profile/ViewAccount.jsp").forward(request, response);
+            listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
         }
     }
 }
