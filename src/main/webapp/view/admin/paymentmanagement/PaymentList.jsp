@@ -29,10 +29,10 @@
 	box-sizing: border-box;
 }
 
-.table-container {
+/* .table-container {
 	width: 90%;
 	overflow-x: auto;
-	/* margin-bottom: 50px; */
+	margin-bottom: 50px; 
 	margin-left: 5%;
 	border-radius: 10px;
 	border: 1px solid #e5e7eb;
@@ -112,7 +112,7 @@ button {
 	background: #3b82f6;
 	border-radius: 10px;
 }
-
+*/
 .filters {
 	max-width: 1150px;
 	width: 100%;
@@ -128,20 +128,102 @@ button {
 }
 
 .filters button,
-.filters a {/* 
-	padding:8px 8px; */
+.filters a {
+	padding:8px 8px;
 	background:#3b82f6;
 	color: white;
 	border-radius: 6px; 
 	font-size: 14px;
 }
 
-form {
+.filters form {
 	width: 100%;
 	display:flex;
 	justify-content: space-around; 
 	align-items: center;
-}
+} */
+.device-btn{
+	    color: black !important;
+	}
+	.device-management .pagination-pills {
+	    display: flex;
+	    justify-content: center;
+	    gap: 10px;
+	}
+	
+	.device-management .pagination-pills a {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		text-decoration: none;
+	    width: 44px;
+	    height: 44px;
+	    padding: 0;
+	    border-radius: 16px;
+	    border: 1px solid rgba(15, 23, 42, 0.15);
+	    background: rgba(255, 255, 255, 0.9);
+	    color: #1f2937;
+	    font-weight: 600;
+	    cursor: pointer;
+	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+	}
+	
+	.device-management .pagination-pills a.active {
+	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	}
+	
+	.device-management .pagination-pills a:hover {
+	    transform: translateY(-2px);
+	}
+
+	body .panel h2{
+		margin-bottom: 0 !important;
+	}
+	
+	button {
+         padding: 6px 12px;
+         background-color: #28a745;
+         color: white;
+         border: none;
+         border-radius: 4px;
+         cursor: pointer;
+         font-size: 14px;
+     }
+
+     button:hover {
+         background-color: #218838;
+     }
+
+     button {
+         padding: 10px 12px !important;
+     }
+
+     .container-paging {
+         margin-top: 10px;
+         margin-left: 45%;
+     }
+
+     .container-paging a {
+         padding: 6px 12px;
+         text-decoration: none;
+         border: none;
+         color: white !important;
+         background: #3b82f6;
+         border-radius: 10px;
+     }
+     
+     th, td{
+     	 padding: 14px 5px !important;
+     	 font-size: 1.3rem !important;
+     }
+     
+     button {
+     	width: 80px;
+     	font-size: 1rem !important;
+     }
 </style>
 
 <body>
@@ -200,7 +282,7 @@ form {
 					</div>
 					</form>
 				</div>
-			<div class="table-container">
+			<div class="table-wrapper">
 				<table>
 					<thead>
 					
