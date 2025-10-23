@@ -373,7 +373,6 @@
       </article>
     </div>
 
-    <!-- Right Column -->
     <div class="right-column">
       <article class="hero-card" aria-label="Thông tin sản phẩm" id="hero-card">
         <h2>${device.name}</h2>
@@ -409,51 +408,14 @@
         </ul>
       
         <div class="cta-inline">
-          <a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+       <!--<a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> -->
+          <a href="cart-add?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
           <a href="checkout?id=${device.id}" class="buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
           <a href="device-page" class="back">← Quay lại</a>
         </div>
       </article>
 
-   <!--   <article class="promotion" aria-label="Danh sách serial">
-        <h3>Danh sách serial & trạng thái</h3>
-        <c:choose>
-          <c:when test="${not empty serialList}">
-            <table style="width:100%; border-collapse: collapse;">
-              <thead>
-                <tr style="background-color:#0284c7; color:white;">
-                  <th style="padding:8px; border:1px solid #ddd;">Serial</th>
-                  <th style="padding:8px; border:1px solid #ddd;">Trạng thái</th>
-                  <th style="padding:8px; border:1px solid #ddd;">Ngày nhập</th>
-                </tr>
-              </thead>
-              <tbody>
-                <c:forEach var="serial" items="${serialList}">
-                  <tr>
-                    <td style="padding:6px; border:1px solid #ddd;">${serial.serial_no}</td>
-                    <td style="padding:6px; border:1px solid #ddd;">
-                      <c:choose>
-                        <c:when test="${serial.status.name() == 'IN_STOCK'}">Còn hàng</c:when>
-                        <c:when test="${serial.status.name() == 'SOLD'}">Đã bán</c:when>
-                        <c:when test="${serial.status.name() == 'IN_REPAIR'}">Đang bảo trì</c:when>
-                        <c:when test="${serial.status.name() == 'OUT_STOCK'}">Hết hàng</c:when>
-                        <c:otherwise>Không xác định</c:otherwise>
-                      </c:choose>
-                    </td>
-                    <td style="padding:6px; border:1px solid #ddd;">
-                      <fmt:formatDate value="${serial.import_date}" pattern="dd/MM/yyyy HH:mm"/>
-                    </td>
-                  </tr>
-                </c:forEach>
-              </tbody>
-            </table>
-          </c:when>
-          <c:otherwise>
-            <p>Chưa có serial nào được nhập cho thiết bị này.</p>
-          </c:otherwise>
-        </c:choose>
-      </article> -->
-
+   
     </div>
 	</div>
     <c:if test="${not empty relatedDevices}">
@@ -477,6 +439,7 @@
         <div class="cta-inline">
           <a href="device-detail?id=${rel.id}" class="buy-now"><i class="fa-solid fa-eye"></i> Xem chi tiết</a>
           <a href="cart-add?id=${rel.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+        <!-- <a href="cart-add?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> --> 
         </div>
       </div>
     </c:forEach>
@@ -513,7 +476,6 @@
           </li>
         </c:forEach>
 
-        <!-- Nút Tiếp -->
         <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
           <a class="page-link"
              href="device-detail?id=${device.id}&page=${currentPage + 1}">

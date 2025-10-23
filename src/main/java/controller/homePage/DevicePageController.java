@@ -28,7 +28,6 @@ public class DevicePageController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		try {
 			String keyword = request.getParameter("key");
 			List<Category> listCategory = categoryDao.getAllCategories();
