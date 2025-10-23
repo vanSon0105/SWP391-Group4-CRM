@@ -239,8 +239,8 @@
                         <span>Tài Khoản Của Tôi</span>
                     </div>
                     <div class="submenu">
-                        <a href="/swp391/profile" class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
-                        <a href="/swp391/account?action=list" class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
+                        <a href="profile" class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
+                        <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
                     </div>
                 </div>
             </nav>
@@ -250,14 +250,12 @@
             <div id="profile" class="profile-section">
                 <h2>Thông tin cá nhân</h2>
 
-                <!-- Thông báo thành công -->
                 <c:if test="${not empty message}">
                     <div style="padding: 10px; background-color: #d1fae5; color: #065f46; margin-bottom: 20px; border-radius: 6px;">
                         ${message}
                     </div>
                 </c:if>
 
-                <!-- Thông báo lỗi -->
                 <c:if test="${not empty errorMessage}">
                     <div style="padding: 10px; background-color: #fee2e2; color: #991b1b; margin-bottom: 20px; border-radius: 6px;">
                         ${errorMessage}
@@ -273,16 +271,16 @@
              <div class="form-group gender-group">
     <label>Giới tính:</label>
     <label>
-        <input type="radio" name="gender" value="Male" 
-               <c:if test="${user.gender eq 'Male'}">checked</c:if>> Nam
+        <input type="radio" name="gender" value="male" 
+               <c:if test="${user.gender eq 'male'}">checked</c:if>> Nam
     </label>
     <label>
-        <input type="radio" name="gender" value="Female" 
-               <c:if test="${user.gender eq 'Female'}">checked</c:if>> Nữ
+        <input type="radio" name="gender" value="female" 
+               <c:if test="${user.gender eq 'female'}">checked</c:if>> Nữ
     </label>
     <label>
-        <input type="radio" name="gender" value="Other" 
-               <c:if test="${user.gender eq 'Other'}">checked</c:if>> Khác
+        <input type="radio" name="gender" value="other" 
+               <c:if test="${user.gender eq 'other'}">checked</c:if>> Khác
     </label>
 </div>
 

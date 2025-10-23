@@ -11,7 +11,8 @@ import java.sql.Timestamp;
 import dao.TaskDetailDAO;
 import dao.TaskDAO;
 import dao.UserDAO;
-import dao.CustomerIssueDAO;
+import dao.CustomerIssueDao;
+import dao.CustomerIssueDao;
 import model.Task;
 import model.CustomerIssue;
 import model.User;
@@ -23,7 +24,7 @@ public class TaskFormController extends HttpServlet {
 	TaskDetailDAO taskDetailDao = new TaskDetailDAO();
 	TaskDAO taskDao = new TaskDAO();
 	UserDAO userDao = new UserDAO();
-	CustomerIssueDAO issueDao = new CustomerIssueDAO();
+	CustomerIssueDao issueDao = new CustomerIssueDao();
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

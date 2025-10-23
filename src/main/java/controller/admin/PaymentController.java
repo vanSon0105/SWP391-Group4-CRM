@@ -23,8 +23,10 @@ import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import dao.UserDAO;
 import dao.CartDAO;
-import dao.CartDetailDAO;
-import dao.WarrantyCardDAO;
+import dao.CartDetailDao;
+import dao.CartDetailDao;
+import dao.WarrantyCardDao;
+import dao.WarrantyCardDao;
 
 import java.util.logging.*;
 
@@ -38,10 +40,10 @@ public class PaymentController extends HttpServlet {
 	OrderDAO orderDao = new OrderDAO();
 	UserDAO userDao = new UserDAO();
 	CartDAO cartDao = new CartDAO();
-	WarrantyCardDAO wcDao = new WarrantyCardDAO();
+	WarrantyCardDao wcDao = new WarrantyCardDao();
 	OrderDetailDAO odDao = new OrderDetailDAO();
 	DeviceSerialDAO dsDao = new DeviceSerialDAO();
-	CartDetailDAO cdDao = new CartDetailDAO();
+	CartDetailDao cdDao = new CartDetailDao();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

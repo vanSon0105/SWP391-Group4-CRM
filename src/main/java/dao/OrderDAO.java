@@ -63,13 +63,13 @@ public class OrderDAO extends DBContext{
             e.printStackTrace();
         }
     }
-    public int addNewOrder(int customerId, BigDecimal totalAmount, BigDecimal discount) {
+    public int addNewOrder(int customerId, double totalAmount, double discount) {
         String sql = "INSERT INTO orders (customer_id, total_amount, discount, status, date) VALUES (?, ?, ?, 'pending', NOW())";
         try (Connection conn = getConnection();
              PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
             pre.setInt(1, customerId);
-            pre.setBigDecimal(2, totalAmount);
-            pre.setBigDecimal(3, discount);
+            pre.setDouble(2, totalAmount);
+            pre.setDouble(3, discount);
             pre.executeUpdate();
             ResultSet rs = pre.getGeneratedKeys();
             if(rs.next()) {
