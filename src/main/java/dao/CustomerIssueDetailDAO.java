@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import dal.DBContext;
 import model.CustomerIssueDetail;
 
-public class CustomerIssueDetailDAO extends DBContext {
+public class CustomerIssueDetailDao extends DBContext {
 	
 	public CustomerIssueDetail getByIssueId(int issueId) {
 		String sql = "SELECT * FROM customer_issue_details WHERE issue_id = ?";
