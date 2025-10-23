@@ -11,6 +11,7 @@ import model.User;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,92 +29,114 @@ public class TaskController extends HttpServlet {
     private UserDAO userDAO;
     private CustomerIssueDAO issueDAO;
 
+
     @Override
     public void init() {
         taskDAO = new TaskDAO();
         taskDetailDAO = new TaskDetailDAO();
         userDAO = new UserDAO();
         issueDAO = new CustomerIssueDAO();
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+
         String action = req.getParameter("action");
         if (action == null) action = "list";
 
-        try {
-            switch (action) {
-                default:
-                    listTasks(req, resp);
-                    break;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            resp.getWriter().println("Error: " + e.getMessage());
+        switch (action) {
+            case "assign":
+                showAssignForm(req, resp);
+                break;
+            case "list":
+            default:
+                showTaskList(req, resp);
+                break;
         }
     }
 
-    private void listTasks(HttpServletRequest req, HttpServletResponse resp)
+    private void showTaskList(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         List<Task> tasks = taskDAO.getAllTasks();
-        List<User> technicians = userDAO.getUsersByRole(3);
-        List<CustomerIssue> issues = issueDAO.getAllIssues();
-
-        for (Task task : tasks) {
-            Set<Integer> assignedIds = taskDAO.getAssignedStaffIds(task.getId());
-            task.setAssignedStaffIds(assignedIds);
-            List<TaskDetail> details = taskDetailDAO.getTaskDetailsWithStaffInfo(task.getId());
-            task.setDetails(details);
-        }
-
         req.setAttribute("tasks", tasks);
-        req.setAttribute("technicians", technicians);
-        req.setAttribute("issues", issues);
-        req.getRequestDispatcher("/view/profile/task.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/profile/task_list.jsp").forward(req, resp);
+    }
+
+    private void showAssignForm(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        try {
+            int taskId = Integer.parseInt(req.getParameter("taskId"));
+            Task task = taskDAO.getTaskById(taskId);
+            if (task == null) {
+                req.setAttribute("error", "Task không tồn tại");
+                showTaskList(req, resp);
+                return;
+            }
+
+            List<TaskDetail> assignedDetails = taskDetailDAO.getTaskDetailsWithStaffInfo(taskId);
+            Set<Integer> assignedTechIds = new HashSet<>();
+            for (TaskDetail td : assignedDetails) {
+                assignedTechIds.add(td.getTechnicalStaffId());
+            }
+
+            List<User> technicians = userDAO.getUsersByRole(3); // roleId 3 = kỹ thuật viên
+
+            req.setAttribute("task", task);
+            req.setAttribute("assignedDetails", assignedDetails);
+            req.setAttribute("assignedTechIds", assignedTechIds);
+            req.setAttribute("technicians", technicians);
+            req.getRequestDispatcher("/view/profile/task_assign.jsp").forward(req, resp);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            req.setAttribute("error", "Lỗi khi lấy thông tin task");
+            showTaskList(req, resp);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
-        String action = req.getParameter("action");
         try {
-            switch (action) {
-                case "assign":
-                    assignStaff(req, resp);
-                    break;
-                case "unassign":
-                    unassignStaff(req, resp);
-                    break;
-                default:
-                    resp.sendRedirect("tasks");
-                    break;
+            String action = req.getParameter("action");
+            int taskId = Integer.parseInt(req.getParameter("taskId"));
+
+            if ("assign".equals(action)) {
+                int staffId = Integer.parseInt(req.getParameter("staffId"));
+                String deadlineStr = req.getParameter("deadline");
+                Timestamp deadline = null;
+                if (deadlineStr != null && !deadlineStr.isEmpty()) {
+                    // Chuyển String "yyyy-MM-dd" sang Timestamp bắt đầu ngày đó
+                    deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
+                }
+
+                TaskDetail newDetail = new TaskDetail();
+                newDetail.setTaskId(taskId);
+                newDetail.setTechnicalStaffId(staffId);
+                newDetail.setAssignedAt(new Timestamp(System.currentTimeMillis()));
+                newDetail.setDeadline(deadline);
+                newDetail.setStatus("pending");
+                newDetail.setProgress(0);
+
+                taskDetailDAO.add(newDetail);
+
+                resp.sendRedirect(req.getContextPath() + "/tasks?action=assign&taskId=" + taskId);
+
+            } else if ("unassign".equals(action)) {
+                int staffId = Integer.parseInt(req.getParameter("staffId"));
+                taskDetailDAO.deleteByTaskIdAndStaffId(taskId, staffId);
+
+                resp.sendRedirect(req.getContextPath() + "/tasks?action=assign&taskId=" + taskId);
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/tasks");
             }
+
         } catch (Exception e) {
             e.printStackTrace();
-            resp.getWriter().println("Error: " + e.getMessage());
+            req.setAttribute("error", "Lỗi khi xử lý phân công nhiệm vụ: " + e.getMessage());
+            showTaskList(req, resp);
         }
-    }
-
-    private void assignStaff(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        int taskId = Integer.parseInt(req.getParameter("taskId"));
-        int staffId = Integer.parseInt(req.getParameter("staffId"));
-        Integer assignedBy = 1;
-        Timestamp deadline = Timestamp.valueOf(req.getParameter("deadline") + " 00:00:00");
-
-        if (!taskDetailDAO.isStaffAssignedToTask(taskId, staffId)) {
-            taskDetailDAO.assignStaffToTask(taskId, staffId, assignedBy, deadline);
-        }
-
-        resp.sendRedirect("tasks");
-    }
-
-    private void unassignStaff(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-        int taskId = Integer.parseInt(req.getParameter("taskId"));
-        int staffId = Integer.parseInt(req.getParameter("staffId"));
-
-        taskDetailDAO.unassignStaffFromTask(taskId, staffId);
-        resp.sendRedirect("tasks");
     }
 }
