@@ -55,7 +55,7 @@ public class UserDAO extends DBContext{
             stmt.setString(5, user.getFullName());
             stmt.setString(6, user.getPhone());
             stmt.setString(7, user.getGender());
-            stmt.setDate(8, user.getBirthday());
+            stmt.setTimestamp(8, user.getBirthday());
             stmt.setInt(9, user.getRoleId());
             stmt.setString(10, user.getStatus());
             stmt.executeUpdate();
@@ -222,6 +222,8 @@ public class UserDAO extends DBContext{
                 u.setImageUrl(rs.getString("image_url"));
                 u.setUsername(rs.getString("username"));
                 u.setRoleId(rs.getInt("role_id"));
+                u.setBirthday(rs.getTimestamp("birthday"));
+                u.setGender(rs.getString("gender"));
                 return u;
             }
         } catch (SQLException e) {
@@ -281,7 +283,7 @@ public class UserDAO extends DBContext{
             ps.setString(4, u.getImageUrl());
             ps.setString(5, u.getGender());
             if (u.getBirthday() != null) {
-                ps.setDate(6, u.getBirthday());
+                ps.setTimestamp(6, u.getBirthday());
             } else {
                 ps.setNull(6, java.sql.Types.DATE);
             }

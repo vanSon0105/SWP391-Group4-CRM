@@ -12,7 +12,7 @@ public class User {
     private String fullName;
     private String phone;
     private String gender;       
-    private Date birthday;       
+    private Timestamp birthday;       
     private int roleId;
     private String status;       
     private Timestamp createdAt;
@@ -21,7 +21,7 @@ public class User {
 
     public User() {}
 
-    public User(int id, String username, String email, String fullName, String phone, String gender, Date birthday, String imageUrl, int roleId) {
+    public User(int id, String username, String email, String fullName, String phone, String gender, Timestamp birthday, String imageUrl, int roleId) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -57,8 +57,10 @@ public class User {
     public String getGender() { return gender; }
     public void setGender(String gender) { this.gender = gender; }
 
-    public Date getBirthday() { return birthday; }
-    public void setBirthday(Date birthday) { this.birthday = birthday; }
+    public Timestamp getBirthday() { 
+    	return birthday; 
+    	}
+    public void setBirthday(Timestamp birthday) { this.birthday = birthday; }
 
     public int getRoleId() { return roleId; }
     public void setRoleId(int roleId) { this.roleId = roleId; }

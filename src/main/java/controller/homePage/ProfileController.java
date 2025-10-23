@@ -3,7 +3,9 @@ package controller.homePage;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.regex.Pattern;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -85,16 +87,18 @@ public class ProfileController extends HttpServlet {
             errors.append("Giới tính không hợp lệ. ");
         }
 
-        Date birthday = null;
+        Timestamp birthday = null;
         if (birthdayStr == null || birthdayStr.trim().isEmpty()) {
             errors.append("Vui lòng chọn ngày sinh. ");
         } else {
             try {
-                birthday = Date.valueOf(birthdayStr);
-                if (birthday.toLocalDate().isAfter(LocalDate.now())) {
+                LocalDate date = LocalDate.parse(birthdayStr);
+                if (date.isAfter(LocalDate.now())) {
                     errors.append("Ngày sinh không được ở tương lai. ");
+                } else {
+                    birthday = Timestamp.valueOf(date.atStartOfDay());
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (DateTimeParseException e) {
                 errors.append("Định dạng ngày sinh không hợp lệ. ");
             }
         }

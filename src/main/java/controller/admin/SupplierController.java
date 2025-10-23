@@ -124,7 +124,7 @@ public class SupplierController extends HttpServlet {
         List<Supplier> suppliers = supplierDAO.getDeletedSuppliers();
         request.setAttribute("suppliers", suppliers);
         request.setAttribute("action", "trash");
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
@@ -164,7 +164,7 @@ public class SupplierController extends HttpServlet {
             request.setAttribute("action", "view");
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
-            request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
         }
         request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
@@ -182,10 +182,10 @@ public class SupplierController extends HttpServlet {
                 request.setAttribute("history", history);
             }
             request.setAttribute("action", "viewHistory");
-            request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
-            request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
         }
     }
 
@@ -346,6 +346,6 @@ public class SupplierController extends HttpServlet {
     private void forwardToForm(HttpServletRequest request, HttpServletResponse response, String action)
             throws ServletException, IOException {
         request.setAttribute("action", action);
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 }

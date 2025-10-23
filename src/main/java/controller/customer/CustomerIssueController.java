@@ -3,8 +3,10 @@ package controller.customer;
 import java.io.IOException;
 import java.util.List;
 
-import dao.CustomerIssueDAO;
-import dao.CustomerIssueDetailDAO;
+import dao.CustomerIssueDao;
+import dao.CustomerIssueDao;
+import dao.CustomerIssueDetailDao;
+import dao.CustomerIssueDetailDao;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,8 +21,8 @@ import utils.AuthorizationUtils;
 
 @WebServlet({"/issue", "/create-issue", "/issue-fill"})
 public class CustomerIssueController extends HttpServlet {
-	private CustomerIssueDAO ciDao = new CustomerIssueDAO();
-	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
+	private CustomerIssueDao ciDao = new CustomerIssueDao();
+	private CustomerIssueDetailDao dDao = new CustomerIssueDetailDao();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
-import dao.CustomerIssueDAO;
+import dao.CustomerIssueDao;
+import dao.CustomerIssueDao;
 import dao.TaskDetailDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,7 +20,7 @@ import utils.AuthorizationUtils;
 @WebServlet(urlPatterns = { "/technical-issues" })
 public class TechnicalStaffController extends HttpServlet {
 	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
-	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
+	private CustomerIssueDao issueDao = new CustomerIssueDao();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

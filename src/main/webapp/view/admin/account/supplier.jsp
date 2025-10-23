@@ -3,6 +3,7 @@
     <%@ page isELIgnored="false" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -127,7 +128,56 @@
 	    background: #cbd5e1;
 	}
 		
-	}
+	
+	.pagination {
+         display: flex;
+         justify-content: center;
+         padding-left: 0;
+         list-style: none;
+         margin-top: 20px;
+         font-family: Arial, sans-serif;
+     }
+
+     .page-item {
+         margin: 0 5px;
+     }
+
+     .page-link {
+         display: block;
+         padding: 8px 14px;
+         border: 1px solid #ddd;
+         color: #007bff;
+         text-decoration: none;
+         cursor: pointer;
+         border-radius: 4px;
+         transition: background-color 0.3s, color 0.3s;
+         user-select: none;
+     }
+
+     .page-link:hover:not(.disabled):not(.active) {
+         background-color: #e9f5ff;
+         color: #0056b3;
+     }
+
+     .page-item.active .page-link {
+         background-color: #007bff;
+         color: white;
+         border-color: #007bff;
+         cursor: default;
+     }
+
+     .page-item.disabled .page-link {
+         color: #aaa;
+         border-color: #ddd;
+         cursor: default;
+         pointer-events: none;
+     }
+
+     .page-link span {
+         font-size: 16px;
+         font-weight: bold;
+         line-height: 1;
+     }
 </style>
 </head>
 <body class="management-page device-management">
@@ -141,6 +191,8 @@
                             <i class="fa-solid fa-plus"></i>
                             <span>Thêm nhà cung cấp</span>
                         </a>
+                        
+                        <a href="supplier?action=trash" class="btn btn-danger">Thùng rác</a>
                     </div>
                     
                         
@@ -245,8 +297,98 @@
 						    </tbody>
 						</table>
                    </c:if>
+                   
+                   <c:if test="${(action == 'view' || action == 'viewHistory') && not empty supplier}">
+                        <div class="detail-wrapper">
+                            <div class="detail-box">
+                                <h3>Chi tiết nhà cung cấp</h3>
+                                <p><b>ID:</b> ${supplier.id}</p>
+                                <p><b>Tên:</b> ${supplier.name}</p>
+                                <p><b>SĐT:</b> ${supplier.phone}</p>
+                                <p><b>Email:</b> ${supplier.email}</p>
+                                <p><b>Địa chỉ:</b> ${supplier.address}</p>
+                                <a href="supplier?action=list" class="btn btn-secondary">Quay lại</a>
+                            </div>
+                            <c:if test="${action == 'viewHistory' && not empty history}">
+                                <div class="detail-box" style="margin-top: 24px;">
+                                    <h3>Lịch sử cung cấp thiết bị</h3>
+                                    <div class="table-wrap">
+                                        <table>
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Device ID</th>
+                                                    <th>Tên thiết bị</th>
+                                                    <th>Ngày</th>
+                                                    <th>Giá</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <c:forEach var="h" items="${history}" varStatus="status">
+                                                    <tr>
+                                                        <td>${status.index + 1}</td>
+                                                        <td>${h.deviceId}</td>
+                                                        <td>${h.deviceName}</td>
+                                                        <td>${h.date}</td>
+                                                        <td>${h.price}</td>
+                                                    </tr>
+                                                </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </c:if>
+                        </div>
+                    </c:if>
                 </div>
+                
+                <p style="margin-top:12px; color:#6b7280">
+                    Tổng số nhà cung cấp: <strong>
+                        <c:out value="${fn:length(suppliers)}" />
+                    </strong>
+                </p>
              </section>
+             
+              <nav style="margin-top: 20px;">
+                 <ul class="pagination">
+                     <c:choose>
+                         <c:when test="${currentPage > 1}">
+                             <li class="page-item">
+                                 <a class="page-link"
+                                     href="supplier?action=${action}&page=${currentPage - 1}">
+                                     <span>&laquo;</span>
+                                 </a>
+                             </li>
+                         </c:when>
+                         <c:otherwise>
+                             <li class="page-item disabled">
+                                 <span class="page-link">&laquo;</span>
+                             </li>
+                         </c:otherwise>
+                     </c:choose>
+                     <c:forEach var="i" begin="1" end="${totalPages}">
+                         <li class="page-item ${i == currentPage ? 'active' : ''}">
+                             <a class="page-link" href="supplier?action=${action}&page=${i}">${i}</a>
+                         </li>
+                     </c:forEach>
+                     <c:choose>
+                         <c:when test="${currentPage < totalPages}">
+                             <li class="page-item">
+                                 <a class="page-link"
+                                     href="supplier?action=${action}&page=${currentPage + 1}"
+                                     aria-label="Next">
+                                     <span>&raquo;</span>
+                                 </a>
+                             </li>
+                         </c:when>
+                         <c:otherwise>
+                             <li class="page-item disabled">
+                                 <span class="page-link">&raquo;</span>
+                             </li>
+                         </c:otherwise>
+                     </c:choose>
+                 </ul>
+             </nav>
         </main>
 </body>
 </html>
