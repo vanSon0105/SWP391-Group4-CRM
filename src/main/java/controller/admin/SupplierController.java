@@ -5,6 +5,7 @@ import dao.SupplierDetailDAO;
 import model.Supplier;
 import model.SupplierDetail;
 import model.User;
+import utils.AuthorizationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -29,39 +30,33 @@ public class SupplierController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("text/html; charset=UTF-8");
-
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
-            return;
-        }
-
-        User currentUser = (User) session.getAttribute("account");
-        if (currentUser == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
-            return;
-        }
-
-        if (currentUser.getRoleId() != 1) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
-            return;
-        }
+    	User currentUser = AuthorizationUtils.requirePermission(request, response, "SUPPLIER_INFORMATION_MANAGEMENT");
 
         String action = request.getParameter("action");
-        if (action == null || action.isEmpty()) action = "list";
+        if (action == null || action.isEmpty()) {
+        	action = "list";
+        }
 
         switch (action) {
             case "add":
+            	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CRUD_SUPPLIER")) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
                 showAddForm(request, response);
                 break;
             case "edit":
+            	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CRUD_SUPPLIER")) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
                 showEditForm(request, response);
                 break;
             case "delete":
+            	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CRUD_SUPPLIER")) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                    return;
+                }
                 deleteSupplier(request, response);
                 break;
             case "restore":
@@ -121,7 +116,7 @@ public class SupplierController extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("action", "list");
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
     private void listDeletedSuppliers(HttpServletRequest request, HttpServletResponse response)
@@ -135,7 +130,8 @@ public class SupplierController extends HttpServlet {
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("action", "add");
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.setAttribute("suppliers", supplierDAO.getAllSuppliers());
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -149,10 +145,10 @@ public class SupplierController extends HttpServlet {
                 request.setAttribute("supplier", supplier);
             }
             request.setAttribute("action", "edit");
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
         }
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
     private void viewSupplier(HttpServletRequest request, HttpServletResponse response)
@@ -166,10 +162,11 @@ public class SupplierController extends HttpServlet {
                 request.setAttribute("supplier", supplier);
             }
             request.setAttribute("action", "view");
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
+            request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
         }
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
     private void viewSupplierWithHistory(HttpServletRequest request, HttpServletResponse response)
@@ -228,7 +225,7 @@ public class SupplierController extends HttpServlet {
         request.setAttribute("suppliers", result);
         request.setAttribute("keyword", keyword);
         request.setAttribute("action", "list");
-        request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
     private void deleteSupplier(HttpServletRequest request, HttpServletResponse response)
@@ -262,11 +259,8 @@ public class SupplierController extends HttpServlet {
             throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
 
-        HttpSession session = request.getSession(false);
-        User currentUser = (session != null) ? (User) session.getAttribute("account") : null;
-
-        if (currentUser == null || currentUser.getRoleId() != 1) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền thực hiện thao tác này!");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "CRUD_SUPPLIER");
+        if (currentUser == null) {
             return;
         }
 

@@ -3,6 +3,8 @@ package controller.admin;
 import dao.TaskDAO;
 import dao.TaskDetailDAO;
 import dao.UserDAO;
+import dao.CustomerIssueDAO;
+import model.CustomerIssue;
 import model.Task;
 import model.TaskDetail;
 import model.User;
@@ -25,12 +27,16 @@ public class TaskController extends HttpServlet {
     private TaskDAO taskDAO;
     private TaskDetailDAO taskDetailDAO;
     private UserDAO userDAO;
+    private CustomerIssueDAO issueDAO;
+
 
     @Override
     public void init() {
         taskDAO = new TaskDAO();
         taskDetailDAO = new TaskDetailDAO();
         userDAO = new UserDAO();
+        issueDAO = new CustomerIssueDAO();
+
     }
 
     @Override
