@@ -35,10 +35,10 @@ import java.util.logging.*;
  */
 @WebServlet("/payment-list")
 public class PaymentController extends HttpServlet {
-	private static int PAYMENT_PER_PAGE = 10;
+	private static int PAYMENT_PER_PAGE = 6;
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
-	UserDAO userDao = new UserDAO();
+	UserDAO userDao = new UserDAO(); 
 	CartDAO cartDao = new CartDAO();
 	WarrantyCardDao wcDao = new WarrantyCardDao();
 	OrderDetailDAO odDao = new OrderDetailDAO();
@@ -48,19 +48,24 @@ public class PaymentController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String pageParam = req.getParameter("page");
+		String status = req.getParameter("status");
+		String sortCreatedAt = req.getParameter("sortCreatedAt");
+		String sortPaidAt = req.getParameter("sortPaidAt");
+		String method = req.getParameter("method");
+		String search = req.getParameter("search");
 
 		int page = 1;
 		if (pageParam != null) {
 			page = Integer.parseInt(pageParam);
 		}
 
-		int totalPayments = paymentDao.getPaymentCount();
+		int totalPayments = paymentDao.getFilteredPaymentCount(status, method, search);
 		int totalPages = (int) Math.ceil((double) totalPayments / PAYMENT_PER_PAGE);
 		int offset = (page - 1) * PAYMENT_PER_PAGE;
 
-		List<Payment> paymentList = paymentDao.getAllPayment(PAYMENT_PER_PAGE, offset);
+		List<Payment> paymentList = paymentDao.getFilteredPayments(status, sortCreatedAt, sortPaidAt, method, search, PAYMENT_PER_PAGE, offset);
 
-		req.setAttribute("totalPages", totalPages);
+		req.setAttribute("totalPages", totalPages); 
 		req.setAttribute("paymentList", paymentList);
 		req.getRequestDispatcher("view/admin/paymentmanagement/PaymentList.jsp").forward(req, resp);
 	}
