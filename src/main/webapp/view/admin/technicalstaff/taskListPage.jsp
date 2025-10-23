@@ -20,7 +20,6 @@
         }
 
         h1 {
-            margin-top: 0;
             color: #0f172a;
         }
 

@@ -6,7 +6,7 @@ import model.CustomerDevice;
 import model.CustomerIssue;
 import dal.DBContext;
 
-public class CustomerIssueDAO extends DBContext{
+public class CustomerIssueDao extends DBContext{
 	
 	public List<CustomerIssue> getAllIssues() {
 		List<CustomerIssue> list = new ArrayList<>();

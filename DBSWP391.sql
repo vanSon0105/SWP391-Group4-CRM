@@ -50,7 +50,8 @@ CREATE TABLE device_serials(
   id INT PRIMARY KEY AUTO_INCREMENT,
   device_id INT NOT NULL,
   serial_no VARCHAR(100) UNIQUE,
-  status ENUM('in_stock', 'sold', 'in_repair', 'out_stock') DEFAULT 'in_stock',
+  stock_status ENUM('in_stock', 'sold', 'in_repair', 'out_stock') DEFAULT 'in_stock',
+  status ENUM('active', 'discontinued') default 'active',
   import_date TIMESTAMP,
   foreign key (device_id) references devices(id)
 );
@@ -356,7 +357,7 @@ INSERT INTO devices (category_id, name, price, unit, image_url, description, war
 (2, 'OnePlus Nord 4', 11990000, 'pcs', NULL, 'Hiệu năng mạnh mẽ trong tầm giá, sạc nhanh SUPERVOOC, màn hình mượt mà.', 12),
 (2, 'Xiaomi Redmi Note 14 Pro', 8990000, 'pcs', NULL, 'Smartphone tầm trung với camera 200MP, sạc nhanh 120W, màn hình AMOLED 120Hz.', 12);
 
-INSERT INTO device_serials (id, device_id, serial_no, status, import_date) VALUES
+INSERT INTO device_serials (id, device_id, serial_no, stock_status, import_date) VALUES
 (1, 3, 'IP15-SN0001', 'in_stock', '2025-09-01 00:00:00'),
 (2, 2, 'MBP14-SN0001', 'in_stock', '2025-09-01 00:00:00'),
 (3, 4, 'S24-SN0001', 'in_stock', '2025-09-01 00:00:00'),
