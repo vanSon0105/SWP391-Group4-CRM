@@ -1,7 +1,9 @@
 package controller.admin;
 
 import dao.SupplierDAO;
+import dao.SupplierDetailDAO;
 import model.Supplier;
+import model.SupplierDetail;
 import model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,10 +18,12 @@ import java.util.List;
 public class SupplierController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private SupplierDAO supplierDAO;
+    private SupplierDetailDAO detailDAO;
 
     @Override
     public void init() throws ServletException {
         supplierDAO = new SupplierDAO();
+        detailDAO = new SupplierDetailDAO();
     }
 
     @Override
@@ -58,7 +62,7 @@ public class SupplierController extends HttpServlet {
                 showEditForm(request, response);
                 break;
             case "delete":
-                deleteSupplier(request, response); 
+                deleteSupplier(request, response);
                 break;
             case "restore":
                 restoreSupplier(request, response);
@@ -68,6 +72,9 @@ public class SupplierController extends HttpServlet {
                 break;
             case "view":
                 viewSupplier(request, response);
+                break;
+            case "viewHistory":
+                viewSupplierWithHistory(request, response);
                 break;
             case "search":
                 searchSupplier(request, response);
@@ -82,9 +89,9 @@ public class SupplierController extends HttpServlet {
             throws ServletException, IOException {
         List<Supplier> suppliers = supplierDAO.getAllSuppliers();
 
-        int pageSize = 5; 
+        int pageSize = 5;
         String pageParam = request.getParameter("page");
-        int page = 1; 
+        int page = 1;
         if (pageParam != null) {
             try {
                 page = Integer.parseInt(pageParam);
@@ -96,7 +103,7 @@ public class SupplierController extends HttpServlet {
 
         int totalSuppliers = suppliers.size();
         int totalPages = (int) Math.ceil((double) totalSuppliers / pageSize);
-        if (totalPages == 0) totalPages = 1; 
+        if (totalPages == 0) totalPages = 1;
 
         if (page > totalPages) {
             page = totalPages;
@@ -165,6 +172,26 @@ public class SupplierController extends HttpServlet {
         request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
     }
 
+    private void viewSupplierWithHistory(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            Supplier supplier = supplierDAO.getSupplierById(id);
+            if (supplier == null) {
+                request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
+            } else {
+                request.setAttribute("supplier", supplier);
+                List<SupplierDetail> history = detailDAO.getDetailsBySupplierId(id);
+                request.setAttribute("history", history);
+            }
+            request.setAttribute("action", "viewHistory");
+            request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("error", "Dữ liệu không hợp lệ!");
+            request.getRequestDispatcher("/view/profile/supplier.jsp").forward(request, response);
+        }
+    }
+
     private void searchSupplier(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String keyword = request.getParameter("keyword");
@@ -208,7 +235,7 @@ public class SupplierController extends HttpServlet {
             throws IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            supplierDAO.deleteSupplier(id); 
+            supplierDAO.deleteSupplier(id);
             response.sendRedirect("supplier?action=list&message=" +
                     URLEncoder.encode("Đã chuyển vào thùng rác!", "UTF-8"));
         } catch (Exception e) {
@@ -221,7 +248,7 @@ public class SupplierController extends HttpServlet {
             throws IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            supplierDAO.restoreSupplier(id); 
+            supplierDAO.restoreSupplier(id);
             response.sendRedirect("supplier?action=trash&message=" +
                     URLEncoder.encode("Khôi phục thành công!", "UTF-8"));
         } catch (Exception e) {
