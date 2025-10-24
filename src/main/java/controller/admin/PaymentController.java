@@ -116,7 +116,7 @@ public class PaymentController extends HttpServlet {
 						wcId = wc.getId();
 					}
 
-					odDao.addOrderDetail(orderId, cd.getDevice().getId(), ds.getId(), 1, cd.getPrice(), wcId);
+					boolean check = odDao.addOrderDetail(orderId, cd.getDevice().getId(), ds.getId(), 1, cd.getPrice(), wcId);
 					dsDao.updateStatus(ds.getId(), "sold");
 				}
 			}

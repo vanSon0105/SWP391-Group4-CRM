@@ -33,7 +33,6 @@ table tbody tr td {
 	<main>
 		<form action="checkout" method="post">
 			<section class="checkout-grid">
-				<!-- Thông tin giao hàng -->
 				<div class="panel" style="background: rgba(255, 255, 255, 0.97);">
 					<h2>Thông tin thanh toán</h2>
 					<div style="display: flex; gap: 20px;margin-bottom:10px">
@@ -124,7 +123,7 @@ table tbody tr td {
 						<p style="color: #0f172a;">
 							Khi xác nhận, bạn đồng ý với <a href="#"
 								style="color: #22d3ee; text-decoration: none; font-weight: 600;">điều
-								khoản mua hàng</a> và chính sách hoàn tiền của NovaCare.
+								khoản mua hàng</a> và chính sách hoàn tiền của TechShop.
 						</p>
 					</div>
 					<div class="cta" style="margin-top: 20px">

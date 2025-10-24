@@ -100,7 +100,7 @@ public class DeviceSerialDAO extends dal.DBContext {
     }
 
     public boolean updateStatus(int serialId, String status) {
-        String sql = "UPDATE device_serials SET status = ? WHERE id = ?";
+        String sql = "UPDATE device_serials SET stock_status = ? WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
@@ -136,7 +136,7 @@ public class DeviceSerialDAO extends dal.DBContext {
     		if(rs.next()) {
     			return new DeviceSerial(
     					rs.getInt("id"),
-    					rs.getInt("order_id"),
+    					rs.getInt("device_id"),
     					rs.getString("serial_no"),
     					rs.getString("stock_status"),
     					rs.getTimestamp("import_date"),
