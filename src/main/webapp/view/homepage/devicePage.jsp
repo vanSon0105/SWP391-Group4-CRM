@@ -10,7 +10,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NovaCare Shop - Danh mục sản phẩm</title>
+<title>TechShop - Danh mục sản phẩm</title>
 <link rel="stylesheet"
 	href="<%=request.getContextPath()%>/assets/css/shop.css">
 

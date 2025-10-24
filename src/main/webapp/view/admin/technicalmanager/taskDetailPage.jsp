@@ -97,7 +97,7 @@ th {
 				<div class="task-meta">
 					<b>Mô tả:</b> ${task.description}<br> <b>Manager:</b>
 					${task.managerId}<br> <b>Customer Issue:</b> Issue
-					#${task.customerIssueId}<br> <b>Số nhân viên tham gia:</b> 1<br>
+					#${task.customerIssueId}<br> 
 					<b>Trạng thái chung:</b> <span style="color: #0ea5e9">Đang
 						xử lý</span>
 				</div>
@@ -107,7 +107,7 @@ th {
 				<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
 				<form action="task-detail" method="post" style="display: inline;">
 					<input type="hidden" name="taskId" value="${task.id}" />
-					<button type="submit" class="btn btn-secondary">Đánh dấu
+					<button type="submit" class="btn btn-secondary" ${not empty listTaskDetail ? '' : 'disabled'} >Đánh dấu
 						hoàn thành Task</button>
 				</form>
 			</div>

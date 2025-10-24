@@ -3,6 +3,7 @@
     <%@ page isELIgnored="false" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -125,7 +126,7 @@
 	                        	<c:forEach items="${listDevices}" var="s">
 		                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
 		                            	<td>${s.id}</td>
-		                                <td><img class="device-thumb" src="../assets/img/${s.imageUrl}" alt=""></td>
+			                            <td><img class="device-thumb" src="${deviceImageSrc}" alt="Anh thiet bi"></td>
 		                                <td>${s.name}</td>
 		                                <td>${s.category.name}</td>
 		                                <td>

@@ -1,11 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
  <footer id="contact" class="footer">
     <div class="container">
         <div class="footer-body">
             <section class="footer-left">
-                <h2 class="footer-title">Sign up for our newsletter</h2>
+                <h2 class="footer-title">Sign up for our new devices</h2>
                 <div class="footer-input-form"><input type="email" class="footer-input"
                         placeholder="Enter your email">
                     <a href="#1">
@@ -16,14 +17,13 @@
                         </svg>
                     </a>
                 </div>
-                <div class="footer-link">
-                    <a target="_blank" href="https://www.facebook.com/"><img src="./assets/img/facebook.svg"
-                            alt="facebook"></a>
+                <%-- <div class="footer-link">
+                    <a target="_blank" href="https://www.facebook.com/"><i class="fa-brands fa-facebook"></i></a>
                     <a target="_blank" href="https://www.instagram.com/"><img src="./assets/img/instagram.svg"
                             alt="instagram"></a>
                     <a target="_blank" href="https://www.spacex.com/"><img class="footer-x-link"
                             src="./assets/img/x.svg" alt="x"></a>
-                </div>
+                </div>--%>
             </section>
             <section class="footer-right">
                 <ul>
@@ -34,7 +34,7 @@
                     <li><a href="#1">Blog Post</a></li>
                 </ul>
                 <ul>
-                    <h4 class="footer-title-right">Product</h4>
+                    <h4 class="footer-title-right">Devices</h4>
                     <li><a href="#1">Home</a></li>
                     <li><a href="#1">About</a></li>
                     <li><a href="#1">Blog</a></li>

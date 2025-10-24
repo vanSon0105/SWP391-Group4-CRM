@@ -386,6 +386,18 @@ public class UserDAO extends DBContext{
         }
         return false;
     }
+    
+    public void updateLastLoginAt(int userId){
+        String sql = "UPDATE users SET last_login_at = UTC_TIMESTAMP() WHERE id = ?";
+        try (Connection con = getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+
 
 
     

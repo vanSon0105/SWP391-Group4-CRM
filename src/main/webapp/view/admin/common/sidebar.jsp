@@ -6,8 +6,10 @@
 
 <aside class="sidebar" aria-label="Chức năng quản trị">
     <div class="brand">
-        <img src="../assets/img/device-placeholder.svg" alt="">
-        <span>VanSon</span>
+        <c:when test="${not empty account.imageUrl}">
+            <img src="${pageContext.request.contextPath}/${account.imageUrl}" alt="Avatar">
+        </c:when>
+        <span>${account.username}</span>
     </div>
     <nav>
         <a href="admin" class="active">Dashboard</a>
@@ -15,8 +17,9 @@
         <a href="category-show">Danh mục</a>
         <a href="account">Tài khoản</a>        
         <a href="supplier">Nhà cung cấp</a> 
-        <a href="${pageContext.request.contextPath}/task-list">Danh sách task</a>
-        <a href="${pageContext.request.contextPath}/payment-list">Danh sách thanh toán</a>
+        <a href="task-list">Danh sách task</a>
+        <a href="payment-list">Danh sách thanh toán</a>
+        <a href="manager-issues">Task cần giao</a>
     </nav>
 </aside>
     

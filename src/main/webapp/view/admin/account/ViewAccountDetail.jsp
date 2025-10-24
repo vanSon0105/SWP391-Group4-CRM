@@ -5,10 +5,10 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Chi tiết người dùng | NovaCare</title>
+  <title>Chi tiết người dùng | TechShop</title>
   <style>
     body{font-family:system-ui;background:#f5f7fb;margin:0;padding:20px}
-    .card{max-width:900px;margin:24px auto;background:#fff;padding:24px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+    .card{max-width:900px;margin:auto;background:#fff;padding:24px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
     .grid{display:flex;gap:20px;align-items:flex-start}
     .avatar{width:160px;height:160px;border-radius:10px;background:#f0f2f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .avatar img{width:100%;height:100%;object-fit:cover}
@@ -19,12 +19,20 @@
     .btn{display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600}
     .btn-back{background:#e5e7eb;color:#111}
     .btn-edit{background:#f59e0b;color:#111;margin-left:8px}
+    section{
+    	height: 100%;
+    	display: flex;
+    	flex-direction: column;
+    	justify-content: center;
+    	align-items: center;
+    }
   </style>
 </head>
 <body>
 
 <jsp:include page="../common/header.jsp"></jsp:include>
 
+<section>
 <div class="card">
   <h2>Chi tiết người dùng</h2>
 
@@ -64,13 +72,14 @@
         <div class="row"><div class="label">Lần đăng nhập cuối</div><div class="value">${userDetail.lastLoginAt}</div></div>
 
         <div style="margin-top:16px">
-          <a href="${pageContext.request.contextPath}/account" class="btn btn-back">Quay lại</a>
-          <a href="${pageContext.request.contextPath}/account?action=edit&id=${userDetail.id}" class="btn btn-edit">Sửa</a>
+          <a href="account" class="btn btn-back">Quay lại</a>
+          <a href="account?action=edit&id=${userDetail.id}" class="btn btn-edit">Sửa</a>
         </div>
       </div>
     </div>
   </c:if>
 
 </div>
+</section>
 </body>
 </html>

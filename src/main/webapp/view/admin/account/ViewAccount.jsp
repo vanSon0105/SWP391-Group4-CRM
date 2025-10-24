@@ -13,6 +13,22 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
+	:root{
+      --primary:#2563eb; 
+      --primary-hover:#1d4ed8;
+      --neutral:#6b7280; 
+      --bg:#f5f7fb; 
+      --card:#fff; 
+      --text:#111827;
+      --danger:#ef4444; 
+      --warning:#f59e0b; 
+      --info:#0ea5e9; 
+      --success:#10b981;
+      --radius:10px; 
+      --shadow:0 6px 18px rgba(0,0,0,.08);
+      --border:#e5e7eb;
+    }
+    
 	.device-btn{
 	    color: black !important;
 	}
@@ -53,7 +69,43 @@
 	body .panel h2{
 		margin-bottom: 0 !important;
 	}
-}
+	
+	.pager {
+         display: flex;
+         gap: 6px;
+         align-items: center;
+         justify-content: flex-end;
+         margin-top: 12px;
+         flex-wrap: wrap;
+     }
+
+     .pager .page-btn {
+         min-width: 36px;
+         height: 36px;
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         border: 1px solid var(--border);
+         border-radius: 8px;
+         background: #fff;
+         cursor: pointer;
+     }
+
+     .pager .page-btn[disabled] {
+         opacity: .5;
+         cursor: not-allowed
+     }
+
+     .pager .active {
+         background: var(--primary);
+         color: #fff;
+         border-color: var(--primary)
+     }
+
+     .pager .info {
+         margin-right: auto;
+         color: var(--neutral)
+     }
 </style>
 </head>
 <body class="management-page device-management">
@@ -65,7 +117,7 @@
                     <div class="device-toolbar-actions">
                         <a class="btn btn-add" href="${pageContext.request.contextPath}/view/profile/AddUser.jsp">
                             <i class="fa-solid fa-plus"></i>
-                            <span>Thêm thiết bị</span>
+                            <span>Thêm tài khoản</span>
                         </a>
                     </div>
                     
@@ -170,6 +222,24 @@
                    <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số người dùng: <strong>${total}</strong></p>
                 </div>
              </section>
+             <c:if test="${totalPages > 1}">
+				  <div class="pager">
+				    <span class="info">Trang ${currentPage} / ${totalPages}</span>
+				
+				    <c:if test="${currentPage > 1}">
+				      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage - 1}">«</a>
+				    </c:if>
+				
+				    <c:forEach var="i" begin="1" end="${totalPages}">
+				      <a class="page-btn ${i == currentPage ? 'active' : ''}"
+				         href="${pageContext.request.contextPath}/account?page=${i}">${i}</a>
+				    </c:forEach>
+				
+				    <c:if test="${currentPage < totalPages}">
+				      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage + 1}">»</a>
+				    </c:if>
+				  </div>
+			</c:if>
         </main>
 </body>
 </html>
