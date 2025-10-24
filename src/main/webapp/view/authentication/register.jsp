@@ -28,7 +28,7 @@
 </head>
 <body class="shop-page register-page">
     <section class="card">
-        <h1>Tạo tài khoản NovaCare</h1>
+        <h1>Tạo tài khoản TechShop</h1>
         <p>Mua sắm, theo dõi bảo hành và nhận thông báo sửa chữa một cách dễ dàng.</p>
         
         

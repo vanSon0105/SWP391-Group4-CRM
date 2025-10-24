@@ -186,7 +186,6 @@ public class CartDAO extends DBContext {
 		try (Connection connection = getConnection();
 			 PreparedStatement ps = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
 			ps.setInt(1, id);
-			ps.executeUpdate();
 			int affected = ps.executeUpdate();
 	        if (affected == 0) throw new SQLException("Insert cart failed, no rows affected.");
 			ResultSet rs = ps.getGeneratedKeys();

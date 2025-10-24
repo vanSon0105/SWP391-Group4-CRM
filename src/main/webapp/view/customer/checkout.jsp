@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-        <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
             <!DOCTYPE html>
             <html lang="vi">
 
@@ -116,17 +116,17 @@
                 <jsp:include page="../common/header.jsp" />
                 <main>
                     <c:choose>
-                        <c:when test="${empty cartItems}">
+                        <c:when test="${empty listCart}">
                             <section class="empty-state">
                                 <h2>Your cart is empty</h2>
                                 <p>Add items to your cart before proceeding to checkout.</p>
-                                <a class="cta-btn" href="${pageContext.request.contextPath}/device-page">Continue
+                                <a class="cta-btn" href="device-page">Continue
                                     shopping</a>
                             </section>
                         </c:when>
                         <c:otherwise>
                             <section class="checkout-grid">
-                                <form class="panel" action="${pageContext.request.contextPath}/checkout" method="post">
+                                <form class="panel" action="checkout" method="post">
                                     <h2>Shipping information</h2>
                                     <c:if test="${not empty error}">
                                         <div class="alert-error">${error}</div>
@@ -185,7 +185,7 @@
                                     </div>
                                     <div class="cta">
                                         <button type="submit" class="cta-btn">Confirm order</button>
-                                        <a href="${pageContext.request.contextPath}/cart" class="cta-btn secondary">Back
+                                        <a href="cart" class="cta-btn secondary">Back
                                             to cart</a>
                                     </div>
                                 </form>
@@ -193,11 +193,11 @@
                                 <section class="summary">
                                     <h2>Order summary</h2>
                                     <ul class="cart-items">
-                                        <c:forEach var="item" items="${cartItems}">
+                                        <c:forEach var="item" items="${listCart}">
                                             <li>
                                                 <span>${item.device.name} x ${item.quantity}</span>
                                                 <strong>
-                                                    <fmt:formatNumber value="${item.price * item.quantity}"
+                                                    <fmt:formatNumber value=""
                                                         type="number" /> VND
                                                 </strong>
                                             </li>
@@ -206,13 +206,13 @@
                                     <div class="summary-line">
                                         <span>Subtotal</span>
                                         <strong>
-                                            <fmt:formatNumber value="${subtotal}" type="number" /> VND
+                                            <fmt:formatNumber value="" type="number" /> VND
                                         </strong>
                                     </div>
                                     <div class="summary-line">
                                         <span>Discount</span>
                                         <strong>-
-                                            <fmt:formatNumber value="${discount}" type="number" /> VND
+                                            ${sessionScope.discount}
                                         </strong>
                                     </div>
                                     <div class="summary-line">
@@ -222,7 +222,7 @@
                                     <div class="summary-total">
                                         <span>Total</span>
                                         <strong>
-                                            <fmt:formatNumber value="${finalTotal}" type="number" /> VND
+                                            ${finalPrice}
                                         </strong>
                                     </div>
                                 </section>

@@ -6,7 +6,7 @@ import model.OrderDetail;
 import dal.DBContext;
 
 public class OrderDetailDAO extends DBContext{
-	  public void addOrderDetail(int orderId, int deviceId, int deviceSerialId, int quantity, double price, int warrantyCardId) {
+	  public boolean addOrderDetail(int orderId, int deviceId, int deviceSerialId, int quantity, double price, int warrantyCardId) {
 	        String sql = "INSERT INTO order_details (order_id, device_id, device_serial_id, quantity, price, warranty_card_id) "
 	                   + "VALUES (?, ?, ?, ?, ?, ?)";
 	        try (Connection conn = getConnection();
@@ -17,10 +17,11 @@ public class OrderDetailDAO extends DBContext{
 	            ps.setInt(4, quantity);
 	            ps.setDouble(5, price);
 	            ps.setInt(6, warrantyCardId);
-	            ps.executeUpdate();
+	            return ps.executeUpdate() > 0;
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
+	        return false;
 	    }
 	    public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
 	        List<OrderDetail> list = new ArrayList<>();
