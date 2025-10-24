@@ -45,13 +45,13 @@ public class AuthorizationUtils {
             throws IOException {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+            response.sendRedirect("login");
             return null;
         }
 
         User user = (User) session.getAttribute(SESSION_ACCOUNT);
         if (user == null) {
-            response.sendRedirect(request.getContextPath() + "/view/authentication/login.jsp");
+            response.sendRedirect("login");
             return null;
         }
 

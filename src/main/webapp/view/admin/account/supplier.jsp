@@ -14,6 +14,22 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
+	:root {
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --neutral: #6b7280;
+        --bg: #f5f7fb;
+        --card: #fff;
+        --text: #111827;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --info: #0ea5e9;
+        --success: #10b981;
+        --radius: 10px;
+        --shadow: 0 6px 18px rgba(0, 0, 0, .08);
+        --border: #e5e7eb;
+    }
+    
 	.device-btn{
 	    color: black !important;
 	}
@@ -178,6 +194,20 @@
          font-weight: bold;
          line-height: 1;
      }
+     
+     .management-page.device-management .table-wrapper{
+     	border: none !important;
+     }
+     
+     .detail-box {
+         background: var(--card);
+         border: 1px solid var(--border);
+         border-radius: var(--radius);
+         box-shadow: var(--shadow);
+         padding: 24px 28px;
+         margin-top: 12px;
+         margin-bottom: 24px;
+     }
 </style>
 </head>
 <body class="management-page device-management">
@@ -251,7 +281,7 @@
                     </c:if>     
             	</div>
                 <div class="table-wrapper">
-                    <c:if test="${not empty suppliers}"> 
+                <c:if test="${action == 'list' || action == 'trash'}">
 	                    <table class="device-table">
 	                        <thead>
 	                            <tr>
@@ -264,6 +294,8 @@
                                 </tr>
 	                        </thead>
 	                        <tbody>
+	                        <c:choose>
+                    		<c:when test="${not empty suppliers}"> 
 	                        	<c:forEach items="${suppliers}" var="s">
 		                            <tr>
 		                            	<td>${s.id}</td>
@@ -272,30 +304,38 @@
                                         <td>${s.email}</td>
                                         <td>${s.address}</td>
                                         <td>
-                                            <a href="supplier?action=view&id=${s.id}"
-                                                class="btn device-btn">Xem</a>
-                                                
-	                                    	<a class="btn device-btn" href="supplier?action=edit&id=${s.id}">Sửa</a>
-	                                    	
-	                                    	<a class="btn device-remove" href="supplier?action=delete&id=${s.id}"
-	                                    	onclick="return confirm('Bạn có chắc muốn dừng nhà cung cấp này?');" >Xóa</a>
+                                        	<c:choose>
+                                        		<c:when test="${action == 'trash'}">
+                                        			<a href="supplier?action=restore&id=${s.id}"
+                                                        class="btn device-btn">Khôi phục</a>
+                                                        
+                                                    <a href="supplier?action=deletePermanent&id=${s.id}"
+                                                        class="btn device-remove"
+                                                        onclick="return confirm('Xóa vĩnh viễn?');">Xóa
+                                                        vĩnh viễn</a>
+	                                            </c:when>
+	                                            <c:otherwise>
+		                                            <a href="supplier?action=viewHistory&id=${s.id}"
+		                                                class="btn device-btn">Xem</a>
+		                                                
+			                                    	<a class="btn device-btn" href="supplier?action=edit&id=${s.id}">Sửa</a>
+			                                    	
+			                                    	<a class="btn device-remove" href="supplier?action=delete&id=${s.id}"
+			                                    	onclick="return confirm('Bạn có chắc muốn dừng nhà cung cấp này?');" >Xóa</a>
+		                                    	</c:otherwise>
+		                                    </c:choose>
                                         </td>
 		                            </tr>
 		                          </c:forEach>
+			                   </c:when>
+			                   <c:otherwise>
+                                   <tr>
+                                       <td colspan="6" style="color:gray;">Không có dữ liệu</td>
+                                   </tr>
+                               </c:otherwise>
+			                   </c:choose>
 	                        </tbody>
 	                    </table>
-                   </c:if>
-                   
-                   <c:if test="${empty suppliers}">
-	                   <table class="device-table"> 
-	                   		<tbody>
-		                   		<tr>
-							        <td colspan="7" style="text-align: center; border: none;">
-							            Không tìm thấy nhà cung cấp
-							        </td>
-							    </tr>
-						    </tbody>
-						</table>
                    </c:if>
                    
                    <c:if test="${(action == 'view' || action == 'viewHistory') && not empty supplier}">

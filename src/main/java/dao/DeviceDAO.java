@@ -632,9 +632,9 @@ public class DeviceDAO extends DBContext {
 	public boolean deleteDevice(int id) {
 	    String sql = "UPDATE devices SET status = 'discontinued' WHERE id = ?;";
 	    
-	    String sql1 = "UPDATE device_serials " +
-                "SET status = 'discontinued' " +
-                "WHERE device_id = ? AND (status = 'in_stock' OR status = 'out_stock')";
+	    String sql1 = "UPDATE device_serials\r\n"
+	    		+ "SET status = 'discontinued'\r\n"
+	    		+ "WHERE device_id = ? AND (stock_status = 'in_stock' OR stock_status = 'out_stock') AND status = 'active';";
 
 	    try (Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql);

@@ -3,6 +3,7 @@
     <%@ page isELIgnored="false" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -12,6 +13,18 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    .image-preview {
+        margin-top: 12px;
+    }
+    .image-preview img {
+        max-width: 220px;
+        border-radius: 12px;
+        border: 1px solid #d7dce6;
+        background: #fff;
+        padding: 6px;
+    }
+</style>
 </head>
 <body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
@@ -24,6 +37,7 @@
         <section class="panel">
             <h2>Cập nhật thông tin</h2>
             <c:if test="${not empty device}">
+            
             <form class="device-form" action="device-update" method="post" enctype="multipart/form-data">
                 <div class="form-grid">
                     <input type="hidden" name="id" value="${device.id}">
@@ -58,6 +72,9 @@
                     <div class="form-field file-image">
 					    <label for="image">Ảnh</label>
 					    <input type="file" id="image" name="image" accept="image/*">
+					    <div class="image-preview">
+                            <img src="${deviceImageSrc}" alt="Anh thiet bi hien tai">
+                        </div>
 					</div>
 
                 </div>

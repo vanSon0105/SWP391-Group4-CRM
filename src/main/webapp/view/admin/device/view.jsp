@@ -3,6 +3,7 @@
     <%@ page isELIgnored="false" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +25,7 @@
     <section class="panel">
         <div class="device-detail">
             <div class="device-img">
-                <img src="../assets/img/${deviceDetail.imageUrl}" alt="Hình thiết bị">
+                <img src="${deviceImageSrc}" alt="Anh thiet bi">
             </div>
             <div class="device-container">
 	            <table class="device-table">

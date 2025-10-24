@@ -413,8 +413,8 @@ body:not(.sidebar-collapsed) .sidebar-main {
 }
 
 .avatar {
-    width: 36px;
-    height: 36px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
     background: linear-gradient(90deg, #06b6d4, #3b82f6);
     color: #fff;

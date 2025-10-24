@@ -72,6 +72,7 @@ public class LoginController extends HttpServlet {
         User user = userDAO.getUserByLogin(email, password);
 
         if (user != null) {
+        	userDAO.updateLastLoginAt(user.getId());
 		    session.setAttribute("account", user);
 		    AuthorizationUtils.storePermissions(session, permissionDAO.getPermissionsForUser(user.getId()));
 		    response.sendRedirect(request.getContextPath() + "/home");

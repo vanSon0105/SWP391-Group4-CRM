@@ -22,7 +22,7 @@
        <div class="topbar-right">
            <div class="user-area">
                <a href=""><i class="fa-solid fa-gear"></i></a>
-               <a href=""><i class="fa-solid fa-user"></i></a>
+               <a href="profile"><i class="fa-solid fa-user"></i></a>
            </div>
        </div>
    </header>
