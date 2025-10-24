@@ -9,11 +9,14 @@ import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
 import model.User;
+import utils.AuthorizationUtils;
 
 import java.io.IOException;
 import java.util.List;
 
 import dao.CustomerIssueDao;
+import dao.CustomerIssueDao;
+import dao.CustomerIssueDetailDao;
 import dao.CustomerIssueDetailDao;
 
 /**
@@ -24,6 +27,7 @@ public class SupportIsssueController extends HttpServlet {
 	private CustomerIssueDao iDao = new CustomerIssueDao();
 	private CustomerIssueDetailDao dDao = new CustomerIssueDetailDao();
        
+	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		User staff = getUser(req, resp);
 		if (staff == null) {
@@ -43,6 +47,7 @@ public class SupportIsssueController extends HttpServlet {
 		req.getRequestDispatcher("view/admin/supportstaff/issueListPage.jsp").forward(req, resp);
 	}
 
+	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User staff = getUser(request, response);
 		if (staff == null) {
@@ -53,7 +58,9 @@ public class SupportIsssueController extends HttpServlet {
 		if ("save".equalsIgnoreCase(action)) {
 			checkRequest(request, response, staff);
 			return;
-		} else if ("request_details".equalsIgnoreCase(action)) {
+		}
+		
+		if ("request_details".equalsIgnoreCase(action)) {
 			sendRequestDetails(request, response, staff);
 			return;
 		}
@@ -61,17 +68,7 @@ public class SupportIsssueController extends HttpServlet {
 	}
 	
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		HttpSession session = req.getSession(false);
-		if(session == null) {
-			resp.sendRedirect("login");
-			return null;
-		}
-		User user = (User) session.getAttribute("account");
-		if (user == null || user.getRoleId() != 4) {
-			resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Bạn không có quyền truy cập trang này!");
-			return null;
-		}
-		return user;
+		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES_RESPONDING");
 	}
 	
 	private void showReviewDetail(HttpServletRequest req, HttpServletResponse resp, User staff)
@@ -129,12 +126,15 @@ public class SupportIsssueController extends HttpServlet {
 			return;
 		}
 
-		int issueId = Integer.parseInt(issueIdParam);
-		CustomerIssue issue = iDao.getIssueById(issueId);
-		if (issue == null) {
-			resp.sendRedirect("support-issues?notfound=1");
-			return;
-		}
+		int issueId;
+        try {
+            issueId = Integer.parseInt(issueIdParam);
+        } catch (NumberFormatException ex) {
+            resp.sendRedirect("support-issues?notfound=1");
+            return;
+        }
+
+        CustomerIssue issue = iDao.getIssueById(issueId);
 		
 		if (isLockedForSupport(issue.getSupportStatus())) {
 			resp.sendRedirect("support-issues?locked=1");

@@ -3,80 +3,47 @@ package model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 
-
 public class Order {
-	private int id;
-	private Customer customer_id;
-	private double total_amount;
-	private double discount;
-	private String status;
-	private Timestamp date;
-	
-	public Order() {}
+    private int id;
+    private int customerId;           
+    private BigDecimal totalAmount;   // Dùng BigDecimal cho tiền
+    private BigDecimal discount;      // Dùng BigDecimal cho tiền
+    private String status;
+    private Timestamp date;
 
-	public Order(int id, Customer customer_id, double total_amount,double discount, String status, Timestamp date) {
-		super();
-		this.id = id;
-		this.customer_id = customer_id;
-		this.total_amount = total_amount;
-		this.discount = discount;
-		this.status = status;
-		this.date = date;
-	}
-	
-	
+    public Order() {}
 
-	public double getDiscount() {
-		return discount;
-	}
+    public Order(int id, int customerId, BigDecimal totalAmount, BigDecimal discount, String status, Timestamp date) {
+        this.id = id;
+        this.customerId = customerId;
+        this.totalAmount = totalAmount;
+        this.discount = discount;
+        this.status = status;
+        this.date = date;
+    }
 
-	public void setDiscount(double discount) {
-		this.discount = discount;
-	}
+    // Getter & Setter
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-	public int getId() {
-		return id;
-	}
+    public int getCustomerId() { return customerId; }
+    public void setCustomerId(int customerId) { this.customerId = customerId; }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public BigDecimal getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(BigDecimal totalAmount) { this.totalAmount = totalAmount; }
 
-	public Customer getCustomer_id() {
-		return customer_id;
-	}
+    public BigDecimal getDiscount() { return discount; }
+    public void setDiscount(BigDecimal discount) { this.discount = discount; }
 
-	public void setCustomer_id(Customer customer_id) {
-		this.customer_id = customer_id;
-	}
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-	public double getTotal_amount() {
-		return total_amount;
-	}
+    public Timestamp getDate() { return date; }
+    public void setDate(Timestamp date) { this.date = date; }
 
-	public void setTotal_amount(double total_amount) {
-		this.total_amount = total_amount;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Timestamp getDate() {
-		return date;
-	}
-
-	public void setDate(Timestamp date) {
-		this.date = date;
-	}
-
-	@Override
-	public String toString() {
-		return "Order [id=" + id + ", customer_id=" + customer_id + ", total_amount=" + total_amount + ", status="
-				+ status + ", date=" + date + "]";
-	}
+    @Override
+    public String toString() {
+        return "Order [id=" + id + ", customerId=" + customerId + ", totalAmount=" + totalAmount
+                + ", discount=" + discount + ", status=" + status + ", date=" + date + "]";
+    }
 }

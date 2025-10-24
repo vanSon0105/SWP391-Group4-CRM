@@ -1,7 +1,12 @@
 package controller.homePage;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.regex.Pattern;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,7 +15,7 @@ import dao.UserDAO;
 import model.User;
 
 @WebServlet("/profile")
-@MultipartConfig(maxFileSize = 1024 * 1024 * 5) // 5MB
+@MultipartConfig(maxFileSize = 1024 * 1024 * 5)
 public class ProfileController extends HttpServlet {
     private UserDAO userDAO = new UserDAO();
 
@@ -28,7 +33,7 @@ public class ProfileController extends HttpServlet {
         User freshUser = userDAO.getUserById(currentUser.getId());
 
         if (freshUser != null) {
-            session.setAttribute("account", freshUser); 
+            session.setAttribute("account", freshUser);
             request.setAttribute("user", freshUser);
         } else {
             request.setAttribute("user", currentUser);
@@ -58,15 +63,43 @@ public class ProfileController extends HttpServlet {
 
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
-        String gender = request.getParameter("gender"); 
+        String gender = request.getParameter("gender");
         String birthdayStr = request.getParameter("birthday");
 
-        Date birthday = null;
-        if (birthdayStr != null && !birthdayStr.isEmpty()) {
+        StringBuilder errors = new StringBuilder();
+
+        if (fullName == null || fullName.trim().isEmpty()) {
+            errors.append("Họ tên không được để trống. ");
+        } else if (fullName.trim().length() < 2 || fullName.trim().length() > 50) {
+            errors.append("Họ tên phải từ 2–50 ký tự. ");
+        } else if (!Pattern.matches("^[\\p{L} ]+$", fullName.trim())) {
+            errors.append("Họ tên chỉ được chứa chữ cái và dấu cách. ");
+        }
+
+        if (phone == null || phone.trim().isEmpty()) {
+            errors.append("Số điện thoại không được để trống. ");
+        } else if (!Pattern.matches("^0\\d{9,10}$", phone.trim())) {
+            errors.append("Số điện thoại không hợp lệ. ");
+        }
+
+        if (gender == null || 
+            !(gender.equalsIgnoreCase("Male") || gender.equalsIgnoreCase("Female") || gender.equalsIgnoreCase("Other"))) {
+            errors.append("Giới tính không hợp lệ. ");
+        }
+
+        Timestamp birthday = null;
+        if (birthdayStr == null || birthdayStr.trim().isEmpty()) {
+            errors.append("Vui lòng chọn ngày sinh. ");
+        } else {
             try {
-                birthday = Date.valueOf(birthdayStr);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                LocalDate date = LocalDate.parse(birthdayStr);
+                if (date.isAfter(LocalDate.now())) {
+                    errors.append("Ngày sinh không được ở tương lai. ");
+                } else {
+                    birthday = Timestamp.valueOf(date.atStartOfDay());
+                }
+            } catch (DateTimeParseException e) {
+                errors.append("Định dạng ngày sinh không hợp lệ. ");
             }
         }
 
@@ -74,19 +107,34 @@ public class ProfileController extends HttpServlet {
         try {
             Part imagePart = request.getPart("imageUrl");
             if (imagePart != null && imagePart.getSize() > 0) {
-                String fileName = System.currentTimeMillis() + "_" + imagePart.getSubmittedFileName();
-                String uploadPath = getServletContext().getRealPath("/uploads/users");
-                java.io.File uploadDir = new java.io.File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
-                imagePart.write(uploadPath + "/" + fileName);
-                imageUrl = "uploads/users/" + fileName;
+                String rawFileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString().toLowerCase();
+                if (!(rawFileName.endsWith(".jpg") || rawFileName.endsWith(".jpeg") || rawFileName.endsWith(".png"))) {
+                    errors.append("Chỉ chấp nhận file JPG hoặc PNG. ");
+                } else if (imagePart.getSize() > 5 * 1024 * 1024) {
+                    errors.append("Kích thước ảnh vượt quá 5MB. ");
+                } else {
+                    String fileName = System.currentTimeMillis() + "_" + rawFileName;
+                    String uploadPath = getServletContext().getRealPath("/uploads/users");
+                    java.io.File uploadDir = new java.io.File(uploadPath);
+                    if (!uploadDir.exists()) uploadDir.mkdirs();
+                    imagePart.write(uploadPath + "/" + fileName);
+                    imageUrl = "uploads/users/" + fileName;
+                }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            errors.append("Lỗi khi tải ảnh lên. ");
         }
-        currentUser.setFullName(fullName);
-        currentUser.setPhone(phone);
-        currentUser.setGender(gender);
+
+        if (errors.length() > 0) {
+            request.setAttribute("user", currentUser);
+            request.setAttribute("errorMessage", errors.toString());
+            request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+            return;
+        }
+
+        currentUser.setFullName(fullName.trim());
+        currentUser.setPhone(phone.trim());
+        currentUser.setGender(gender.trim());
         currentUser.setBirthday(birthday);
         currentUser.setImageUrl(imageUrl);
 

@@ -110,7 +110,7 @@
     <main class="sidebar-main">
     <div class="layout">
         <div class="card">
-            <h2>Thong tin yeu cau</h2>
+            <h2>Thông tin yêu cầu</h2>
             <div class="meta">Mã yêu cầu: <strong>${issue.issueCode}</strong></div>
             <div class="meta">ID khách hàng: ${issue.customerId}</div>
             <div class="meta">Tiêu đề: <strong>${issue.title}</strong></div>
