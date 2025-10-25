@@ -25,6 +25,23 @@
         padding: 6px;
     }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {     
+        const fileInput = document.getElementById('avartaFile');
+        const previewImage = document.querySelector('.image-preview img');
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
 </head>
 <body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
@@ -70,10 +87,10 @@
 
                     
                     <div class="form-field file-image">
-					    <label for="image">Ảnh</label>
-					    <input type="file" id="image" name="image" accept="image/*">
+					    <label for="avartaFile">Ảnh</label>
+					    <input type="file" id="avartaFile" name="image" accept=".png, .jpg, .jpeg">
 					    <div class="image-preview">
-                            <img src="${deviceImageSrc}" alt="Anh thiet bi hien tai">
+                            <img src="${pageContext.request.contextPath}/assets/img/device/${device.imageUrl}" alt="Anh thiet bi hien tai">
                         </div>
 					</div>
 

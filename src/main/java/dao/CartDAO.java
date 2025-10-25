@@ -17,7 +17,7 @@ import model.User;
 public class CartDAO extends DBContext {
 	private UserDAO uDao = new UserDAO();
 	private DeviceDAO dDao = new DeviceDAO();
-	private CartDetailDao cdDao = new CartDetailDao();
+	private CartDetailDAO cdDao = new CartDetailDAO();
 	
 	public Cart getCartByUserId(int userId) {
         String sql = "SELECT * FROM carts WHERE user_id = ?";

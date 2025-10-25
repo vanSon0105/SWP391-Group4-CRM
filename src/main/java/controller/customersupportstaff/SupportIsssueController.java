@@ -14,18 +14,16 @@ import utils.AuthorizationUtils;
 import java.io.IOException;
 import java.util.List;
 
-import dao.CustomerIssueDao;
-import dao.CustomerIssueDao;
-import dao.CustomerIssueDetailDao;
-import dao.CustomerIssueDetailDao;
+import dao.CustomerIssueDAO;
+import dao.CustomerIssueDetailDAO;
 
 /**
  * Servlet implementation class SupportIsssueController
  */
 @WebServlet("/support-issues")
 public class SupportIsssueController extends HttpServlet {
-	private CustomerIssueDao iDao = new CustomerIssueDao();
-	private CustomerIssueDetailDao dDao = new CustomerIssueDetailDao();
+	private CustomerIssueDAO iDao = new CustomerIssueDAO();
+	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
        
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

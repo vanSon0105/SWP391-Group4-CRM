@@ -1,5 +1,12 @@
 package dao;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
@@ -8,6 +15,8 @@ import java.util.logging.Logger;
 import com.mysql.cj.x.protobuf.MysqlxPrepare.Execute;
 
 import dal.DBContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.Part;
 import model.Category;
 import model.Device;
 import model.DeviceSerial;
@@ -568,8 +577,8 @@ public class DeviceDAO extends DBContext {
 	                    rs.getString("name"),
 	                    rs.getDouble("price"),
 	                    rs.getString("unit"),
-	                    rs.getString("description"),
 	                    rs.getString("image_url"),
+	                    rs.getString("description"),
 	                    rs.getTimestamp("created_at"),
 	                    rs.getBoolean("is_featured"),
 	                    rs.getInt("stock_quantity")
@@ -697,6 +706,55 @@ public class DeviceDAO extends DBContext {
 		        e.printStackTrace();
 		    }
 		    return list;
+	}
+	
+	public String saveUploadFile(Part filePart, String targetFolder, ServletContext context) {
+	    String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+	    if (originalFileName == null || originalFileName.isEmpty() || filePart.getSize() == 0) {
+	        return "";
+	    }
+
+	    String finalName = System.currentTimeMillis() + "-" + originalFileName;
+	    String deployRootPath = context.getRealPath("/assets/img");
+	   
+	    File deployDir = new File(deployRootPath + File.separator + targetFolder);
+	    if (!deployDir.exists()) {
+	        deployDir.mkdirs();
+	    }
+	    
+	    String deployFullSavePath = deployDir.getAbsolutePath() + File.separator + finalName;
+	    try {
+	        filePart.write(deployFullSavePath);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        return "";
+	    }
+
+
+	    try {
+	        String PROJECT_SOURCE_DIR = "D:\\Folder\\JavaProjects\\SWP391-Group4-CRM\\src\\main\\webapp";
+	        
+	        String sourceSaveDirStr = PROJECT_SOURCE_DIR + File.separator + "assets" + 
+                    File.separator + "img" + File.separator + targetFolder;
+
+	        File sourceSaveDir = new File(sourceSaveDirStr);
+	        if (!sourceSaveDir.exists()) {
+	            sourceSaveDir.mkdirs();
+	        }
+
+	        String sourceFullSavePath = sourceSaveDirStr + File.separator + finalName;
+
+	        File deployFile = new File(deployFullSavePath);
+	        File sourceFile = new File(sourceFullSavePath);
+	        Files.copy(deployFile.toPath(), sourceFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+	    } catch (Exception e) {
+	        System.err.println("Lỗi khi copy file vào thư mục source: " + e.getMessage());
+	        e.printStackTrace();
+	    }
+
+	    return finalName;
 	}
 
 }

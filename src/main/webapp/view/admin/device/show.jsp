@@ -126,7 +126,7 @@
 	                        	<c:forEach items="${listDevices}" var="s">
 		                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
 		                            	<td>${s.id}</td>
-			                            <td><img class="device-thumb" src="${deviceImageSrc}" alt="Anh thiet bi"></td>
+			                            <td><img class="device-thumb" src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}" alt="Anh thiet bi"></td>
 		                                <td>${s.name}</td>
 		                                <td>${s.category.name}</td>
 		                                <td>

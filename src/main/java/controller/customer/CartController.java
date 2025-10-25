@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.CartDAO;
-import dao.CartDetailDao;
-import dao.CartDetailDao;
+import dao.CartDetailDAO;
 
 /**
  * Servlet implementation class CartController
@@ -28,7 +27,7 @@ public class CartController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	public CartDAO cdao = new CartDAO();
-	public CartDetailDao cdDao = new CartDetailDao();
+	public CartDetailDAO cdDao = new CartDetailDAO();
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
         switch (path) {

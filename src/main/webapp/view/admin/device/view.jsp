@@ -25,7 +25,7 @@
     <section class="panel">
         <div class="device-detail">
             <div class="device-img">
-                <img src="${deviceImageSrc}" alt="Anh thiet bi">
+                <img src="${pageContext.request.contextPath}/assets/img/device/${deviceDetail.imageUrl}" alt="Anh thiet bi">
             </div>
             <div class="device-container">
 	            <table class="device-table">

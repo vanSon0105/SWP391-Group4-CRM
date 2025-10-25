@@ -130,7 +130,11 @@ public class DeviceController extends HttpServlet {
         Double price = Double.parseDouble(request.getParameter("price"));
 		
 		Part filePart = request.getPart("image");
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String fileName = dao.saveUploadFile(filePart, "device", getServletContext());
+        if (fileName.isEmpty()) {
+            Device oldDevice = dao.getDeviceById(id);
+            fileName = oldDevice.getImageUrl();
+        }
 		
         Category c = cdao.getCategoryById(categoryId);
         String unit = request.getParameter("unit");
@@ -164,7 +168,10 @@ public class DeviceController extends HttpServlet {
 		}
 		
 		Part filePart = request.getPart("image");
-        String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        String fileName = dao.saveUploadFile(filePart, "device", getServletContext());
+        if (fileName.isEmpty()) {
+            fileName = null;
+        }
 		
         Category c = cdao.getCategoryById(categoryId);
         String unit = request.getParameter("unit");
