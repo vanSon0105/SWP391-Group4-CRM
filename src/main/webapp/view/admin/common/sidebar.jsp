@@ -1,25 +1,52 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
     <%@ page isELIgnored="false" %>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 
 <aside class="sidebar" aria-label="Chức năng quản trị">
     <div class="brand">
-        <c:when test="${not empty account.imageUrl}">
-            <img src="${pageContext.request.contextPath}/${account.imageUrl}" alt="Avatar">
-        </c:when>
+        <c:if test="${not empty account.imageUrl}">
+            <img src="${pageContext.request.contextPath}/assets/img/user/${account.imageUrl}" alt="Avatar">
+        </c:if>
+        
+        <c:if test="${empty account.imageUrl}">
+            <img src="${pageContext.request.contextPath}/assets/img/user/imageUrl.jsp" alt="Avatar">
+        </c:if>
         <span>${account.username}</span>
     </div>
     <nav>
-        <a href="admin" class="active">Dashboard</a>
-        <a href="device-show">Thiết bị</a>
-        <a href="category-show">Danh mục</a>
-        <a href="account">Tài khoản</a>        
-        <a href="supplier">Nhà cung cấp</a> 
-        <a href="task-list">Danh sách task</a>
-        <a href="payment-list">Danh sách thanh toán</a>
-        <a href="manager-issues">Task cần giao</a>
+        <c:if test="${permissions != null && permissions.contains('PRODUCT_OVERVIEW')}">
+            <a href="admin">Dashboard</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('PRODUCT_CATALOG_MANAGEMENT')}">
+            <a href="device-show">Thiết bị</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('CATEGORY_MANAGEMENT')}">
+            <a href="category-show">Danh mục</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('VIEW_ACCOUNT')}">
+            <a href="account">Tài khoản</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('CRUD_SUPPLIER')}">
+            <a href="supplier">Nhà cung cấp</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('VIEW_TASK_LIST')}">
+            <a href="task-list">Danh sách task</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('PAYMENT_REPORTS')}">
+            <a href="payment-list">Danh sách thanh toán</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
+            <a href="manager-issues">Task cần giao</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('SUPPORT_DASH')}">
+            <a href="support-staff">Dashboard</a>
+        </c:if>
+        <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_RESPONDING')}">
+            <a href="support-issues">Vấn đề của khách hàng</a>
+        </c:if>
     </nav>
 </aside>
     

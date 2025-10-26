@@ -29,20 +29,7 @@ public class RegisterController extends HttpServlet {
         String email = request.getParameter("email");
         String phone = request.getParameter("phone");
         String password = request.getParameter("password");
-        int roleId = 1;
-
-//        int roleId;
-//        switch (role) {
-//            case "Doanh nghiệp":
-//                roleId = 2;
-//                break;
-//            case "Đăng ký dịch vụ sửa chữa":
-//                roleId = 3;
-//                break;
-//            default:
-//                roleId = 1;
-//                break;
-//        }
+        int roleId = 6;
 
         User user = new User();
         user.setFullName(name);
@@ -52,7 +39,7 @@ public class RegisterController extends HttpServlet {
         user.setPassword(password);
         user.setRoleId(roleId);
         user.setStatus("active");
-        user.setImageUrl("/assets/images/default-avatar.png");
+        user.setImageUrl("");
 
         UserDAO dao = new UserDAO();
         boolean success = dao.registerUser(user);

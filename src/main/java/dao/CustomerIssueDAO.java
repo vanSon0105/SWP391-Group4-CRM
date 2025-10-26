@@ -57,7 +57,7 @@ public class CustomerIssueDAO extends DBContext{
 			while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,18 +69,19 @@ public class CustomerIssueDAO extends DBContext{
 		return "ISS-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 	}
 	
-	public boolean createIssue(int customerId, String title, String description, Integer warrantyCardId) {
-		String sql = "INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id) VALUES (?, ?, ?, ?, ?)";
+	public boolean createIssue(int customerId, String title, String description, String issueType, int warrantyCardId) {
+		String sql = "INSERT INTO customer_issues (customer_id, issue_code, title, description, issue_type,  warranty_card_id) VALUES (?, ?, ?, ?, ?, ?)";
 		try (Connection conn = getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, customerId);
 			ps.setString(2, generateIssueCode());
 			ps.setString(3, title);
 			ps.setString(4, description);
+			ps.setString(5, issueType);
 			if (warrantyCardId == 0) {
-		        ps.setNull(5, java.sql.Types.INTEGER);
+		        ps.setNull(6, java.sql.Types.INTEGER);
 		    } else {
-		    	ps.setInt(5, warrantyCardId);		        
+		    	ps.setInt(6, warrantyCardId);		        
 		    }
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
@@ -98,7 +99,7 @@ public class CustomerIssueDAO extends DBContext{
 			if (rs.next()) {
 				return new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -115,7 +116,7 @@ public class CustomerIssueDAO extends DBContext{
 			 while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -133,7 +134,7 @@ public class CustomerIssueDAO extends DBContext{
 			 while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -196,7 +197,7 @@ public class CustomerIssueDAO extends DBContext{
 			 while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();

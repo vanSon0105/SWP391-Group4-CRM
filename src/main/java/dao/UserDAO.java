@@ -93,10 +93,16 @@ public class UserDAO extends DBContext{
                 u.setId(rs.getInt("id"));
                 u.setUsername(rs.getString("username"));
                 u.setPassword(null);
-                u.setEmail(rs.getString("email"));             
+                u.setEmail(rs.getString("email"));
+                u.setImageUrl(rs.getString("image_url"));
+                u.setFullName(rs.getString("full_name"));
                 u.setPhone(rs.getString("phone"));
+                u.setGender(rs.getString("gender"));
+                u.setBirthday(rs.getTimestamp("birthday"));
                 u.setStatus(rs.getString("status"));
                 u.setRoleId(rs.getInt("role_id"));
+                u.setCreatedAt(rs.getTimestamp("created_at"));
+                u.setLastLoginAt(rs.getTimestamp("last_login_at"));
                 return u;
             }
         } catch (SQLException e) {
@@ -246,15 +252,6 @@ public class UserDAO extends DBContext{
         String sql = "UPDATE users SET full_name=?, phone=?, email=?, image_url=?, gender=?, birthday=? WHERE id=?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            System.out.println("Updating user ID: " + u.getId());
-            System.out.println("FullName: " + u.getFullName());
-            System.out.println("Phone: " + u.getPhone());
-            System.out.println("Email: " + u.getEmail());
-            System.out.println("ImageUrl: " + u.getImageUrl());
-            System.out.println("Gender: " + u.getGender());
-            System.out.println("Birthday: " + u.getBirthday());
-
             ps.setString(1, u.getFullName());
             ps.setString(2, u.getPhone());
             ps.setString(3, u.getEmail());

@@ -127,6 +127,7 @@ CREATE TABLE customer_issues (
   issue_code VARCHAR(50) UNIQUE,
   title VARCHAR(100) NOT NULL,
   description TEXT,
+  issue_type ENUM('warranty','repair') DEFAULT 'warranty',
   warranty_card_id INT,
   support_staff_id INT,
   support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress','resolved') DEFAULT 'new',
@@ -1200,14 +1201,14 @@ INSERT INTO task_details (task_id, technical_staff_id, deadline, status) VALUES
 INSERT INTO permissions (id, permission_name) VALUES
 (1, 'CREATE_TASK'), (2, 'VIEW_TASK_LIST'), (3, 'UPDATE_TASK'), (4, 'DELETE_TASK'), (5, 'ASSIGN_TASK'),
 (6, 'UNASSIGN_TASK'), (7, 'CREATE_ACCOUNT'), (8, 'VIEW_ACCOUNT'), (9, 'UPDATE_ACCOUNT'), (10, 'ACTIVE_ACCOUNT'),
-(11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'PRODUCT_CATALOG_MANAGEMENT'), (14, 'PRODUCT_OVERVIEW'),
+(11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'DEVICE_CATALOG_MANAGEMENT'), (14, 'DEVICE_OVERVIEW'),
 (15, 'PRICING_MANAGEMENT'), (16, 'CREATE_IMPORT_EXPORT_ORDER'), (17, 'QUANTITY_CHECK'), (18, 'IMPORT_EXPORT_REPORTS'),
-(19, 'CRUD_SUPPLIER'), (20, 'PRODUCT_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
+(19, 'CRUD_SUPPLIER'), (20, 'DEVICE_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
 (22, 'SUPPLIER_INFO_INTEGRATION'), (23, 'ORDER_VALIDATION'), (24, 'CRUD_ORDER'), (25, 'ORDER_TRACKING'),
 (26, 'ORDER_REPORTS'), (27, 'INTEGRATION_PAYOS'), (28, 'PAYMENT_REPORTS'), (29, 'PAYMENT_CONFIRMATION'),
 (30, 'PAYMENT_REQUEST_CREATION'), (31, 'REVENUE_PROFIT_ANALYSIS'), (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
-(37, 'CUSTOMER_ISSUES');
+(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH');
 
 -- Admin
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
@@ -1218,7 +1219,7 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 -- Technical Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES (3, 2), (3, 3), (3, 14), (3, 16), (3, 36);
 -- Customer Support Staff
-INSERT INTO role_permission (role_id, permission_id) VALUES (4, 14), (4, 23), (4, 25), (4, 26), (4, 35), (4, 36);
+INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38);
 -- Storekeeper
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (5, 12), (5, 13), (5, 14), (5, 15), (5, 16), (5, 17), (5, 18), (5, 23), (5, 24), (5, 25), (5, 26), (5, 28),

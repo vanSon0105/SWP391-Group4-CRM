@@ -11,6 +11,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+import dao.DeviceDAO;
 import dao.UserDAO;
 import model.User;
 
@@ -18,6 +19,7 @@ import model.User;
 @MultipartConfig(maxFileSize = 1024 * 1024 * 5)
 public class ProfileController extends HttpServlet {
     private UserDAO userDAO = new UserDAO();
+    private DeviceDAO dao = new DeviceDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -63,6 +65,7 @@ public class ProfileController extends HttpServlet {
 
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
+        String email = request.getParameter("email");
         String gender = request.getParameter("gender");
         String birthdayStr = request.getParameter("birthday");
 
@@ -102,23 +105,39 @@ public class ProfileController extends HttpServlet {
                 errors.append("Định dạng ngày sinh không hợp lệ. ");
             }
         }
-
+        
+        if (email == null || email.trim().isEmpty()) {
+            errors.append("Email không được để trống. ");
+        } else if (!Pattern.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$", email.trim())) {
+            errors.append("Email không hợp lệ. ");
+        }
+        
         String imageUrl = currentUser.getImageUrl();
         try {
             Part imagePart = request.getPart("imageUrl");
             if (imagePart != null && imagePart.getSize() > 0) {
-                String rawFileName = Paths.get(imagePart.getSubmittedFileName()).getFileName().toString().toLowerCase();
+                String submittedName = imagePart.getSubmittedFileName();
+                String rawFileName = submittedName != null
+                        ? Paths.get(submittedName).getFileName().toString().toLowerCase()
+                        : "";
+
                 if (!(rawFileName.endsWith(".jpg") || rawFileName.endsWith(".jpeg") || rawFileName.endsWith(".png"))) {
                     errors.append("Chỉ chấp nhận file JPG hoặc PNG. ");
                 } else if (imagePart.getSize() > 5 * 1024 * 1024) {
                     errors.append("Kích thước ảnh vượt quá 5MB. ");
                 } else {
-                    String fileName = System.currentTimeMillis() + "_" + rawFileName;
-                    String uploadPath = getServletContext().getRealPath("/uploads/users");
-                    java.io.File uploadDir = new java.io.File(uploadPath);
-                    if (!uploadDir.exists()) uploadDir.mkdirs();
-                    imagePart.write(uploadPath + "/" + fileName);
-                    imageUrl = "uploads/users/" + fileName;
+                    String savedName = dao.saveUploadFile(imagePart, "user", getServletContext());
+                    if (savedName == null || savedName.isEmpty()) {
+                        errors.append("Không thể lưu ảnh tải lên. ");
+                    } else {
+                        if (imageUrl != null && !imageUrl.trim().isEmpty() && imageUrl.startsWith("assets/img/users/")) {
+                            java.io.File oldFile = new java.io.File(getServletContext().getRealPath("/") + imageUrl);
+                            if (oldFile.exists()) {
+                                oldFile.delete();
+                            }
+                        }
+                        imageUrl = savedName;
+                    }
                 }
             }
         } catch (Exception e) {
@@ -133,6 +152,7 @@ public class ProfileController extends HttpServlet {
         }
 
         currentUser.setFullName(fullName.trim());
+        currentUser.setEmail(email.trim());
         currentUser.setPhone(phone.trim());
         currentUser.setGender(gender.trim());
         currentUser.setBirthday(birthday);

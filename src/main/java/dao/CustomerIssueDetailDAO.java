@@ -10,7 +10,7 @@ import model.CustomerIssueDetail;
 
 public class CustomerIssueDetailDAO extends DBContext {
 	
-	public CustomerIssueDetail getByIssueId(int issueId) {
+	public CustomerIssueDetail getByIssueId(int issueId, String serialNo) {
 		String sql = "SELECT * FROM customer_issue_details WHERE issue_id = ?";
 		try (Connection conn = getConnection();
 			 PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -24,7 +24,7 @@ public class CustomerIssueDetailDAO extends DBContext {
 				 c.setCustomerFullName(rs.getString("customer_full_name"));
 				 c.setContactEmail(rs.getString("contact_email"));
 				 c.setContactPhone(rs.getString("contact_phone"));
-				 c.setDeviceSerial(rs.getString("device_serial"));
+				 c.setDeviceSerial(serialNo);
 				 c.setSummary(rs.getString("summary"));
 				 c.setForwardToManager(rs.getBoolean("forward_to_manager"));
 				 c.setCreatedAt(rs.getTimestamp("created_at"));
