@@ -5,6 +5,7 @@ import java.util.List;
 
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
+import dao.DeviceSerialDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,6 +22,7 @@ import utils.AuthorizationUtils;
 public class CustomerIssueController extends HttpServlet {
 	private CustomerIssueDAO ciDao = new CustomerIssueDAO();
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
+	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -75,6 +77,7 @@ public class CustomerIssueController extends HttpServlet {
 		String title = req.getParameter("title");
 		String description = req.getParameter("description");
 		String warrantyCardIdParam = req.getParameter("warrantyCardId");
+		String issueType = req.getParameter("issueType");
 
 		if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty()) {
 			req.setAttribute("error", "Vui lòng nhập đầy đủ tiêu đề và mô tả sự cố!");
@@ -90,12 +93,14 @@ public class CustomerIssueController extends HttpServlet {
 				warrantyId = Integer.parseInt(warrantyCardIdParam.trim());
 			} catch (NumberFormatException ex) {
 				req.setAttribute("error", "Mã bảo hành không hợp lệ.");
+				List<CustomerDevice> list = ciDao.getCustomerDevices(u.getId());
+				req.setAttribute("list", list);
 				req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
 				return;
 			}
 		}
 
-		boolean check = ciDao.createIssue(u.getId(), title.trim(), description.trim(), warrantyId);
+		boolean check = ciDao.createIssue(u.getId(), title.trim(), description.trim(), issueType, warrantyId);
 		if (check) {
 			resp.sendRedirect("issue?created=1");
 		} else {
@@ -130,8 +135,8 @@ public class CustomerIssueController extends HttpServlet {
 			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
-
-		CustomerIssueDetail d = dDao.getByIssueId(issueId);
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
+		CustomerIssueDetail d = dDao.getByIssueId(issueId, serialNo);
 		if (d == null) {
 			d = new CustomerIssueDetail();
 		}
@@ -156,8 +161,9 @@ public class CustomerIssueController extends HttpServlet {
 			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
-
+		
 		CustomerIssue issue = ciDao.getIssueById(issueId);
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		if (issue == null || issue.getCustomerId() != customer.getId()) {
 			resp.sendRedirect("issue?notfound=1");
 			return;
@@ -173,7 +179,7 @@ public class CustomerIssueController extends HttpServlet {
 		int staffId = issue.getSupportStaffId();
 		if (staffId == 0) {
 			req.setAttribute("error", "Yêu cầu chưa được nhân viên hỗ trợ tiếp nhận. Vui lòng thử lại sau.");
-			req.setAttribute("issueDetail", dDao.getByIssueId(issueId));
+			req.setAttribute("issueDetail", dDao.getByIssueId(issueId, serialNo));
 			req.getRequestDispatcher("view/customer/issueDetailPage.jsp").forward(req, resp);
 			return;
 		}
@@ -186,7 +192,7 @@ public class CustomerIssueController extends HttpServlet {
 
 		if (customerName == null || customerName.trim().isEmpty()) {
 			req.setAttribute("error", "Vui lòng nhập họ tên khách hàng.");
-			CustomerIssueDetail c = dDao.getByIssueId(issueId);
+			CustomerIssueDetail c = dDao.getByIssueId(issueId, serialNo);
 			if (c == null) {
 				c = new CustomerIssueDetail();
 			}

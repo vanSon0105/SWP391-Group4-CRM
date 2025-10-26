@@ -178,6 +178,10 @@
 		                <div class="alert alert-info">Đã gửi yêu cầu. Vui lòng chờ khách hàng bổ sung thông tin.</div>
 		            </c:if>
 		            
+		            <c:if test="${param.infoComplete == '1'}">
+                        <div class="alert alert-info">Hồ sơ khách hàng đã có thông tin liên hệ cần thiết - không có lời nhắc nào được gửi đi.</div>
+                    </c:if>
+		            
 		            <c:if test="${awaitingCustomer}">
 		                <div class="alert alert-info">Đang chờ khách hàng phản hồi. Bạn có thể gửi lại form nếu cân nhắc.</div>
 		            </c:if>
@@ -192,7 +196,7 @@
 					    <div classD="alert alert-info">Task kỹ thuật đã được tạo. Bạn chỉ có thể xem thông tin đã gửi.</div>
 					</c:if>
 		
-		            <c:if test="${not lockedForSupport}">
+		            <c:if test="${not lockedForSupport and (needsCustomerInfo or awaitingCustomer)}">
 	                    <form method="post" action="support-issues">
 	                        <input type="hidden" name="action" value="request_details">
 	                        <input type="hidden" name="issueId" value="${issue.id}">

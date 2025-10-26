@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
+import model.DeviceSerial;
 import model.User;
 import utils.AuthorizationUtils;
 
@@ -16,6 +17,8 @@ import java.util.List;
 
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
+import dao.DeviceSerialDAO;
+import dao.UserDAO;
 
 /**
  * Servlet implementation class SupportIsssueController
@@ -24,6 +27,8 @@ import dao.CustomerIssueDetailDAO;
 public class SupportIsssueController extends HttpServlet {
 	private CustomerIssueDAO iDao = new CustomerIssueDAO();
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
+	private UserDAO userDao = new UserDAO();
+	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
        
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -99,21 +104,31 @@ public class SupportIsssueController extends HttpServlet {
 			return;
 		}
 
-		CustomerIssueDetail d = dDao.getByIssueId(issueId);
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
+		CustomerIssueDetail d = dDao.getByIssueId(issueId, serialNo);
+		User customerDetail = userDao.getUserDetailsById(issue.getCustomerId());
+		CustomerIssueDetail viewDetail = d != null ? d : new CustomerIssueDetail();
+		addWithAccountInfo(viewDetail, customerDetail, serialNo);
+        
+        
 		req.setAttribute("issue", issue);
-		req.setAttribute("issueDetail", d);
+		req.setAttribute("issueDetail", viewDetail);
 		
 		String status = issue.getSupportStatus();
 		boolean managerRejected = "manager_rejected".equalsIgnoreCase(status);
 		boolean managerApproved = "manager_approved".equalsIgnoreCase(status);
 		boolean managerPending = "manager_review".equalsIgnoreCase(status);
 		boolean taskLocked = isLockedForSupport(status);
+		boolean awaitingCustomer = "awaiting_customer".equalsIgnoreCase(status);
+		boolean needsCustomerInfo = needsAdditionalCustomerInfo(d, customerDetail);
 		
 		req.setAttribute("managerRejected", managerRejected);
 		req.setAttribute("managerApproved", managerApproved);
 		req.setAttribute("lockedForSupport", taskLocked);
 		req.setAttribute("managerPending", managerPending);
 		req.setAttribute("lockedForSupport", taskLocked);
+		req.setAttribute("awaitingCustomer", awaitingCustomer);
+		req.setAttribute("needsCustomerInfo", needsCustomerInfo);
 		req.getRequestDispatcher("view/admin/supportstaff/issueReviewPage.jsp").forward(req, resp);
 	}
 	
@@ -143,7 +158,8 @@ public class SupportIsssueController extends HttpServlet {
 			resp.sendRedirect("support-issues?locked=1");
 			return;
 		}
-
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
+		User customer = userDao.getUserDetailsById(issue.getCustomerId());
 		String customerName = req.getParameter("customerName");
 		String contactEmail = req.getParameter("contactEmail");
 		String contactPhone = req.getParameter("contactPhone");
@@ -154,8 +170,21 @@ public class SupportIsssueController extends HttpServlet {
 		if (customerName == null || customerName.trim().isEmpty()) {
 			req.setAttribute("error", "Vui lòng nhập tên khách hàng.");
 			req.setAttribute("issue", issue);
-			req.setAttribute("issueDetail", dDao.getByIssueId(issueId));
-			req.setAttribute("awaitingCustomer", "awaiting_customer".equalsIgnoreCase(issue.getSupportStatus()));
+			CustomerIssueDetail detail = dDao.getByIssueId(issueId, serialNo);
+			if (detail == null) {
+				detail = new CustomerIssueDetail();
+			}
+			detail.setCustomerFullName(customerName);
+			detail.setContactEmail(contactEmail);
+			detail.setContactPhone(contactPhone);
+			detail.setDeviceSerial(deviceSerial);
+			detail.setSummary(summary);
+			addWithAccountInfo(detail, customer, serialNo);
+			boolean awaitingCustomer = "awaiting_customer".equalsIgnoreCase(issue.getSupportStatus());
+			
+			req.setAttribute("issueDetail", detail);
+			req.setAttribute("awaitingCustomer", awaitingCustomer);
+			req.setAttribute("needsCustomerInfo", needsAdditionalCustomerInfo(dDao.getByIssueId(issueId, serialNo), customer));
 			req.getRequestDispatcher("view/admin/supportstaff/issueReviewPage.jsp").forward(req, resp);
 			return;
 		}
@@ -209,6 +238,13 @@ public class SupportIsssueController extends HttpServlet {
 			resp.sendRedirect("support-issues?locked=1");
 			return;
 		}
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
+		CustomerIssueDetail detail = dDao.getByIssueId(issueId, serialNo);
+		User customer = userDao.getUserDetailsById(issue.getCustomerId());
+		if (!needsAdditionalCustomerInfo(detail, customer)) {
+			resp.sendRedirect("support-issues?action=review&id=" + issueId + "&infoComplete=1");
+			return;
+		}
 
 		iDao.updateSupportStatus(issueId, staff.getId(), "awaiting_customer");
 		resp.sendRedirect("support-issues?action=review&id=" + issueId + "&requested=1");
@@ -227,6 +263,41 @@ public class SupportIsssueController extends HttpServlet {
 		default:
 			return false;
 		}
+	}
+	
+	private boolean needsAdditionalCustomerInfo(CustomerIssueDetail detail, User customer) {
+		String name = hasText(detail != null ? detail.getCustomerFullName() : null)
+				? detail.getCustomerFullName()
+				: (customer != null ? customer.getFullName() : null);
+		String email = hasText(detail != null ? detail.getContactEmail() : null)
+				? detail.getContactEmail()
+				: (customer != null ? customer.getEmail() : null);
+		String phone = hasText(detail != null ? detail.getContactPhone() : null)
+				? detail.getContactPhone()
+				: (customer != null ? customer.getPhone() : null);
+		return !hasText(name) || (!hasText(email) && !hasText(phone));
+	}
+	
+	private void addWithAccountInfo(CustomerIssueDetail detail, User customer,  String serialNo) {
+		if (detail == null || customer == null) {
+			return;
+		}
+		if (!hasText(detail.getCustomerFullName())) {
+			detail.setCustomerFullName(customer.getFullName());
+		}
+		if (!hasText(detail.getContactEmail())) {
+			detail.setContactEmail(customer.getEmail());
+		}
+		if (!hasText(detail.getContactPhone())) {
+			detail.setContactPhone(customer.getPhone());
+		}
+		if (!hasText(detail.getDeviceSerial())) {
+			detail.setDeviceSerial(serialNo);
+		}
+	}
+	
+	private boolean hasText(String value) {
+		return value != null && !value.trim().isEmpty();
 	}
 
 }

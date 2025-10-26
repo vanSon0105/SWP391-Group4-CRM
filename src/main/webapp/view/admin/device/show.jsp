@@ -91,6 +91,7 @@
 					    </select>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
+		            	<a href="device-show" class="btn device-btn">Reset</a>
 		            </form>
                 </div>
             </section>

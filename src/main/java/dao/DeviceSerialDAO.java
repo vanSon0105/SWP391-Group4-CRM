@@ -145,10 +145,26 @@ public class DeviceSerialDAO extends dal.DBContext {
     		}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
     	
     	return null;
     }
+    
+    public String getDeviceSerialByWarrantyId(int warrantyCardId) {
+		String sql = "SELECT ds.serial_no FROM warranty_cards wc "
+				+ "JOIN device_serials ds ON wc.device_serial_id = ds.id WHERE wc.id = ?";
+		try (Connection conn = getConnection(); 
+			PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, warrantyCardId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString("serial_no");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
     
 }

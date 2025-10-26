@@ -8,6 +8,7 @@ public class CustomerIssue {
 	private String title;
 	private String description;
 	private int warrantyCardId;
+	private String issueType;
 	private Timestamp createdAt;
 	private int supportStaffId;
 	private String supportStatus;
@@ -27,6 +28,30 @@ public class CustomerIssue {
 		this.supportStatus = supportStatus;
 	}
 	
+	public CustomerIssue(int id, int customerId, String issueCode, String title, String description, int warrantyCardId,
+			Timestamp createdAt, int supportStaffId, String supportStatus, String issueType) {
+		this.id = id;
+		this.customerId = customerId;
+		this.issueCode = issueCode;
+		this.title = title;
+		this.description = description;
+		this.warrantyCardId = warrantyCardId;
+		this.createdAt = createdAt;
+		this.supportStaffId = supportStaffId;
+		this.supportStatus = supportStatus;
+		this.issueType = issueType;
+	}
+	
+	
+	
+	public String getIssueType() {
+		return issueType;
+	}
+
+	public void setIssueType(String issueType) {
+		this.issueType = issueType;
+	}
+
 	public CustomerIssue(int id, String title) {
 		this.id = id;
 		this.title = title;

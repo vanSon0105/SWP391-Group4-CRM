@@ -16,6 +16,7 @@ import java.util.List;
 
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
+import dao.DeviceSerialDAO;
 
 
 
@@ -24,9 +25,9 @@ import dao.CustomerIssueDetailDAO;
  */
 @WebServlet("/manager-issues")
 public class TechnicalManagerIssueController extends HttpServlet {
-
 	private CustomerIssueDAO iDao = new CustomerIssueDAO();
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
+	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User manager = getUser(request, response);
@@ -104,6 +105,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		}
 
 		CustomerIssue issue = iDao.getIssueById(issueId);
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		if (issue == null) {
 			resp.sendRedirect("manager-issues?notfound=1");
 			return;
@@ -115,7 +117,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 			return;
 		}
 
-		CustomerIssueDetail d = dDao.getByIssueId(issueId);
+		CustomerIssueDetail d = dDao.getByIssueId(issueId, serialNo);
 		req.setAttribute("issue", issue);
 		req.setAttribute("issueDetail", d);
 		req.getRequestDispatcher("view/admin/technicalmanager/issueReviewPage.jsp").forward(req, resp);

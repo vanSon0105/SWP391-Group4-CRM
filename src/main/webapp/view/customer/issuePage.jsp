@@ -65,6 +65,38 @@
             gap: 12px;
         }
 
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 18px 0;
+            flex-wrap: wrap;
+        }
+
+        .radio-group span {
+            font-weight: 600;
+            color: #1f2d3d;
+            margin-right: 8px;
+        }
+
+        .radio-group label {
+            margin: 0;
+            font-weight: 500;
+            color: #1f2d3d;
+        }
+
+        .radio-group input {
+            margin-right: 6px;
+        }
+
+        #warrantySection.disabled {
+            opacity: 0.6;
+        }
+
+        #warrantySection.disabled select {
+            pointer-events: none;
+        }
+
         .btn {
             padding: 12px 24px;
             border-radius: 8px;
@@ -115,33 +147,52 @@
         <c:set var="selectedWarrantyId"
                value="${not empty selectedWarrantyCardId ? selectedWarrantyCardId : param.warrantyCardId}" />
 
-        <form method="post" action="create-issue">
+		<c:set var="selectedIssueType"
+		               value="${not empty param.issueType ? param.issueType : (empty selectedWarrantyId ? 'repair' : 'warranty')}" />
+		               
+        <form method="post" action="create-issue" style="margin-top: 10px;">
             <label for="title">Tiêu đề sự cố *</label>
             <input type="text" id="title" name="title" value="${param.title}" required>
 
             <label for="description">Mô tả chi tiết *</label>
             <textarea id="description" name="description" required>${param.description}</textarea>
+            
+            <div class="radio-group">
+                <span>Loại yêu cầu</span>
+                <label>
+                    <input type="radio" name="issueType" value="repair"
+                        <c:if test="${selectedIssueType ne 'warranty'}">checked</c:if>>
+                    Sửa chữa
+                </label>
+                <label>
+                    <input type="radio" name="issueType" value="warranty"
+                        <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
+                    Bảo hành
+                </label>
+            </div>
 
-            <label for="warrantyCardId">Thiết bị đã mua</label>
-            <c:choose>
-                <c:when test="${not empty list}">
-                    <select id="warrantyCardId" name="warrantyCardId">
-                        <option value="">-- Chọn thiết bị --</option>
-                        <c:forEach var="device" items="${list}">
-                            <option value="${device.warrantyCardId}"
-                                <c:if test="${selectedWarrantyId == device.warrantyCardId}">selected</c:if>>
-                                ${device.deviceName} (${device.serialNumber})
-                            </option>
-                        </c:forEach>
-                    </select>
-                    <div class="hint">Nếu sản phẩm không xuất hiện, hãy liên hệ bộ phận chăm sóc khách hàng.</div>
-                </c:when>
-                <c:otherwise>
-                    <select id="warrantyCardId" name="warrantyCardId" disabled>
-                        <option>Chưa có thiết bị được kích hoạt bảo hành</option>
-                    </select>
-                </c:otherwise>
-            </c:choose>
+			<div id="warrantySection">
+	            <label for="serialNo">Thiết bị đã mua</label>
+	            <c:choose>
+	                <c:when test="${not empty list}">
+	                    <select id="warrantyCardId" name="warrantyCardId">
+	                        <option value="">-- Chọn thiết bị --</option>
+	                        <c:forEach var="device" items="${list}">
+	                            <option value="${device.warrantyCardId}"
+	                                <c:if test="${selectedWarrantyId == device.warrantyCardId}">selected</c:if>>
+	                                ${device.deviceName} (${device.serialNumber})
+	                            </option>
+	                        </c:forEach>
+	                    </select>
+	                    <div class="hint">Nếu sản phẩm không xuất hiện, hãy liên hệ bộ phận chăm sóc khách hàng.</div>
+	                </c:when>
+	                <c:otherwise>
+	                    <select id="warrantyCardId" name="warrantyCardId" disabled>
+	                        <option>Chưa có thiết bị được kích hoạt bảo hành</option>
+	                    </select>
+	                </c:otherwise>
+	            </c:choose>
+            </div>
 
             <div class="actions">
                 <a class="btn btn-secondary" href="customer-issues">Hủy </a>

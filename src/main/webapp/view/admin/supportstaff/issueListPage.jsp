@@ -16,6 +16,11 @@
             font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 24px;
+            height: 100% !important;
+        }
+        
+        main{
+        	height: 100% !important;
         }
 
         h1 {

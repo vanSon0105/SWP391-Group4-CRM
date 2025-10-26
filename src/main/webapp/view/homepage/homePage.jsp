@@ -18,7 +18,8 @@
                 <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của TechShop</p>
                 <div class="banner-btn">
                     <a href="device-page">Khám phá sản phẩm</a>
-                    <a class="secondary" href="order-tracking.html">Theo dõi đơn hàng &amp; bảo hành</a>
+                    <a class="secondary" href="order-tracking.html">Theo dõi đơn hàng</a>
+                    <a class="secondary" href="issue">Theo dõi bảo hành</a>
                 </div>
             </div>
             <div class="banner-promos" data-hero-slider>
@@ -28,11 +29,11 @@
         <div class="banner-promos-track">
         <c:forEach items="${bannerList}" var="s"> 
             <article class="promo-card">
-                <span class="promo-tag">${s.category.name}</span>
-                <h3>${s.name}</h3>
-                <p>Thu cũ đổi mới lên đến <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong></p>
-                <p>Bảo hành ${s.warrantyMonth} tháng</p>
-                <span class="promo-price">Giá ưu đãi: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
+	                <span class="promo-tag">${s.category.name}</span>
+	                <h3>${s.name}</h3>
+	                <p>Thu cũ đổi mới lên đến <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong></p>
+	                <p>Bảo hành ${s.warrantyMonth} tháng</p>
+	                <span class="promo-price">Giá ưu đãi: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
             </article>
         </c:forEach>
         </div>
@@ -91,7 +92,7 @@
 	              			<div class="device-card">
               			<a href="device-detail?id=${s.id}">
 	                        	<div class="device-thumb">
-	                        		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                        		<img alt="" src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}">
 	                        	</div>
 	                            <h4>${s.getName()}</h4>
 	                            <p>${s.getDesc()}</p>
@@ -126,7 +127,7 @@
 	                    <div class="device-card">
 	                <a href="device-detail?id=${s.id}">
 	                    	<div class="device-thumb">
-	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+	                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}">
 	                       	</div>
 	                        <h4>${s.getName()}</h4>
 	                        <p>${s.getDesc()}</p>
@@ -215,7 +216,7 @@
 	                        <div class="device-card">
 	                    <a href="device-detail?id=${s.id}">
 	                        	<div class="device-thumb">
-		                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/laptop.jpg">
+		                       		<img alt="" src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}">
 		                       	</div>
 	                            <h4>${s.getName()}</h4>
 	                        	<p>${s.getDesc()}</p>

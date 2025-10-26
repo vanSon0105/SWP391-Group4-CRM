@@ -153,7 +153,7 @@
         }
 
         input[type="text"],
-        input[type="email"],
+        input[type="email"]:not(.footer-input),
         input[type="tel"],
         input[type="date"],
         input[type="password"] {
@@ -219,7 +219,7 @@
                 <div class="profile-avatar">
                     <c:choose>
                         <c:when test="${not empty user.imageUrl}">
-                            <img src="${pageContext.request.contextPath}/${user.imageUrl}" alt="Avatar">
+                            <img src="${pageContext.request.contextPath}/assets/img/user/${user.imageUrl}" alt="Avatar">
                         </c:when>
                         <c:otherwise>
                             <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png" alt="Avatar">
@@ -262,40 +262,40 @@
                     </div>
                 </c:if>
 
-                <form action="${pageContext.request.contextPath}/profile" method="post" enctype="multipart/form-data">
+                <form action="profile" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="fullName">Họ và tên</label>
                         <input type="text" id="fullName" name="fullName" value="${user.fullName}" required>
                     </div>
 
-             <div class="form-group gender-group">
-    <label>Giới tính:</label>
-    <label>
-        <input type="radio" name="gender" value="male" 
-               <c:if test="${user.gender eq 'male'}">checked</c:if>> Nam
-    </label>
-    <label>
-        <input type="radio" name="gender" value="female" 
-               <c:if test="${user.gender eq 'female'}">checked</c:if>> Nữ
-    </label>
-    <label>
-        <input type="radio" name="gender" value="other" 
-               <c:if test="${user.gender eq 'other'}">checked</c:if>> Khác
-    </label>
-</div>
+		             <div class="form-group gender-group">
+					    <label>Giới tính:</label>
+					    <label>
+					        <input type="radio" name="gender" value="male" 
+					               <c:if test="${user.gender eq 'male'}">checked</c:if>> Nam
+					    </label>
+					    <label>
+					        <input type="radio" name="gender" value="female" 
+					               <c:if test="${user.gender eq 'female'}">checked</c:if>> Nữ
+					    </label>
+					    <label>
+					        <input type="radio" name="gender" value="other" 
+					               <c:if test="${user.gender eq 'other'}">checked</c:if>> Khác
+					    </label>
+					</div>
 
-<div class="form-group">
-    <label for="birthday">Ngày sinh</label>
-    <c:choose>
-        <c:when test="${not empty user.birthday}">
-            <fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd" var="birthdayFormatted"/>
-            <input type="date" id="birthday" name="birthday" value="${birthdayFormatted}">
-        </c:when>
-        <c:otherwise>
-            <input type="date" id="birthday" name="birthday">
-        </c:otherwise>
-    </c:choose>
-</div>
+					<div class="form-group">
+					    <label for="birthday">Ngày sinh</label>
+					    <c:choose>
+					        <c:when test="${not empty user.birthday}">
+					            <fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd" var="birthdayFormatted"/>
+					            <input type="date" id="birthday" name="birthday" value="${birthdayFormatted}">
+					        </c:when>
+					        <c:otherwise>
+					            <input type="date" id="birthday" name="birthday">
+					        </c:otherwise>
+					    </c:choose>
+					</div>
 
                     <div class="form-group">
                         <label for="email">Email</label>
