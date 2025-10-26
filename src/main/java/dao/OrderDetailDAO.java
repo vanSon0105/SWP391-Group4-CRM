@@ -7,16 +7,14 @@ import dal.DBContext;
 
 public class OrderDetailDAO extends DBContext{
 	  public boolean addOrderDetail(int orderId, int deviceId, int deviceSerialId, int quantity, double price, int warrantyCardId) {
-	        String sql = "INSERT INTO order_details (order_id, device_id, device_serial_id, quantity, price, warranty_card_id) "
+	        String sql = "INSERT INTO order_details (order_id, device_id, quantity, price) "
 	                   + "VALUES (?, ?, ?, ?, ?, ?)";
 	        try (Connection conn = getConnection();
 	             PreparedStatement ps = conn.prepareStatement(sql)) {
 	            ps.setInt(1, orderId);
 	            ps.setInt(2, deviceId);
-	            ps.setInt(3, deviceSerialId);
-	            ps.setInt(4, quantity);
-	            ps.setDouble(5, price);
-	            ps.setInt(6, warrantyCardId);
+	            ps.setInt(3, quantity);
+	            ps.setDouble(4, price);
 	            return ps.executeUpdate() > 0;
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -35,10 +33,8 @@ public class OrderDetailDAO extends DBContext{
 	                        rs.getInt("id"),
 	                        rs.getInt("order_id"),
 	                        rs.getInt("device_id"),
-	                        rs.getInt("device_serial_id"),
 	                        rs.getInt("quantity"),
-	                        rs.getDouble("price"),
-	                        rs.getInt("warranty_card_id")
+	                        rs.getDouble("price")
 	                    );
 	                    list.add(od);
 	                }

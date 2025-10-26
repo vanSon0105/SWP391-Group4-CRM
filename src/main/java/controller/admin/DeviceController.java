@@ -11,6 +11,7 @@ import jakarta.servlet.http.Part;
 import model.Category;
 import model.Device;
 import model.DeviceSerial;
+import model.User;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -19,6 +20,7 @@ import java.util.List;
 import dao.CategoryDAO;
 import dao.DeviceDAO;
 import dao.DeviceSerialDAO;
+import dao.UserDAO;
 
 /**
  * Servlet implementation class DeviceController
@@ -158,6 +160,7 @@ public class DeviceController extends HttpServlet {
 
 	public void addDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String name = request.getParameter("name");
+		boolean checkName = dao.checkExistByName(name);
         int categoryId = 0;
         Double price = 0.0;
 		try {
@@ -176,7 +179,11 @@ public class DeviceController extends HttpServlet {
         Category c = cdao.getCategoryById(categoryId);
         String unit = request.getParameter("unit");
         String description = request.getParameter("description");
-        Boolean isFeatured =Boolean.parseBoolean(request.getParameter("isFeatured"));
+        Boolean isFeatured = Boolean.parseBoolean(request.getParameter("isFeatured"));
+        if(checkName) {
+    		checkAddDevice(request, response, fileName, categoryId, categoryId, unit, description, checkName, "Thiết bị đã tồn tại!");
+			return;
+		}
         
         Device d = new Device();
         d.setCategory(c);
@@ -187,8 +194,17 @@ public class DeviceController extends HttpServlet {
         d.setDesc(description);
         d.setIsFeatured(isFeatured);
         
-        boolean check = dao.addDevice(d);
-        String mess = check ? "Add device thành công" : "Add device thất bại";
+        int newDeviceId = dao.insertDevice(d);
+        if(newDeviceId <= 0) {
+        	checkAddDevice(request, response, fileName, categoryId, categoryId, unit, description, checkName, "Thêm thiết bị thất bại! Vui lòng thử lại");
+			return;
+        }
+        
+        int storekeeperId = getStorekeeperId(request);
+		if (storekeeperId != 0) {
+			dao.insertInventory(newDeviceId, storekeeperId, 0);
+		}
+        String mess = "Add device thành công";
 		HttpSession session = request.getSession();
 		session.removeAttribute("mess");
 	    session.setAttribute("mess", mess);
@@ -217,6 +233,35 @@ public class DeviceController extends HttpServlet {
 	    response.sendRedirect("device-show");
 	}
 	
+	private int getStorekeeperId(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			User current = (User) session.getAttribute("account");
+			if (current != null && current.getRoleId() == 4) {
+				return current.getId();
+			}
+		}
+		UserDAO userDAO = new UserDAO();
+		List<User> storekeepers = userDAO.getUsersByRole(4);
+		if (!storekeepers.isEmpty()) {
+			return storekeepers.get(0).getId();
+		}
+		return 0;
+	}
+	
+	private void checkAddDevice(HttpServletRequest request, HttpServletResponse response, String name, int categoryId, double price, String unit, String description, boolean isFeatured, String mss) throws ServletException, IOException {
+		request.setAttribute("name", name);
+		request.setAttribute("categoryId", categoryId);
+		request.setAttribute("price", price);
+		request.setAttribute("unit", unit);
+		request.setAttribute("desc", description);
+		request.setAttribute("isFeatured", isFeatured);
+		request.setAttribute("error", mss);
+		List<Category> listCategory = cdao.getAllCategories();
+        request.setAttribute("categories", listCategory);
+		request.getRequestDispatcher("view/admin/device/add.jsp#device-name").forward(request, response);
+	}
+	
 	public void activeDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));			
 		boolean check = dao.activeDevice(id);
@@ -227,5 +272,5 @@ public class DeviceController extends HttpServlet {
 	    response.sendRedirect("device-show");
 		
 	}
-
+	
 }

@@ -278,6 +278,7 @@ public class DeviceDAO extends DBContext {
 		List<Device> list = new ArrayList<>();   
         String sql = "SELECT d.id, d.name,d.price, d.description, d.image_url, SUM(od.quantity) AS total_sold FROM order_details od\r\n"
         		+ "JOIN devices d ON od.device_id = d.id\r\n"
+        		+ "WHERE d.status = 'active'\r\n"
         		+ "GROUP BY d.id, d.name, d.price, d.description\r\n"
         		+ "ORDER BY total_sold DESC\r\n"
         		+ "LIMIT ?, ?;";
@@ -324,7 +325,7 @@ public class DeviceDAO extends DBContext {
 	public List<Device> getNewDevicesList(int offset, int recordsEachPage) {
 		List<Device> list = new ArrayList<>();
 		String sql = "SELECT id, name, image_url, price, created_at, description FROM devices\r\n"
-        		+ "WHERE created_at >= NOW() - INTERVAL 7 DAY \r\n"
+        		+ "WHERE (created_at >= NOW() - INTERVAL 7 DAY) AND status = 'active' \r\n"
         		+ "ORDER BY created_at DESC\r\n"
         		+ "LIMIT ?, ?;";
        
@@ -403,7 +404,7 @@ public class DeviceDAO extends DBContext {
 		List<Device> list = new ArrayList<>();   
         String sql = "SELECT id, name, price, image_url, description\r\n"
         		+ "FROM devices\r\n"
-        		+ "WHERE is_featured = ?\r\n"
+        		+ "WHERE is_featured = ? AND status = 'active'\r\n"
         		+ "LIMIT ?, ?;";
         try {
         	connection = DBContext.getConnection();
@@ -455,7 +456,7 @@ public class DeviceDAO extends DBContext {
 	            + "LEFT JOIN ( "
 	            + "     SELECT device_id, COUNT(id) AS quantity "
 	            + "     FROM device_serials "
-	            + "     WHERE status = 'in_stock' "
+	            + "     WHERE stock_status = 'in_stock' "
 	            + "     GROUP BY device_id "
 	            + ") AS stock ON d.id = stock.device_id "
 	            +"WHERE 1=1 ";
@@ -615,27 +616,61 @@ public class DeviceDAO extends DBContext {
 	    return update;
 	}
 	
+	public int insertDevice(Device device) {
+        String sql = "INSERT INTO devices (name, category_id, price, unit, image_url, description, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, device.getName());
+            ps.setInt(2, device.getCategory().getId());
+            ps.setDouble(3, device.getPrice());
+            ps.setString(4, device.getUnit());
+            ps.setString(5, device.getImageUrl());
+            ps.setString(6, device.getDesc());
+            ps.setBoolean(7, Boolean.TRUE.equals(device.getIsFeatured()));
+
+            int affected = ps.executeUpdate();
+            if (affected > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        return rs.getInt(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 	public boolean addDevice(Device device) {
-		String sql = "INSERT INTO devices (name, category_id, price, unit, image_url, description, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?);";
-	    boolean add = false;
-	    
-	    try (Connection conn = getConnection();
-	         PreparedStatement ps = conn.prepareStatement(sql)) {
-	        
-	        ps.setString(1, device.getName());
-	        ps.setInt(2, device.getCategory().getId());
-	        ps.setDouble(3, device.getPrice());
-	        ps.setString(4, device.getUnit());
-	        ps.setString(5, device.getImageUrl());
-	        ps.setString(6, device.getDesc());
-	        ps.setBoolean(7, device.getIsFeatured());
-	        
-	        add = ps.executeUpdate() > 0;
-	        
-	    } catch (SQLException e) {
-	        e.printStackTrace();
-	    }
-	    return add;
+        return insertDevice(device) > 0;
+	}
+
+    public boolean insertInventory(int deviceId, int storekeeperId, int quantity) {
+        String sql = "INSERT INTO inventories (storekeeper_id, device_id, quantity) VALUES (?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, storekeeperId);
+            ps.setInt(2, deviceId);
+            ps.setInt(3, quantity);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+	
+	public boolean checkExistByName(String name) {
+		String sql = "SELECT 1 FROM devices WHERE LOWER(name) = LOWER(?) LIMIT 1";
+		try (Connection c = getConnection();
+			PreparedStatement ps = c.prepareStatement(sql)) {
+			ps.setString(1, name);
+			ResultSet rs = ps.executeQuery();
+			return rs.next();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public boolean deleteDevice(int id) {
