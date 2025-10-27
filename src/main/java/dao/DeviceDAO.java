@@ -94,7 +94,7 @@ public class DeviceDAO extends DBContext {
 	}
 
 	public Device getDeviceById(int id) {
-	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured FROM devices WHERE id = ?;";
+	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured, warrantyMonth FROM devices WHERE id = ?;";
 	    try (Connection conn = getConnection();
 	         PreparedStatement pre = conn.prepareStatement(sql)) {
 	        pre.setInt(1, id);
@@ -112,7 +112,8 @@ public class DeviceDAO extends DBContext {
 	                    rs.getString("image_url"),
 	                    rs.getString("description"),
 	                    rs.getTimestamp("created_at"),
-	                    rs.getBoolean("is_featured")
+	                    rs.getBoolean("is_featured"),
+	                    rs.getInt("warrantyMonth")
 	                );
 	            }
 	        }

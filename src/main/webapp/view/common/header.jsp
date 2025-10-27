@@ -11,7 +11,7 @@
 
             <header class="header">
                 <h1 class="header-title">
-                    <a href="home" style="color: #fff;">TechShop</a>
+                    <a href="${pageContext.request.contextPath}/home" style="color: #fff;">TechShop</a>
                 </h1>
                 <div class="header-center">
                     <div class="category-menu" data-category-menu>
@@ -24,7 +24,7 @@
                             <a href="create-issue">Bảo hành/Sửa chữa</a>
                             <a href="${pageContext.request.contextPath}/profile">Thông tin cá nhân</a>
                             <a href="checkout.jsp">Thanh toán</a>
-                            <a href="order-tracking.jsp">Đơn hàng</a>
+                            <a href="view/homepage/order-tracking.jsp">Đơn hàng</a>
                             <a href="issue">Lịch sử yêu cầu</a>
                             <c:if test="${sessionScope.account != null}">
                                 <form action="logout" method="post" style="display:inline;">

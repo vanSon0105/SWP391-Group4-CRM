@@ -63,7 +63,7 @@ table tbody tr td {
 							<option value="weekend">Cuối tuần</option>
 						</select>
 					</div>
-					<div style="display: grid; gap: 8px;">
+					<!-- <div style="display: grid; gap: 8px;">
 						<label for="method">Chọn phương thức</label> <select id="method"
 							name="method" required>
 							<option value="credit_card">Thẻ tín dụng</option>
@@ -72,7 +72,7 @@ table tbody tr td {
 							<option value="cash_on_delivery">Thanh toán khi nhận
 								hàng</option>
 						</select>
-					</div>
+					</div> -->
 					<div style="display: grid; gap: 8px;">
 						<label for="note">Ghi chú cho kỹ thuật</label>
 						<textarea id="note" name="note"

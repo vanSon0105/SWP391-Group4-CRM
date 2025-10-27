@@ -6,21 +6,16 @@ import model.OrderDetail;
 import dal.DBContext;
 
 public class OrderDetailDAO extends DBContext{
-	  public boolean addOrderDetail(int orderId, int deviceId, int deviceSerialId, int quantity, double price, int warrantyCardId) {
-	        String sql = "INSERT INTO order_details (order_id, device_id, quantity, price) "
-	                   + "VALUES (?, ?, ?, ?, ?, ?)";
-	        try (Connection conn = getConnection();
-	             PreparedStatement ps = conn.prepareStatement(sql)) {
-	            ps.setInt(1, orderId);
-	            ps.setInt(2, deviceId);
-	            ps.setInt(3, quantity);
-	            ps.setDouble(4, price);
-	            return ps.executeUpdate() > 0;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-	        return false;
-	    }
+	/*
+	 * public boolean addOrderDetail(int orderId, int deviceId, int deviceSerialId,
+	 * int quantity, double price, int warrantyCardId) { String sql =
+	 * "INSERT INTO order_details (order_id, device_id, quantity, price) " +
+	 * "VALUES (?, ?, ?, ?, ?, ?)"; try (Connection conn = getConnection();
+	 * PreparedStatement ps = conn.prepareStatement(sql)) { ps.setInt(1, orderId);
+	 * ps.setInt(2, deviceId); ps.setInt(3, quantity); ps.setDouble(4, price);
+	 * return ps.executeUpdate() > 0; } catch (Exception e) { e.printStackTrace(); }
+	 * return false; }
+	 */
 	    public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
 	        List<OrderDetail> list = new ArrayList<>();
 	        String sql = "SELECT * FROM order_details WHERE order_id = ?";
@@ -80,4 +75,39 @@ public class OrderDetailDAO extends DBContext{
 	            e.printStackTrace();
 	        }
 	    }
+	    
+	    public int addOrderDetail(int orderId, int deviceId, int quantity, double price) {
+	        String sql = "INSERT INTO order_details (order_id, device_id, quantity, price) VALUES (?, ?, ?, ?)";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+	            ps.setInt(1, orderId);
+	            ps.setInt(2, deviceId);
+	            ps.setInt(3, quantity);
+	            ps.setDouble(4, price);
+	            ps.executeUpdate();
+
+	            ResultSet rs = ps.getGeneratedKeys();
+	            if (rs.next()) {
+	                return rs.getInt(1); 
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return -1;
+	    }
+	    
+	    public boolean addOrderDetailSerial(int orderDetailId, int deviceSerialId) {
+	        String sql = "INSERT INTO order_detail_serials (order_detail_id, device_serial_id) VALUES (?, ?)";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+	            ps.setInt(1, orderDetailId);
+	            ps.setInt(2, deviceSerialId);
+	            return ps.executeUpdate() > 0;
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return false;
+	    }
+
+
 }
