@@ -226,4 +226,40 @@ public class CustomerIssueDAO extends DBContext{
 	public List<CustomerIssue> getIssuesAwaitingManagerReview() {
 		return getIssuesBySupportStatuses(new String[] { "submitted", "manager_review" });
 	}
+	
+	public List<CustomerIssue> getIssuesWithoutTask() {
+	    List<CustomerIssue> list = new ArrayList<>();
+	    String sql =
+	    		"SELECT ci.* " +
+	    		"FROM customer_issues ci " +
+	    	    "LEFT JOIN tasks t ON ci.id = t.customer_issue_id " +
+	 		    "WHERE t.customer_issue_id IS NULL " +
+	   		    "AND ci.support_status = 'manager_approved' " +
+	  		    "ORDER BY ci.created_at DESC";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            list.add(new CustomerIssue(
+	                rs.getInt("id"),
+	                rs.getInt("customer_id"),
+	                rs.getString("issue_code"),
+	                rs.getString("title"),
+	                rs.getString("description"),
+	                rs.getInt("warranty_card_id"),
+	                rs.getTimestamp("created_at"),
+	                rs.getInt("support_staff_id"),
+	                rs.getString("support_status"),
+	                rs.getString("issue_type")
+	            ));
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
 }

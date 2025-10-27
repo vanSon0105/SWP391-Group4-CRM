@@ -45,11 +45,11 @@ public class TaskFormController extends HttpServlet {
 				assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
 			}
 
-			List<CustomerIssue> issueList = issueDao.getAllIssues();
+			List<CustomerIssue> customerIssues = issueDao.getIssuesWithoutTask();
 			List<User> staffList = userDao.getAllTechnicalStaff();
 
 			request.setAttribute("task", task);
-			request.setAttribute("customerIssues", issueList);
+			request.setAttribute("customerIssues", customerIssues);
 			request.setAttribute("technicalStaffList", staffList);
 			request.setAttribute("taskDetail", taskDetail);
 			request.setAttribute("assignedStaffIds", assignedStaffIds);

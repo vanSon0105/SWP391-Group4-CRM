@@ -17,6 +17,8 @@ import model.DeviceSerial;
 import model.OrderDetail;
 import model.Payment;
 import model.WarrantyCard;
+import model.Device;
+import dao.DeviceDAO;
 import dao.PaymentDAO;
 import dao.DeviceSerialDAO;
 import dao.OrderDAO;
@@ -42,6 +44,7 @@ public class PaymentController extends HttpServlet {
 	OrderDetailDAO odDao = new OrderDetailDAO();
 	DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	CartDetailDAO cdDao = new CartDetailDAO();
+	DeviceDAO deviceDao = new DeviceDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -81,20 +84,23 @@ public class PaymentController extends HttpServlet {
 			orderDao.updateOrderStatus(orderId, "confirmed");
 
 			int userId = userDao.getUserIdByOrderId(orderId);
-			int cartId = cartDao.getCartIdByUserId(userId);
 
-			List<CartDetail> orderItems = cartDao.getCartDetail(cartId);
+			List<OrderDetail> orderItems = odDao.getOrderDetailsByOrderId(orderId);
 
-			Timestamp now = new Timestamp(System.currentTimeMillis());
-			Timestamp end = new Timestamp(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
-
-			for (CartDetail cd : orderItems) {
-				for (int i = 0; i < cd.getQuantity(); i++) {
-					DeviceSerial ds = dsDao.getInStockSerialId(cd.getDevice().getId());
+			for (OrderDetail od : orderItems) {
+				for (int i = 0; i < od.getQuantity(); i++) {
+					DeviceSerial ds = dsDao.getInStockSerialId(od.getDeviceId());
 					if (ds == null) {
 						continue;
 					}
-
+					
+					Device device = deviceDao.getDeviceById(od.getDeviceId());
+					int warrantyMonths = (device != null) ? device.getWarrantyMonth() : 12;
+					Timestamp now = new Timestamp(System.currentTimeMillis());
+			        Timestamp end = new Timestamp(
+			            now.getTime() + (long) warrantyMonths * 30 * 24 * 60 * 60 * 1000
+			        );
+					
 					WarrantyCard wc = wcDao.getBySerialId(ds.getId());
 					int wcId;
 
@@ -114,15 +120,12 @@ public class PaymentController extends HttpServlet {
 						wcId = wc.getId();
 					}
 
-					int orderDetailId = odDao.addOrderDetail(orderId, cd.getDevice().getId(), 1, cd.getPrice());
-					if (orderDetailId > 0) {
-						odDao.addOrderDetailSerial(orderDetailId, ds.getId());
-					}
+					odDao.addOrderDetailSerial(od.getId(), ds.getId());
+					
 					dsDao.updateStatus(ds.getId(), "sold");
 				}
 			}
 
-			cartDao.deleteCart(cartId);
 		} else if ("failed".equals(action)) {
 			paymentDao.updateStatus(Integer.parseInt(id), action);
 			orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(Integer.parseInt(id)), "cancelled");

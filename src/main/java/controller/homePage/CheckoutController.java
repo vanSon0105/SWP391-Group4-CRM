@@ -17,6 +17,7 @@ import model.User;
 import dao.PaymentDAO;
 import dao.CartDAO;
 import dao.OrderDAO;
+import dao.OrderDetailDAO;
 import model.Cart;
 import model.Payment;
 import model.Order;
@@ -27,7 +28,7 @@ public class CheckoutController extends HttpServlet {
 	CartDAO cartDao = new CartDAO();
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
-
+	OrderDetailDAO odDao = new OrderDetailDAO();
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -131,6 +132,16 @@ public class CheckoutController extends HttpServlet {
 		}
 		
 		int orderId = orderDao.addNewOrder(user.getId(), finalPrice, discount);
+		
+		List<CartDetail> cartItems = cartDao.getCartDetail(cartId);
+		for (CartDetail item : cartItems) {
+	        odDao.addOrderDetail(
+	                orderId,
+	                item.getDevice().getId(),
+	                item.getQuantity(),
+	                item.getPrice()
+	        );
+	    }
 		
 		Payment payment = new Payment();
 		payment.setOrderId(orderId);

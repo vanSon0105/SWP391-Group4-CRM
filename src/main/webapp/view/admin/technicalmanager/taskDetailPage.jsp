@@ -117,13 +117,14 @@ th {
 			<div class="btn-gr"
 				style="margin-top: 14px; display: flex; gap: 10px;">
 				<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
-				<form action="task-detail" method="post" style="display: inline;"
-					onsubmit="return confirm('Bạn có chắc chắn muốn đánh dấu task này là hoàn thành không?')">
-					<input type="hidden" name="taskId" value="${task.id}" />
-					<button type="submit" class="btn btn-secondary"
-						${not empty listTaskDetail ? '' : 'disabled'}>Đánh dấu
-						hoàn thành Task</button>
-				</form>
+				<c:if test="${not empty listTaskDetail}">
+					<form action="task-detail" method="post" style="display: inline;"
+						onsubmit="return confirm('Bạn có chắc chắn muốn đánh dấu task này là hoàn thành không?')">
+						<input type="hidden" name="taskId" value="${task.id}" />
+						<button type="submit" class="btn btn-secondary">Đánh dấu
+							hoàn thành Task</button>
+					</form>
+				</c:if>
 
 			</div>
 			<table>

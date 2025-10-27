@@ -111,19 +111,34 @@ button {
 	padding: 10px 12px !important;
 }
 
-.container-paging {
-	margin-top: 10px;
-	margin-left: 45%;
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 8px;
 }
 
-.container-paging a {
-	padding: 6px 12px;
-	text-decoration: none;
-	border: none;
-	color: white !important;
-	background: #3b82f6;
-	border-radius: 10px;
+.page-link {
+  display: inline-block;
+  padding: 8px 14px;
+  text-decoration: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #1d4ed8;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
+
+/* .page-link:hover {
+  background: #2563eb;
+} */
+
+.page-link.active {
+  background: #1d4ed8;
+  color:white;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
+
 
 th, td {
 	padding: 14px 5px !important;
@@ -134,40 +149,40 @@ button {
 	width: 80px;
 	font-size: 1rem !important;
 }
+
 .status {
-  display: inline-block;
-  padding: 5px 7px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 12px;
-  text-align: center;
-  min-width: 100px;
+	display: inline-block;
+	padding: 5px 7px;
+	border-radius: 20px;
+	font-weight: 600;
+	font-size: 12px;
+	text-align: center;
+	min-width: 100px;
 }
 
 .status.pending {
-  background-color: #fef3c7;
-  color: #b45309;
-  border: 1px solid #facc15;
+	background-color: #fef3c7;
+	color: #b45309;
+	border: 1px solid #facc15;
 }
 
 .status.success {
-  background-color: #dcfce7;
-  color: #166534;
-  border: 1px solid #22c55e;
+	background-color: #dcfce7;
+	color: #166534;
+	border: 1px solid #22c55e;
 }
 
 .status.failed {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  border: 1px solid #ef4444;
+	background-color: #fee2e2;
+	color: #b91c1c;
+	border: 1px solid #ef4444;
 }
 
 .status.unknown {
-  background-color: #e5e7eb;
-  color: #374151;
-  border: 1px solid #9ca3af;
+	background-color: #e5e7eb;
+	color: #374151;
+	border: 1px solid #9ca3af;
 }
-
 </style>
 
 <body class="management-page device-management">
@@ -176,8 +191,7 @@ button {
 	<main class="sidebar-main">
 
 		<section class="panel" id="table-panel">
-			<h1 style="font-weight: 500; margin-left: 60px; margin-top: 20px">Payment
-				List</h1>
+			<h2>Danh sách thanh toán</h2>
 			<div class="filters">
 				<form action="payment-list" method="get">
 					<select id="status" name="status"
@@ -211,7 +225,7 @@ button {
 							dần</option>
 						<option value="desc"
 							${param.sortPaidAt == 'desc' ? 'selected' : ''}>Giảm dần</option>
-					</select> 
+					</select>
 					<div>
 
 						<input type="search" name="search"
@@ -265,10 +279,17 @@ button {
 								<td>${p.createdAt}</td>
 								<td>${p.paidAt}</td>
 								<td><input type="hidden" name="paymentId" value="${p.id}" />
-									<button style="background-color: #1976D2" name="action"
-										type="submit" value="success">Confirm</button>
-									<button style="background-color: #E70043" name="action"
-										type="submit" value="failed">Deny</button></td>
+
+									<c:if test="${p.status == 'pending'}">
+										<button style="background-color: #1976D2" name="action"
+											type="submit" value="success"
+											onclick="return confirm('Xác nhận thanh toán thành công cho đơn hàng này?')">
+											Confirm</button>
+										<button style="background-color: #E70043" name="action"
+											type="submit" value="failed"
+											onclick="return confirm('Bạn có chắc muốn từ chối thanh toán này không?')">
+											Deny</button>
+									</c:if></td>
 								</form>
 							</tr>
 						</c:forEach>
@@ -277,10 +298,10 @@ button {
 				</table>
 
 			</div>
-			<div class="container-paging">
+			<div class="pagination-wrapper">
 				<c:forEach var="i" begin="1" end="${totalPages}">
 					<a
-						class="pagination ${(param.page == null && i == 1) || param.page == i ? 'active' : ''}"
+						class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}"
 						href="payment-list?page=${i}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">${i}</a>
 				</c:forEach>
 			</div>

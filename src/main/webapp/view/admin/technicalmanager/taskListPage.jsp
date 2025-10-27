@@ -18,7 +18,7 @@
 .device-btn {
 	color: black !important;
 }
-
+/* 
 .device-management .pagination-pills {
 	display: flex;
 	justify-content: center;
@@ -53,24 +53,39 @@
 
 .device-management .pagination-pills a:hover {
 	transform: translateY(-2px);
-}
+} */
 
 body .panel h2 {
 	margin-bottom: 0 !important;
 }
 
-.pagination {
-	display: flex;
-	justify-content: center;
-	align-items: center;
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 8px;
 }
 
-.pagination a {
-	padding: 12px 10px;
-	color: black;
-	text-decoration: none;
+.page-link {
+  display: inline-block;
+  padding: 8px 14px;
+  text-decoration: none;
+  border-radius: 8px;
+  background: #fff;
+  color: #1d4ed8;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
+/* .page-link:hover {
+  background: #2563eb;
+} */
+
+.page-link.active {
+  background: #1d4ed8;
+  color:white;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+}
 .status-badge {
     display: inline-block;
     white-space: nowrap;
@@ -214,7 +229,7 @@ body .panel h2 {
 													onclick="return confirm('Bạn có chắc muốn dừng task này?');"
 													type="submit"
 													style="outline: none; background: none; border: none; color: #fff; padding: 0; font-weight: 600;">
-													Xóa</button>
+													Hủy</button>
 											</form>
 										</c:if></td>
 								</tr>
@@ -235,16 +250,17 @@ body .panel h2 {
 				</c:if>
 
 			</div>
-		</section>
-		<div class="pagination">
+			<div class="pagination-wrapper">
 			<c:forEach var="i" begin="1" end="${totalPages}">
 				<a
 					href="task-list?page=${i}&status=${param.status}&search=${param.search}"
-					style="${i == currentPage ? 'font-weight:bold;color:#0d6efd;' : ''}">
+					class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}">
 					${i} </a>
 			</c:forEach>
 
 		</div>
+		</section>
+		
 	</main>
 </body>
 </html>
