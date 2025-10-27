@@ -229,13 +229,12 @@ public class CustomerIssueDAO extends DBContext{
 	
 	public List<CustomerIssue> getIssuesWithoutTask() {
 	    List<CustomerIssue> list = new ArrayList<>();
-	    String sql =
-	    		"SELECT ci.* " +
-	    		"FROM customer_issues ci " +
-	    	    "LEFT JOIN tasks t ON ci.id = t.customer_issue_id " +
-	 		    "WHERE t.customer_issue_id IS NULL " +
-	   		    "AND ci.support_status = 'manager_approved' " +
-	  		    "ORDER BY ci.created_at DESC";
+	    String sql = "SELECT ci.* " +
+                "FROM customer_issues ci " +
+                "LEFT JOIN tasks t ON ci.id = t.customer_issue_id " +
+                "WHERE t.customer_issue_id IS NULL " +
+                "AND ci.support_status = 'manager_approved' " +
+                "ORDER BY ci.created_at DESC"; 
 
 	    try (Connection conn = getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql);
@@ -256,6 +255,37 @@ public class CustomerIssueDAO extends DBContext{
 	            ));
 	        }
 
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
+	public List<CustomerIssue> getIssuesForTask(int currentIssueId) {
+	    List<CustomerIssue> list = new ArrayList<>();
+	    String sql = "SELECT ci.* " +
+                "FROM customer_issues ci " +
+                "LEFT JOIN tasks t ON ci.id = t.customer_issue_id " +
+                "WHERE (t.customer_issue_id IS NULL OR ci.id = ?) " +
+                "AND ci.support_status = 'manager_approved' ";
+
+	    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, currentIssueId);
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            list.add(new CustomerIssue(
+	                rs.getInt("id"),
+	                rs.getInt("customer_id"), 
+	                rs.getString("issue_code"),
+	                rs.getString("title"),
+	                rs.getString("description"),
+	                rs.getInt("warranty_card_id"),
+	                rs.getTimestamp("created_at"),
+	                rs.getInt("support_staff_id"),
+	                rs.getString("support_status"),
+	                rs.getString("issue_type")
+	            ));
+	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }

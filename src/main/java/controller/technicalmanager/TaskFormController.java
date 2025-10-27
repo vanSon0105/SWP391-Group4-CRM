@@ -32,36 +32,40 @@ public class TaskFormController extends HttpServlet {
 	}
 
 	private void loadData(HttpServletRequest request, HttpServletResponse response) {
-		try {
-			String idParam = request.getParameter("id");
-			String issueIdParam = request.getParameter("issueId");
-			Task task = null;
-			Set<Integer> assignedStaffIds = null;
-			List<TaskDetail> taskDetail = new ArrayList<>();
-			if (idParam != null && !idParam.isEmpty()) {
-				int taskId = Integer.parseInt(idParam);
-				task = taskDao.getTaskById(taskId);
-				taskDetail = taskDetailDao.getTaskDetail(taskId);
-				assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
-			}
+	    try {
+	        String idParam = request.getParameter("id");
+	        Task task = null;
+	        Set<Integer> assignedStaffIds = null;
+	        List<TaskDetail> taskDetail = new ArrayList<>();
+	        List<CustomerIssue> customerIssues;
 
-			List<CustomerIssue> customerIssues = issueDao.getIssuesWithoutTask();
-			List<User> staffList = userDao.getAllTechnicalStaff();
+	        if (idParam != null && !idParam.isEmpty()) {
+	            int taskId = Integer.parseInt(idParam);
+	            task = taskDao.getTaskById(taskId);
+	            taskDetail = taskDetailDao.getTaskDetail(taskId);
+	            assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
+	            customerIssues = issueDao.getIssuesForTask(task.getCustomerIssueId());
+	        } else {
+	            customerIssues = issueDao.getIssuesWithoutTask();
+	        }
 
-			request.setAttribute("task", task);
-			request.setAttribute("customerIssues", customerIssues);
-			request.setAttribute("technicalStaffList", staffList);
-			request.setAttribute("taskDetail", taskDetail);
-			request.setAttribute("assignedStaffIds", assignedStaffIds);
-			request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
-		} catch (Exception e) {
-			System.out.print("Error");
-		}
+	        List<User> staffList = userDao.getAllTechnicalStaff();
+
+	        request.setAttribute("task", task);
+	        request.setAttribute("customerIssues", customerIssues);
+	        request.setAttribute("technicalStaffList", staffList);
+	        request.setAttribute("taskDetail", taskDetail);
+	        request.setAttribute("assignedStaffIds", assignedStaffIds);
+	        request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 	}
+
 
 	private void addNewTask(HttpServletRequest request, HttpServletResponse res) {
 		try {
-			String title = request.getParameter("title");
+			String title = request.getParameter("title"); 
 			String description = request.getParameter("description");
 			String customerIssueIdStr = request.getParameter("customerIssueId");
 			int customerIssueId = Integer.parseInt(customerIssueIdStr);
