@@ -147,8 +147,6 @@
                                  <th>Tiêu đề</th>
                                  <th>Khách hàng</th>
                                  <th>Ngày gửi</th>
-                                 <th>Trạng thái</th>
-                                 <th></th>
                              </tr>
                          </thead>
                          <tbody>
@@ -237,6 +235,8 @@
                                  <th>Mã</th>
                                  <th>Tiêu đề</th>
                                  <th>Khách hàng</th>
+                                 <th>Lí do</th>
+                                 <th>Trạng thái</th>
                                  <th>Ngày gửi</th>
                              </tr>
                          </thead>
@@ -246,6 +246,15 @@
                                      <td>${issue.issueCode}</td>
                                      <td>${issue.title}</td>
                                      <td>${issue.customerId}</td>
+                                     <td>${empty issue.feedback ? '-' : issue.feedback}</td>
+                                     <td>
+                                         <c:choose>
+                                             <c:when
+                                                 test="${issue.supportStatus == 'customer_cancelled'}">
+                                                 Khách hủy</c:when>
+                                             <c:otherwise>Quản lý từ chối</c:otherwise>
+                                         </c:choose>
+                                     </td>
                                      <td>
                                          <fmt:formatDate value="${issue.createdAt}"
                                              pattern="dd/MM/yyyy HH:mm" />

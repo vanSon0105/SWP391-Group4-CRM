@@ -2,6 +2,7 @@
     <%@ page isELIgnored="false" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -116,6 +117,17 @@
             <div class="meta">Tiêu đề: <strong>${issue.title}</strong></div>
             <div class="meta">Mô tả</div>
             <pre>${issue.description}</pre>
+            
+            <form id="rejectForm" method="post" action="manager-issues" style="margin:0;">
+                <input type="hidden" name="issueId" value="${issue.id}">
+                <input type="hidden" name="action" value="reject">
+                <label for="rejectReason">Ly do tu choi *</label>
+                <textarea id="rejectReason" name="rejectReason" required>${fn:escapeXml(rejectReasonDraft != null ? rejectReasonDraft : '')}</textarea>
+                <c:if test="${not empty errorRejectReason}">
+                    <div class="form-error">${errorRejectReason}</div>
+                </c:if>
+                <button type="submit" class="btn btn-danger">Từ chối</button>
+            </form>
         </div>
 
         <div class="card">
@@ -139,14 +151,12 @@
                 <label>Tổng hợp/Ghi chú</label>
                 <textarea readonly>${issueDetail.summary}</textarea>
             </c:if>
+            
 
             <div class="actions">
-                <a class="btn btn-outline" href="manager-issues">Quay lai</a>
-                <form method="post" action="manager-issues" style="margin:0;">
-                    <input type="hidden" name="issueId" value="${issue.id}">
-                    <input type="hidden" name="action" value="reject">
-                    <button type="submit" class="btn btn-danger">Từ chối</button>
-                </form>
+                <a class="btn btn-outline" href="manager-issues">Quay lại</a>
+                
+                
                 <form method="post" action="manager-issues" style="margin:0;">
                     <input type="hidden" name="issueId" value="${issue.id}">
                     <input type="hidden" name="action" value="approve">

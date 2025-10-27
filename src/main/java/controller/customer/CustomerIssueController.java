@@ -163,19 +163,34 @@ public class CustomerIssueController extends HttpServlet {
 		}
 		
 		CustomerIssue issue = ciDao.getIssueById(issueId);
-		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		if (issue == null || issue.getCustomerId() != customer.getId()) {
 			resp.sendRedirect("issue?notfound=1");
 			return;
 		}
 
-		if (issue.getSupportStatus() == null || !"awaiting_customer".equalsIgnoreCase(issue.getSupportStatus())) {
+		String status = issue.getSupportStatus();
+
+		if ("1".equals(req.getParameter("cancel"))) {
+			boolean allowCancel = status != null && (
+					"awaiting_customer".equalsIgnoreCase(status) ||
+					"manager_rejected".equalsIgnoreCase(status));
+			if (!allowCancel) {
+				resp.sendRedirect("issue?invalid=1");
+				return;
+			}
+			ciDao.updateSupportStatus(issueId, "customer_cancelled");
+			resp.sendRedirect("issue?cancelled=1");
+			return;
+		}
+
+		if (status == null || !"awaiting_customer".equalsIgnoreCase(status)) {
 			resp.sendRedirect("issue?invalid=1");
 			return;
 		}
 
 		req.setAttribute("issue", issue);
 
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		int staffId = issue.getSupportStaffId();
 		if (staffId == 0) {
 			req.setAttribute("error", "Yêu cầu chưa được nhân viên hỗ trợ tiếp nhận. Vui lòng thử lại sau.");

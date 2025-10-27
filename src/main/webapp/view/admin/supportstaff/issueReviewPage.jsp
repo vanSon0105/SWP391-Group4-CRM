@@ -187,8 +187,17 @@
 		            </c:if>
 		            
 		            <c:if test="${managerRejected}">
-					    <div class="alert alert-warning">Quản lý kỹ thuật đã từ chối yêu cầu. Bạn hãy bổ sung thông tin và gửi lại.</div>
+					    <div class="alert alert-warning">Quản lý kỹ thuật đã từ chối yêu cầu. Bạn hãy bổ sung thông tin và gửi lại.
+					        <c:if test="${not empty issue.feedback}">
+					            <br/>Lý do: ${issue.feedback}
+					        </c:if>
+					    </div>
 					</c:if>
+					
+					<c:if test="${customerCancelled}">
+                        <div class="alert alert-warning">Khách hàng đã hủy yêu cầu. Vui lòng liên hệ lại nếu cần mở lại hồ sơ.</div>
+                    </c:if>
+                    
 					<c:if test="${managerApproved}">
 					    <div class="alert alert-info">Quản lý kỹ thuật đã chấp thuận thông tin. Đang chờ tạo task kỹ thuật.</div>
 					</c:if>
@@ -196,7 +205,7 @@
 					    <div classD="alert alert-info">Task kỹ thuật đã được tạo. Bạn chỉ có thể xem thông tin đã gửi.</div>
 					</c:if>
 		
-		            <c:if test="${not lockedForSupport and (needsCustomerInfo or awaitingCustomer)}">
+		            <c:if test="${not lockedForSupport and (needsCustomerInfo or awaitingCustomer or managerRejected)}">
 	                    <form method="post" action="support-issues">
 	                        <input type="hidden" name="action" value="request_details">
 	                        <input type="hidden" name="issueId" value="${issue.id}">

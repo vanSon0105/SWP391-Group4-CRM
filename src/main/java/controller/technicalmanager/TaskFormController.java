@@ -15,6 +15,7 @@ import dao.CustomerIssueDAO;
 import model.Task;
 import model.CustomerIssue;
 import model.User;
+import utils.AuthorizationUtils;
 import model.TaskDetail;
 
 @WebServlet("/task-form")
@@ -28,17 +29,26 @@ public class TaskFormController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
+		applyReviewNotice(request);
 		forwardToForm(request, response);
-
 	}
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		User manager = getManager(req, resp);
+		if (manager == null) {
+			return;
+		}
+		
 		String id = req.getParameter("id");
 		if (id != null && !id.isEmpty()) {
-			updateTask(req, resp);
+			updateTask(req, resp, manager);
 		} else {
-			addNewTask(req, resp);
+			addNewTask(req, resp, manager);
 		}
 	}
 
@@ -46,36 +56,82 @@ public class TaskFormController extends HttpServlet {
 		try {
 			String idParam = request.getParameter("id");
 			String issueIdParam = request.getParameter("issueId");
+			
 			Task task = null;
+			
 			Set<Integer> assignedStaffIds = null;
 			List<TaskDetail> taskDetail = new ArrayList<>();
-      List<CustomerIssue> customerIssues;
+			
+			int issueIdFromParam = 0;
+			
 			if (idParam != null && !idParam.isEmpty()) {
 				int taskId = Integer.parseInt(idParam);
 				task = taskDao.getTaskById(taskId);
 				taskDetail = taskDetailDao.getTaskDetail(taskId);
 				assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
-        customerIssues = issueDao.getIssuesForTask(task.getCustomerIssueId());
-				if (task != null && request.getAttribute("selectedIssueId") == null) {
-					request.setAttribute("selectedIssueId", task.getCustomerIssueId());
+				if (task != null) {
+					issueIdFromParam = task.getCustomerIssueId();
 				}
-			}else {
-          customerIssues = issueDao.getIssuesWithoutTask();
-      }
+			}
+
+			if (issueIdFromParam == 0 && issueIdParam != null && !issueIdParam.trim().isEmpty()) {
+				try {
+					issueIdFromParam = Integer.parseInt(issueIdParam.trim());
+				} catch (NumberFormatException ignored) {
+				}
+			}
+
+			if (task == null && issueIdFromParam != 0) {
+				task = taskDao.getTaskByIssueId(issueIdFromParam);
+				if (task != null) {
+					taskDetail = taskDetailDao.getTaskDetail(task.getId());
+					assignedStaffIds = taskDao.getAssignedStaffIds(task.getId());
+					issueIdFromParam = task.getCustomerIssueId();
+				} 
+			}
+
+			List<CustomerIssue> issueList = issueDao.getAllIssues();
 			List<User> staffList = userDao.getAllTechnicalStaff();
+			
+			CustomerIssue currentIssue = null;
+			if (issueIdFromParam != 0) {
+				for (CustomerIssue ci : issueList) {
+					if (ci.getId() == issueIdFromParam) {
+						currentIssue = ci;
+						break;
+					}
+				}
+				if (currentIssue == null) {
+					currentIssue = issueDao.getIssueById(issueIdFromParam);
+				}
+			}
 
 			request.setAttribute("task", task);
-			request.setAttribute("customerIssues", customerIssues);
-			request.setAttribute("technicalStaffList", staffList);
 			request.setAttribute("taskDetail", taskDetail);
-      request.setAttribute("assignedStaffIds", assignedStaffIds);
+			request.setAttribute("customerIssues", issueList);
+			request.setAttribute("technicalStaffList", staffList);
+			if (currentIssue != null) {
+				request.setAttribute("currentIssue", currentIssue);
+			}
+
+			if (request.getAttribute("assignedStaffIds") == null) {
+				request.setAttribute("assignedStaffIds",
+						assignedStaffIds != null ? assignedStaffIds : Collections.emptySet());
+			}
+
+			if (request.getAttribute("selectedIssueId") == null) {
+				if (issueIdFromParam != 0) {
+					request.setAttribute("selectedIssueId", issueIdFromParam);
+				}
+			}
+
 		} catch (Exception e) {
 			System.out.print("Error");
 		}
 	}
 
 
-	private void addNewTask(HttpServletRequest request, HttpServletResponse res) {
+	private void addNewTask(HttpServletRequest request, HttpServletResponse res, User manager) {
 		try {
 			String title = request.getParameter("title"); 
 			String description = request.getParameter("description");
@@ -96,7 +152,7 @@ public class TaskFormController extends HttpServlet {
 			String deadlineStr = request.getParameter("deadline");
 			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
 			
-			int managerId = 2;
+			int managerId = manager.getId();
 			Timestamp now = new Timestamp(System.currentTimeMillis());
 
 			if (title == null || title.trim().isEmpty()) {
@@ -147,7 +203,7 @@ public class TaskFormController extends HttpServlet {
 		}
 	}
 
-	private void updateTask(HttpServletRequest req, HttpServletResponse res) {
+	private void updateTask(HttpServletRequest req, HttpServletResponse res, User manager) {
 		try {
 			int taskId = Integer.parseInt(req.getParameter("id"));
 			
@@ -160,7 +216,7 @@ public class TaskFormController extends HttpServlet {
 			req.setAttribute("assignedStaffIds", newStaffIds);
 			req.setAttribute("selectedIssueId", customerIssueId);
 			
-			int managerId = 2;
+			int managerId = manager.getId();
 			Timestamp deadline = null;
 			String deadlineStr = req.getParameter("deadline");
 			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
@@ -196,6 +252,8 @@ public class TaskFormController extends HttpServlet {
 					taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
 				}
 			}
+			
+			issueDao.updateSupportStatus(customerIssueId, "task_created");
 
 			for (Integer staffId : existingStaffIds) {
 				if (!newStaffIds.contains(staffId)) {
@@ -244,8 +302,23 @@ public class TaskFormController extends HttpServlet {
 	
 	private void forwardToForm(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		applyReviewNotice(request);
 		loadData(request, response);
 		request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
+	}
+	
+	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		return AuthorizationUtils.requirePermission(request, response, "CUSTOMER_ISSUES_MANAGEMENT");
+	}
+	
+	private void applyReviewNotice(HttpServletRequest request) {
+		if (request.getAttribute("fromReviewNotice") != null) {
+			return;
+		}
+		String fromReview = request.getParameter("fromReview");
+		if (fromReview != null && ("1".equals(fromReview) || "true".equalsIgnoreCase(fromReview))) {
+			request.setAttribute("fromReviewNotice", Boolean.TRUE);
+		}
 	}
 
 }

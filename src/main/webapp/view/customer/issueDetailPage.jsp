@@ -80,6 +80,11 @@
             background: #e2e8f0;
             color: #0f172a;
         }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: #fff;
+        }
 
         .btn-primary {
             background: #2563eb;
@@ -94,6 +99,11 @@
             background: #fee2e2;
             color: #b91c1c;
         }
+        
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
     </style>
 </head>
 <body class="home-page">
@@ -101,11 +111,17 @@
     <main>
         <div class="container">
         <div class="card">
-            <h1>Bo sung thong tin yeu cau</h1>
+            <h1>Bổ sung thông tin yêu cầu</h1>
             <div class="meta">
-                Ma yeu cau: <strong>${issue.issueCode}</strong><br>
-                Tieu de: <strong>${issue.title}</strong>
+                Mã yêu cầu: <strong>${issue.issueCode}</strong><br>
+                Tiêu đề: <strong>${issue.title}</strong>
             </div>
+            
+            <c:if test="${not empty issue.feedback}">
+                <div class="alert alert-warning">
+                    Ghi chú từ quản lý: ${issue.feedback}
+                </div>
+            </c:if>
 
             <c:if test="${not empty error}">
                 <div class="alert">${error}</div>
@@ -131,6 +147,7 @@
 
                 <div class="actions">
                     <a class="btn btn-secondary" href="issue">Hủy</a>
+                    <button type="submit" name="cancel" value="1" class="btn btn-danger" formnovalidate>Từ chối yêu cầu</button>
                     <button type="submit" class="btn btn-primary">Gửi nhân viên hỗ trợ</button>
                 </div>
             </form>

@@ -352,9 +352,34 @@ public class TaskDAO extends DBContext {
 	}
 	
 	 
+	    public Task getTaskByIssueId(int id) {
+	        Task task = null;
+	        String sql = "SELECT * FROM task_with_status WHERE customer_issue_id = ?;";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, id);
+	            try (ResultSet rs = ps.executeQuery()) {
+	                if (rs.next()) {
+	                    task = new Task(
+	                            rs.getInt("id"),
+	                            rs.getString("title"),
+	                            rs.getString("description"),
+	                            rs.getInt("manager_id"),
+	                            rs.getInt("customer_issue_id"),
+	                            rs.getString("status"));
+	                }
+	            }
+
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	        return task;
+	    }
+	    
 	    public Task getTaskById(int id) {
 	        Task task = null;
-	        String sql = "SELECT * FROM task_with_status WHERE id=?";
+	        String sql = "SELECT * FROM task_with_status WHERE id = ?;";
 	        try (Connection conn = getConnection();
 	             PreparedStatement ps = conn.prepareStatement(sql)) {
 

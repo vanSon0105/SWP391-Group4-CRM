@@ -118,10 +118,12 @@ public class SupportIsssueController extends HttpServlet {
 		boolean managerRejected = "manager_rejected".equalsIgnoreCase(status);
 		boolean managerApproved = "manager_approved".equalsIgnoreCase(status);
 		boolean managerPending = "manager_review".equalsIgnoreCase(status);
+		boolean customerCancelled = "customer_cancelled".equalsIgnoreCase(status);
 		boolean taskLocked = isLockedForSupport(status);
 		boolean awaitingCustomer = "awaiting_customer".equalsIgnoreCase(status);
 		boolean needsCustomerInfo = needsAdditionalCustomerInfo(d, customerDetail);
 		
+		req.setAttribute("customerCancelled", customerCancelled);
 		req.setAttribute("managerRejected", managerRejected);
 		req.setAttribute("managerApproved", managerApproved);
 		req.setAttribute("lockedForSupport", taskLocked);
@@ -241,7 +243,9 @@ public class SupportIsssueController extends HttpServlet {
 		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		CustomerIssueDetail detail = dDao.getByIssueId(issueId, serialNo);
 		User customer = userDao.getUserDetailsById(issue.getCustomerId());
-		if (!needsAdditionalCustomerInfo(detail, customer)) {
+		boolean managerRejected = "manager_rejected".equalsIgnoreCase(issue.getSupportStatus());
+		boolean needsInfo = needsAdditionalCustomerInfo(detail, customer);
+		if (!needsInfo && !managerRejected) {
 			resp.sendRedirect("support-issues?action=review&id=" + issueId + "&infoComplete=1");
 			return;
 		}
@@ -259,6 +263,7 @@ public class SupportIsssueController extends HttpServlet {
 		case "task_created":
 		case "tech_in_progress":
 		case "resolved":
+		case "customer_cancelled":
 			return true;
 		default:
 			return false;

@@ -129,7 +129,8 @@ CREATE TABLE customer_issues (
   issue_type ENUM('warranty','repair') DEFAULT 'warranty',
   warranty_card_id INT,
   support_staff_id INT,
-  support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress','resolved') DEFAULT 'new',
+  feedback TEXT,
+  support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress', 'customer_cancelled', 'resolved') DEFAULT 'new',
   created_at TIMESTAMP default current_timestamp,
   foreign key (customer_id) references users(id),
   foreign key (warranty_card_id) references warranty_cards(id),
@@ -1171,12 +1172,12 @@ INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
 (101, 1, 5), (101, 3, 10), (101, 13, 50),
 (102, 2, 3), (102, 11, 10), (102, 14, 100);
 
-INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, support_staff_id, support_status, created_at) VALUES
-(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, 'submitted', '2025-10-01 10:00:00'),
-(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, 'submitted', '2025-10-02 11:00:00'),
-(10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, 7, 'submitted', '2025-10-03 09:30:00'),
-(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, 7, 'submitted', '2025-10-04 16:45:00'),
-(11,'ISS-0005', 'Màn hình lỗi', 'iPad Air bị lỗi', 31, 7, 'submitted', '2025-10-04 16:55:00');
+INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, support_staff_id, feedback, support_status, created_at) VALUES
+(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, NULL, 'submitted', '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, NULL, 'submitted', '2025-10-02 11:00:00'),
+(10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, 7, NULL, 'task_created', '2025-10-03 09:30:00'),
+(11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, 7, NULL, 'task_created', '2025-10-04 16:45:00'),
+(11,'ISS-0005', 'Màn hình lỗi', 'iPad Air bị lỗi', 31, 7, NULL, 'task_created', '2025-10-04 16:55:00');
 
 INSERT INTO customer_issue_details (issue_id, support_staff_id, customer_full_name, contact_email, contact_phone, device_serial, summary, forward_to_manager) VALUES
 (1, 7, 'Hieu Pham', 'customer01@example.com', '0906789012', 'IP15-SN0001','Khách hàng phản ánh máy nóng khi sạc. Đã kiểm tra sơ bộ và xác nhận hiện tượng.', TRUE),

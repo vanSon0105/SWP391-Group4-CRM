@@ -1,17 +1,19 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page isELIgnored="false" %>
-
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Hồ sơ của tôi | TechShop</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/profile.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body {
+<meta charset="UTF-8">
+<title>Cập nhật hồ sơ | TechShop</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/assets/css/profile.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+	body {
             background: #f5f5f5;
             font-family: Arial, sans-serif;
         }
@@ -214,148 +216,121 @@
 			display: flex;
 			gap: 12px;
 		}
-		
-		.btn {
-			display: inline-block;
-			padding: 10px 22px;
-			border-radius: 6px;
-			border: none;
-			font-weight: 500;
-			cursor: pointer;
-			text-decoration: none;
-			text-align: center;
-		}
-		
-		.btn-edit {
-			background: #ee4d2d;
-			color: #fff;
-		}
-		
-		.btn-edit:hover {
-			background: #d73211;
-		}
-		
-		.btn-cancel {
-			background: #f5f5f5;
-			color: #333;
-			border: 1px solid #ddd;
-		}
-		
-		.btn-cancel:hover {
-			background: #eaeaea;
-		}
-    </style>
+</style>
 </head>
-<jsp:include page="../common/header.jsp"></jsp:include>
+	<jsp:include page="../common/header.jsp"></jsp:include>
 <body>
-    <div class="profile-container">
-        <aside class="profile-sidebar">
-            <div class="profile-card">
-                <div class="profile-avatar">
-                    <c:choose>
-                        <c:when test="${not empty user.imageUrl}">
-                            <img src="${pageContext.request.contextPath}/assets/img/user/${user.imageUrl}" alt="Avatar">
-                        </c:when>
-                        <c:otherwise>
-                            <img src="${pageContext.request.contextPath}/assets/img/default-avatar.png" alt="Avatar">
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-                <div class="profile-meta">
-                    <h3>${user.username}</h3>
-                    <span>${user.email}</span>
-                </div>
-            </div>
-
-            <nav class="profile-menu">
-                <div class="menu-group active">
-                    <div class="menu-title" onclick="toggleMenu(this)">
-                        <i class="fa fa-user-circle"></i>
-                        <span>Tài Khoản Của Tôi</span>
+	<div class="profile-container">
+		<aside class="profile-sidebar">
+			<div class="profile-card">
+				<div class="profile-avatar">
+					<c:choose>
+						<c:when test="${not empty user.imageUrl}">
+							<img
+								src="${pageContext.request.contextPath}/assets/img/user/${user.imageUrl}"
+								alt="Avatar">
+						</c:when>
+						<c:otherwise>
+							<img
+								src="${pageContext.request.contextPath}/assets/img/default-avatar.png"
+								alt="Avatar">
+						</c:otherwise>
+					</c:choose>
+				</div>
+				<div class="profile-meta">
+					<h3>${user.username}</h3>
+					<span>${user.email}</span>
+				</div>
+			</div>
+			<nav class="profile-menu">
+				<div class="menu-group active">
+					<div class="menu-title" onclick="toggleMenu(this)">
+						<i class="fa fa-user-circle"></i> <span>Tài Khoản Của Tôi</span>
+					</div>
+					<div class="submenu">
+						<a href="profile" class="${param.action == null ? 'active' : ''}">Hồ
+							Sơ</a> <a href="account?action=list"
+							class="${param.action == 'list' ? 'active' : ''}">Xem Tài
+							Khoản</a>
+					</div>
+				</div>
+			</nav>
+		</aside>
+		<section class="profile-content">
+			<div id="profile" class="profile-section">
+				<h2>Cập nhật thông tin cá nhân</h2>
+				
+				 <c:if test="${not empty message}">
+                    <div style="padding: 10px; background-color: #d1fae5; color: #065f46; margin-bottom: 20px; border-radius: 6px;">
+                        ${message}
                     </div>
-                    <div class="submenu">
-                        <a href="profile" class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
-                        <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
+                </c:if>
+
+                <c:if test="${not empty errorMessage}">
+                    <div style="padding: 10px; background-color: #fee2e2; color: #991b1b; margin-bottom: 20px; border-radius: 6px;">
+                        ${errorMessage}
                     </div>
-                </div>
-            </nav>
-        </aside>
-
-        <section class="profile-content">
-            <div id="profile" class="profile-section">
-                <h2>Thông tin cá nhân</h2>
-
-                    <div class="form-group">
-                        <label for="fullName">Họ và tên</label>
-                        <input type="text" id="fullName" name="fullName" value="${user.fullName}" disabled>
-                    </div>
-
-		             <div class="form-group gender-group">
+                </c:if>
+                
+				<form action="profile" method="post" enctype="multipart/form-data">
+					<div class="form-group">
+						<label for="fullName">Họ và tên</label> <input type="text"
+							id="fullName" name="fullName" value="${user.fullName}" required>
+					</div>
+					<div class="form-group gender-group">
 					    <label>Giới tính:</label>
 					    <label>
 					        <input type="radio" name="gender" value="male" 
-					               <c:if test="${user.gender eq 'male'}">checked</c:if> disabled> Nam
+					               <c:if test="${user.gender eq 'male'}">checked</c:if>> Nam
 					    </label>
 					    <label>
 					        <input type="radio" name="gender" value="female" 
-					               <c:if test="${user.gender eq 'female'}">checked</c:if> disabled> Nữ
+					               <c:if test="${user.gender eq 'female'}">checked</c:if>> Nữ
 					    </label>
 					    <label>
 					        <input type="radio" name="gender" value="other" 
-					               <c:if test="${user.gender eq 'other'}">checked</c:if> disabled> Khác
+					               <c:if test="${user.gender eq 'other'}">checked</c:if>> Khác
 					    </label>
 					</div>
-
+					
 					<div class="form-group">
 					    <label for="birthday">Ngày sinh</label>
 					    <c:choose>
 					        <c:when test="${not empty user.birthday}">
 					            <fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd" var="birthdayFormatted"/>
-					            <input type="date" id="birthday" name="birthday" value="${birthdayFormatted}" disabled>
+					            <input type="date" id="birthday" name="birthday" value="${birthdayFormatted}">
 					        </c:when>
 					        <c:otherwise>
-					            <input type="date" id="birthday" name="birthday" disabled>
+					            <input type="date" id="birthday" name="birthday" required>
 					        </c:otherwise>
 					    </c:choose>
 					</div>
-
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" value="${user.email}" disabled>
+					
+					<div class="form-group">
+						<label for="email">Email</label> <input type="email" id="email"
+							name="email" value="${user.email}" required>
+					</div>
+					
+					<div class="form-group">
+						<label for="phone">Số điện thoại</label> <input type="tel"
+							id="phone" name="phone" value="${user.phone}" required>
+					</div>
+					
+					<div class="form-group">
+                        <label>Ảnh đại diện</label>
+                        <div class="avatar-upload">
+                            <input type="file" id="imageUrl" name="imageUrl" accept="image/*">
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label for="phone">Số điện thoại</label>
-                        <input type="tel" id="phone" name="phone" value="${user.phone}" disabled>
-                    </div>
-
-                    <div class="profile-actions">
-					<a href="profile?action=edit" class="btn btn-edit"> <i
-						class="fa fa-edit"></i> Chỉnh sửa hồ sơ
-					</a> <a href="home" class="btn btn-cancel"> <i class="fa fa-home"></i>Về trang chủ
-					</a>
-				</div>
-            </div>
-        </section>
-    </div>
-
-    <jsp:include page="../common/footer.jsp"></jsp:include>
-
-    <script>
-        function toggleMenu(el) {
-            const parent = el.parentElement;
-            parent.classList.toggle('active');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentURL = window.location.href;
-            document.querySelectorAll('.submenu a').forEach(link => {
-                if (currentURL.includes(link.getAttribute('href'))) {
-                    link.classList.add('active');
-                    link.closest('.menu-group').classList.add('active');
-                }
-            });
-        });
-    </script>
+                    
+					<div class="profile-actions">
+						<button type="submit" class="btn-primary">Lưu thay đổi</button>
+						<a href="profile" class="btn-secondary">Hủy</a>
+					</div>
+				</form>
+			</div>
+		</section>
+	</div>
+	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
