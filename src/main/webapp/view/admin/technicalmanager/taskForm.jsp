@@ -96,6 +96,7 @@ form button {
 								${selectedIssueId != null && selectedIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
 						</c:forEach>
 					</select> <label>Technical Staff:</label>
+					<small style="color:red">${errorStaffLimit}</small>
 					<div class="checkbox-group">
 						<c:forEach var="staff" items="${technicalStaffList}">
 							<p>
