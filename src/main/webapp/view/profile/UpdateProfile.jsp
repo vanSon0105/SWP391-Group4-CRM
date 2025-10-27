@@ -7,7 +7,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Hồ sơ của tôi | TechShop</title>
+<title>Cập nhật hồ sơ | TechShop</title>
 <link rel="stylesheet"
 	href="${pageContext.request.contextPath}/assets/css/profile.css">
 <link rel="stylesheet"
@@ -244,8 +244,8 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
 }
 </style>
 </head>
-<jsp:include page="../common/header.jsp"></jsp:include>
 <body>
+	<jsp:include page="../common/header.jsp"></jsp:include>
 	<div class="profile-container">
 		<aside class="profile-sidebar">
 			<div class="profile-card">
@@ -283,65 +283,60 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
 			</nav>
 		</aside>
 		<section class="profile-content">
-			<div id="profile" class="profile-section">
-				<h2>Thông tin cá nhân</h2>
+			<h2>Cập nhật thông tin cá nhân</h2>
+			<c:if test="${not empty errorMessage}">
+				<div
+					style="padding: 10px; background-color: #fee2e2; color: #991b1b; margin-bottom: 20px; border-radius: 6px;">
+					${errorMessage}</div>
+			</c:if>
+			<form action="profile" method="post" enctype="multipart/form-data">
 				<div class="form-group">
-					<label>Họ và tên</label> <input type="text"
-						value="${user.fullName}" readonly>
+					<label for="fullName">Họ và tên</label> <input type="text"
+						id="fullName" name="fullName" value="${user.fullName}" required>
 				</div>
 				<div class="form-group gender-group">
-					<label>Giới tính:</label> <label> <input type="radio"
-						name="gender" value="Male" disabled
-						<c:if test="${user.gender eq 'Male'}">checked</c:if>> Nam
-					</label> <label> <input type="radio" name="gender" value="Female"
-						disabled <c:if test="${user.gender eq 'Female'}">checked</c:if>>
-						Nữ
-					</label> <label> <input type="radio" name="gender" value="Other"
-						disabled <c:if test="${user.gender eq 'Other'}">checked</c:if>>
-						Khác
-					</label>
+					<label>Giới tính:</label> <label><input type="radio"
+						name="gender" value="Male"
+						<c:if test="${user.gender eq 'Male'}">checked</c:if>> Nam</label>
+					<label><input type="radio" name="gender" value="Female"
+						<c:if test="${user.gender eq 'Female'}">checked</c:if>> Nữ</label>
+					<label><input type="radio" name="gender" value="Other"
+						<c:if test="${user.gender eq 'Other'}">checked</c:if>>
+						Khác</label>
 				</div>
 				<div class="form-group">
-					<label>Ngày sinh</label>
+					<label for="birthday">Ngày sinh</label>
 					<c:choose>
 						<c:when test="${not empty user.birthday}">
 							<fmt:formatDate value="${user.birthday}" pattern="yyyy-MM-dd"
 								var="birthdayFormatted" />
-							<input type="date" value="${birthdayFormatted}" readonly>
+							<input type="date" id="birthday" name="birthday"
+								value="${birthdayFormatted}">
 						</c:when>
 						<c:otherwise>
-							<input type="date" readonly>
+							<input type="date" id="birthday" name="birthday">
 						</c:otherwise>
 					</c:choose>
 				</div>
 				<div class="form-group">
-					<label>Email</label> <input type="email" value="${user.email}"
-						readonly>
+					<label for="email">Email</label> <input type="email" id="email"
+						name="email" value="${user.email}" required>
 				</div>
 				<div class="form-group">
-					<label>Số điện thoại</label> <input type="tel"
-						value="${user.phone}" readonly>
+					<label for="phone">Số điện thoại</label> <input type="tel"
+						id="phone" name="phone" value="${user.phone}">
+				</div>
+				<div class="form-group">
+					<label>Ảnh đại diện</label> <input type="file" id="imageUrl"
+						name="imageUrl" accept="image/*">
 				</div>
 				<div class="profile-actions">
-					<a href="profile?action=edit" class="btn btn-edit"> <i
-						class="fa fa-edit"></i> Chỉnh sửa hồ sơ
-					</a> <a href="home" class="btn btn-cancel"> <i class="fa fa-home"></i>
-						Về trang chủ
-					</a>
+					<button type="submit" class="btn-primary">Lưu thay đổi</button>
+					<a href="profile" class="btn-secondary">Hủy</a>
 				</div>
-			</div>
+			</form>
 		</section>
 	</div>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
-	<script> function toggleMenu(el) { 
-		const parent = el.parentElement; parent.classList.toggle('active');
-		} document.addEventListener('DOMContentLoaded', function()
-				{ const currentURL = window.location.href;
-				document.querySelectorAll('.submenu a').forEach(link => { if (currentURL.includes(link.getAttribute('href')))
-				{ link.classList.add('active'); 
-				link.closest('.menu-group').classList.add('active');
-				} 
-				}); 
-				}); </script>
 </body>
 </html>

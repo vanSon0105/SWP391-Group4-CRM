@@ -43,7 +43,12 @@ public class ProfileController extends HttpServlet {
             session.removeAttribute("profileMessage");
         }
 
-        request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+        String action = request.getParameter("action");
+        if ("edit".equalsIgnoreCase(action)) {
+            request.getRequestDispatcher("/view/profile/UpdateProfile.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+        }
     }
 
     @Override
