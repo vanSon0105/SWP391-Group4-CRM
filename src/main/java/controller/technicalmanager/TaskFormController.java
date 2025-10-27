@@ -49,31 +49,35 @@ public class TaskFormController extends HttpServlet {
 			Task task = null;
 			Set<Integer> assignedStaffIds = null;
 			List<TaskDetail> taskDetail = new ArrayList<>();
+      List<CustomerIssue> customerIssues;
 			if (idParam != null && !idParam.isEmpty()) {
 				int taskId = Integer.parseInt(idParam);
 				task = taskDao.getTaskById(taskId);
 				taskDetail = taskDetailDao.getTaskDetail(taskId);
 				assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
+        customerIssues = issueDao.getIssuesForTask(task.getCustomerIssueId());
 				if (task != null && request.getAttribute("selectedIssueId") == null) {
 					request.setAttribute("selectedIssueId", task.getCustomerIssueId());
 				}
-			}
-
-			List<CustomerIssue> issueList = issueDao.getAllIssues();
+			}else {
+          customerIssues = issueDao.getIssuesWithoutTask();
+      }
 			List<User> staffList = userDao.getAllTechnicalStaff();
 
 			request.setAttribute("task", task);
-			request.setAttribute("customerIssues", issueList);
+			request.setAttribute("customerIssues", customerIssues);
 			request.setAttribute("technicalStaffList", staffList);
 			request.setAttribute("taskDetail", taskDetail);
+      request.setAttribute("assignedStaffIds", assignedStaffIds);
 		} catch (Exception e) {
 			System.out.print("Error");
 		}
 	}
 
+
 	private void addNewTask(HttpServletRequest request, HttpServletResponse res) {
 		try {
-			String title = request.getParameter("title");
+			String title = request.getParameter("title"); 
 			String description = request.getParameter("description");
 			String customerIssueIdStr = request.getParameter("customerIssueId");
 			int customerIssueId;

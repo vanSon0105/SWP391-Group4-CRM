@@ -8,21 +8,20 @@ public class PaymentDAO extends DBContext {
 	
 	public int addNewPayment(Payment payment) {
 		String sql = "INSERT INTO payments \r\n"
-				+ "(order_id, payment_url, payment_method, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)";
+				+ "(order_id, payment_url, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)";
 		
 		try (Connection conn = getConnection();
 			 PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 			pre.setInt(1, payment.getOrderId());
 			pre.setString(2, null);
-			pre.setString(3, payment.getPaymentMethod());
-			pre.setDouble(4, payment.getAmount());
-			pre.setString(5, payment.getFullName());
-			pre.setString(6, payment.getPhone());
-			pre.setString(7, payment.getAddress());
-			pre.setString(8, payment.getDeliveryTime());
-			pre.setString(9, payment.getTechnicalNote());
-			pre.setTimestamp(10, payment.getPaidAt());
+			pre.setDouble(3, payment.getAmount());
+			pre.setString(4, payment.getFullName());
+			pre.setString(5, payment.getPhone());
+			pre.setString(6, payment.getAddress());
+			pre.setString(7, payment.getDeliveryTime());
+			pre.setString(8, payment.getTechnicalNote());
+			pre.setTimestamp(9, payment.getPaidAt());
 			pre.executeUpdate();
 			ResultSet rs = pre.getGeneratedKeys();
 			
@@ -57,7 +56,7 @@ public class PaymentDAO extends DBContext {
 		}
 	}
 	
-	public List<Payment> getFilteredPayments(String status, String sortCreatedAt, String sortPaidAt, String method, String search,
+	public List<Payment> getFilteredPayments(String status, String sortCreatedAt, String sortPaidAt, String search,
 			int limit, int offset) {
 		List<Payment> list = new ArrayList<>();
 		String sql = "select * from payments where 1=1 ";
@@ -65,10 +64,6 @@ public class PaymentDAO extends DBContext {
 		if(status != null && !status.trim().isEmpty()) {
 			sql += " and status = '" + status + "' ";
 		} 
-		
-		if (method != null && !method.trim().isEmpty()) {
-	        sql += " AND payment_method = '" + method + "' ";
-	    }
 		
 		if (search != null && !search.trim().isEmpty()) {
 	        sql += " AND (phone LIKE '%" + search + "%' OR full_name LIKE '%" + search + "%') ";
@@ -101,7 +96,6 @@ public class PaymentDAO extends DBContext {
 								rs.getInt("id"),
 								rs.getInt("order_id"),
 								rs.getString("payment_url"),
-								rs.getString("payment_method"),
 								rs.getDouble("amount"),
 								rs.getString("full_name"),
 								rs.getString("phone"),
@@ -121,13 +115,10 @@ public class PaymentDAO extends DBContext {
 		return list;
 	}
 	
-	public int getFilteredPaymentCount(String status, String method, String search) {
+	public int getFilteredPaymentCount(String status, String search) {
 	    String sql = "SELECT COUNT(*) FROM payments WHERE 1=1 ";
 	    if (status != null && !status.trim().isEmpty()) {
 	        sql += " AND status = '" + status + "'";
-	    }
-	    if (method != null && !method.trim().isEmpty()) {
-	        sql += " AND payment_method = '" + method + "'";
 	    }
 	    if (search != null && !search.trim().isEmpty()) {
 	        sql += " AND (full_name LIKE '%" + search + "%' OR phone LIKE '%" + search + "%')";

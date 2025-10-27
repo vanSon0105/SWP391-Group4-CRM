@@ -8,6 +8,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Task Form</title>
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/assets/css/admin.css">
 </head>
 
 <style>
@@ -77,7 +79,7 @@ form button {
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
 		<form action="task-form" method="post">
-			<div class="container">
+			<div class="panel">
 				<div class="head">
 					<h2>${task != null ? "Update Task" : "Add Task"}</h2>
 				</div>
