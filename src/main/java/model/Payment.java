@@ -6,7 +6,7 @@ public class Payment {
 	private int id;
 	private int orderId;
 	private String paymentUrl;
-	private String paymentMethod;
+//	private String paymentMethod;
 	private double amount;
 	private String fullName;
 	private String phone;
@@ -19,14 +19,13 @@ public class Payment {
 	public Payment() {
 		super();
 	}
-	public Payment(int id, int orderId, String paymentUrl, String paymentMethod, double amount, String fullName,
+	public Payment(int id, int orderId, String paymentUrl, double amount, String fullName,
 			String phone, String address, String deliveryTime, String technicalNote, String status, Timestamp createdAt,
 			Timestamp paidAt) {
 		super();
 		this.id = id;
 		this.orderId = orderId;
 		this.paymentUrl = paymentUrl;
-		this.paymentMethod = paymentMethod;
 		this.amount = amount;
 		this.fullName = fullName;
 		this.phone = phone;
@@ -55,12 +54,7 @@ public class Payment {
 	public void setPaymentUrl(String paymentUrl) {
 		this.paymentUrl = paymentUrl;
 	}
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
+
 	public double getAmount() {
 		return amount;
 	}
@@ -118,7 +112,7 @@ public class Payment {
 	@Override
 	public String toString() {
 		return "Payment [id=" + id + ", orderId=" + orderId + ", paymentUrl=" + paymentUrl + ", paymentMethod="
-				+ paymentMethod + ", amount=" + amount + ", fullName=" + fullName + ", phone=" + phone + ", address="
+				 + ", amount=" + amount + ", fullName=" + fullName + ", phone=" + phone + ", address="
 				+ address + ", deliveryTime=" + deliveryTime + ", technicalNote=" + technicalNote + ", status=" + status
 				+ ", createdAt=" + createdAt + ", paidAt=" + paidAt + "]";
 	}

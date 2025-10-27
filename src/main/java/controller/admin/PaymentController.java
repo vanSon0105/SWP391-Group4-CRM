@@ -26,7 +26,6 @@ import dao.WarrantyCardDAO;
 import dao.CartDAO;
 import dao.CartDetailDAO;
 
-
 import java.util.logging.*;
 
 /**
@@ -37,7 +36,7 @@ public class PaymentController extends HttpServlet {
 	private static int PAYMENT_PER_PAGE = 6;
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
-	UserDAO userDao = new UserDAO(); 
+	UserDAO userDao = new UserDAO();
 	CartDAO cartDao = new CartDAO();
 	WarrantyCardDAO wcDao = new WarrantyCardDAO();
 	OrderDetailDAO odDao = new OrderDetailDAO();
@@ -50,7 +49,6 @@ public class PaymentController extends HttpServlet {
 		String status = req.getParameter("status");
 		String sortCreatedAt = req.getParameter("sortCreatedAt");
 		String sortPaidAt = req.getParameter("sortPaidAt");
-		String method = req.getParameter("method");
 		String search = req.getParameter("search");
 
 		int page = 1;
@@ -58,13 +56,14 @@ public class PaymentController extends HttpServlet {
 			page = Integer.parseInt(pageParam);
 		}
 
-		int totalPayments = paymentDao.getFilteredPaymentCount(status, method, search);
+		int totalPayments = paymentDao.getFilteredPaymentCount(status, search);
 		int totalPages = (int) Math.ceil((double) totalPayments / PAYMENT_PER_PAGE);
 		int offset = (page - 1) * PAYMENT_PER_PAGE;
 
-		List<Payment> paymentList = paymentDao.getFilteredPayments(status, sortCreatedAt, sortPaidAt, method, search, PAYMENT_PER_PAGE, offset);
+		List<Payment> paymentList = paymentDao.getFilteredPayments(status, sortCreatedAt, sortPaidAt, search,
+				PAYMENT_PER_PAGE, offset);
 
-		req.setAttribute("totalPages", totalPages); 
+		req.setAttribute("totalPages", totalPages);
 		req.setAttribute("paymentList", paymentList);
 		req.getRequestDispatcher("view/admin/paymentmanagement/PaymentList.jsp").forward(req, resp);
 	}
@@ -115,7 +114,10 @@ public class PaymentController extends HttpServlet {
 						wcId = wc.getId();
 					}
 
-					boolean check = odDao.addOrderDetail(orderId, cd.getDevice().getId(), ds.getId(), 1, cd.getPrice(), wcId);
+					int orderDetailId = odDao.addOrderDetail(orderId, cd.getDevice().getId(), 1, cd.getPrice());
+					if (orderDetailId > 0) {
+						odDao.addOrderDetailSerial(orderDetailId, ds.getId());
+					}
 					dsDao.updateStatus(ds.getId(), "sold");
 				}
 			}

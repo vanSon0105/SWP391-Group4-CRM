@@ -88,6 +88,9 @@ public class CheckoutController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("account");
+		
+		Cart cart = cartDao.getCartByUserId(user.getId());
+		int cartId = cart.getId();
 		double finalPrice = (double)session.getAttribute("finalPrice");
 		double discount = (double)session.getAttribute("discount");
 		
@@ -95,7 +98,6 @@ public class CheckoutController extends HttpServlet {
 		String phone = request.getParameter("phone");
 		String address = request.getParameter("address");
 		String time = request.getParameter("time");
-		String method = request.getParameter("method");
 		String note = request.getParameter("note");
 		
 		if(fullName == null || fullName.trim().isEmpty()) {
@@ -103,6 +105,14 @@ public class CheckoutController extends HttpServlet {
 			loadCheckoutData(request, response);
 			request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
 			return;
+		}
+		
+		String namePattern = "^[\\p{L}\\s]+$";
+		if (!fullName.matches(namePattern)) {
+		    request.setAttribute("errorFullname", "Họ tên không được chứa ký tự đặc biệt hoặc số");
+		    loadCheckoutData(request, response);
+		    request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
+		    return;
 		}
 		
 		String phoneRegex = "^[0-9]{10}$";
@@ -129,13 +139,12 @@ public class CheckoutController extends HttpServlet {
 		payment.setAddress(address);
 		payment.setAmount(finalPrice);
 		payment.setDeliveryTime(time);
-		payment.setPaymentMethod(method);
 		payment.setTechnicalNote(note);
 //		payment.setCreatedAt(Timestamp.);
 		payment.setPaidAt(null);
 		
 		paymentDao.addNewPayment(payment);
-		
+		cartDao.deleteCart(cartId); 
 		
 		session.setAttribute("finalPrice", finalPrice);
 		response.sendRedirect("view/homepage/banking.jsp");

@@ -23,7 +23,7 @@
 .container {
 	width: 80%;
 	margin: 0 auto;
-	padding: 20px;
+	padding: 0px 20px;
 }
 
 .head {
@@ -97,19 +97,34 @@ th {
 				<div class="task-meta">
 					<b>Mô tả:</b> ${task.description}<br> <b>Manager:</b>
 					${task.managerId}<br> <b>Customer Issue:</b> Issue
-					#${task.customerIssueId}<br> 
-					<b>Trạng thái chung:</b> <span style="color: #0ea5e9">Đang
-						xử lý</span>
+					#${task.customerIssueId}<br> <b>Trạng thái chung:</b>
+					<c:choose>
+						<c:when test="${task.status == 'pending'}">
+							<span style="color: #f59e0b;">Đang chờ xử lý</span>
+						</c:when>
+						<c:when test="${task.status == 'in_progress'}">
+							<span style="color: #0ea5e9;">Đang xử lý</span>
+						</c:when>
+						<c:when test="${task.status == 'completed'}">
+							<span style="color: #10b981;">Hoàn thành</span>
+						</c:when>
+						<c:otherwise>
+							<span>Không xác định</span>
+						</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 			<div class="btn-gr"
 				style="margin-top: 14px; display: flex; gap: 10px;">
 				<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
-				<form action="task-detail" method="post" style="display: inline;">
+				<form action="task-detail" method="post" style="display: inline;"
+					onsubmit="return confirm('Bạn có chắc chắn muốn đánh dấu task này là hoàn thành không?')">
 					<input type="hidden" name="taskId" value="${task.id}" />
-					<button type="submit" class="btn btn-secondary" ${not empty listTaskDetail ? '' : 'disabled'} >Đánh dấu
+					<button type="submit" class="btn btn-secondary"
+						${not empty listTaskDetail ? '' : 'disabled'}>Đánh dấu
 						hoàn thành Task</button>
 				</form>
+
 			</div>
 			<table>
 				<thead>
