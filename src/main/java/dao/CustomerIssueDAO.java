@@ -222,8 +222,4 @@ public class CustomerIssueDAO extends DBContext{
 	public List<CustomerIssue> getIssuesReadyForManager() {
 		return getIssuesBySupportStatuses(new String[] { "manager_approved" });
 	}
-	
-	public List<CustomerIssue> getIssuesAwaitingManagerReview() {
-		return getIssuesBySupportStatuses(new String[] { "submitted", "manager_review" });
-	}
 }

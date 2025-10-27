@@ -280,8 +280,6 @@ CREATE TABLE user_permission (
     UNIQUE (user_id, permission_id)
 );
 
--- DATA INSERTION --
--- NOTE: Prices and totals have been scaled up to represent VND values.
 
 INSERT INTO roles (role_name, description) VALUES
 ('Admin', 'System administrator'),

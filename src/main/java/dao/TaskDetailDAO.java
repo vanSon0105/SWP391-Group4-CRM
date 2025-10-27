@@ -458,4 +458,21 @@ public class TaskDetailDAO extends DBContext{
             e.printStackTrace();
         }
     }
+    
+    public int countActiveTasksForStaff(int staffId) {
+        String sql = "SELECT COUNT(DISTINCT task_id) FROM task_details "
+                + "WHERE technical_staff_id = ? "
+                + "AND status NOT IN ('completed', 'cancelled');";
+        try (Connection c = getConnection();
+            PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

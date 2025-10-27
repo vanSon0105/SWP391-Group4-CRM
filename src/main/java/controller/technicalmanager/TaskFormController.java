@@ -20,15 +20,26 @@ import model.TaskDetail;
 @WebServlet("/task-form")
 public class TaskFormController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	TaskDetailDAO taskDetailDao = new TaskDetailDAO();
-	TaskDAO taskDao = new TaskDAO();
-	UserDAO userDao = new UserDAO();
-	CustomerIssueDAO issueDao = new CustomerIssueDAO();
+	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
+	private TaskDAO taskDao = new TaskDAO();
+	private UserDAO userDao = new UserDAO();
+	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
+	private static final int MAX_ACTIVE_TASKS_PER_STAFF = 3;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		loadData(request, response);
+		forwardToForm(request, response);
 
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String id = req.getParameter("id");
+		if (id != null && !id.isEmpty()) {
+			updateTask(req, resp);
+		} else {
+			addNewTask(req, resp);
+		}
 	}
 
 	private void loadData(HttpServletRequest request, HttpServletResponse response) {
@@ -43,6 +54,9 @@ public class TaskFormController extends HttpServlet {
 				task = taskDao.getTaskById(taskId);
 				taskDetail = taskDetailDao.getTaskDetail(taskId);
 				assignedStaffIds = taskDao.getAssignedStaffIds(taskId);
+				if (task != null && request.getAttribute("selectedIssueId") == null) {
+					request.setAttribute("selectedIssueId", task.getCustomerIssueId());
+				}
 			}
 
 			List<CustomerIssue> issueList = issueDao.getAllIssues();
@@ -52,8 +66,6 @@ public class TaskFormController extends HttpServlet {
 			request.setAttribute("customerIssues", issueList);
 			request.setAttribute("technicalStaffList", staffList);
 			request.setAttribute("taskDetail", taskDetail);
-			request.setAttribute("assignedStaffIds", assignedStaffIds);
-			request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
 		} catch (Exception e) {
 			System.out.print("Error");
 		}
@@ -64,27 +76,46 @@ public class TaskFormController extends HttpServlet {
 			String title = request.getParameter("title");
 			String description = request.getParameter("description");
 			String customerIssueIdStr = request.getParameter("customerIssueId");
-			int customerIssueId = Integer.parseInt(customerIssueIdStr);
-			String[] staffs = request.getParameterValues("technicalStaffIds");
+			int customerIssueId;
+			try {
+				customerIssueId = Integer.parseInt(customerIssueIdStr);
+			} catch (NumberFormatException ex) {
+				res.sendRedirect("task-list?invalid=1");
+				return;
+			}
+			
+			Set<Integer> selectedStaffs = extractStaffIds(request.getParameterValues("technicalStaffIds"));
+			request.setAttribute("selectedIssueId", customerIssueId);
+			request.setAttribute("assignedStaffIds", selectedStaffs);
 
 			Timestamp deadline = null;
 			String deadlineStr = request.getParameter("deadline");
 			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
+			
 			int managerId = 2;
 			Timestamp now = new Timestamp(System.currentTimeMillis());
 
 			if (title == null || title.trim().isEmpty()) {
 				request.setAttribute("errorTitle", "Không được để trống trường này");
-				loadData(request, res);
-				request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, res);
+				forwardToForm(request, res);
 				return;
 			}
 
 			if (deadline.before(now) || deadline.equals(now)) {
 				request.setAttribute("errorDeadline", "Deadline phải hơn ngày hôm nay");
-				loadData(request, res);
-				request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, res);
+				forwardToForm(request, res);
 				return;
+			}
+			
+			for (Integer staffId : selectedStaffs) {
+				int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
+				if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
+					request.setAttribute("errorStaffLimit",
+							"Technical staff " + resolveStaffLabel(staffId) + " đã nhận đủ "
+									+ MAX_ACTIVE_TASKS_PER_STAFF + " tasks");
+					forwardToForm(request, res);
+					return;
+				}
 			}
 
 			Task task = new Task();
@@ -92,29 +123,39 @@ public class TaskFormController extends HttpServlet {
 			task.setDescription(description);
 			task.setManagerId(managerId);
 			task.setCustomerIssueId(customerIssueId);
+			
 			int taskId = taskDao.addNewTask(task);
-			if (staffs != null && staffs.length != 0) {
-				for (String staff : staffs) {
-					int staffId = Integer.parseInt(staff);
-					taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
-				}
+			if (taskId <= 0) {
+				request.setAttribute("errorGeneral", "Không thể tạo task. Vui lòng thử lại");
+				forwardToForm(request, res);
+				return;
+			}
+			
+			issueDao.updateSupportStatus(customerIssueId, "task_created");
+			
+			for (Integer staffId : selectedStaffs) {
+				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
 			}
 
 			res.sendRedirect("task-list");
-			;
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 
 	private void updateTask(HttpServletRequest req, HttpServletResponse res) {
 		try {
 			int taskId = Integer.parseInt(req.getParameter("id"));
+			
 			String title = req.getParameter("title");
 			String description = req.getParameter("description");
 			String customerIssueIdStr = req.getParameter("customerIssueId");
 			int customerIssueId = Integer.parseInt(customerIssueIdStr);
-			String[] newStaffs = req.getParameterValues("technicalStaffIds");
+			
+			Set<Integer> newStaffIds = extractStaffIds(req.getParameterValues("technicalStaffIds"));
+			req.setAttribute("assignedStaffIds", newStaffIds);
+			req.setAttribute("selectedIssueId", customerIssueId);
+			
 			int managerId = 2;
 			Timestamp deadline = null;
 			String deadlineStr = req.getParameter("deadline");
@@ -122,59 +163,85 @@ public class TaskFormController extends HttpServlet {
 
 			if (title == null || title.trim().isEmpty()) {
 				req.setAttribute("errorTitle", "Không được để trống trường này");
-				loadData(req, res);
-				req.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(req, res);
+				forwardToForm(req, res);
 				return;
+			}
+			
+			Set<Integer> existingStaffIds = taskDao.getAssignedStaffIds(taskId);
+			if (existingStaffIds == null) {
+				existingStaffIds = new HashSet<>();
+			}
+			
+			for (Integer staffId : newStaffIds) {
+				if (!existingStaffIds.contains(staffId)) {
+					int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
+					if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
+						req.setAttribute("errorStaffLimit",
+								"Technical staff " + resolveStaffLabel(staffId) + " đã được giao đủ "
+										+ MAX_ACTIVE_TASKS_PER_STAFF + " tasks.");
+						forwardToForm(req, res);
+						return;
+					}
+				}
 			}
 
 			taskDao.updateTask(taskId, title, description, managerId, customerIssueId);
 
-			Set<Integer> oldStaffSet = taskDao.getAssignedStaffIds(taskId);
-
-			if (newStaffs != null && newStaffs.length > 0) {
-			    Set<Integer> newStaffSet = new HashSet<>();
-			    for (String staff : newStaffs) {
-			        newStaffSet.add(Integer.parseInt(staff));
-			    }
-
-			    for (Integer staffId : newStaffSet) {
-			        if (!oldStaffSet.contains(staffId)) {
-			            taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
-			        }
-			    }
-
-			    for (Integer staffId : oldStaffSet) {
-			        if (!newStaffSet.contains(staffId)) {
-			            taskDetailDao.deleteStaffFromTask(taskId, staffId);
-			        }
-			    }
-
-			} else {
-			    for (Integer staffId : oldStaffSet) {
-			        taskDetailDao.deleteStaffFromTask(taskId, staffId);
-			    }
+			for (Integer staffId : newStaffIds) {
+				if (!existingStaffIds.contains(staffId)) {
+					taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
+				}
 			}
 
-			String deadlineStr2 = req.getParameter("deadline");
-			if (deadlineStr2 != null && !deadlineStr2.isEmpty()) {
-				Timestamp newDeadline = Timestamp.valueOf(deadlineStr2 + " 00:00:00");
-				taskDetailDao.updateDeadlineForTask(taskId, newDeadline);
+			for (Integer staffId : existingStaffIds) {
+				if (!newStaffIds.contains(staffId)) {
+					taskDetailDao.deleteStaffFromTask(taskId, staffId);
+				}
 			}
+
+			taskDetailDao.updateDeadlineForTask(taskId, deadline);
+
 			res.sendRedirect("task-list");
 
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
-
-	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String id = req.getParameter("id");
-		if (id != null && !id.isEmpty()) {
-			updateTask(req, resp);
-		} else {
-			addNewTask(req, resp);
+	
+	private Set<Integer> extractStaffIds(String[] staffParams) {
+		if (staffParams == null || staffParams.length == 0) {
+			return new LinkedHashSet<>();
 		}
+		Set<Integer> ids = new LinkedHashSet<>();
+		for (String staffIdStr : staffParams) {
+			if (staffIdStr == null || staffIdStr.trim().isEmpty()) {
+				continue;
+			}
+			try {
+				ids.add(Integer.parseInt(staffIdStr));
+			} catch (NumberFormatException ignored) {
+			}
+		}
+		return ids;
+	}
+	
+	private String resolveStaffLabel(int staffId) {
+		User staff = userDao.getUserById(staffId);
+		if (staff == null) {
+			return "#" + staffId;
+		}
+		String fullName = staff.getFullName();
+		if (fullName != null && !fullName.trim().isEmpty()) {
+			return fullName.trim();
+		}
+		String username = staff.getUsername();
+		return (username != null && !username.trim().isEmpty()) ? username.trim() : ("#" + staffId);
+	}	
+	
+	private void forwardToForm(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		loadData(request, response);
+		request.getRequestDispatcher("view/admin/technicalmanager/taskForm.jsp").forward(request, response);
 	}
 
 }

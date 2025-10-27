@@ -65,6 +65,35 @@
         color: black;
         text-decoration: none;
     }
+    
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .badge-completed {
+        background: #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .badge-cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .badge-pending {
+        background: #ede9fe;
+        color: #7c3aed;
+    }
+
+    .badge-in_progress {
+        background: #fde68a;
+        color: #92400e;
+    }
 </style>
 </head>
 <body class="management-page device-management">
@@ -137,7 +166,18 @@
                                         <td>${task.description}</td>
                                         <td>${task.managerId}</td>
                                         <td>${task.customerIssueId}</td>
-                                        <td>${task.status}</td>
+                                        <td><span class="badge badge-${task.status}">
+                                        	<c:choose>
+                                                 <c:when test="${task.status == 'pending'}">Đang chờ</c:when>
+                                                 <c:when test="${task.status == 'in_progress'}">Đang xử lí
+                                                 </c:when>
+                                                 <c:when test="${task.status == 'completed'}">Đã hoàn thành
+                                                 </c:when>
+                                                 <c:when test="${task.status == 'cancelled'}">Đã hủy</c:when>
+                                                 <c:otherwise></c:otherwise>
+                                             </c:choose>
+                                             </span>
+                                        </td>
                                         <td>
                                         	<c:if test="${task.status != 'cancelled'}">
 	                                            

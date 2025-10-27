@@ -41,7 +41,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 			return;
 		}
 
-		List<CustomerIssue> pendingIssues = iDao.getIssuesAwaitingManagerReview();
+		List<CustomerIssue> pendingIssues = iDao.getIssuesBySupportStatuses(new String[] { "submitted", "manager_review" });
 		List<CustomerIssue> approvedIssues = iDao.getIssuesBySupportStatuses(
 				new String[] { "manager_approved", "task_created", "tech_in_progress", "resolved" });
 		List<CustomerIssue> rejectedIssues = iDao.getIssuesBySupportStatus("manager_rejected");
