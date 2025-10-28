@@ -19,11 +19,11 @@
          }
 
          .layout {
-             max-width: 960px;
-             margin: 0 auto;
              display: grid;
-             grid-template-columns: 1fr 1fr;
-             gap: 24px;
+		     grid-template-columns: 1fr 1fr;
+		     gap: 24px;
+		     max-width: 1100px;
+		     margin: 0 auto;
          }
 
          .card-div {
@@ -36,10 +36,11 @@
          .card-div h2 {
              margin-top: 0;
              color: #0f172a;
+             width: 490px;
          }
 
          .meta {
-             font-size: 1.4rem;
+             font-size: 1.6rem;
              color: #475569;
              margin-bottom: 16px;
          }
@@ -155,7 +156,7 @@
 
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<jsp:include page="../common/header.jsp"></jsp:include>
-<body class="management-page dashboard">
+<body >
     <main class="sidebar-main">
          <div class="layout">
                 <div class="card-div">
@@ -163,6 +164,12 @@
                     <div class="meta">Mã yêu cầu: <strong>${issue.issueCode}</strong></div>
                     <div class="meta">Khách hàng ID: ${issue.customerId}</div>
                     <div class="meta">Tiêu đề: <strong>${issue.title}</strong></div>
+                    <div class="meta">Loại yêu cầu: <strong>
+                    	<c:choose>
+	                        <c:when test="${issue.issueType == 'repair'}">Sửa chữa</c:when>
+	                        <c:otherwise>Bảo hành</c:otherwise>
+	                    </c:choose>
+                    </strong></div>
                     <div class="meta">Mô tả</div>
                     <pre>${issue.description}</pre>
                 </div>

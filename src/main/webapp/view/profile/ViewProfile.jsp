@@ -276,6 +276,7 @@
                     <div class="submenu">
                         <a href="profile" class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
                         <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
+                        <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Thay đổi mật khẩu</a>
                     </div>
                 </div>
             </nav>

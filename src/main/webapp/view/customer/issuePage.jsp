@@ -13,9 +13,12 @@
             background: #f5f6fa;
             margin: 0;
             padding: 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .issue-container {
+        	flex: 1;
             max-width: 720px;
             margin: 40px auto;
             background: #fff;
@@ -137,6 +140,7 @@
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
     <div class="issue-container">
+		<c:if test="${not empty list}">
         <h1>Gửi yêu cầu hỗ trợ</h1>
         <p>Vui lòng mô tả chi tiết vấn đề bạn gặp phải. Đội hỗ trợ sẽ liên hệ để xác nhận thông tin.</p>
 
@@ -149,7 +153,6 @@
 
 		<c:set var="selectedIssueType"
 		               value="${not empty param.issueType ? param.issueType : (empty selectedWarrantyId ? 'repair' : 'warranty')}" />
-		               
         <form method="post" action="create-issue" style="margin-top: 10px;">
             <label for="title">Tiêu đề sự cố *</label>
             <input type="text" id="title" name="title" value="${param.title}" required>
@@ -173,25 +176,16 @@
 
 			<div id="warrantySection">
 	            <label for="serialNo">Thiết bị đã mua</label>
-	            <c:choose>
-	                <c:when test="${not empty list}">
-	                    <select id="warrantyCardId" name="warrantyCardId">
-	                        <option value="">-- Chọn thiết bị --</option>
-	                        <c:forEach var="device" items="${list}">
-	                            <option value="${device.warrantyCardId}"
-	                                <c:if test="${selectedWarrantyId == device.warrantyCardId}">selected</c:if>>
-	                                ${device.deviceName} (${device.serialNumber})
-	                            </option>
-	                        </c:forEach>
-	                    </select>
-	                    <div class="hint">Nếu sản phẩm không xuất hiện, hãy liên hệ bộ phận chăm sóc khách hàng.</div>
-	                </c:when>
-	                <c:otherwise>
-	                    <select id="warrantyCardId" name="warrantyCardId" disabled>
-	                        <option>Chưa có thiết bị được kích hoạt bảo hành</option>
-	                    </select>
-	                </c:otherwise>
-	            </c:choose>
+                    <select id="warrantyCardId" name="warrantyCardId">
+                        <option value="">-- Chọn thiết bị --</option>
+                        <c:forEach var="device" items="${list}">
+                            <option value="${device.warrantyCardId}"
+                                <c:if test="${selectedWarrantyId == device.warrantyCardId}">selected</c:if>>
+                                ${device.deviceName} (${device.serialNumber})
+                            </option>
+                        </c:forEach>
+                    </select>
+                    <div class="hint">Nếu sản phẩm không xuất hiện, hãy liên hệ bộ phận chăm sóc khách hàng.</div>
             </div>
 
             <div class="actions">
@@ -199,6 +193,10 @@
                 <button type="submit" class="btn btn-primary">Gửi</button>
             </div>
         </form>
+        </c:if>
+        <c:if test="${empty list}">
+        	<div style="text-align: center;">Tài khoản của bạn hiện không có thiết bị bảo hành/sửa chữa. Vui lòng mua hàng!</div>
+        </c:if>
     </div>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
