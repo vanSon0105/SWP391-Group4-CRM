@@ -44,7 +44,8 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		List<CustomerIssue> pendingIssues = iDao.getIssuesBySupportStatuses(new String[] { "submitted", "manager_review" });
 		List<CustomerIssue> approvedIssues = iDao.getIssuesBySupportStatuses(
 				new String[] { "manager_approved", "task_created", "tech_in_progress", "resolved" });
-		List<CustomerIssue> rejectedIssues = iDao.getIssuesBySupportStatus("manager_rejected");
+		List<CustomerIssue> rejectedIssues = iDao.getIssuesBySupportStatuses(
+                new String[] { "manager_rejected", "customer_cancelled" });
 
 		request.setAttribute("pendingIssues", pendingIssues);
 		request.setAttribute("approvedIssues", approvedIssues);
@@ -105,12 +106,12 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		}
 
 		CustomerIssue issue = iDao.getIssueById(issueId);
-		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		if (issue == null) {
 			resp.sendRedirect("manager-issues?notfound=1");
 			return;
 		}
 
+		String serialNo = dsDao.getDeviceSerialByWarrantyId(issue.getWarrantyCardId());
 		String status = issue.getSupportStatus();
 		if (status == null || (!"submitted".equalsIgnoreCase(status) && !"manager_review".equalsIgnoreCase(status))) {
 			resp.sendRedirect("manager-issues?invalid=1");
@@ -120,6 +121,9 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		CustomerIssueDetail d = dDao.getByIssueId(issueId, serialNo);
 		req.setAttribute("issue", issue);
 		req.setAttribute("issueDetail", d);
+		if (req.getAttribute("rejectReasonDraft") == null) {
+			req.setAttribute("rejectReasonDraft", issue.getFeedback());
+		}
 		req.getRequestDispatcher("view/admin/technicalmanager/issueReviewPage.jsp").forward(req, resp);
 	}
 	
@@ -130,17 +134,28 @@ public class TechnicalManagerIssueController extends HttpServlet {
 			return;
 		}
 
+		iDao.updateFeedback(issueId, null);
 		iDao.updateSupportStatus(issueId, "manager_approved");
-		resp.sendRedirect("task-form?issueId=" + issueId + "&fromReview=1");
+		resp.sendRedirect("task-form?issueId=" + issue.getId());
 	}
 	
-	private void handleReject(HttpServletRequest req, HttpServletResponse resp, int issueId) throws IOException {
+	private void handleReject(HttpServletRequest req, HttpServletResponse resp, int issueId) throws ServletException, IOException {
 		CustomerIssue issue = iDao.getIssueById(issueId);
 		if (issue == null) {
 			resp.sendRedirect("manager-issues?notfound=1");
 			return;
 		}
+		String reason = req.getParameter("rejectReason");
+		String feedBack = reason != null ? reason.trim() : null;
+		if (feedBack == null || feedBack.isEmpty()) {
+			req.setAttribute("errorRejectReason", "Vui lòng nhập lý do từ chối.");
+			req.setAttribute("rejectReasonDraft", reason);
+			req.setAttribute("issueId", issueId);
+			showReview(req, resp);
+			return;
+		}
 
+		iDao.updateFeedback(issueId, feedBack);
 		iDao.updateSupportStatus(issueId, "manager_rejected");
 		resp.sendRedirect("manager-issues?rejected=1");
 	}

@@ -44,6 +44,12 @@
             margin-bottom: 16px;
             font-size: 14px;
         }
+        
+        .status-reason {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #b91c1c;
+        }
 
         .alert-success {
             background: #dcfce7;
@@ -91,6 +97,11 @@
         .status-new {
             background: #e2e8f0;
             color: #1e293b;
+        }
+        
+        .status-customer_cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
         }
 
         .status-in_progress {
@@ -145,6 +156,22 @@
             color: #2563eb;
             font-weight: 600;
         }
+        
+        .link-button {
+            border-radius: 5px;
+		    background: #ffd7d7;
+		    border: 1px solid red;
+		    color: #dc2626;
+		    cursor: pointer;
+		    font-weight: 600;
+		    padding: 4px;
+		    margin-left: 12px;
+		    transition: all 0.5s ease;
+        }
+
+        .link-button:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="home-page">
@@ -163,6 +190,10 @@
 </c:if>
 <c:if test="${param.invalid == '1'}">
     <div class="alert alert-warning">Yêu cầu bổ sung không hợp lệ hoặc đã được xử lý.</div>
+</c:if>
+
+<c:if test="${param.cancelled == '1'}">
+    <div class="alert alert-success">Bạn đã hủy yêu cầu này. Nếu cần hỗ trợ, hãy tạo yêu cầu mới.</div>
 </c:if>
 
 <c:choose>
@@ -193,6 +224,7 @@
                                     <c:when test="${status == 'submitted'}">Đã chuyển kỹ thuật</c:when>
                                     <c:when test="${status == 'in_progress'}">Đang xử lý</c:when>
                                     <c:when test="${status == 'manager_rejected'}">Cần bổ sung thông tin</c:when>
+                                    <c:when test="${status == 'customer_cancelled'}">Đã hủy theo yêu cầu khách</c:when>
                                     <c:when test="${status == 'manager_approved'}">Đã duyệt tạo task</c:when>
                                     <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
                                     <c:when test="${status == 'tech_in_progress'}">Đang thực hiện</c:when>
@@ -200,11 +232,22 @@
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
                             </span>
+                             <c:if test="${status == 'manager_rejected' && not empty s.feedback}">
+                                <div class="status-reason">Lý do: ${s.feedback}</div>
+                            </c:if>
                         </td>
                         <td>
                             <c:if test="${status == 'awaiting_customer'}">
                                 <a class="action-link"
                                    href="issue-fill?id=${s.id}">Bổ sung form</a>
+                            </c:if>
+                            
+                            <c:if test="${status == 'awaiting_customer' || status == 'manager_rejected'}">
+                                <form method="post" action="issue-fill" style="display:inline;">
+                                    <input type="hidden" name="issueId" value="${s.id}">
+                                    <input type="hidden" name="cancel" value="1">
+                                    <button type="submit" class="link-button" formnovalidate>Hủy yêu cầu</button>
+                                </form>
                             </c:if>
                         </td>
                     </tr>

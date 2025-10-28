@@ -14,14 +14,10 @@
        	</h1>
            <button class="sidebar-toggle" aria-label="Mở/đóng menu" aria-expanded="false"><i
                    class="fa-solid fa-bars-staggered"></i></button>
-           <div class="top-search">
-               <input type="search" placeholder="Tìm kiếm trang, báo cáo, hoặc đơn hàng..."
-                   aria-label="Tìm kiếm">
-           </div>
        </div>
        <div class="topbar-right">
            <div class="user-area">
-               <a href=""><i class="fa-solid fa-gear"></i></a>
+               <a href="logout"><i class="fa-solid fa-right-from-bracket"></i></a>
                <a href="profile"><i class="fa-solid fa-user"></i></a>
            </div>
        </div>

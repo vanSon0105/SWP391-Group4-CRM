@@ -16,7 +16,7 @@ import dao.UserDAO;
 import model.User;
 
 @WebServlet("/profile")
-@MultipartConfig(maxFileSize = 1024 * 1024 * 5)
+@MultipartConfig(maxFileSize = 1024 * 1024 * 20)
 public class ProfileController extends HttpServlet {
     private UserDAO userDAO = new UserDAO();
     private DeviceDAO dao = new DeviceDAO();
@@ -47,14 +47,17 @@ public class ProfileController extends HttpServlet {
             session.removeAttribute("profileMessage");
         }
 
-        request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+        String action = request.getParameter("action");
+        if ("edit".equalsIgnoreCase(action)) {
+            request.getRequestDispatcher("/view/profile/UpdateProfile.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
             response.sendRedirect("login");
@@ -86,7 +89,7 @@ public class ProfileController extends HttpServlet {
         }
 
         if (gender == null || 
-            !(gender.equalsIgnoreCase("Male") || gender.equalsIgnoreCase("Female") || gender.equalsIgnoreCase("Other"))) {
+            !(gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("female") || gender.equalsIgnoreCase("other"))) {
             errors.append("Giới tính không hợp lệ. ");
         }
 
@@ -147,7 +150,7 @@ public class ProfileController extends HttpServlet {
         if (errors.length() > 0) {
             request.setAttribute("user", currentUser);
             request.setAttribute("errorMessage", errors.toString());
-            request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/profile/UpdateProfile.jsp").forward(request, response);
             return;
         }
 
@@ -171,6 +174,6 @@ public class ProfileController extends HttpServlet {
             session.setAttribute("profileMessage", "Cập nhật hồ sơ thất bại.");
         }
 
-        response.sendRedirect(request.getContextPath() + "/profile");
+        response.sendRedirect("profile");
     }
 }

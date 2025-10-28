@@ -83,6 +83,12 @@
             font-size: 12px;
             font-weight: 600;
         }
+        
+        .reason-note {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #b45309;
+        }
 
         .badge-new {
             background: #e2e8f0;
@@ -151,6 +157,11 @@
             padding: 24px 0;
             color: #475569;
             font-style: italic;
+        }
+        
+        .badge-customer_cancelled {
+            background: #fecaca;
+            color: #991b1b;
         }
     </style>
 </head>
@@ -242,6 +253,7 @@
                                                     phản hồi</c:when>
                                                 <c:when test="${status == 'in_progress'}">Đang thu thập
                                                 </c:when>
+                                                <c:when test="${status == 'customer_cancelled'}">Khách hủy yêu cầu</c:when>
                                                 <c:when test="${status == 'manager_rejected'}">Quản lý từ chối</c:when>
 	                                            <c:when test="${status == 'manager_approved'}">Quản lý đã duyệt</c:when>
 	                                            <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
@@ -250,6 +262,9 @@
                                                 <c:otherwise>Chưa tiếp nhận</c:otherwise>
                                             </c:choose>
                                         </span>
+                                        <c:if test="${status == 'manager_rejected' && not empty issue.feedback}">
+	                                        <div class="reason-note">Ly do: ${issue.feedback}</div>
+	                                    </c:if>
                                     </td>
                                     <td>
                                         <fmt:formatDate value="${issue.createdAt}"

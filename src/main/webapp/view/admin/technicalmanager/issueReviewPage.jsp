@@ -2,6 +2,7 @@
     <%@ page isELIgnored="false" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -115,7 +116,24 @@
             <div class="meta">ID khách hàng: ${issue.customerId}</div>
             <div class="meta">Tiêu đề: <strong>${issue.title}</strong></div>
             <div class="meta">Mô tả</div>
+            <div class="meta">Loại yêu cầu: <strong>
+             	<c:choose>
+                  <c:when test="${issue.issueType == 'repair'}">Sửa chữa</c:when>
+                  <c:otherwise>Bảo hành</c:otherwise>
+              </c:choose>
+             </strong></div>
             <pre>${issue.description}</pre>
+            
+            <form id="rejectForm" method="post" action="manager-issues" style="margin:0;">
+                <input type="hidden" name="issueId" value="${issue.id}">
+                <input type="hidden" name="action" value="reject">
+                <label for="rejectReason">Lý do từ chối *</label>
+                <textarea id="rejectReason" name="rejectReason" required>${fn:escapeXml(rejectReasonDraft != null ? rejectReasonDraft : '')}</textarea>
+                <c:if test="${not empty errorRejectReason}">
+                    <div class="form-error">${errorRejectReason}</div>
+                </c:if>
+                <button type="submit" class="btn btn-danger">Từ chối</button>
+            </form>
         </div>
 
         <div class="card">
@@ -125,28 +143,26 @@
             </c:if>
             <c:if test="${issueDetail != null}">
                 <label>Tên khách hàng</label>
-                <input type="text" value="${issueDetail.customerFullName}" readonly>
+                <input type="text" value="${issueDetail.customerFullName}" disabled>
 
                 <label>Email liên hệ</label>
-                <input type="text" value="${issueDetail.contactEmail}" readonly>
+                <input type="text" value="${issueDetail.contactEmail}" disabled>
 
                 <label>Số điện thoại</label>
-                <input type="text" value="${issueDetail.contactPhone}" readonly>
+                <input type="text" value="${issueDetail.contactPhone}" disabled>
 
                 <label>Serial thiết bị</label>
-                <input type="text" value="${issueDetail.deviceSerial}" readonly>
+                <input type="text" value="${issueDetail.deviceSerial}" disabled>
 
                 <label>Tổng hợp/Ghi chú</label>
-                <textarea readonly>${issueDetail.summary}</textarea>
+                <textarea disabled>${issueDetail.summary}</textarea>
             </c:if>
+            
 
             <div class="actions">
-                <a class="btn btn-outline" href="manager-issues">Quay lai</a>
-                <form method="post" action="manager-issues" style="margin:0;">
-                    <input type="hidden" name="issueId" value="${issue.id}">
-                    <input type="hidden" name="action" value="reject">
-                    <button type="submit" class="btn btn-danger">Từ chối</button>
-                </form>
+                <a class="btn btn-outline" href="manager-issues">Quay lại</a>
+                
+                
                 <form method="post" action="manager-issues" style="margin:0;">
                     <input type="hidden" name="issueId" value="${issue.id}">
                     <input type="hidden" name="action" value="approve">

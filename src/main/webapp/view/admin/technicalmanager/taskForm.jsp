@@ -72,6 +72,28 @@ form button {
 	border:none;
 	text-decoration: none;
 }
+
+.panel {
+	width: 100%;
+	margin: 30px auto;
+	padding: 20px 30px;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.notice {
+	background-color: #eff6ff;
+	color: #1d4ed8;
+	padding: 12px 16px;
+	border-radius: 6px;
+	margin-bottom: 16px;
+	font-size: 14px;
+}
+
+.notice strong {
+	color: #1e3a8a;
+}
 </style>
 
 <body>
@@ -80,10 +102,23 @@ form button {
 	<main class="sidebar-main">
 		<form action="task-form" method="post">
 			<div class="panel">
+				<c:if test="${fromReviewNotice}">
+					<div class="notice">
+						Yêu cầu này vừa được phê duyệt để tạo task. Vui lòng kiểm tra lại thông tin trước khi giao kỹ thuật.
+						<c:if test="${not empty currentIssue.feedback}">
+							<br />
+							<strong>Lý do quản lý ghi chú:</strong> ${currentIssue.feedback}
+						</c:if>
+					</div>
+				</c:if>
+				
 				<div class="head">
 					<h2>${task != null ? "Update Task" : "Add Task"}</h2>
 				</div>
 				<div class="task-form">
+					<c:if test="${fromReviewNotice}">
+						<input type="hidden" name="fromReview" value="1" />
+					</c:if>
 					<input type="hidden" name="id" value="${task.id}" /> 
 					<label>Title:</label>
 					<input type="text" name="title" value="${task.title}" required /> 

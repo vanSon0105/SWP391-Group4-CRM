@@ -56,8 +56,8 @@ public class CustomerIssueDAO extends DBContext{
 			 ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
-						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
+						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"), 
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),rs.getString("issue_type"), rs.getString("feedback")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -99,7 +99,7 @@ public class CustomerIssueDAO extends DBContext{
 			if (rs.next()) {
 				return new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type"));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -116,7 +116,7 @@ public class CustomerIssueDAO extends DBContext{
 			 while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback")));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -134,7 +134,7 @@ public class CustomerIssueDAO extends DBContext{
 			 while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback")));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -197,7 +197,7 @@ public class CustomerIssueDAO extends DBContext{
 			 while (rs.next()) {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type")));
+						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback")));
 			 }
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -223,8 +223,21 @@ public class CustomerIssueDAO extends DBContext{
 		return getIssuesBySupportStatuses(new String[] { "manager_approved" });
 	}
 	
-	public List<CustomerIssue> getIssuesAwaitingManagerReview() {
-		return getIssuesBySupportStatuses(new String[] { "submitted", "manager_review" });
+	public boolean updateFeedback(int issueId, String feedback) {
+		String sql = "UPDATE customer_issues SET feedback = ? WHERE id = ?";
+		try (Connection c = getConnection(); 
+			PreparedStatement ps = c.prepareStatement(sql)) {
+			if (feedback == null) {
+				ps.setNull(1, Types.VARCHAR);
+			} else {
+				ps.setString(1, feedback);
+			}
+			ps.setInt(2, issueId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	public List<CustomerIssue> getIssuesWithoutTask() {
@@ -251,7 +264,8 @@ public class CustomerIssueDAO extends DBContext{
 	                rs.getTimestamp("created_at"),
 	                rs.getInt("support_staff_id"),
 	                rs.getString("support_status"),
-	                rs.getString("issue_type")
+	                rs.getString("issue_type"),
+	                rs.getString("feedback")
 	            ));
 	        }
 
@@ -283,7 +297,8 @@ public class CustomerIssueDAO extends DBContext{
 	                rs.getTimestamp("created_at"),
 	                rs.getInt("support_staff_id"),
 	                rs.getString("support_status"),
-	                rs.getString("issue_type")
+	                rs.getString("issue_type"),
+	                rs.getString("feedback")
 	            ));
 	        }
 	    } catch (SQLException e) {
