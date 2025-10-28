@@ -13,7 +13,23 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-	.device-btn {
+	:root{
+      --primary:#2563eb; 
+      --primary-hover:#1d4ed8;
+      --neutral:#6b7280; 
+      --bg:#f5f7fb; 
+      --card:#fff; 
+      --text:#111827;
+      --danger:#ef4444; 
+      --warning:#f59e0b; 
+      --info:#0ea5e9; 
+      --success:#10b981;
+      --radius:10px; 
+      --shadow:0 6px 18px rgba(0,0,0,.08);
+      --border:#e5e7eb;
+    }
+    
+	.device-btn{
 	    color: black !important;
 	}
 	.device-management .pagination-pills {
@@ -21,6 +37,7 @@
 	    justify-content: center;
 	    gap: 10px;
 	}
+	
 	.device-management .pagination-pills a {
 		display: inline-flex;
 		justify-content: center;
@@ -37,18 +54,58 @@
 	    cursor: pointer;
 	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 	}
+	
 	.device-management .pagination-pills a.active {
 	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
 	    color: #f8fafc;
 	    border-color: transparent;
 	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
 	}
+	
 	.device-management .pagination-pills a:hover {
 	    transform: translateY(-2px);
 	}
-	body .panel h2 {
+
+	body .panel h2{
 		margin-bottom: 0 !important;
 	}
+	
+	.pager {
+         display: flex;
+         gap: 6px;
+         align-items: center;
+         justify-content: flex-end;
+         margin-top: 12px;
+         flex-wrap: wrap;
+     }
+
+     .pager .page-btn {
+         min-width: 36px;
+         height: 36px;
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         border: 1px solid var(--border);
+         border-radius: 8px;
+         background: #fff;
+         cursor: pointer;
+     }
+
+     .pager .page-btn[disabled] {
+         opacity: .5;
+         cursor: not-allowed
+     }
+
+     .pager .active {
+         background: var(--primary);
+         color: #fff;
+         border-color: var(--primary)
+     }
+
+     .pager .info {
+         margin-right: auto;
+         color: var(--neutral)
+     }
 </style>
 </head>
 <body class="management-page device-management">
@@ -172,6 +229,27 @@
                </p>
             </div>
          </section>
+         
+         <c:if test="${totalPages > 1}">
+				  <div class="pager">
+				    <span class="info">Trang ${currentPage} / ${totalPages}</span>
+				
+				    <c:if test="${currentPage > 1}">
+				      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage - 1}">«</a>
+				    </c:if>
+				
+				    <c:forEach var="i" begin="1" end="${totalPages}">
+				      <a class="page-btn ${i == currentPage ? 'active' : ''}"
+				         href="${pageContext.request.contextPath}/account?page=${i}">${i}</a>
+				    </c:forEach>
+				
+				    <c:if test="${currentPage < totalPages}">
+				      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage + 1}">»</a>
+				    </c:if>
+				  </div>
+			</c:if>
+			
+         
     </main>
 </body>
 </html>
