@@ -11,7 +11,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>NovaCare Shop - Chi tiết sản phẩm</title>
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/shop.css" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
 .left-column {
@@ -164,7 +163,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 14px;
+    padding: 12px 14px;
     border-radius: 20px;
     font-size: 14px;
     font-weight: 600;
@@ -179,22 +178,20 @@
 }
 
 .cta-inline a.add-to-cart {
-    background-color: #2db400;
+    background: linear-gradient(90deg, #03d200, #61ed22);
     color: white;
 }
 
 .cta-inline a.add-to-cart:hover {
-    background-color: #228800;
     box-shadow: 0 6px 16px rgba(34, 136, 0, 0.4);
 }
 
 .cta-inline a.buy-now {
-    background-color: #ff6600;
+    background: linear-gradient(90deg, #d2661a, #ff8a61);
     color: white;
 }
 
 .cta-inline a.buy-now:hover {
-    background-color: #cc5200;
     box-shadow: 0 6px 16px rgba(204, 82, 0, 0.4);
 }
 
@@ -240,7 +237,7 @@
 }
 
 .related-products .hero-card .cta-inline a {
-    padding: 6px 10px;
+    padding: 12px 10px;
     font-size: 13px;
 }
 
@@ -278,11 +275,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 44px;
+    height: 44px;
     color: #007bff;
     border: 1px solid #dee2e6;
-    border-radius: 6px;
+    border-radius: 16px;
     background-color: #fff;
     text-decoration: none;
     font-weight: 600;
@@ -349,10 +346,10 @@
       <div class="product-image">
         <c:choose>
           <c:when test="${not empty device.imageUrl}">
-            <img src="${device.imageUrl}" alt="${device.name}" />
+            <img src="${pageContext.request.contextPath}/assets/img/device/${device.imageUrl}" alt="${device.name}" />
           </c:when>
           <c:otherwise>
-            <img src="<%=request.getContextPath()%>/assets/images/no-image.png" alt="No image available" />
+            <img src="<%=request.getContextPath()%>/assets/images/uno-image.png" alt="No image available" />
           </c:otherwise>
         </c:choose>
       </div>
@@ -392,6 +389,13 @@
           </c:choose>
         </strong>
         <p><strong>Mô tả:</strong> ${device.desc}</p>
+        
+        <div class="cta-inline">
+       <!--<a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> -->
+          <a href="cart-add?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+          <a href="checkout?id=${device.id}" class="buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
+          <a href="device-page" class="back">← Quay lại</a>
+        </div>
       </article>
 
       <article class="promotion" aria-label="Khuyến mãi">
@@ -407,12 +411,7 @@
           <li>Khuyến mãi theo mùa, theo dịp lễ lớn với nhiều quà tặng hấp dẫn.</li>
         </ul>
       
-        <div class="cta-inline">
-       <!--<a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> -->
-          <a href="cart-add?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
-          <a href="checkout?id=${device.id}" class="buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
-          <a href="device-page" class="back">← Quay lại</a>
-        </div>
+        
       </article>
 
    
@@ -452,7 +451,7 @@
         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
           <a class="page-link"
              href="device-detail?id=${device.id}&page=${currentPage - 1}">
-            Trước
+            &#10094;
           </a>
         </li>
 
@@ -479,7 +478,7 @@
         <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
           <a class="page-link"
              href="device-detail?id=${device.id}&page=${currentPage + 1}">
-            Tiếp
+            &#10095;
           </a>
         </li>
 

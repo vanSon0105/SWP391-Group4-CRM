@@ -95,6 +95,7 @@ public class DeviceController extends HttpServlet {
 		int totalDevices = dao.getTotalDevices(key, categoryId, sortBy, order);
 		int totalPages = (int) Math.ceil((double) totalDevices / recordsEachPage);
 		
+		request.setAttribute("totalDevices", totalDevices);
 		request.setAttribute("listCategories", listCategories);
 		request.setAttribute("currentPage", currentPage);
 		request.setAttribute("totalPages", totalPages);

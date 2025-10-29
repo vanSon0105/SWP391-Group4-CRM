@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import dao.PermissionDAO;
+import dao.UserDAO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ public class AuthorizationUtils {
     public static final String SESSION_PERMISSIONS = "permissions";
 
     private static final PermissionDAO PERMISSION_DAO = new PermissionDAO();
+    private static final UserDAO USER_DAO = new UserDAO();
 
     private AuthorizationUtils() {
     }
@@ -51,6 +53,23 @@ public class AuthorizationUtils {
 
         User user = (User) session.getAttribute(SESSION_ACCOUNT);
         if (user == null) {
+            response.sendRedirect("login");
+            return null;
+        }
+        
+        String status = USER_DAO.getUserStatus(user.getId());
+        if (status == null) {
+            status = user.getStatus();
+        } else if (user.getStatus() == null || !status.equals(user.getStatus())) {
+            user.setStatus(status);
+            session.setAttribute(SESSION_ACCOUNT, user);
+        }
+
+        if (status == null || !"active".equalsIgnoreCase(status)) {
+            clearPermissions(session);
+            session.removeAttribute(SESSION_ACCOUNT);
+            session.setAttribute("loginAlertType", "error");
+            session.setAttribute("loginAlertMessage", "Tài khoản của bạn đã bị khóa.");
             response.sendRedirect("login");
             return null;
         }

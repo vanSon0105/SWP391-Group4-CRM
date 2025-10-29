@@ -381,12 +381,7 @@
                         </div>
                     </c:if>
                 </div>
-                
-                <p style="margin-top:12px; color:#6b7280">
-                    Tổng số nhà cung cấp: <strong>
-                        <c:out value="${fn:length(suppliers)}" />
-                    </strong>
-                </p>
+                <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thiết bị: <strong><c:out value="${fn:length(suppliers)}" /></strong></p>
              </section>
              
               <nav style="margin-top: 20px;">

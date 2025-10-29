@@ -372,6 +372,21 @@ public class UserDAO extends DBContext{
 			e.printStackTrace();
 		}
     }
+    
+    public String getUserStatus(int userId) {
+        String sql = "SELECT status FROM users WHERE id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getString("status");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
 

@@ -296,6 +296,8 @@ button {
 
 					</tbody>
 				</table>
+				
+				<p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thanh toán: <strong>${totalPayments}</strong></p>
 
 			</div>
 			<div class="pagination-wrapper">

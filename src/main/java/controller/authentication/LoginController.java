@@ -25,14 +25,24 @@ public class LoginController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	String path = req.getServletPath();
     	HttpSession session = req.getSession();
-    	session.removeAttribute("error");
-//    	session.removeAttribute("mss");
+
+    	Object alertMessage = session.getAttribute("loginAlertMessage");
+    	if (alertMessage != null) {
+    		req.setAttribute("loginAlertMessage", alertMessage);
+    		Object alertType = session.getAttribute("loginAlertType");
+    		if (alertType != null) {
+    			req.setAttribute("loginAlertType", alertType);
+    		}
+    		session.removeAttribute("loginAlertMessage");
+    		session.removeAttribute("loginAlertType");
+    	}
+//		session.removeAttribute("mss");
         switch (path) {
             case "/forgot-password":
             	req.getRequestDispatcher("/view/authentication/forgot-password.jsp").forward(req, resp);  
                 break;
             default:
-            	req.getRequestDispatcher("/view/authentication/login.jsp").forward(req, resp);            	
+            	req.getRequestDispatcher("/view/authentication/login.jsp").forward(req, resp);            
         }
     }
 
@@ -67,19 +77,28 @@ public class LoginController extends HttpServlet {
             throws ServletException, IOException {
     	HttpSession session = request.getSession();
     	session.setMaxInactiveInterval(SESSION_TIMEOUT_SECONDS);
+
     	String email = request.getParameter("email");
         String password = request.getParameter("password");
         User user = userDAO.getUserByLogin(email, password);
 
-        if (user != null) {
-        	userDAO.updateLastLoginAt(user.getId());
-		    session.setAttribute("account", user);
-		    AuthorizationUtils.storePermissions(session, permissionDAO.getPermissionsForUser(user.getId()));
-		    response.sendRedirect(request.getContextPath() + "/home");
-        } else {
-        	session.removeAttribute("error");
-            session.setAttribute("error", "Email hoặc mật khẩu không đúng!");
+        if (user == null) {
+            request.setAttribute("loginAlertType", "error");
+            request.setAttribute("loginAlertMessage", "Email hoặc mật khẩu không đúng!");
             request.getRequestDispatcher("/view/authentication/login.jsp").forward(request, response);
+            return;
         }
+
+        if (!"active".equalsIgnoreCase(user.getStatus())) {
+            request.setAttribute("loginAlertType", "error");
+            request.setAttribute("loginAlertMessage", "Tài khoản của bạn đã bị khóa.");
+            request.getRequestDispatcher("/view/authentication/login.jsp").forward(request, response);
+            return;
+        }
+
+    	userDAO.updateLastLoginAt(user.getId());
+    	session.setAttribute("account", user);
+    	AuthorizationUtils.storePermissions(session, permissionDAO.getPermissionsForUser(user.getId()));
+    	response.sendRedirect("home");
     }
 }
