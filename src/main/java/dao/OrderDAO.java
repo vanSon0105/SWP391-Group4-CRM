@@ -115,6 +115,65 @@ public class OrderDAO extends DBContext{
 			// TODO: handle exception
 		}
 	}
+	public List<Order> getOrdersByCustomerWithFilter(int customerId, String status, String sortField, int limit, int offset) {
+	    List<Order> list = new ArrayList<>();
+	    StringBuilder sql = new StringBuilder("SELECT * FROM orders WHERE customer_id = ?");
+
+	    if (status != null && !status.isEmpty()) {
+	        sql.append(" AND status = ?");
+	    }
+
+	    if (sortField == null || sortField.isEmpty()) sortField = "date";
+
+	    sql.append(" LIMIT ? OFFSET ?");
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+	        int idx = 1;
+	        ps.setInt(idx++, customerId);
+	        if (status != null && !status.isEmpty()) {
+	            ps.setString(idx++, status);
+	        }
+	        ps.setInt(idx++, limit);
+	        ps.setInt(idx++, offset);
+
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            list.add(new Order(
+	                rs.getInt("id"),
+	                rs.getInt("customer_id"),
+	                rs.getBigDecimal("total_amount"),
+	                rs.getBigDecimal("discount"),
+	                rs.getString("status"),
+	                rs.getTimestamp("date")
+	            ));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
+	public int countOrdersByCustomerWithFilter(int customerId, String status) {
+	    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM orders WHERE customer_id = ?");
+	    if (status != null && !status.isEmpty()) {
+	        sql.append(" AND status = ?");
+	    }
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+	        ps.setInt(1, customerId);
+	        if (status != null && !status.isEmpty()) {
+	            ps.setString(2, status);
+	        }
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) return rs.getInt(1);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return 0;
+	}
+
 }
 //package dao;
 //
