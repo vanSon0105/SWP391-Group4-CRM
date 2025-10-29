@@ -66,6 +66,7 @@ public class PaymentController extends HttpServlet {
 		List<Payment> paymentList = paymentDao.getFilteredPayments(status, sortCreatedAt, sortPaidAt, search,
 				PAYMENT_PER_PAGE, offset);
 
+		req.setAttribute("totalPayments", totalPayments);
 		req.setAttribute("totalPages", totalPages);
 		req.setAttribute("paymentList", paymentList);
 		req.getRequestDispatcher("view/admin/paymentmanagement/PaymentList.jsp").forward(req, resp);

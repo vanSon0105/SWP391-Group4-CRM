@@ -77,6 +77,8 @@ public class CategoryController extends HttpServlet {
 		int totalPages = (int) Math.ceil((double) totalCategories / recordsEachPage);
 		
 		List<Category> listCategories = cdao.getCategoriesByPage(offset, recordsEachPage, key);
+		
+		req.setAttribute("totalCategories", totalCategories);
 		req.setAttribute("selectedCategory", categoryId);
 		req.setAttribute("currentPage", currentPage);
 		req.setAttribute("totalPages", totalPages);

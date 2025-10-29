@@ -117,6 +117,8 @@
 	                    </table>
                    </c:if>
                    
+                   <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số danh mục: <strong>${totalCategories}</strong></p>
+                   
                    <c:if test="${empty listCategories}">
 	                   <table class="device-table"> 
 	                   		<tbody>

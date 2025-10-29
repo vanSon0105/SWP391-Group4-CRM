@@ -214,7 +214,7 @@ body .panel h2 {
 										</c:choose></td>
 
 
-									<td><c:if test="${task.status != 'cancelled'}">
+									<td style="display:flex; gap: 5px;"><c:if test="${task.status != 'cancelled'}">
 
 											<a href="task-detail?id=${task.id}" class="btn device-btn">
 												Xem</a>
@@ -237,6 +237,8 @@ body .panel h2 {
 						</tbody>
 					</table>
 				</c:if>
+				
+				<p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số tasks: <strong>${totalTasks}</strong></p>
 
 				<c:if test="${empty listTask}">
 					<table class="device-table">
