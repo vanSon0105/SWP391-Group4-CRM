@@ -68,22 +68,25 @@ public class WarrantyCardDAO extends DBContext{
         return -1;
     }
 	
-	public static void main(String[] args) {
-	    WarrantyCardDAO dao = new WarrantyCardDAO();
-	    
-	    int deviceSerialId = 5;  // 🔧 sửa lại ID thật có trong bảng device_serials
-	    int customerId = 2;      // 🔧 sửa lại ID thật có trong bảng customers
-	    Timestamp start = new Timestamp(System.currentTimeMillis());
-	    Timestamp end = new Timestamp(System.currentTimeMillis() + 365L * 24 * 60 * 60 * 1000);
-
-	    try {
-	        System.out.println("🟢 Đang test thêm warranty card...");
-	        int wcId = dao.addWarrantyCard(deviceSerialId, customerId, start, end);
-	        System.out.println("✅ Kết quả trả về wcId = " + wcId);
+	public WarrantyCard getById(int id) {
+	    String sql = "SELECT * FROM warranty_cards WHERE id = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, id);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return new WarrantyCard(
+	            		rs.getInt("id"),
+	            		rs.getInt("device_serial_id"),
+	            		rs.getInt("customer_id"),
+	            		rs.getTimestamp("start_at"),
+	            		rs.getTimestamp("end_at")
+	            		);
+	        }
 	    } catch (SQLException e) {
-	        System.err.println("❌ Lỗi SQL khi thêm warranty card: " + e.getMessage());
 	        e.printStackTrace();
 	    }
+	    return null;
 	}
 
 

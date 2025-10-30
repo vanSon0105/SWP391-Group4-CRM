@@ -39,9 +39,12 @@ public class TechnicalStaffController extends HttpServlet {
 		if (staff == null) {
 			return;
 		}
+		
+		int id = staff.getId();
 
 		String assignmentIdParam = req.getParameter("assignmentId");
 		String status = req.getParameter("status");
+		String summary = req.getParameter("summary");
 		if (assignmentIdParam == null || status == null) {
 			resp.sendRedirect("technical-issues");
 			return;
@@ -55,7 +58,8 @@ public class TechnicalStaffController extends HttpServlet {
 			return;
 		}
 
-		TaskDetail assignment = taskDetailDao.getAssignmentForStaff(assignmentId, staff.getId());
+		TaskDetail assignment = null;
+				assignment	= taskDetailDao.getAssignmentForStaff(assignmentId, staff.getId());
 		if (assignment == null) {
 			resp.sendRedirect("technical-issues?invalid=1");
 			return;
@@ -65,8 +69,18 @@ public class TechnicalStaffController extends HttpServlet {
 			resp.sendRedirect("technical-issues?invalid=1");
 			return;
 		}
+		
+		if ("completed".equals(status) || "cancelled".equals(status)) {
+			if (summary == null || summary.trim().isEmpty()) {
+				resp.sendRedirect("technical-issues?invalid=1");
+				return;
+			}
+			summary = summary.trim();
+		} else {
+			summary = null;
+		}
 
-		boolean updated = taskDetailDao.updateAssignmentStatus(assignmentId, staff.getId(), status);
+		boolean updated = taskDetailDao.updateAssignmentStatus(assignmentId, staff.getId(), status, summary);
 		if (updated) {
 			syncIssueStatus(assignment.getTaskId(), assignment.getCustomerIssueId(), status);
 			resp.sendRedirect("technical-issues?updated=1");
@@ -76,7 +90,7 @@ public class TechnicalStaffController extends HttpServlet {
 	}
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "VIEW_TASK_LIST");
+		return AuthorizationUtils.requirePermission(req, resp, "PROCESS_TASK");
 	}
 
 	private boolean isValidStatus(String status) {
@@ -109,20 +123,13 @@ public class TechnicalStaffController extends HttpServlet {
 			}
 		}
 
-		if (allCompleted && !details.isEmpty()) {
-			issueDao.updateSupportStatus(issueId, "resolved");
-		} else if (anyInProgress || "in_progress".equalsIgnoreCase(latestStatus)) {
+//		if (allCompleted && !details.isEmpty()) {
+//			issueDao.updateSupportStatus(issueId, "resolved");
+//		} else 
+		if (anyInProgress || "in_progress".equalsIgnoreCase(latestStatus)) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
 		} else {
 			issueDao.updateSupportStatus(issueId, "task_created");
-		}
-	}
-	
-	public static void main(String[] args) {
-		TaskDetailDAO taskDetailDao = new TaskDetailDAO();
-		List<TaskDetail> assignments = taskDetailDao.getAssignmentsForStaff(3);
-		for (TaskDetail taskDetail : assignments) {
-			System.out.println(taskDetail.toString());
 		}
 	}
 }

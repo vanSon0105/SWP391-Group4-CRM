@@ -17,24 +17,18 @@ public class TaskDetail {
     private String taskDescription;
     private Integer customerIssueId;
     private String issueCode;
-    private String issueTitle;
-    private int progress;
-    private String priority;                     
+    private String issueTitle;                 
     private String note;
-    private String attachmentUrl;
     private Timestamp updatedAt;
     private String technicalStaffName; 
     private String assignedByName;   
 
     public TaskDetail() {}
-    
-    
 
-    public TaskDetail(int id, int taskId, int technicalStaffId, Integer assignedBy, Timestamp assignedAt,
+	public TaskDetail(int id, int taskId, int technicalStaffId, Integer assignedBy, Timestamp assignedAt,
 			Timestamp deadline, String status, String staffName, String staffEmail, String taskTitle,
-			String taskDescription, Integer customerIssueId, String issueCode, String issueTitle, int progress,
-			String priority, String note, String attachmentUrl, Timestamp updatedAt, String technicalStaffName,
-			String assignedByName) {
+			String taskDescription, Integer customerIssueId, String issueCode, String issueTitle, String note,
+			Timestamp updatedAt, String technicalStaffName, String assignedByName) {
 		this.id = id;
 		this.taskId = taskId;
 		this.technicalStaffId = technicalStaffId;
@@ -49,16 +43,11 @@ public class TaskDetail {
 		this.customerIssueId = customerIssueId;
 		this.issueCode = issueCode;
 		this.issueTitle = issueTitle;
-		this.progress = progress;
-		this.priority = priority;
 		this.note = note;
-		this.attachmentUrl = attachmentUrl;
 		this.updatedAt = updatedAt;
 		this.technicalStaffName = technicalStaffName;
 		this.assignedByName = assignedByName;
 	}
-
-
 
 	public TaskDetail(int id, int taskId, int technicalStaffId, Timestamp assignedAt, Timestamp deadline, String status,
 			String staffName, String staffEmail, String taskTitle, String taskDescription, Integer customerIssueId,
@@ -78,10 +67,6 @@ public class TaskDetail {
 		this.issueCode = issueCode;
 		this.issueTitle = issueTitle;
 	}
-	
-	
-
-
 
 	public TaskDetail(int id, int taskId, int technicalStaffId, Timestamp assignedAt, Timestamp deadline,
 			String status) {
@@ -106,13 +91,9 @@ public class TaskDetail {
 		this.id = id;
 	}
 
-
-
 	public int getTaskId() {
 		return taskId;
 	}
-
-
 
 	public void setTaskId(int taskId) {
 		this.taskId = taskId;
@@ -263,31 +244,6 @@ public class TaskDetail {
 	}
 
 
-
-	public int getProgress() {
-		return progress;
-	}
-
-
-
-	public void setProgress(int progress) {
-		this.progress = progress;
-	}
-
-
-
-	public String getPriority() {
-		return priority;
-	}
-
-
-
-	public void setPriority(String priority) {
-		this.priority = priority;
-	}
-
-
-
 	public String getNote() {
 		return note;
 	}
@@ -296,18 +252,6 @@ public class TaskDetail {
 
 	public void setNote(String note) {
 		this.note = note;
-	}
-
-
-
-	public String getAttachmentUrl() {
-		return attachmentUrl;
-	}
-
-
-
-	public void setAttachmentUrl(String attachmentUrl) {
-		this.attachmentUrl = attachmentUrl;
 	}
 
 

@@ -13,6 +13,7 @@ html {
 }
 
 body {
+	background: linear-gradient(180deg, #f8fafc, #ffffff);
 	height: 100vh;
 	margin: 0;
     font-size: 1.8rem;
