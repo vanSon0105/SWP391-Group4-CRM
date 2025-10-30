@@ -54,68 +54,66 @@
 .device-management .pagination-pills a:hover {
 	transform: translateY(-2px);
 } */
-
 body .panel h2 {
 	margin-bottom: 0 !important;
 }
 
 .pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 8px;
+	display: flex;
+	justify-content: center;
+	margin-top: 20px;
+	gap: 8px;
 }
 
 .page-link {
-  display: inline-block;
-  padding: 8px 14px;
-  text-decoration: none;
-  border-radius: 8px;
-  background: #fff;
-  color: #1d4ed8;
-  font-weight: 500;
-  transition: all 0.2s ease;
+	display: inline-block;
+	padding: 8px 14px;
+	text-decoration: none;
+	border-radius: 8px;
+	background: #fff;
+	color: #1d4ed8;
+	font-weight: 500;
+	transition: all 0.2s ease;
 }
 
 /* .page-link:hover {
   background: #2563eb;
 } */
-
 .page-link.active {
-  background: #1d4ed8;
-  color:white;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+	background: #1d4ed8;
+	color: white;
+	box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
 }
+
 .status-badge {
-    display: inline-block;
-    white-space: nowrap;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 14px;
-    text-align: center;
+	display: inline-block;
+	white-space: nowrap;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-weight: 600;
+	font-size: 14px;
+	text-align: center;
 }
 
 .status-pending {
-    background: #fef3c7;
-    color: #92400e;
+	background: #fef3c7;
+	color: #92400e;
 }
 
 .status-inprogress {
-    background: #dbeafe;
-    color: #1d4ed8;
+	background: #dbeafe;
+	color: #1d4ed8;
 }
 
 .status-completed {
-    background: #dcfce7;
-    color: #166534;
+	background: #dcfce7;
+	color: #166534;
 }
 
 .status-cancelled {
-    background: #fee2e2;
-    color: #991b1b;
+	background: #fee2e2;
+	color: #991b1b;
 }
-
 </style>
 </head>
 <body class="management-page device-management">
@@ -214,13 +212,14 @@ body .panel h2 {
 										</c:choose></td>
 
 
-									<td style="display:flex; gap: 5px;"><c:if test="${task.status != 'cancelled'}">
-
-											<a href="task-detail?id=${task.id}" class="btn device-btn">
-												Xem</a>
-
+									<td style="display: flex; gap: 5px;">
+									 <c:if
+											test="${task.status != 'cancelled'}">
+											<a href="task-detail?id=${task.id}" class="btn device-btn">Xem</a>
+										</c:if> 
+										<c:if
+											test="${task.status != 'cancelled' and task.status != 'completed'}">
 											<a class="btn device-btn" href="task-form?id=${task.id}">Sửa</a>
-
 
 											<form action="task-list" method="post"
 												class="btn device-remove">
@@ -231,14 +230,18 @@ body .panel h2 {
 													style="outline: none; background: none; border: none; color: #fff; padding: 0; font-weight: 600;">
 													Hủy</button>
 											</form>
-										</c:if></td>
+										</c:if>
+									</td>
+
 								</tr>
 							</c:forEach>
 						</tbody>
 					</table>
 				</c:if>
-				
-				<p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số tasks: <strong>${totalTasks}</strong></p>
+
+				<p style="margin-top: 12px; color: #6b7280; text-align: center;">
+					Tổng số tasks: <strong>${totalTasks}</strong>
+				</p>
 
 				<c:if test="${empty listTask}">
 					<table class="device-table">
@@ -253,16 +256,16 @@ body .panel h2 {
 
 			</div>
 			<div class="pagination-wrapper">
-			<c:forEach var="i" begin="1" end="${totalPages}">
-				<a
-					href="task-list?page=${i}&status=${param.status}&search=${param.search}"
-					class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}">
-					${i} </a>
-			</c:forEach>
+				<c:forEach var="i" begin="1" end="${totalPages}">
+					<a
+						href="task-list?page=${i}&status=${param.status}&search=${param.search}"
+						class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}">
+						${i} </a>
+				</c:forEach>
 
-		</div>
+			</div>
 		</section>
-		
+
 	</main>
 </body>
 </html>

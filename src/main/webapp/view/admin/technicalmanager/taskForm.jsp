@@ -121,10 +121,11 @@ form button {
 					</c:if>
 					<input type="hidden" name="id" value="${task.id}" /> 
 					<label>Title:</label>
-					<input type="text" name="title" value="${task.title}" required /> 
+					<input type="text" name="title" value="${task.title}" maxlength="100" required /> 
 					<small style="color:red">${errorTitle}</small> 
 					<label>Description:</label>
-					<input type="text" name="description" value="${task.description}" />
+					<input type="text" name="description" value="${task.description}" maxlength="500" />
+					<small style="color: red" >${errorDescription}</small>
 					<label>Customer Issue ID:</label> <select name="customerIssueId">
 						<c:forEach var="issue" items="${customerIssues}">
 							<option value="${issue.id}"

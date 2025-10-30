@@ -76,7 +76,7 @@
 					<strong>Lưu ý:</strong>
 					<p>Sau khi chuyển khoản thành công bạn có thể vào trang theo dõi đơn để xem tình trạng chuyển khoản</p>
 				</div>
-				<a href="oder-tracking.jsp">Tình trạng thanh toán <i class="fa-solid fa-arrow-right"></i></a>
+				<a href="<%=request.getContextPath()%>/order-tracking">Tình trạng thanh toán <i class="fa-solid fa-arrow-right"></i></a>
 				<a class="back-to-home" href="<%=request.getContextPath()%>/"><i class="fa-solid fa-arrow-left"></i> Về trang chủ</a>
 			</div>
 			<div style="text-align: center;">

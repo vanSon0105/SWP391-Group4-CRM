@@ -1483,22 +1483,6 @@ body.shop-page.checkout-page {
     color: #0f172a;
 }
 
-body.shop-page.checkout-page header {
-    padding: 40px 60px;
-    background: linear-gradient(90deg, #34d399, #14b8a6);
-    color: #ecfeff;
-    border-bottom: 6px solid rgba(45, 212, 191, 0.32);
-}
-
-body.shop-page.checkout-page header h1 {
-    font-size: 36px;
-}
-
-body.shop-page.checkout-page header p {
-    margin-top: 12px;
-    max-width: 720px;
-    line-height: 1.6;
-}
 
 body.shop-page.checkout-page main {
     padding: 50px 60px 70px;
@@ -1598,12 +1582,6 @@ body.shop-page.checkout-page .cta a:nth-child(2) {
     box-shadow: 0 18px 36px rgba(249, 115, 22, 0.28);
 }
 
-body.shop-page.checkout-page footer {
-    padding: 36px 60px;
-    background: rgba(34, 197, 94, 0.18);
-    color: #065f46;
-    font-size: 14px;
-}
 
 /* order-tracking.html */
 body.shop-page.tracking-page {

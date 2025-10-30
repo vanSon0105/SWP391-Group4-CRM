@@ -116,6 +116,13 @@ public class CheckoutController extends HttpServlet {
 		    return;
 		}
 		
+		if(fullName.length() > 50) {
+			request.setAttribute("errorFullname", "Họ tên không được vượt quá 50 ký tự");
+			loadCheckoutData(request, response);
+			request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
+		    return;
+		}
+		
 		String phoneRegex = "^[0-9]{10}$";
 		if(phone.length() != 10 || !phone.matches(phoneRegex)) {
 			request.setAttribute("errorPhone", "Định dạng số điện thoại không chính xác");
@@ -129,6 +136,21 @@ public class CheckoutController extends HttpServlet {
 			loadCheckoutData(request, response);
 			request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
 			return;
+		}
+		
+		if(address.length() > 200) {
+			request.setAttribute("errorAddress", "Địa chỉ không được vượt quá 200 ký tự");
+			loadCheckoutData(request, response);
+			request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
+			return;
+		}
+		
+		if(note != null && note.length() > 200) {
+			request.setAttribute("errorNote", "Ghi chú không được vượt quá 200 ký tự");
+			loadCheckoutData(request, response);
+			request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
+			return;
+			
 		}
 		
 		int orderId = orderDao.addNewOrder(user.getId(), finalPrice, discount);

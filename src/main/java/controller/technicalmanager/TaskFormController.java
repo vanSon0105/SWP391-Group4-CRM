@@ -26,6 +26,8 @@ public class TaskFormController extends HttpServlet {
 	private UserDAO userDao = new UserDAO();
 	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
 	private static final int MAX_ACTIVE_TASKS_PER_STAFF = 3;
+	private static final int MAX_TITLE_LENGTH = 100;
+	private static final int MAX_DESCRIPTION_LENGTH = 500;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -159,6 +161,18 @@ public class TaskFormController extends HttpServlet {
 				request.setAttribute("errorTitle", "Không được để trống trường này");
 				forwardToForm(request, res);
 				return;
+			}
+			
+			if (title.length() > MAX_TITLE_LENGTH) {
+			    request.setAttribute("errorTitle", "Tiêu đề không được vượt quá " + MAX_TITLE_LENGTH + " ký tự");
+			    forwardToForm(request, res);
+			    return;
+			}
+			
+			if (description != null && description.length() > MAX_DESCRIPTION_LENGTH) {
+			    request.setAttribute("errorDescription", "Ghi chú không được vượt quá " + MAX_DESCRIPTION_LENGTH + " ký tự");
+			    forwardToForm(request, res);
+			    return;
 			}
 
 			if (deadline.before(now) || deadline.equals(now)) {
