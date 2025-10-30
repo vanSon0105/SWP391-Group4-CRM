@@ -69,5 +69,121 @@
     </div>
   </form>
 </div>
+
+<script>
+// Lấy context path từ JSP
+const contextPath = '${pageContext.request.contextPath}';
+
+// Thêm thẻ span để hiển thị lỗi cho từng input
+document.querySelectorAll('input, select').forEach(input => {
+    const errorSpan = document.createElement('span');
+    errorSpan.style.color = 'red';
+    errorSpan.style.fontSize = '13px';
+    errorSpan.style.display = 'block';
+    errorSpan.style.marginTop = '3px';
+    input.parentNode.insertBefore(errorSpan, input.nextSibling);
+    input.errorSpan = errorSpan;
+});
+
+// Hàm validate format cơ bản
+function validateField(input) {
+    const name = input.name;
+    const value = input.value.trim();
+    let message = '';
+
+    switch(name) {
+        case 'username':
+            if (!/^[a-zA-Z0-9_]{3,20}$/.test(value)) {
+                message = 'Tên đăng nhập: 3-20 ký tự, chỉ chữ, số, dấu _';
+            }
+            break;
+        case 'email':
+            if (!/^\S+@\S+\.\S+$/.test(value)) {
+                message = 'Email không hợp lệ';
+            }
+            break;
+        case 'password':
+            if (!/^(?=.*[a-zA-Z])(?=.*\d).{6,}$/.test(value)) {
+                message = 'Mật khẩu: ít nhất 6 ký tự, bao gồm chữ và số';
+            }
+            break;
+        case 'fullName':
+            if (!/^[a-zA-Z\s]{2,50}$/.test(value)) {
+                message = 'Họ tên chỉ gồm chữ và khoảng trắng';
+            }
+            break;
+        case 'phone':
+            if (value && !/^\d{9,12}$/.test(value)) {
+                message = 'Số điện thoại: 9-12 chữ số';
+            }
+            break;
+        default:
+            message = '';
+    }
+
+    input.errorSpan.textContent = message;
+    input.style.borderColor = message ? 'red' : '#4ade80';
+    return message === '';
+}
+
+// Hàm validate real-time + check duplicate với servlet
+async function checkDuplicate(input) {
+    const name = input.name;
+    const value = input.value.trim();
+    if (!value) return;
+
+    if (name === 'username' || name === 'email') {
+        const params = new URLSearchParams();
+        params.append(name, value);
+
+        try {
+            // Gọi servlet bằng context path chính xác
+            const res = await fetch(`${contextPath}/checkDuplicate?${params.toString()}`);
+            const text = await res.text();
+
+            if (text === 'USERNAME_EXISTS') {
+                input.errorSpan.textContent = 'Tên đăng nhập đã tồn tại!';
+                input.style.borderColor = 'red';
+            } else if (text === 'EMAIL_EXISTS') {
+                input.errorSpan.textContent = 'Email đã tồn tại!';
+                input.style.borderColor = 'red';
+            } else {
+                // Nếu không trùng và format hợp lệ thì reset lỗi
+                if (validateField(input)) {
+                    input.errorSpan.textContent = '';
+                    input.style.borderColor = '#4ade80';
+                }
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    }
+}
+
+// Real-time validate + check duplicate
+document.querySelectorAll('input, select').forEach(input => {
+    input.addEventListener('input', () => {
+        validateField(input);
+        checkDuplicate(input);
+    });
+});
+
+// Validate toàn bộ form khi submit
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    let valid = true;
+    document.querySelectorAll('input, select').forEach(input => {
+        if (!validateField(input)) {
+            valid = false;
+        }
+    });
+    if (!valid) e.preventDefault();
+});
+</script>
+
+
+
+
+
 </body>
 </html>
