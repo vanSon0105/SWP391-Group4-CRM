@@ -155,7 +155,9 @@ CREATE TABLE task_details (
   technical_staff_id INT NOT NULL,
   assigned_at timestamp default current_timestamp,
   deadline timestamp,
+  note TEXT,
   status ENUM('pending','in_progress','completed','cancelled') DEFAULT 'pending',
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   foreign key (task_id) references tasks(id),
   foreign key (technical_staff_id) references users(id)
 );
@@ -1207,7 +1209,7 @@ INSERT INTO permissions (id, permission_name) VALUES
 (26, 'ORDER_REPORTS'), (27, 'INTEGRATION_PAYOS'), (28, 'PAYMENT_REPORTS'), (29, 'PAYMENT_CONFIRMATION'),
 (30, 'PAYMENT_REQUEST_CREATION'), (31, 'REVENUE_PROFIT_ANALYSIS'), (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
-(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH');
+(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK');
 
 -- Admin
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
@@ -1216,7 +1218,10 @@ INSERT INTO role_permission (role_id, permission_id) VALUES
 (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 12), (2, 13), (2, 14), (2, 15), (2, 19),
 (2, 20), (2, 21), (2, 22), (2, 23), (2, 24), (2, 25), (2, 26), (2, 28), (2, 31), (2, 32), (2, 33), (2, 34), (2, 36);
 -- Technical Staff
-INSERT INTO role_permission (role_id, permission_id) VALUES (3, 2), (3, 3), (3, 14), (3, 16), (3, 36);
+INSERT INTO role_permission (role_id, permission_id) VALUES (3, 3), (3, 42);
+INSERT INTO role_permission (role_id, permission_id) VALUES (4, 3), (4, 42);
+INSERT INTO role_permission (role_id, permission_id) VALUES (5, 3), (5, 42);
+INSERT INTO role_permission (role_id, permission_id) VALUES (6, 3), (6, 42);
 -- Customer Support Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38);
 -- Storekeeper

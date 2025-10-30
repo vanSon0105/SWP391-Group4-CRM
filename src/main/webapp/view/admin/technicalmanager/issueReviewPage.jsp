@@ -102,6 +102,41 @@
             background: #2563eb;
             color: #fff;
         }
+        
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -162,6 +197,7 @@
             <div class="actions">
                 <a class="btn btn-outline" href="manager-issues">Quay lại</a>
                 
+                <a class="btn btn-outline" href="manager-issues?action=check_warranty&id=${issue.id}">Kiểm tra bảo hành</a>
                 
                 <form method="post" action="manager-issues" style="margin:0;">
                     <input type="hidden" name="issueId" value="${issue.id}">
@@ -171,6 +207,50 @@
             </div>
         </div>
     </div>
+    
+    <c:if test="${not empty warrantyInfo}">
+        <div id="warrantyModal" class="modal-overlay">
+            <div class="modal-content">
+                <span class="modal-close">&times;</span>
+                <h2>Thông tin bảo hành</h2>
+                <div class="meta">ID Thẻ: <strong>${warrantyInfo.id}</strong></div>
+                <div class="meta">Ngày bắt đầu: <strong><fmt:formatDate value="${warrantyInfo.start_at}" pattern="dd/MM/yyyy" /></strong></div>
+                <div class="meta">Ngày kết thúc: <strong><fmt:formatDate value="${warrantyInfo.end_at}" pattern="dd/MM/yyyy" /></strong></div>
+                
+                <c:set var="isExpired" value="${warrantyInfo.end_at.time < currentDate.time}" />
+                <div class="meta">Trạng thái: 
+                    <c:if test="${isExpired}">
+                        <strong style="color: #ef4444;">Đã hết hạn</strong>
+                    </c:if>
+                    <c:if test="${not isExpired}">
+                        <strong style="color: #22c55e;">Còn hiệu lực</strong>
+                    </c:if>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var modal = document.getElementById("warrantyModal");
+                if (!modal) return;
+
+                var closeBtn = modal.querySelector(".modal-close");
+
+                modal.style.display = "flex";
+
+                if(closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        modal.style.display = "none";
+                    });
+                }
+
+                window.addEventListener('click', function(event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                });
+            });
+        </script>
+    </c:if>
     </main>
 </body>
 

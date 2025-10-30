@@ -2,6 +2,7 @@
     <%@ page isELIgnored="false" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
         <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 
 <head>
@@ -123,6 +124,69 @@
             text-align: center;
             color: #475569;
         }
+        
+        .hidden {
+            display: none;
+        }
+
+        .summary-modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 999;
+        }
+        
+        .summary-modal-overlay.hidden {
+            display: none;
+        }
+
+        .summary-modal {
+            width: min(480px, 90%);
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-modal h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .summary-modal textarea {
+            resize: vertical;
+            min-height: 120px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5f5;
+            font-family: inherit;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .summary-modal textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .summary-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
     </style>
 </head>
 
@@ -184,8 +248,9 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <form method="post" action="technical-issues" style="display:flex; gap:8px; align-items:center;">
+                                    <form method="post" action="technical-issues" style="display:flex; gap:8px; align-items:center;" class="assignment-form" data-existing-summary="${assignment.note != null ? fn:escapeXml(assignment.note) : ''}">
                                         <input type="hidden" name="assignmentId" value="${assignment.id}">
+                                        <input type="hidden" name="summary" value="">
                                         <select name="status">
                                             <option value="pending" ${assignment.status == 'pending' ? 'selected' : ''}>Chưa bắt đầu</option>
                                             <option value="in_progress" ${assignment.status == 'in_progress' ? 'selected' : ''}>Đang thực hiện</option>
@@ -205,6 +270,86 @@
             </c:otherwise>
         </c:choose>
     </main>
+    
+    <div id="summary-modal" class="summary-modal-overlay hidden">
+        <div class="summary-modal">
+            <h2>Nhập tóm tắt công việc</h2>
+            <p id="summary-modal-message" style="margin:0; color:#475569; font-size:14px;"></p>
+            <textarea id="summary-modal-textarea" placeholder="Ghi lại những hạng mục đã xử lý hoặc lý do hủy..."></textarea>
+            <div class="summary-modal-actions">
+                <button type="button" class="btn-secondary" id="summary-modal-cancel">Hủy</button>
+                <button type="button" id="summary-modal-confirm">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        (function () {
+            var forms = document.querySelectorAll('.assignment-form');
+            var modalOverlay = document.getElementById('summary-modal');
+            var modalMessage = document.getElementById('summary-modal-message');
+            var modalTextarea = document.getElementById('summary-modal-textarea');
+            var confirmButton = document.getElementById('summary-modal-confirm');
+            var cancelButton = document.getElementById('summary-modal-cancel');
+            var activeForm = null;
+
+            forms.forEach(function (form) {
+                var statusSelect = form.querySelector('select[name="status"]');
+                var summaryInput = form.querySelector('input[name="summary"]');
+                if (!statusSelect || !summaryInput) {
+                    return;
+                }
+
+                form.addEventListener('submit', function (event) {
+                    var status = statusSelect.value;
+                    if (status === 'completed' || status === 'cancelled') {
+                        event.preventDefault();
+                        activeForm = form;
+                        var existingSummary = summaryInput.value || form.getAttribute('data-existing-summary') || '';
+                        modalTextarea.value = existingSummary;
+                        modalMessage.textContent = status === 'completed'
+                            ? 'Nhập tóm tắt những hạng mục đã sửa trước khi hoàn tất.'
+                            : 'Nhập tóm tắt những hạng mục hoặc lý do trước khi hủy.';
+                        modalOverlay.classList.remove('hidden');
+                        setTimeout(function () {
+                            modalTextarea.focus();
+                            modalTextarea.select();
+                        }, 0);
+                    } else {
+                        summaryInput.value = '';
+                    }
+                });
+            });
+
+            confirmButton.addEventListener('click', function () {
+                if (!activeForm) {
+                    return;
+                }
+                var summaryText = modalTextarea.value.trim();
+                if (!summaryText) {
+                    modalTextarea.focus();
+                    return;
+                }
+                var summaryInput = activeForm.querySelector('input[name="summary"]');
+                summaryInput.value = summaryText;
+                modalOverlay.classList.add('hidden');
+                activeForm.submit();
+                activeForm = null;
+            });
+
+            cancelButton.addEventListener('click', function () {
+                modalOverlay.classList.add('hidden');
+                activeForm = null;
+            });
+
+            modalOverlay.addEventListener('click', function (event) {
+                if (event.target === modalOverlay) {
+                    modalOverlay.classList.add('hidden');
+                    activeForm = null;
+                }
+            });
+        })();
+    </script>
 </body>
 
 </html>

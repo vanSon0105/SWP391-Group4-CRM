@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
 import model.User;
+import model.WarrantyCard;
 import utils.AuthorizationUtils;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ import java.util.List;
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
 import dao.DeviceSerialDAO;
+import dao.WarrantyCardDAO;
 
 
 
@@ -28,6 +30,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 	private CustomerIssueDAO iDao = new CustomerIssueDAO();
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
 	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
+	private WarrantyCardDAO wDao = new WarrantyCardDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		User manager = getUser(request, response);
@@ -38,6 +41,9 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		String action = request.getParameter("action");
 		if ("review".equalsIgnoreCase(action)) {
 			showReview(request, response);
+			return;
+		}else if ("check_warranty".equalsIgnoreCase(action)) {
+			showWarranty(request, response);
 			return;
 		}
 
@@ -88,6 +94,31 @@ public class TechnicalManagerIssueController extends HttpServlet {
 	
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES_MANAGEMENT");
+	}
+	
+	private void showWarranty(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String issueIdParam = req.getParameter("id");
+		if (issueIdParam == null) {
+			resp.sendRedirect("manager-issues");
+			return;
+		}
+
+		int issueId;
+		try {
+			issueId = Integer.parseInt(issueIdParam);
+		} catch (NumberFormatException ex) {
+			resp.sendRedirect("manager-issues?invalid=1");
+			return;
+		}
+
+		CustomerIssue issue = iDao.getIssueById(issueId);
+		if (issue != null && issue.getWarrantyCardId() > 0) {
+			WarrantyCard warranty = wDao.getById(issue.getWarrantyCardId());
+			req.setAttribute("warrantyInfo", warranty);
+			req.setAttribute("currentDate", new java.util.Date());
+		}
+
+		showReview(req, resp);
 	}
 	
 	private void showReview(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

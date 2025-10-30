@@ -76,7 +76,7 @@
 					</c:if>
 					
 					<c:if test="${sessionScope.account.roleId == 4}">
-					    <a href="support-staff" class="order-btn account-btn">
+					    <a href="support-issues" class="order-btn account-btn">
 					        <i class="fa-solid fa-headset"></i>
 					    </a>
 					</c:if>

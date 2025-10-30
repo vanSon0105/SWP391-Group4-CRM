@@ -1,6 +1,8 @@
 package dao;
 import java.util.*;
 import java.sql.*;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import model.CustomerDevice;
 import model.CustomerIssue;
@@ -70,25 +72,29 @@ public class CustomerIssueDAO extends DBContext{
 	}
 	
 	public boolean createIssue(int customerId, String title, String description, String issueType, int warrantyCardId) {
-		String sql = "INSERT INTO customer_issues (customer_id, issue_code, title, description, issue_type,  warranty_card_id) VALUES (?, ?, ?, ?, ?, ?)";
-		try (Connection conn = getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, customerId);
-			ps.setString(2, generateIssueCode());
-			ps.setString(3, title);
-			ps.setString(4, description);
-			ps.setString(5, issueType);
-			if (warrantyCardId == 0) {
-		        ps.setNull(6, java.sql.Types.INTEGER);
-		    } else {
-		    	ps.setInt(6, warrantyCardId);		        
-		    }
-			return ps.executeUpdate() > 0;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+	    String sql = "INSERT INTO customer_issues (customer_id, issue_code, title, description, issue_type, warranty_card_id, created_at) "
+	               + "VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)"; 
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, customerId);
+	        ps.setString(2, generateIssueCode());
+	        ps.setString(3, title);
+	        ps.setString(4, description);
+	        ps.setString(5, issueType);
+	          
+	        if (warrantyCardId == 0) {
+	            ps.setNull(6, java.sql.Types.INTEGER);
+	        } else {
+	            ps.setInt(6, warrantyCardId);        
+	        }
+	        
+	        return ps.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
+
 	
 	public CustomerIssue getIssueById(int id) {
 		String sql = "SELECT * FROM customer_issues WHERE id = ?";

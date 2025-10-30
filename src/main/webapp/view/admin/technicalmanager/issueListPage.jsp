@@ -147,6 +147,8 @@
                                  <th>Tiêu đề</th>
                                  <th>Khách hàng</th>
                                  <th>Ngày gửi</th>
+                                 <th>Trạng thái</th>
+                                 <th>Thao tác</th>
                              </tr>
                          </thead>
                          <tbody>
@@ -248,12 +250,14 @@
                                      <td>${issue.customerId}</td>
                                      <td>${empty issue.feedback ? '-' : issue.feedback}</td>
                                      <td>
-                                         <c:choose>
-                                             <c:when
-                                                 test="${issue.supportStatus == 'customer_cancelled'}">
-                                                 Khách hủy</c:when>
-                                             <c:otherwise>Quản lý từ chối</c:otherwise>
-                                         </c:choose>
+                                     	<span class="badge badge-manager_rejected">
+	                                         <c:choose>
+	                                             <c:when
+	                                                 test="${issue.supportStatus == 'customer_cancelled'}">
+	                                                 Khách hủy</c:when>
+	                                             <c:otherwise>Quản lý từ chối</c:otherwise>
+	                                         </c:choose>
+                                         </span>
                                      </td>
                                      <td>
                                          <fmt:formatDate value="${issue.createdAt}"

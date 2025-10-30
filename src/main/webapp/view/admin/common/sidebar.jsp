@@ -41,9 +41,7 @@
         <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
             <a href="manager-issues">Task cần giao</a>
         </c:if>
-        <c:if test="${permissions != null && permissions.contains('SUPPORT_DASH')}">
-            <a href="support-staff">Dashboard</a>
-        </c:if>
+        
         <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_RESPONDING')}">
             <a href="support-issues">Vấn đề của khách hàng</a>
         </c:if>
