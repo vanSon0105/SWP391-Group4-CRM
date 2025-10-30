@@ -47,25 +47,25 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            font-size: 1.25rem;
+            font-size: 2rem;
             font-weight: 600;
             margin-bottom: 12px;
         }
 
         .login-alert__message {
             color: #0f172a;
-            font-size: 1rem;
+            font-size: 1.3rem;
             line-height: 1.5;
             margin-bottom: 18px;
         }
 
         .login-alert__close {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: -5px;
+            right: 10px;
             background: transparent;
             border: none;
-            font-size: 1.25rem;
+            font-size: 3rem;
             cursor: pointer;
             color: #475569;
             transition: color 0.2s ease;
@@ -184,9 +184,7 @@
         }
 
     });
-
-
-
+    
     setTimeout(hideAlert, 5000);
 
 })();

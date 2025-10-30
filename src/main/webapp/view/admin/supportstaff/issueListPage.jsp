@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page isELIgnored="false" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 
 <head>
@@ -18,6 +19,10 @@
             padding: 24px;
             height: 100% !important;
         }
+        
+        body:not(.sidebar-collapsed) .sidebar-main {
+		    margin-left: 0 !important;
+		}
         
         main{
         	height: 100% !important;
@@ -163,17 +168,87 @@
             background: #fecaca;
             color: #991b1b;
         }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+        .summary-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 16px 32px rgba(99, 102, 241, 0.08);
+            border: 1px solid rgba(99, 102, 241, 0.08);
+        }
+        .summary-card h3 {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: #475569;
+        }
+        .summary-card strong {
+            display: block;
+            font-size: 30px;
+            margin: 12px 0 6px;
+            color: #1e3a8a;
+        }
+        .summary-card span {
+            font-size: 13px;
+            color: #64748b;
+        }
+        .panel {
+            background: #fff;
+            padding: 22px;
+            border-radius: 16px;
+            margin-bottom: 26px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08) !important;
+        }
+        .panel h2 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #0f172a;
+        }
     </style>
 </head>
 
 <body class="management-page dashboard">
-    <jsp:include page="../common/sidebar.jsp"></jsp:include>
     <jsp:include page="../common/header.jsp"></jsp:include>
     <main class="sidebar-main">
-        <h1>Yêu cầu khách hàng</h1>
-
+        <section class="panel" style="border: none;">
+	        <h2>Tổng kết nhanh</h2>
+	        <div class="summary-grid">
+	            <div class="summary-card">
+	                <h3>Yêu cầu mới</h3>
+	                <strong>${newIssueCount}</strong>
+	                <span>Chưa có nhân viên tiếp nhận</span>
+	            </div>
+	            <div class="summary-card">
+	                <h3>Đang xử lý của tôi</h3>
+	                <strong>${inProgressCount}</strong>
+	                <span>Đã tiếp nhận và đang xử lý</span>
+	            </div>
+	            <div class="summary-card">
+	                <h3>Chờ khách hàng phản hồi</h3>
+	                <strong>${awaitingCustomerCount}</strong>
+	                <span>Cần nhắc khách bổ sung thông tin</span>
+	            </div>
+	            <div class="summary-card">
+	                <h3>Đang chờ duyệt/đã kết thúc</h3>
+	                <strong>${managerReviewCount + resolvedIssueCount}</strong>
+	                <span>${managerReviewCount} chờ duyệt · ${resolvedIssueCount} đã xong</span>
+	            </div>
+	        </div>
+	    </section>
+	    
         <c:if test="${param.saved == '1'}">
-            <div class="alert alert-success">Đã lưu thông tin khách hàng và cập nhật trạng thái thành công.
+            <div class="alert alert-success">Đã lưu thông tin khách hàng.
+            </div>
+        </c:if>
+        
+        <c:if test="${param.saved == '2'}">
+            <div class="alert alert-success">Cập nhật trạng thái thành công.
             </div>
         </c:if>
         <c:if test="${param.locked == '1'}">
@@ -205,7 +280,7 @@
                                     <td>${issue.title}</td>
                                     <td>
                                         <fmt:formatDate value="${issue.createdAt}"
-                                            pattern="dd/MM/yyyy HH:mm" />
+                                            pattern="dd/MM/yyyy" />
                                     </td>
                                     <td>
                                         <a class="btn btn-primary"
@@ -233,8 +308,8 @@
                                 <th>Mã</th>
                                 <th>Tiêu đề</th>
                                 <th>Trạng thái</th>
-                                <th>Cập nhật</th>
-                                <th></th>
+                                <th>Ngày tạo</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -272,8 +347,7 @@
                                     </td>
                                     <td>
                                         <a class="btn btn-primary"
-                                            href="support-issues?action=review&id=${issue.id}">Cập
-                                            nhật</a>
+                                            href="support-issues?action=review&id=${issue.id}">Chi tiết</a>
                                     </td>
                                 </tr>
                             </c:forEach>

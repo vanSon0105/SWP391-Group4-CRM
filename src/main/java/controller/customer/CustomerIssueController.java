@@ -6,6 +6,7 @@ import java.util.List;
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
 import dao.DeviceSerialDAO;
+import dao.TaskDetailDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,14 +16,16 @@ import jakarta.servlet.http.HttpSession;
 import model.CustomerDevice;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
+import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
 
-@WebServlet({"/issue", "/create-issue", "/issue-fill"})
+@WebServlet({"/issue", "/create-issue", "/issue-fill", "/issue-detail"})
 public class CustomerIssueController extends HttpServlet {
 	private CustomerIssueDAO ciDao = new CustomerIssueDAO();
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
 	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
+	private TaskDetailDAO tdDao = new TaskDetailDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,6 +40,9 @@ public class CustomerIssueController extends HttpServlet {
 			break;
 		case "/issue-fill":
 			forwardCustomerDetailsFill(req, resp, u);
+			break;
+		case "/issue-detail":
+			forwardCustomerTaskDetails(req, resp, u);
 			break;
 		default:
 			List<CustomerIssue> listIssue = ciDao.getIssuesByUserId(u.getId());
@@ -171,13 +177,6 @@ public class CustomerIssueController extends HttpServlet {
 		String status = issue.getSupportStatus();
 
 		if ("1".equals(req.getParameter("cancel"))) {
-			boolean allowCancel = status != null && (
-					"awaiting_customer".equalsIgnoreCase(status) ||
-					"manager_rejected".equalsIgnoreCase(status));
-			if (!allowCancel) {
-				resp.sendRedirect("issue?invalid=1");
-				return;
-			}
 			ciDao.updateSupportStatus(issueId, "customer_cancelled");
 			resp.sendRedirect("issue?cancelled=1");
 			return;
@@ -235,6 +234,44 @@ public class CustomerIssueController extends HttpServlet {
 		ciDao.updateSupportStatus(issueId, staffId, "in_progress");
 
 		resp.sendRedirect("issue?details=1");
+	}
+	
+	
+	private void forwardCustomerTaskDetails(HttpServletRequest req, HttpServletResponse resp, User customer)
+			throws ServletException, IOException {
+		String id = req.getParameter("id");
+		String action = req.getParameter("action");
+		if (id == null) {
+			resp.sendRedirect("support-issues");
+			return;
+		}
+
+		int issueId;
+		try {
+			issueId = Integer.parseInt(id);
+		} catch (NumberFormatException ex) {
+			resp.sendRedirect("support-issues?notfound=1");
+			return;
+		}
+		
+		CustomerIssue issue = ciDao.getIssueById(issueId);
+		if (issue == null || issue.getCustomerId() != customer.getId()) {
+			resp.sendRedirect("issue?notfound=1");
+			return;
+		}
+		
+		if("1".equalsIgnoreCase(action)) {
+			CustomerIssue c = ciDao.getIssueById(issueId);
+			req.setAttribute("issueDetail", c);			
+		}else {
+			TaskDetail t = tdDao.getTaskDetailFromCustomerIssue(issueId);
+			req.setAttribute("taskDetail", t);
+			
+		}		
+		List<CustomerIssue> listIssue = ciDao.getIssuesByUserId(customer.getId());
+		req.setAttribute("list", listIssue);
+		req.getRequestDispatcher("view/customer/issueListPage.jsp").forward(req, resp);
+		
 	}
 	
 }

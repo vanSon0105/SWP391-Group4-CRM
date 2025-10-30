@@ -9,15 +9,18 @@ import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
 import model.DeviceSerial;
+import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
 import dao.DeviceSerialDAO;
+import dao.TaskDetailDAO;
 import dao.UserDAO;
 
 /**
@@ -29,6 +32,7 @@ public class SupportIsssueController extends HttpServlet {
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
 	private UserDAO userDao = new UserDAO();
 	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
+	private TaskDetailDAO tdDao = new TaskDetailDAO();
        
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -39,11 +43,40 @@ public class SupportIsssueController extends HttpServlet {
 
 		String action = req.getParameter("action");
 		if ("review".equalsIgnoreCase(action)) {
-			showReviewDetail(req, resp, staff);
+			showReviewIssueDetail(req, resp, staff);
 			return;
 		}
+		
+		if ("updateStatus".equalsIgnoreCase(action)) {
+			updateStatusIssue(req, resp, staff);
+			return;
+		}
+		
 		List<CustomerIssue> newIssues = iDao.getUnassignedIssues();
 		List<CustomerIssue> myIssues = iDao.getIssuesAssignedToStaff(staff.getId());
+		List<CustomerIssue> awaitingCustomerIssues = iDao.getIssuesBySupportStatus("awaiting_customer");
+		List<CustomerIssue> managerReviewIssues = iDao
+				.getIssuesBySupportStatuses(new String[] { "manager_review", "submitted" });
+		List<CustomerIssue> resolvedIssues = iDao.getIssuesBySupportStatus("resolved");
+
+		int awaitingCustomerCount = 0;
+		int inProgressCount = 0;
+
+		for (CustomerIssue i : myIssues) {
+		    String s = i.getSupportStatus();
+		    if ("awaiting_customer".equalsIgnoreCase(s)) {
+		    	awaitingCustomerCount++;
+		    }else if ("in_progress".equalsIgnoreCase(s)) {
+		    	inProgressCount++;
+		    }
+		}
+		
+		req.setAttribute("newIssueCount", newIssues.size());
+		req.setAttribute("myIssueCount", myIssues.size());
+		req.setAttribute("awaitingCustomerCount", awaitingCustomerCount);
+		req.setAttribute("inProgressCount", inProgressCount);
+		req.setAttribute("managerReviewCount", managerReviewIssues.size());
+		req.setAttribute("resolvedIssueCount", resolvedIssues.size());
 
 		req.setAttribute("newIssues", newIssues);
 		req.setAttribute("myIssues", myIssues);
@@ -74,7 +107,7 @@ public class SupportIsssueController extends HttpServlet {
 		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES_RESPONDING");
 	}
 	
-	private void showReviewDetail(HttpServletRequest req, HttpServletResponse resp, User staff)
+	private void showReviewIssueDetail(HttpServletRequest req, HttpServletResponse resp, User staff)
 			throws ServletException, IOException {
 		String id = req.getParameter("id");
 		if (id == null) {
@@ -109,6 +142,7 @@ public class SupportIsssueController extends HttpServlet {
 		User customerDetail = userDao.getUserDetailsById(issue.getCustomerId());
 		CustomerIssueDetail viewDetail = d != null ? d : new CustomerIssueDetail();
 		addWithAccountInfo(viewDetail, customerDetail, serialNo);
+		
         
         
 		req.setAttribute("issue", issue);
@@ -122,6 +156,7 @@ public class SupportIsssueController extends HttpServlet {
 		boolean taskLocked = isLockedForSupport(status);
 		boolean awaitingCustomer = "awaiting_customer".equalsIgnoreCase(status);
 		boolean needsCustomerInfo = needsAdditionalCustomerInfo(d, customerDetail);
+		TaskDetail t = tdDao.getTaskDetailFromCustomerIssue(issueId);
 		
 		req.setAttribute("customerCancelled", customerCancelled);
 		req.setAttribute("managerRejected", managerRejected);
@@ -131,6 +166,7 @@ public class SupportIsssueController extends HttpServlet {
 		req.setAttribute("lockedForSupport", taskLocked);
 		req.setAttribute("awaitingCustomer", awaitingCustomer);
 		req.setAttribute("needsCustomerInfo", needsCustomerInfo);
+		req.setAttribute("taskDetail", t);
 		req.getRequestDispatcher("view/admin/supportstaff/issueReviewPage.jsp").forward(req, resp);
 	}
 	
@@ -205,6 +241,24 @@ public class SupportIsssueController extends HttpServlet {
 		String nextStatus = forward ? "manager_review" : "in_progress";
 		boolean check = iDao.updateSupportStatus(issueId, staff.getId(), nextStatus);
 		resp.sendRedirect("support-issues?saved=1");
+	}
+	
+	private void updateStatusIssue(HttpServletRequest req, HttpServletResponse resp, User staff) throws IOException, ServletException {
+		String issueIdParam = req.getParameter("id");
+		if (issueIdParam == null) {
+			resp.sendRedirect("support-issues");
+			return;
+		}
+
+		int issueId;
+        try {
+            issueId = Integer.parseInt(issueIdParam);
+        } catch (NumberFormatException ex) {
+            resp.sendRedirect("support-issues?notfound=1");
+            return;
+        }
+		iDao.updateSupportStatus(issueId, "resolved");
+		resp.sendRedirect("support-issues?saved=2");
 	}
 	
 	private void sendRequestDetails(HttpServletRequest req, HttpServletResponse resp, User staff)
@@ -304,5 +358,7 @@ public class SupportIsssueController extends HttpServlet {
 	private boolean hasText(String value) {
 		return value != null && !value.trim().isEmpty();
 	}
+	
+	
 
 }

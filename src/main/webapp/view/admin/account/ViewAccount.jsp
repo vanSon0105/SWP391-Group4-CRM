@@ -187,7 +187,7 @@
                                             ${u.status == 'active' ? 'Hoạt động' : 'Bị khóa'}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td style="display: flex; gap: 5px;">
                                         <a href="account?action=detail&id=${u.id}" class="btn device-btn">Xem</a>
 
                                         <c:if test="${u.status == 'active'}">

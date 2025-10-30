@@ -33,26 +33,6 @@ public class TaskDAO extends DBContext {
 	    }
 	}
 	
-//	public Task getTaskById(int id) {
-//	    String sql = "SELECT * FROM tasks WHERE id = ?";
-//	    try (Connection conn = getConnection();
-//	         PreparedStatement ps = conn.prepareStatement(sql)) {
-//	        ps.setInt(1, id);
-//	        ResultSet rs = ps.executeQuery();
-//	        if (rs.next()) {
-//	            Task t = new Task();
-//	            t.setId(rs.getInt("id"));
-//	            t.setTitle(rs.getString("title"));
-//	            t.setDescription(rs.getString("description"));
-//	            t.setManagerId(rs.getInt("manager_id"));
-//	            t.setCustomerIssueId(rs.getInt("customer_issue_id"));
-//	            return t;
-//	        }
-//	    } catch (SQLException e) {
-//	        e.printStackTrace();
-//	    }
-//	    return null;
-//	}
     public List<Task> filterTasks(String status, String priority, String technicianId,
                                   String fromDate, String toDate, String searchText) {
         List<Task> list = new ArrayList<>();
@@ -68,10 +48,6 @@ public class TaskDAO extends DBContext {
         if (status != null && !status.isEmpty()) {
             sql.append(" AND td.status = ?");
             params.add(status);
-        }
-        if (priority != null && !priority.isEmpty()) {
-            sql.append(" AND td.priority = ?");
-            params.add(priority);
         }
         if (technicianId != null && !technicianId.isEmpty()) {
             sql.append(" AND td.technical_staff_id = ?");
@@ -119,35 +95,35 @@ public class TaskDAO extends DBContext {
         return list;
     }
 
-    public List<Task> getAllTasks() {
-        List<Task> list = new ArrayList<>();
-        String sql = "SELECT t.*, COUNT(td.id) AS assigned_count " +
-                     "FROM tasks t " +
-                     "LEFT JOIN task_details td ON t.id = td.task_id " +
-                     "GROUP BY t.id " +
-                     "ORDER BY t.id DESC";
-
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-
-            while (rs.next()) {
-                Task t = new Task();
-                t.setId(rs.getInt("id"));
-                t.setTitle(rs.getString("title"));
-                t.setDescription(rs.getString("description"));
-                t.setManagerId(rs.getInt("manager_id"));
-                t.setCustomerIssueId(rs.getInt("customer_issue_id"));
-                t.setProgress(String.valueOf(rs.getInt("assigned_count")));
-                list.add(t);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
+//    public List<Task> getAllTasks() {
+//        List<Task> list = new ArrayList<>();
+//        String sql = "SELECT t.*, COUNT(td.id) AS assigned_count " +
+//                     "FROM tasks t " +
+//                     "LEFT JOIN task_details td ON t.id = td.task_id " +
+//                     "GROUP BY t.id " +
+//                     "ORDER BY t.id DESC";
+//
+//        try (Connection conn = getConnection();
+//             PreparedStatement ps = conn.prepareStatement(sql);
+//             ResultSet rs = ps.executeQuery()) {
+//
+//            while (rs.next()) {
+//                Task t = new Task();
+//                t.setId(rs.getInt("id"));
+//                t.setTitle(rs.getString("title"));
+//                t.setDescription(rs.getString("description"));
+//                t.setManagerId(rs.getInt("manager_id"));
+//                t.setCustomerIssueId(rs.getInt("customer_issue_id"));
+//                t.setProgress(String.valueOf(rs.getInt("assigned_count")));
+//                list.add(t);
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return list;
+//    }
 
     public void addTask(Task task) {
         String sql = "INSERT INTO tasks (title, description, manager_id, customer_issue_id) VALUES (?, ?, ?, ?)";
@@ -236,10 +212,9 @@ public class TaskDAO extends DBContext {
     public List<Task> getAllFullTasks() {
         List<Task> list = new ArrayList<>();
         String sql = "SELECT ci.issue_code AS wo, t.id, t.title, t.description, " +
-                     "td.status, td.priority, " +
+                     "td.status, " +
                      "u1.full_name AS assignedToName, u2.full_name AS assignedByName, " +
-                     "td.assigned_at, td.deadline, td.progress, td.note, " +
-                     "td.attachment_url, td.updated_at " +
+                     "td.assigned_at, td.deadline, td.note, td.updated_at " +
                      "FROM task_details td " +
                      "JOIN tasks t ON td.task_id = t.id " +
                      "JOIN customer_issues ci ON t.customer_issue_id = ci.id " +
@@ -258,14 +233,11 @@ public class TaskDAO extends DBContext {
                 t.setTitle(rs.getString("title"));
                 t.setDescription(rs.getString("description"));
                 t.setStatus(rs.getString("status"));
-                t.setPriority(rs.getString("priority"));
                 t.setAssignedToName(rs.getString("assignedToName"));
                 t.setAssignedByName(rs.getString("assignedByName"));
                 t.setAssignDate(rs.getTimestamp("assigned_at"));
                 t.setDeadline(rs.getTimestamp("deadline"));
-                t.setProgress(String.valueOf(rs.getInt("progress")));
                 t.setNote(rs.getString("note"));
-                t.setAttachmentUrl(rs.getString("attachment_url"));
                 t.setUpdatedAt(rs.getTimestamp("updated_at"));
                 list.add(t);
             }
@@ -276,6 +248,7 @@ public class TaskDAO extends DBContext {
 
         return list;
     }
+
 
     
 	public Set<Integer> getAssignedStaffIds(int taskId) {

@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 	<%@ page isELIgnored="false" %>
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8">
@@ -85,6 +86,11 @@
              background: #e2e8f0;
              color: #0f172a;
          }
+         
+         .btn-success {
+	         background: #a1f6a4;             
+             color: #0f172a;
+         }
 
          .btn-primary {
              background: #2563eb;
@@ -135,11 +141,11 @@
         }
         
         .readonly-block {
-            margin-top: 16px;
-            background: #f8fafc;
-            border-radius: 10px;
-            padding: 16px;
-            border: 1px dashed #cbd5f5;
+		    margin-top: 16px;
+		    background: #f8fafc;
+		    border-radius: 10px;
+		    padding: 16px;
+		    border: 1px dashed #cbd5f5;
         }
 
         .readonly-block h3 {
@@ -151,27 +157,96 @@
             margin: 8px 0;
             color: #475569;
         }
+        
+        .status-badge {
+		    display: inline-block;
+		    white-space: nowrap;
+		    padding: 4px 10px;
+		    border-radius: 12px;
+		    font-weight: 600;
+		    font-size: 14px;
+		    text-align: center;
+		}
+		
+		.status-pending {
+		    background: #fef3c7;
+		    color: #92400e;
+		}
+		
+		.status-inprogress {
+		    background: #dbeafe;
+		    color: #1d4ed8;
+		}
+		
+		.status-completed {
+		    background: #dcfce7;
+		    color: #166534;
+		}
+		
+		.status-cancelled {
+		    background: #fee2e2;
+		    color: #991b1b;
+		}
     </style>
 </head>
 
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 <body >
-    <main class="sidebar-main">
+    <main class="sidebar-main" style="height: max-content;">
          <div class="layout">
                 <div class="card-div">
-                    <h2>Thông tin yêu cầu</h2>
-                    <div class="meta">Mã yêu cầu: <strong>${issue.issueCode}</strong></div>
-                    <div class="meta">Khách hàng ID: ${issue.customerId}</div>
-                    <div class="meta">Tiêu đề: <strong>${issue.title}</strong></div>
-                    <div class="meta">Loại yêu cầu: <strong>
-                    	<c:choose>
-	                        <c:when test="${issue.issueType == 'repair'}">Sửa chữa</c:when>
-	                        <c:otherwise>Bảo hành</c:otherwise>
-	                    </c:choose>
-                    </strong></div>
-                    <div class="meta">Mô tả</div>
-                    <pre>${issue.description}</pre>
+                	<div class="readonly-block">
+                        <h3>Thông tin yêu cầu</h3>
+                        <p>Mã yêu cầu: <strong>${issue.issueCode}</strong></p>
+                        <p>Khách hàng ID: <strong>${issue.customerId}</strong></p>
+                        <p>Tiêu đề: <strong>${issue.title}</strong></p>
+                        <p>Loại yêu cầu:<strong>
+                        	<c:choose>
+		                        <c:when test="${issue.issueType == 'repair'}">Sửa chữa</c:when>
+		                        <c:otherwise>Bảo hành</c:otherwise>
+		                    </c:choose>
+		                    </strong>
+                        </p>
+                        <p>Mô tả: <strong>${issue.description}</strong></p>
+                    </div>
+                    
+                    <c:if test="${not empty taskDetail}">
+	                    <div class="readonly-block">
+	                        <h3>Thông tin task</h3>
+	                        <p>Tên nhân viên sửa: <strong>${taskDetail.technicalStaffName}</strong></p>
+	                        <p>Ngày giao: <strong><fmt:formatDate value="${taskDetail.assignedAt}" pattern="dd/MM/yyyy HH:mm" /></strong></p>
+	                        <p>Deadline: <strong><fmt:formatDate value="${taskDetail.deadline}" pattern="dd/MM/yyyy HH:mm" /></strong></p>
+	                        <p>Note: <strong>${taskDetail.note}</strong></p>
+	                        <p>Trạng thái:
+	                        	<c:choose>
+									<c:when test="${taskDetail.status == 'pending'}">
+										<span class="status-badge status-pending">Đang chờ xử
+											lý</span>
+									</c:when>
+									<c:when test="${taskDetail.status == 'in_progress'}">
+										<span class="status-badge status-inprogress">Đang
+											thực hiện</span>
+									</c:when>
+									<c:when test="${taskDetail.status == 'completed'}">
+										<span class="status-badge status-completed">Hoàn
+											thành</span>
+									</c:when>
+									<c:when test="${taskDetail.status == 'cancelled'}">
+										<span class="status-badge status-cancelled">Đã hủy</span>
+									</c:when>
+									<c:otherwise>
+										<span class="status-badge">Không xác định</span>
+									</c:otherwise>
+								</c:choose>
+	                        </p>
+	                        <p>Cập nhật lúc: <strong><fmt:formatDate value="${taskDetail.updatedAt}" pattern="dd/MM/yyyy HH:mm" /></strong></p>
+	                    </div>
+	                </c:if>
+	                
+	                <c:if test="${empty taskDetail}">
+	                	<div style="margin-top: 20px;" class="alert">Yêu cầu chưa được tạo task!</div>
+	                </c:if>
                 </div>
 
                 <div class="card-div">
@@ -229,14 +304,17 @@
 		                <c:if test="${issueDetail != null}">
 		                    <div class="readonly-block">
 		                        <h3>Thông tin đã gửi</h3>
-		                        <p><strong>Tên khách hàng:</strong> ${issueDetail.customerFullName}</p>
-		                        <p><strong>Email:</strong> ${issueDetail.contactEmail}</p>
-		                        <p><strong>Số điện thoại:</strong> ${issueDetail.contactPhone}</p>
-		                        <p><strong>Serial thiết bị:</strong> ${issueDetail.deviceSerial}</p>
-		                        <p><strong>Tổng hợp:</strong> ${issueDetail.summary}</p>
+		                        <p>Tên khách hàng: <strong>${issueDetail.customerFullName}</strong></p>
+		                        <p>Email: <strong>${issueDetail.contactEmail}</strong></p>
+		                        <p>Số điện thoại: <strong>${issueDetail.contactPhone}</strong></p>
+		                        <p>Serial thiết bị: <strong>${issueDetail.deviceSerial}</strong></p>
+		                        <p>Tổng hợp: <strong>${issueDetail.summary}</strong></p>
 		                    </div>
 		                </c:if>
 		                <div class="actions">
+		                    <c:if test="${taskDetail.status == 'completed'}">
+		                    	<a class="btn btn-success" href="support-issues?action=updateStatus&id=${taskDetail.customerIssueId}">Cập nhật trạng thái</a>
+		                    </c:if>
 		                    <a class="btn btn-secondary" href="support-issues">Quay lại</a>
 		                </div>
 		            </c:if>
