@@ -94,7 +94,7 @@ public class OrderDAO extends DBContext{
 			}
 			
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return -1;
 	}
@@ -105,14 +105,14 @@ public class OrderDAO extends DBContext{
 			ps.setInt(1, cartId);
 			ps.executeUpdate();
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		try (Connection conn = getConnection();
 			 PreparedStatement ps = conn.prepareStatement("UPDATE carts SET sum = 0 WHERE id = ?")) {
 			ps.setInt(1, cartId);
 			ps.executeUpdate();
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 	}
 	public List<Order> getOrdersByCustomerWithFilter(int customerId, String status, String sortField, int limit, int offset) {

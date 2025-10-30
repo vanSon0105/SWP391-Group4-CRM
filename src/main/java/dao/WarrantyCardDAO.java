@@ -62,7 +62,7 @@ public class WarrantyCardDAO extends DBContext{
                     return rs.getInt(1); 
                 }
             } catch (SQLException e) {
-				// TODO: handle exception
+				e.printStackTrace();
 			}
         }
         return -1;

@@ -90,7 +90,6 @@ public class Device {
 
 	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc,
 			Timestamp created_at, Boolean is_featured, int device_inventory) {
-		super();
 		this.id = id;
 		this.category = category;
 		this.name = name;
@@ -102,6 +101,21 @@ public class Device {
 		this.isFeatured = is_featured;
 		this.device_inventory = device_inventory;
 		this.status = status;
+	}
+	
+	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc,
+			Timestamp created_at, Boolean is_featured, int warrantyMonth, int device_inventory) {
+		super();
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.unit = unit;
+		this.imageUrl = imageUrl;
+		this.desc = desc;
+		this.created_at = created_at;
+		this.isFeatured = is_featured;
+		this.warrantyMonth = warrantyMonth;
 	}
 	
 	

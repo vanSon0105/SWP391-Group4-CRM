@@ -113,7 +113,8 @@ public class DeviceDAO extends DBContext {
 	                    rs.getString("description"),
 	                    rs.getTimestamp("created_at"),
 	                    rs.getBoolean("is_featured"),
-	                    rs.getInt("warrantyMonth")
+	                    rs.getInt("warrantyMonth"),
+	                    0
 	                );
 	            }
 	        }
@@ -125,7 +126,7 @@ public class DeviceDAO extends DBContext {
 
 	public List<Device> getAllDevices() {
 		List<Device> list = new ArrayList<>();
-		String sql = "SELECT id, category_id, name, price, unit, image_url FROM devices";
+		String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured FROM devices";
 
 		try (Connection conn = getConnection();
 				PreparedStatement pre = conn.prepareStatement(sql);
@@ -135,7 +136,7 @@ public class DeviceDAO extends DBContext {
 				Category c = new Category();
             	c.setId(rs.getInt("category_id"));
 				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
-						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("desciption"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
+						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
 			}
 
 		} catch (SQLException e) {
@@ -283,9 +284,8 @@ public class DeviceDAO extends DBContext {
         		+ "GROUP BY d.id, d.name, d.price, d.description\r\n"
         		+ "ORDER BY total_sold DESC\r\n"
         		+ "LIMIT ?, ?;";
-        try {
-        	connection = DBContext.getConnection();
-            PreparedStatement pre = connection.prepareStatement(sql);
+        try (Connection conn = DBContext.getConnection();
+            PreparedStatement pre = conn.prepareStatement(sql)) {
             pre.setInt(1, offset);
             pre.setInt(2, recordsEachPage);
             ResultSet rs = pre.executeQuery();
@@ -301,8 +301,6 @@ public class DeviceDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();;
-        }finally {
-        	closeConnection();
         }
         return list;
     }
@@ -419,7 +417,7 @@ public class DeviceDAO extends DBContext {
                 d.setId(rs.getInt("id"));
                 d.setName(rs.getString("name"));
                 d.setPrice(rs.getDouble("price"));
-                d.setDesc(rs.getString("image_url"));
+                d.setImageUrl(rs.getString("image_url"));
                 d.setDesc(rs.getString("description"));
                 list.add(d);
             }
