@@ -29,7 +29,7 @@
 }
 
 .panel {
-	width: 65%;
+	width: 66%;
 	background: rgba(255, 255, 255, 0.95);
 	border-radius: 26px;
 	padding: 28px;

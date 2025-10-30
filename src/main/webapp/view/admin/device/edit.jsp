@@ -24,6 +24,20 @@
         background: #fff;
         padding: 6px;
     }
+    
+    .form-error-box {
+        color: #d9534f;
+        background-color: #f2dede;
+        border: 1px solid #ebccd1;
+        padding: 10px 15px;
+        border-radius: 4px;
+        margin-bottom: 15px;
+    }
+    
+    input[readonly] {
+        background-color: #eeeeee !important;
+        cursor: not-allowed;
+    }
 </style>
 
 <script>
@@ -53,8 +67,10 @@
 
         <section class="panel">
             <h2>Cập nhật thông tin</h2>
+            <c:if test="${not empty error}">
+                <div class="form-error-box">${error}</div>
+            </c:if>
             <c:if test="${not empty device}">
-            
             <form class="device-form" action="device-update" method="post" enctype="multipart/form-data">
                 <div class="form-grid">
                     <input type="hidden" name="id" value="${device.id}">
@@ -72,9 +88,15 @@
                             </c:forEach>
                         </select>
                     </div>
+                    
                     <div class="form-field">
                         <label for="price">Giá bán (₫)</label>
-                        <input id="price" name="price" type="number" min="0" value="${device.price}">
+                        <input id="price" name="price" value="${device.price}" readonly>
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="unit">Đơn vị</label>
+                        <input type="text" id="unit"  name="unit" required value="${device.unit}" placeholder="Ví dụ: Cái">
                     </div>
 					
 					<div class="form-field">
@@ -83,8 +105,6 @@
 					    <input style="margin-bottom: 7px;width: 35px;" type="checkbox" id="isFeatured" name="isFeatured" value="true"
 					           <c:if test="${device.isFeatured}">checked</c:if>>
 					</div>
-
-
                     
                     <div class="form-field file-image">
 					    <label for="avartaFile">Ảnh</label>

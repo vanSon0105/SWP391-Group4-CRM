@@ -81,7 +81,7 @@ public class TechnicalStaffController extends HttpServlet {
 
 		boolean updated = taskDetailDao.updateAssignmentStatus(assignmentId, staff.getId(), status, summary);
 		if (updated) {
-			syncIssueStatus(assignment.getTaskId(), assignment.getCustomerIssueId(), status);
+			syncIssueStatus(assignment.getTaskId(), assignment.getCustomerIssueId(), status, staff.getId());
 			resp.sendRedirect("technical-issues?updated=1");
 		} else {
 			resp.sendRedirect("technical-issues?error=1");
@@ -104,16 +104,34 @@ public class TechnicalStaffController extends HttpServlet {
 		}
 	}
 
-	private void syncIssueStatus(int taskId, Integer issueId, String latestStatus) {
+	private void syncIssueStatus(int taskId, Integer issueId, String latestStatus, int initiatingStaffId) {
 		if (issueId == null) {
 			return;
 		}
 
 		List<TaskDetail> details = taskDetailDao.getTaskDetail(taskId);
+		if (details == null || details.isEmpty()) {
+			return;
+		}
+		if ("cancelled".equalsIgnoreCase(latestStatus)) {
+			for (TaskDetail detail : details) {
+				if (detail.getTechnicalStaffId() != initiatingStaffId && !"cancelled".equalsIgnoreCase(detail.getStatus())) {
+					
+					taskDetailDao.updateAssignmentStatus(detail.getId(), detail.getTechnicalStaffId(), "cancelled", null);
+				}
+			}
+			issueDao.updateSupportStatus(issueId, "cancelled");
+			return;
+		}
+
+		details = taskDetailDao.getTaskDetail(taskId);
+
 		boolean allCompleted = true;
 		boolean anyInProgress = false;
+
 		for (TaskDetail detail : details) {
 			String status = detail.getStatus();
+			
 			if (!"completed".equalsIgnoreCase(status)) {
 				allCompleted = false;
 			}
@@ -122,13 +140,13 @@ public class TechnicalStaffController extends HttpServlet {
 			}
 		}
 
-		if (allCompleted && !details.isEmpty()) {
+		if (allCompleted) {
 			issueDao.updateSupportStatus(issueId, "resolved");
-		} else 
-		if (anyInProgress || "in_progress".equalsIgnoreCase(latestStatus)) {
+		} else if (anyInProgress) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
 		} else {
 			issueDao.updateSupportStatus(issueId, "task_created");
 		}
 	}
+	
 }

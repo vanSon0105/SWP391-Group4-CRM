@@ -78,6 +78,18 @@ public class TaskDetail {
 		this.deadline = deadline;
 		this.status = status;
 	}
+	
+	public TaskDetail(int id, int taskId, int technicalStaffId, Timestamp assignedAt, Timestamp deadline,
+			String status, String note) {
+		super();
+		this.id = id;
+		this.taskId = taskId;
+		this.technicalStaffId = technicalStaffId;
+		this.assignedAt = assignedAt;
+		this.deadline = deadline;
+		this.status = status;
+		this.note = note;
+	}
 
 
 

@@ -226,7 +226,7 @@
                                     <div style="color:#64748b;">${assignment.taskDescription}</div>
                                 </td>
                                 <td>
-                                    <div>Ma: ${assignment.issueCode}</div>
+                                    <div>Mã: ${assignment.issueCode}</div>
                                     <div>Tiêu đề: ${assignment.issueTitle}</div>
                                 </td>
                                 <td>
@@ -258,7 +258,11 @@
                                             <option value="cancelled" ${assignment.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
                                         </select>
                                         <button type="submit">Lưu</button>
+	                                    <c:if test="${assignment.status == 'cancelled'}">
+		                                    <button type="button" class="btn-show-reason" data-reason="${fn:escapeXml(assignment.note)}">Hiển thị lý do</button>
+		                                </c:if>
                                     </form>
+                                    
                                 </td>
                             </tr>
                         </c:forEach>
@@ -283,6 +287,16 @@
         </div>
     </div>
     
+    <div id="reason-modal" class="summary-modal-overlay hidden">
+	    <div class="summary-modal">
+	        <h2>Lý do hủy</h2>
+	        <p id="reason-modal-message" style="margin:0; color:#475569; font-size:14px;"></p>
+	        <div class="summary-modal-actions">
+	            <button type="button" class="btn-secondary" id="reason-modal-close">Đóng</button>
+	        </div>
+	    </div>
+	</div>
+    
     <script>
         (function () {
             var forms = document.querySelectorAll('.assignment-form');
@@ -292,6 +306,9 @@
             var confirmButton = document.getElementById('summary-modal-confirm');
             var cancelButton = document.getElementById('summary-modal-cancel');
             var activeForm = null;
+            var reasonModalOverlay = document.getElementById('reason-modal');
+            var reasonMessage = document.getElementById('reason-modal-message');
+            var closeReasonModal = document.getElementById('reason-modal-close');
 
             forms.forEach(function (form) {
                 var statusSelect = form.querySelector('select[name="status"]');
@@ -341,11 +358,30 @@
                 modalOverlay.classList.add('hidden');
                 activeForm = null;
             });
+            
+            closeReasonModal.addEventListener('click', function () {
+                reasonModalOverlay.classList.add('hidden');
+            });
 
             modalOverlay.addEventListener('click', function (event) {
                 if (event.target === modalOverlay) {
                     modalOverlay.classList.add('hidden');
                     activeForm = null;
+                }
+            });
+            
+            var showReasonButtons = document.querySelectorAll('.btn-show-reason');
+            showReasonButtons.forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var reason = button.getAttribute('data-reason');
+                    reasonMessage.textContent = reason || 'Không có lý do hủy.';
+                    reasonModalOverlay.classList.remove('hidden');
+                });
+            });
+
+            reasonModalOverlay.addEventListener('click', function (event) {
+                if (event.target === reasonModalOverlay) {
+                    reasonModalOverlay.classList.add('hidden');
                 }
             });
         })();

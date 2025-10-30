@@ -127,6 +127,7 @@ th {
 						<th>Assigned At</th>
 						<th>Deadline</th>
 						<th>Status</th>
+						<th>Lí do</th>
 						<!-- <th>Action</th> -->
 					</tr>
 				</thead>
@@ -138,6 +139,7 @@ th {
 							<td>${taskDetail.assignedAt}</td>
 							<td>${taskDetail.deadline}</td>
 							<td>${taskDetail.status}</td>
+							<td>${taskDetail.note}</td>
 							<!-- <td><button class="btn btn-secondary">Cập nhật</button></td> -->
 						</tr>
 					</tbody>
