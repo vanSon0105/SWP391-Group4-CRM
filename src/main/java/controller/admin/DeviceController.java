@@ -12,6 +12,7 @@ import model.Category;
 import model.Device;
 import model.DeviceSerial;
 import model.User;
+import utils.AuthorizationUtils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -73,6 +74,11 @@ public class DeviceController extends HttpServlet {
 	
 	public void showDeviceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
+        
 	    String mess = (String) session.getAttribute("mess");
 	    if (mess != null) {
 	        request.setAttribute("mess", mess);
@@ -107,18 +113,22 @@ public class DeviceController extends HttpServlet {
 	}
 	
 	public void viewDeviceDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		int id = Integer.parseInt(request.getParameter("id"));			
-
-		
 		Device d = dao.getDeviceDetail(id);
 		request.setAttribute("deviceDetail", d);
 		request.getRequestDispatcher("view/admin/device/view.jsp").forward(request, response);
 	}
 	
 	public void updateDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		int id = Integer.parseInt(request.getParameter("id"));			
-
-		
 		Device getDevice = dao.getDeviceById(id);
 		List<Category> listCategory = cdao.getAllCategories();
 		request.setAttribute("device", getDevice);
@@ -127,15 +137,30 @@ public class DeviceController extends HttpServlet {
 	}
 	
 	public void updateDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		String name = request.getParameter("name");
         int id = Integer.parseInt(request.getParameter("id"));
-        int categoryId = Integer.parseInt(request.getParameter("categoryId"));	
-        Double price = Double.parseDouble(request.getParameter("price"));
+        Device oldDevice = dao.getDeviceById(id);
+        if (oldDevice == null) {
+        	response.sendRedirect("device-show?error=Device+not+found");
+        	return;
+        }
+        
+        int categoryId = 0;
+        Double price = 0.0;
+		try {
+			categoryId = Integer.parseInt(request.getParameter("categoryId"));		
+			price = Double.parseDouble(request.getParameter("price")); 
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		Part filePart = request.getPart("image");
         String fileName = dao.saveUploadFile(filePart, "device", getServletContext());
         if (fileName.isEmpty()) {
-            Device oldDevice = dao.getDeviceById(id);
             fileName = oldDevice.getImageUrl();
         }
 		
@@ -145,6 +170,18 @@ public class DeviceController extends HttpServlet {
         Boolean isFeatured = Boolean.parseBoolean(request.getParameter("isFeatured"));
         
         Device device = new Device(id, c, name, price, fileName, unit, description, isFeatured);
+        if (name.length() > 100) {
+            checkEditDevice(request, response, device, "Tên thiết bị không được vượt quá 100 ký tự!");
+            return;
+        }
+        
+        if (!name.equals(oldDevice.getName())) {
+            boolean checkName = dao.checkExistByName(name);
+            if (checkName) {
+                checkEditDevice(request, response, device, "Tên thiết bị đã tồn tại!");
+                return;
+            }
+        }
         boolean check = dao.updateDevice(device);
         String mess = check ? "Update device thành công" : "Update device thất bại";
 		HttpSession session = request.getSession();
@@ -154,19 +191,39 @@ public class DeviceController extends HttpServlet {
 	}
 	
 	public void addDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		List<Category> listCategory = cdao.getAllCategories();
         request.setAttribute("categories", listCategory);
 		request.getRequestDispatcher("view/admin/device/add.jsp").forward(request, response);
 	}
 
 	public void addDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		String name = request.getParameter("name");
+		if (name.length() > 100) {
+	        int categoryId = 0;
+	        try {
+	            categoryId = Integer.parseInt(request.getParameter("categoryId"));
+	        } catch (Exception e) {
+	        	e.printStackTrace();
+	        }
+	        String unit = request.getParameter("unit");
+	        String description = request.getParameter("description");
+	        checkAddDevice(request, response, null, categoryId, 0.0, unit, description, true, "Tên thiết bị không được vượt quá 100 ký tự!");
+	        return;
+	    }
 		boolean checkName = dao.checkExistByName(name);
         int categoryId = 0;
         Double price = 0.0;
 		try {
 			categoryId = Integer.parseInt(request.getParameter("categoryId"));		
-			price = Double.parseDouble(request.getParameter("price")); 
+//			price = Double.parseDouble(request.getParameter("price")); 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -194,6 +251,7 @@ public class DeviceController extends HttpServlet {
         d.setImageUrl(fileName);
         d.setDesc(description);
         d.setIsFeatured(isFeatured);
+        d.setStatus("discontinued");
         
         int newDeviceId = dao.insertDevice(d);
         if(newDeviceId <= 0) {
@@ -213,8 +271,11 @@ public class DeviceController extends HttpServlet {
 	}
 
 	public void deleteDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		int id = Integer.parseInt(request.getParameter("id"));			
-
 		Device getDevice = dao.getDeviceById(id);
 		List<DeviceSerial> listDeviceSerials = dsdao.getAllDeviceSerials(getDevice.getId());
 		request.setAttribute("listDeviceSerials", listDeviceSerials);
@@ -224,8 +285,11 @@ public class DeviceController extends HttpServlet {
 	
 	
 	public void deleteDeviceDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		int id = Integer.parseInt(request.getParameter("id"));			
-
 		boolean check = dao.deleteDevice(id);
 		String mess = check ? "Delete device thành công" : "Delete device thất bại";
 		HttpSession session = request.getSession();
@@ -253,7 +317,7 @@ public class DeviceController extends HttpServlet {
 	private void checkAddDevice(HttpServletRequest request, HttpServletResponse response, String name, int categoryId, double price, String unit, String description, boolean isFeatured, String mss) throws ServletException, IOException {
 		request.setAttribute("name", name);
 		request.setAttribute("categoryId", categoryId);
-		request.setAttribute("price", price);
+//		request.setAttribute("price", price);
 		request.setAttribute("unit", unit);
 		request.setAttribute("desc", description);
 		request.setAttribute("isFeatured", isFeatured);
@@ -263,7 +327,19 @@ public class DeviceController extends HttpServlet {
 		request.getRequestDispatcher("view/admin/device/add.jsp#device-name").forward(request, response);
 	}
 	
+	private void checkEditDevice(HttpServletRequest request, HttpServletResponse response, Device d, String mss) throws ServletException, IOException {
+		request.setAttribute("device", d);
+		request.setAttribute("error", mss);
+		List<Category> listCategory = cdao.getAllCategories();
+        request.setAttribute("categories", listCategory);
+		request.getRequestDispatcher("view/admin/device/edit.jsp#name").forward(request, response);
+	}
+	
 	public void activeDevice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+        if (currentUser == null) {
+            return;
+        }
 		int id = Integer.parseInt(request.getParameter("id"));			
 		boolean check = dao.activeDevice(id);
 		String mess = check ? "Active device thành công" : "Active device thất bại";

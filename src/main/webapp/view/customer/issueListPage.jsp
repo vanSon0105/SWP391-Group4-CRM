@@ -137,6 +137,11 @@
       background: #fef3c7;
       color: #92400e;
     }
+    
+    .status-manager_review{
+      background: #ecffa3;
+      color: #3f3939;
+    }
 
     .status-resolved {
       background: #dcfce7;
@@ -302,8 +307,9 @@
                                     <c:when test="${status == 'awaiting_customer'}">Chờ bổ sung</c:when>
                                     <c:when test="${status == 'submitted'}">Đã chuyển kỹ thuật</c:when>
                                     <c:when test="${status == 'in_progress'}">Đang xử lý</c:when>
-                                    <c:when test="${status == 'manager_rejected'}">Cần bổ sung thông tin</c:when>
+                                    <c:when test="${status == 'manager_rejected'}">Quản lí từ chối! Xem yêu cầu</c:when>
                                     <c:when test="${status == 'customer_cancelled'}">Đã hủy theo yêu cầu khách</c:when>
+                                    <c:when test="${status == 'manager_review'}">Đang đợi quản lí duyệt</c:when>
                                     <c:when test="${status == 'manager_approved'}">Đã duyệt tạo task</c:when>
                                     <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
                                     <c:when test="${status == 'tech_in_progress'}">Đang thực hiện</c:when>

@@ -18,7 +18,7 @@
                 <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của TechShop</p>
                 <div class="banner-btn">
                     <a href="device-page">Khám phá sản phẩm</a>
-                    <a class="secondary" href="order-tracking.html">Theo dõi đơn hàng</a>
+                    <a class="secondary" href="order-tracking">Theo dõi đơn hàng</a>
                     <a class="secondary" href="issue">Theo dõi bảo hành</a>
                 </div>
             </div>

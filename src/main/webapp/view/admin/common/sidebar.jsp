@@ -20,7 +20,7 @@
         <c:if test="${permissions != null && permissions.contains('DEVICE_OVERVIEW')}">
             <a href="admin">Dashboard</a>
         </c:if>
-        <c:if test="${permissions != null && permissions.contains('DEVICE_CATALOG_MANAGEMENT')}">
+        <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
             <a href="device-show">Thiết bị</a>
         </c:if>
         <c:if test="${permissions != null && permissions.contains('CATEGORY_MANAGEMENT')}">

@@ -80,10 +80,11 @@ public class User {
     public String getRole() {
         switch (this.roleId) {
             case 1: return "admin";
-            case 2: return "technical_staff";
-            case 3: return "customer_support";
-            case 4: return "storekeeper";
-            case 5: return "customer";
+            case 2: return "technical_manager";
+            case 3: return "technical_staff";
+            case 4: return "customer_support_staff";
+            case 5: return "storekeeper";
+            case 6: return "customer";
             default: return "unknown";
         }
     }

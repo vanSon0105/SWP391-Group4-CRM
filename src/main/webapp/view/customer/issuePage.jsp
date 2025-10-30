@@ -137,6 +137,10 @@
             color: #64748b;
             margin-top: 6px;
         }
+        
+        option:disabled {
+            color: #94a3b8;
+        }
     </style>
 </head>
 <body class="home-page">
@@ -183,12 +187,14 @@
 
 			<div id="warrantySection">
 	            <label for="serialNo">Thiết bị đã mua</label>
-                    <select id="warrantyCardId" name="warrantyCardId" required>
+                    <select id="warrantyCardId" name="warrantyCardId">
                         <option value="">-- Chọn thiết bị --</option>
                         <c:forEach var="device" items="${list}">
                             <option value="${device.warrantyCardId}"
-                                <c:if test="${selectedWarrantyId == device.warrantyCardId}">selected</c:if>>
+                                <c:if test="${selectedWarrantyId == device.warrantyCardId}">selected</c:if>
+                                <c:if test="${device.hasActiveIssue}">disabled</c:if>>
                                 ${device.deviceName} (${device.serialNumber})
+                                <c:if test="${device.hasActiveIssue}"> (Đang có yêu cầu xử lý)</c:if>
                             </option>
                         </c:forEach>
                     </select>

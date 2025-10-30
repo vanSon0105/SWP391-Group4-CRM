@@ -58,6 +58,23 @@ public class TaskDetailDAO extends DBContext{
             ps.executeUpdate();
         }
     }
+	
+	public int getTechnicalStaffIdByTaskId(int taskId) {
+	    String sql = "SELECT technical_staff_id FROM task_details WHERE task_id = ?;";
+	    try (Connection c = getConnection(); 
+	         PreparedStatement ps = c.prepareStatement(sql)) {
+	        ps.setInt(1, taskId);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt("technical_staff_id");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return -1;
+	}
+
     
 //	public void assignStaffToTask(int taskId, int staffId, Integer assignedBy, Timestamp deadline) {
 //        String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_by, deadline) " +
@@ -253,7 +270,7 @@ public class TaskDetailDAO extends DBContext{
     }
 
     public TaskDetail getAssignmentForStaff(int detailId, int staffId) {
-        String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.status\r\n"
+        String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.status, t.customer_issue_id\r\n"
         		+ "FROM task_details td\r\n"
         		+ "JOIN tasks t ON td.task_id = t.id\r\n"
         		+ "WHERE td.id = ? AND td.technical_staff_id = ?;";
@@ -267,6 +284,7 @@ public class TaskDetailDAO extends DBContext{
                     td.setTaskId(rs.getInt("task_id"));
                     td.setTechnicalStaffId(rs.getInt("technical_staff_id"));
                     td.setStatus(rs.getString("status"));
+                    td.setCustomerIssueId(rs.getInt("customer_issue_id"));
                     return td;
                 }
             }
@@ -325,7 +343,8 @@ public class TaskDetailDAO extends DBContext{
 						rs.getInt("technical_staff_id"),
 						rs.getTimestamp("assigned_at"),
 						rs.getTimestamp("deadline"),
-						rs.getString("status")
+						rs.getString("status"),
+						rs.getString("note")
 						));
 			}
 			

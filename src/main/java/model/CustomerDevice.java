@@ -4,6 +4,7 @@ public class CustomerDevice {
 	private int warrantyCardId;
     private String deviceName;
     private String serialNumber;
+    private boolean hasActiveIssue;
 
     public CustomerDevice() {}
 
@@ -12,16 +13,35 @@ public class CustomerDevice {
         this.deviceName = deviceName;
         this.serialNumber = serialNumber;
     }
+    
+    
 
-    public int getWarrantyCardId() {
+    public CustomerDevice(int warrantyCardId, String deviceName, String serialNumber, boolean hasActiveIssue) {
+		super();
+		this.warrantyCardId = warrantyCardId;
+		this.deviceName = deviceName;
+		this.serialNumber = serialNumber;
+		this.hasActiveIssue = hasActiveIssue;
+	}
+
+	public int getWarrantyCardId() {
         return warrantyCardId;
     }
 
     public void setWarrantyCardId(int warrantyCardId) {
         this.warrantyCardId = warrantyCardId;
     }
+    
 
-    public String getDeviceName() {
+    public boolean isHasActiveIssue() {
+		return hasActiveIssue;
+	}
+
+	public void setHasActiveIssue(boolean hasActiveIssue) {
+		this.hasActiveIssue = hasActiveIssue;
+	}
+
+	public String getDeviceName() {
         return deviceName;
     }
 

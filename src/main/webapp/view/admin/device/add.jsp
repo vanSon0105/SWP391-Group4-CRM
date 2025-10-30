@@ -14,6 +14,17 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <style>
+	.image-preview {
+        margin-top: 12px;
+    }
+    .image-preview img {
+        max-width: 220px;
+        border-radius: 12px;
+        border: 1px solid #d7dce6;
+        background: #fff;
+        padding: 6px;
+    }
+    
     .form-field .error-message {
         color: #d9534f;
         font-size: 0.9em;
@@ -27,7 +38,29 @@
         border-radius: 4px;
         margin-bottom: 15px;
     }
+    
+    input[readonly] {
+        background-color: #eeeeee !important;
+        cursor: not-allowed;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {     
+        const fileInput = document.getElementById('image');
+        const previewImage = document.querySelector('.image-preview img');
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+</script>
 </head>
 <body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
@@ -59,25 +92,28 @@
                             </c:forEach>
                         </select>
                     </div>
+                    <%-- 
                     <div class="form-field">
                         <label for="price">Giá bán (₫)</label>
-                        <input id="price" name="price" type="number" min="0" placeholder="9490000" required value="${price}">
-                    </div>
+                        <input id="price" name="price" placeholder="9490000" readonly value="${price}">
+                    </div> --%>
                     <div class="form-field">
                         <label for="unit">Đơn vị</label>
-                        <input type="text" id="unit"  name="unit" required value="${unit}">
+                        <input type="text" id="unit"  name="unit" required value="${unit}" placeholder="Ví dụ: Cái">
                     </div>
                     
                     <div class="form-field">
                         <label for="isFeatured">Nổi bật</label>
-                        <input style="margin-bottom: 7px;width: 35px;" type="checkbox" id="isFeatured"  name="isFeatured" value="true" <c:if test="${isFeatured}">checked</c:if>>
+                        <input style="margin-bottom: 7px;width: 30px; height: 30px;" type="checkbox" id="isFeatured"  name="isFeatured" value="true" <c:if test="${isFeatured}">checked</c:if>>
                     </div>
                     
                     <div class="form-field file-image">
 					    <label for="image">Ảnh</label>
-					    <input type="file" id="image" name="image" accept="image/*">
+					    <input type="file" id="image" name="image" accept="image/*" style="width: 100%;">
+					    <div class="image-preview">
+                            <img src="${pageContext.request.contextPath}/assets/img/device/${device.imageUrl}" alt="Anh thiet bi hien tai">
+                        </div>
 					</div>
-					
                 </div>
                 <div class="form-field">
                     <label for="description">Mô tả</label>

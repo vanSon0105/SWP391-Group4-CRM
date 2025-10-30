@@ -77,6 +77,11 @@
 		ease;
 }
 
+.management-page.device-management .panel a{
+    border: 1px solid;
+    font-size: 1.5rem;
+}
+
 .device-management .pagination-pills a.active {
 	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95),
 		rgba(59, 130, 246, 0.95));

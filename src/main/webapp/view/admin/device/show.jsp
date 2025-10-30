@@ -54,7 +54,6 @@
 	body .panel h2{
 		margin-bottom: 0 !important;
 	}
-}
 </style>
 </head>
 <body class="management-page device-management">
@@ -80,15 +79,28 @@
 					        </c:forEach>
 					    </select>
 					    
-					    <select class="btn device-btn" name="sortBy">
+					    <select class="btn device-btn" name="sortBy" onchange="this.form.submit()">
 					        <option value="id" ${param.sortBy == 'id' ? 'selected' : ''}>Sắp xếp theo ID</option>
 					        <option value="price" ${param.sortBy == 'price' ? 'selected' : ''}>Sắp xếp theo giá</option>
+					        <option value="name" ${param.sortBy == 'name' ? 'selected' : ''}>Sắp xếp theo tên</option>
+					        <option value="status" ${param.sortBy == 'status' ? 'selected' : ''}>Sắp xếp theo trạng thái</option>
 					    </select>
 					
-					    <select class="btn device-btn" name="order">
-					        <option value="asc" ${param.order == 'asc' ? 'selected' : ''}>Tăng dần</option>
-					        <option value="desc" ${param.order == 'desc' ? 'selected' : ''}>Giảm dần</option>
-					    </select>
+					    <c:choose>
+						    <c:when test="${param.sortBy == 'status'}">
+						        <select class="btn device-btn" name="order">
+						            <option value="active" ${param.order == 'active' ? 'selected' : ''}>Active</option>
+						            <option value="discontinued" ${param.order == 'discontinued' ? 'selected' : ''}>Inactive</option>
+						        </select>
+						    </c:when>
+						    
+						    <c:otherwise>
+						        <select class="btn device-btn" name="order">
+						            <option value="asc" ${param.order == 'asc' ? 'selected' : ''}>Tăng dần</option>
+						            <option value="desc" ${param.order == 'desc' ? 'selected' : ''}>Giảm dần</option>
+						        </select>
+						    </c:otherwise>
+						</c:choose>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
 		            	<a href="device-show" class="btn device-btn">Reset</a>
@@ -150,8 +162,8 @@
 		                          </c:forEach>
 	                        </tbody>
 	                    </table>
-                   </c:if>
                    <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thiết bị: <strong>${totalDevices}</strong></p>
+                   </c:if>
                    
                    <c:if test="${empty listDevices && empty listDeviceSerials}">
 	                   <table class="device-table"> 

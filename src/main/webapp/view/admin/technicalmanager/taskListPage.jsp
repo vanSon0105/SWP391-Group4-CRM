@@ -3,6 +3,7 @@
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,42 +19,12 @@
 .device-btn {
 	color: black !important;
 }
-/* 
-.device-management .pagination-pills {
-	display: flex;
-	justify-content: center;
-	gap: 10px;
+
+.management-page.device-management .panel a{
+    border: 1px solid;
+    font-size: 1.5rem;
 }
 
-.device-management .pagination-pills a {
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	text-decoration: none;
-	width: 44px;
-	height: 44px;
-	padding: 0;
-	border-radius: 16px;
-	border: 1px solid rgba(15, 23, 42, 0.15);
-	background: rgba(255, 255, 255, 0.9);
-	color: #1f2937;
-	font-weight: 600;
-	cursor: pointer;
-	transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s
-		ease;
-}
-
-.device-management .pagination-pills a.active {
-	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95),
-		rgba(59, 130, 246, 0.95));
-	color: #f8fafc;
-	border-color: transparent;
-	box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-}
-
-.device-management .pagination-pills a:hover {
-	transform: translateY(-2px);
-} */
 body .panel h2 {
 	margin-bottom: 0 !important;
 }
@@ -114,6 +85,69 @@ body .panel h2 {
 	background: #fee2e2;
 	color: #991b1b;
 }
+
+		.hidden {
+            display: none;
+        }
+
+        .summary-modal-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 999;
+        }
+        
+        .summary-modal-overlay.hidden {
+            display: none;
+        }
+
+        .summary-modal {
+            width: min(480px, 90%);
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-modal h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .summary-modal textarea {
+            resize: vertical;
+            min-height: 120px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5f5;
+            font-family: inherit;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .summary-modal textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .summary-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
 </style>
 </head>
 <body class="management-page device-management">
@@ -213,12 +247,10 @@ body .panel h2 {
 
 
 									<td style="display: flex; gap: 5px;">
-									 <c:if
-											test="${task.status != 'cancelled'}">
-											<a href="task-detail?id=${task.id}" class="btn device-btn">Xem</a>
-										</c:if> 
-										<c:if
-											test="${task.status != 'cancelled' and task.status != 'completed'}">
+
+										<a href="task-detail?id=${task.id}" class="btn device-btn">Xem</a>
+										
+										<c:if test="${task.status != 'cancelled' and task.status != 'completed'}">
 											<a class="btn device-btn" href="task-form?id=${task.id}">Sửa</a>
 
 											<form action="task-list" method="post"
@@ -262,10 +294,9 @@ body .panel h2 {
 						class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}">
 						${i} </a>
 				</c:forEach>
-
 			</div>
+			
 		</section>
-
 	</main>
 </body>
 </html>
