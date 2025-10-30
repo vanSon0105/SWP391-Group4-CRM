@@ -253,7 +253,7 @@ public class TaskDetailDAO extends DBContext{
     }
 
     public TaskDetail getAssignmentForStaff(int detailId, int staffId) {
-        String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.status\r\n"
+        String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.status, t.customer_issue_id\r\n"
         		+ "FROM task_details td\r\n"
         		+ "JOIN tasks t ON td.task_id = t.id\r\n"
         		+ "WHERE td.id = ? AND td.technical_staff_id = ?;";
@@ -267,6 +267,7 @@ public class TaskDetailDAO extends DBContext{
                     td.setTaskId(rs.getInt("task_id"));
                     td.setTechnicalStaffId(rs.getInt("technical_staff_id"));
                     td.setStatus(rs.getString("status"));
+                    td.setCustomerIssueId(rs.getInt("customer_issue_id"));
                     return td;
                 }
             }

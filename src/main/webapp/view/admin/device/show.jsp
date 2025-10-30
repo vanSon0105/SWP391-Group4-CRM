@@ -150,8 +150,8 @@
 		                          </c:forEach>
 	                        </tbody>
 	                    </table>
-                   </c:if>
                    <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thiết bị: <strong>${totalDevices}</strong></p>
+                   </c:if>
                    
                    <c:if test="${empty listDevices && empty listDeviceSerials}">
 	                   <table class="device-table"> 

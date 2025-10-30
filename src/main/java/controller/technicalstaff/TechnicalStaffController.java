@@ -58,8 +58,7 @@ public class TechnicalStaffController extends HttpServlet {
 			return;
 		}
 
-		TaskDetail assignment = null;
-				assignment	= taskDetailDao.getAssignmentForStaff(assignmentId, staff.getId());
+		TaskDetail assignment = taskDetailDao.getAssignmentForStaff(assignmentId, staff.getId());
 		if (assignment == null) {
 			resp.sendRedirect("technical-issues?invalid=1");
 			return;
@@ -123,9 +122,9 @@ public class TechnicalStaffController extends HttpServlet {
 			}
 		}
 
-//		if (allCompleted && !details.isEmpty()) {
-//			issueDao.updateSupportStatus(issueId, "resolved");
-//		} else 
+		if (allCompleted && !details.isEmpty()) {
+			issueDao.updateSupportStatus(issueId, "resolved");
+		} else 
 		if (anyInProgress || "in_progress".equalsIgnoreCase(latestStatus)) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
 		} else {
