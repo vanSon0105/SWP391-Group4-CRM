@@ -1,277 +1,279 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-	<%@ page isELIgnored="false" %>
-	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page isELIgnored="false"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TechShop</title>
-    <style>
-        body.home-page {
-            background: #f5f6fa;
-        }
-        
-        .home-page main{
-        	padding: 36px 24px !important;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TechShop</title>
+<style>
+    body.home-page {
+      background: #f5f6fa;
+    }
 
-        .issue-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
+    .home-page main {
+      padding: 36px 24px !important;
+    }
 
-        .issue-header h1 {
-            margin: 0;
-            color: #1f2d3d;
-        }
+    .issue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
 
-        .btn-primary {
-            background: #2563eb;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-        }
+    .issue-header h1 {
+      margin: 0;
+      color: #1f2d3d;
+    }
 
-        .alert {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-            font-size: 14px;
-        }
-        
-        .status-reason {
-            margin-top: 6px;
-            font-size: 12px;
-            color: #b91c1c;
-        }
+    .btn-primary {
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+    }
 
-        .alert-success {
-            background: #dcfce7;
-            color: #047857;
-        }
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(31, 45, 61, 0.08);
-        }
+    .status-reason {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #b91c1c;
+    }
 
-        th,
-        td {
-            padding: 14px 16px !important;
-            text-align: left;
-            border-bottom: 1px solid #eef2f6;
-            font-size: 14px;
-        }
+    .alert-success {
+      background: #dcfce7;
+      color: #047857;
+    }
 
-        th {
-            background: #f8fafc;
-            font-weight: 600;
-            color: #475569;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(31, 45, 61, 0.08);
+    }
 
-        tr:last-child td {
-            border-bottom: none;
-        }
+    th, td {
+      padding: 14px 16px !important;
+      text-align: left;
+      border-bottom: 1px solid #eef2f6;
+      font-size: 14px;
+    }
 
-        .status-pill {
-            display: inline-flex;
-            align-items: center;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: .04em;
-        }
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+    }
 
-        .status-new {
-            background: #e2e8f0;
-            color: #1e293b;
-        }
-        
-        .status-customer_cancelled {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
+    tr:last-child td {
+      border-bottom: none;
+    }
 
-        .status-in_progress {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
-        
-        .status-awaiting_customer {
-            background: #fef3c7;
-            color: #b45309;
-        }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
 
-        .status-submitted {
-            background: #dcfce7;
-            color: #047857;
-        }
-        
-        .status-manager_rejected {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
+    .status-new {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
 
-        .status-manager_approved {
-            background: #cffafe;
-            color: #0f766e;
-        }
+    .status-customer_cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
 
-        .status-task_created {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
+    .status-in_progress {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
 
-        .status-tech_in_progress {
-            background: #fef3c7;
-            color: #92400e;
-        }
+    .status-awaiting_customer {
+      background: #fef3c7;
+      color: #b45309;
+    }
 
-        .status-resolved {
-            background: #dcfce7;
-            color: #15803d;
-        }
-        
+    .status-submitted {
+      background: #dcfce7;
+      color: #047857;
+    }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 0;
-            color: #475569;
-        }
-        
-        .action-link {
-            text-decoration: none;
-            color: #2563eb;
-            font-weight: 600;
-        }
-        
-        .link-button {
-            border-radius: 5px;
-		    background: #ffd7d7;
-		    border: 1px solid red;
-		    color: #dc2626;
-		    cursor: pointer;
-		    font-weight: 600;
-		    padding: 4px;
-		    margin-left: 12px;
-		    transition: all 0.5s ease;
-        }
-        
-        .action-view{
-        	display: inline-block;
-        	border-radius: 5px;
-		    background: #cdddfc;
-		    border: 1px solid #f7d3d3;
-		    color: #0f172a;
-		    cursor: pointer;
-		    font-weight: 600;
-		    padding: 4px;
-		    margin-left: 12px;
-		    transition: all 0.5s ease;
-        }
+    .status-manager_rejected {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
 
-        .link-button:hover,
-        .action-view:hover {
-            transform: scale(1.1);
-        }
-        
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
+    .status-manager_approved {
+      background: #cffafe;
+      color: #0f766e;
+    }
 
-        .modal-content {
-            background-color: #fff;
-            margin: auto;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-            width: 90%;
-            max-width: 600px;
-            position: relative;
-        }
+    .status-task_created {
+      background: #ede9fe;
+      color: #6d28d9;
+    }
 
-        .modal-close {
-            color: #aaa;
-            position: absolute;
-            top: -5px;
-            right: 5px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 10px;
-        }
-        
-        .modal-content h2 {
-            margin-top: 0;
-            color: #1f2d3d;
-            border-bottom: 1px solid #eef2f6;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-        .task-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .task-detail-item {
-            font-size: 1.6rem;
-        }
-        .task-detail-item strong {
-            display: block;
-            color: #475569;
-            margin-bottom: 4px;
-        }
-        .task-detail-item span {
-            color: #1f2d3d;
-        }
-        .task-detail-full {
-        	grid-column: 1 / -1;
-        }
-    </style>
+    .status-tech_in_progress {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-resolved {
+      background: #dcfce7;
+      color: #15803d;
+    }
+  
+    .empty-state {
+        text-align: center;
+        padding: 40px 0;
+        color: #475569;
+    }
+
+    .action-link {
+        text-decoration: none;
+        color: #2563eb;
+        font-weight: 600;
+    }
+
+    .link-button {
+        border-radius: 5px;
+    background: #ffd7d7;
+    border: 1px solid red;
+    color: #dc2626;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px;
+    margin-left: 12px;
+    transition: all 0.5s ease;
+    }
+
+    .action-view{
+      display: inline-block;
+      border-radius: 5px;
+    background: #cdddfc;
+    border: 1px solid #f7d3d3;
+    color: #0f172a;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px;
+    margin-left: 12px;
+    transition: all 0.5s ease;
+    }
+
+    .link-button:hover,
+    .action-view:hover {
+        transform: scale(1.1);
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        width: 90%;
+        max-width: 600px;
+        position: relative;
+    }
+
+    .modal-close {
+        color: #aaa;
+        position: absolute;
+        top: -5px;
+        right: 5px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .modal-content h2 {
+        margin-top: 0;
+        color: #1f2d3d;
+        border-bottom: 1px solid #eef2f6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    .task-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .task-detail-item {
+        font-size: 1.6rem;
+    }
+    .task-detail-item strong {
+        display: block;
+        color: #475569;
+        margin-bottom: 4px;
+    }
+    .task-detail-item span {
+        color: #1f2d3d;
+    }
+    .task-detail-full {
+      grid-column: 1 / -1;
+    }
+</style>
 </head>
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
-    <main>
-        <div class="issue-header">
-    <h1>Yêu cầu hỗ trợ của tôi</h1>
-    <a class="btn-primary" href="create-issue">Gửi yêu cầu mới</a>
-</div>
+	<main>
+		<div class="issue-header">
+			<h1>Yêu cầu hỗ trợ của tôi</h1>
+			<a class="btn-primary" href="create-issue">Gửi yêu cầu mới</a>
+		</div>
 
-<c:if test="${param.created == '1'}">
-    <div class="alert alert-success">Đã gửi yêu cầu thành công! Bộ phận hỗ trợ sẽ liên hệ với bạn sớm nhất.</div>
-</c:if>
-<c:if test="${param.details == '1'}">
-    <div class="alert alert-success">Đã gửi form thông tin cho nhân viên hỗ trợ.</div>
-</c:if>
-<c:if test="${param.invalid == '1'}">
-    <div class="alert alert-warning">Yêu cầu bổ sung không hợp lệ hoặc đã được xử lý.</div>
-</c:if>
+		<c:if test="${param.created == '1'}">
+			<div class="alert alert-success">Đã gửi yêu cầu thành công! Bộ
+				phận hỗ trợ sẽ liên hệ với bạn sớm nhất.</div>
+		</c:if>
+		<c:if test="${param.details == '1'}">
+			<div class="alert alert-success">Đã gửi form thông tin cho nhân
+				viên hỗ trợ.</div>
+		</c:if>
+		<c:if test="${param.invalid == '1'}">
+			<div class="alert alert-warning">Yêu cầu bổ sung không hợp lệ
+				hoặc đã được xử lý.</div>
+		</c:if>
 
-<c:if test="${param.cancelled == '1'}">
-    <div class="alert alert-success">Bạn đã hủy yêu cầu này. Nếu cần hỗ trợ, hãy tạo yêu cầu mới.</div>
-</c:if>
+		<c:if test="${param.cancelled == '1'}">
+			<div class="alert alert-success">Bạn đã hủy yêu cầu này. Nếu
+				cần hỗ trợ, hãy tạo yêu cầu mới.</div>
+		</c:if>
 
 <c:choose>
     <c:when test="${not empty list}">
@@ -447,7 +449,7 @@
 		</script>
 	</c:if>
 
-    </main>
+	</main>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 

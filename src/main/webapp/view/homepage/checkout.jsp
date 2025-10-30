@@ -25,7 +25,7 @@ table tbody tr td {
 
 </style>
 
-<body class="shop-page checkout-page">
+<body class="shop-page checkout-page home-page">
 
 	<jsp:include page="../common/header.jsp"></jsp:include>
 
@@ -39,7 +39,7 @@ table tbody tr td {
 						<div style="display: grid; gap: 8px; width: 50%; height: 45px">
 							<label for="fullname">Họ tên</label> <input id="fullname"
 								name="fullname" type="text" placeholder="Nguyễn Minh Anh"
-								required>
+								maxlength="50" required>
 								<small style="color:red">${errorFullname}</small>
 						</div>
 						<div style="display: grid; gap: 8px; width: 50%; height: 45px">
@@ -52,7 +52,7 @@ table tbody tr td {
 					<div style="display: grid; gap: 8px;; margin-top:32px">
 						<label for="address">Địa chỉ</label>
 						<textarea id="address" name="address"
-							placeholder="Số nhà, đường, phường, quận, thành phố" required></textarea>
+							placeholder="Số nhà, đường, phường, quận, thành phố" maxlength="200" required></textarea>
 						<small style="color:red">${errorAddress}</small>
 					</div>
 					<div style="display: grid; gap: 8px;">
@@ -76,7 +76,8 @@ table tbody tr td {
 					<div style="display: grid; gap: 8px;">
 						<label for="note">Ghi chú cho kỹ thuật</label>
 						<textarea id="note" name="note"
-							placeholder="Ví dụ: cần bàn giao, hướng dẫn sao lưu dữ liệu"></textarea>
+							placeholder="Ví dụ: cần bàn giao, hướng dẫn sao lưu dữ liệu" maxlength="200"></textarea>
+							<small style="color:red">${errorNote}</small>
 					</div>
 				</div>
 
@@ -140,10 +141,7 @@ table tbody tr td {
 	</main>
 
 	<!-- Footer -->
-	<footer>
-		Thanh toán bởi NovaCare Payments · Hỗ trợ 24/7: <a
-			href="mailto:pay@novacare.vn">pay@novacare.vn</a> · Hotline 1900 6688
-	</footer>
+	<jsp:include page="../common/footer.jsp"></jsp:include>
 
 </body>
 </html>

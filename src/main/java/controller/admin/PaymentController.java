@@ -27,6 +27,8 @@ import dao.UserDAO;
 import dao.WarrantyCardDAO;
 import dao.CartDAO;
 import dao.CartDetailDAO;
+import model.User;
+import utils.AuthorizationUtils;
 
 import java.util.logging.*;
 
@@ -48,6 +50,10 @@ public class PaymentController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		User staff = getManager(req, resp);
+		if (staff == null) {
+			return;
+		}
 		String pageParam = req.getParameter("page");
 		String status = req.getParameter("status");
 		String sortCreatedAt = req.getParameter("sortCreatedAt");
@@ -137,5 +143,10 @@ public class PaymentController extends HttpServlet {
 
 		resp.sendRedirect("payment-list");
 	}
+	
+	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	}
+
 
 }

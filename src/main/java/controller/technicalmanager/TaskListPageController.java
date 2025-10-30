@@ -10,6 +10,8 @@ import java.util.*;
 import dao.TaskDAO;
 import dao.TaskDetailDAO;
 import model.Task;
+import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet("/task-list")
 public class TaskListPageController extends HttpServlet {
@@ -22,6 +24,10 @@ public class TaskListPageController extends HttpServlet {
 			throws ServletException, IOException {
 		
 		try {
+			User staff = getUser(request, response);
+			if (staff == null) {
+				return;
+			}
 			String status = request.getParameter("status");
 			String search = request.getParameter("search");
 			
@@ -59,6 +65,10 @@ public class TaskListPageController extends HttpServlet {
         tdDao.cancelTask(taskId);
         resp.sendRedirect("task-list");
     }
+	
+	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+		return AuthorizationUtils.requirePermission(req, resp, "VIEW_TASK_LIST");
+	}
 	
 
 }

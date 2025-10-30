@@ -89,7 +89,7 @@ th {
 	<main class="sidebar-main">
 		<div class="container">
 			<div class="head">
-				<h2>Task Detail</h2>
+				<h2>Chi tiết task</h2>
 				<a href="task-list" class="btn btn-secondary">Quay lại</a>
 			</div>
 			<div class="task-box">
@@ -117,14 +117,6 @@ th {
 			<div class="btn-gr"
 				style="margin-top: 14px; display: flex; gap: 10px;">
 				<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
-				<c:if test="${not empty listTaskDetail}">
-					<form action="task-detail" method="post" style="display: inline;"
-						onsubmit="return confirm('Bạn có chắc chắn muốn đánh dấu task này là hoàn thành không?')">
-						<input type="hidden" name="taskId" value="${task.id}" />
-						<button type="submit" class="btn btn-secondary">Đánh dấu
-							hoàn thành Task</button>
-					</form>
-				</c:if>
 
 			</div>
 			<table>
