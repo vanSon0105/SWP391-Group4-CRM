@@ -8,6 +8,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechShop</title>
+    <style>
+		.banner-btn a {
+		  background: #ff9800;
+		  color: #fff;
+		  padding: 12px 24px;
+		  border-radius: 8px;
+		  transition: 0.3s;
+		}
+		.banner-btn a:hover {
+		  background: #ffa733;
+		  transform: translateY(-2px);
+		}
+	
+		.device-card {
+		  background: #fff;
+		  border-radius: 12px;
+		  padding: 16px;
+		  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		  transition: all 0.3s ease;
+		}
+		.device-card:hover {
+		  transform: translateY(-5px);
+		  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+		}
+		.device-thumb img {
+		  transition: transform 0.3s ease;
+		}
+		.device-card:hover .device-thumb img {
+		  transform: scale(1.05);
+		}
+		
+		.category {
+		  transition: transform 0.3s ease, box-shadow 0.3s ease;
+		}
+		.category:hover {
+		  transform: translateY(-6px);
+		  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+		}
+		.category h3::before {
+		  content: "💡";
+		  margin-right: 8px;
+		}
+		
+		.img-banner{
+		  object-fit: cover;
+		  height: 435px;
+		  width: 580px;
+		  position: absolute;
+		  top: -55px;
+		  right: 70px;
+		}
+		
+		.promo-card-item{
+			display: flex;
+			align-items: center;
+			gap: 5px;
+			justify-content: space-between;
+		}
+		
+		.promo-card img{
+	      object-fit: cover;
+		  height: 100%;
+		  width: 180px;
+		  border-radius: 5px;
+		}
+		
+		.container-item{
+			display: flex;
+			flex-direction: column;
+			gap: 7px;
+		}
+		
+		.promo-card h3 {
+		  display: flex;
+		  align-items: center;
+		  gap: 6px;
+		  margin: 8px 0;
+		}
+		
+		.promo-tag i,
+		.promo-card i {
+		  color: #00ffc9;
+		}
+		
+		.promo-tag {
+		  align-items: center;
+		  color: #00ffc9;
+		  font-weight: 600;
+		}
+		
+		.promo-price {
+		  display: inline-flex;
+		  align-items: center;
+		  gap: 6px;
+		  padding: 6px 14px;
+		  border-radius: 8px;
+		  background: linear-gradient(135deg, #d50000 60%, #000 60%);
+		}
+		
+		.promo-price strong {
+		  font-size: 3.5rem;
+		  font-weight: 700;
+		}
+    </style>
 </head>
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
@@ -22,25 +126,45 @@
                     <a class="secondary" href="issue">Theo dõi bảo hành</a>
                 </div>
             </div>
+            
+            <img class="img-banner" alt="" src="${pageContext.request.contextPath}/assets/img/img-banner.png">
+            
             <div class="banner-promos" data-hero-slider>
-    <button class="hero-nav" type="button" data-hero-direction="prev" aria-label="Sản phẩm trước"><i
-            class="fa-solid fa-chevron-left"></i></button>
-    <div class="banner-promos-window">
-        <div class="banner-promos-track">
-        <c:forEach items="${bannerList}" var="s"> 
-            <article class="promo-card">
-	                <span class="promo-tag">${s.category.name}</span>
-	                <h3>${s.name}</h3>
-	                <p>Thu cũ đổi mới lên đến <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong></p>
-	                <p>Bảo hành ${s.warrantyMonth} tháng</p>
-	                <span class="promo-price">Giá ưu đãi: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
-            </article>
-        </c:forEach>
-        </div>
-    </div>
-    <button class="hero-nav" type="button" data-hero-direction="next" aria-label="Sản phẩm tiếp theo"><i
-            class="fa-solid fa-chevron-right"></i></button>
-</div>
+			    <button class="hero-nav" type="button" data-hero-direction="prev" aria-label="Sản phẩm trước"><i
+			            class="fa-solid fa-chevron-left"></i></button>
+			    <div class="banner-promos-window">
+				  <div class="banner-promos-track">
+				    <c:forEach items="${bannerList}" var="s"> 
+				      <article class="promo-card">
+				        <div class="promo-card-item">
+				          <div class="container-item">
+				            <span class="promo-tag">
+				              <i class="fa-solid fa-bolt"></i> ${s.category.name}
+				            </span>
+				            <h3>
+				              <i class="fa-solid fa-gift"></i> ${s.name}
+				            </h3>
+				            <p>
+				              <i class="fa-solid fa-exchange-alt"></i> Thu cũ đổi mới lên đến 
+				              <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong>
+				            </p>
+				            <p>
+				              <i class="fa-solid fa-shield-heart"></i> Bảo hành ${s.warrantyMonth} tháng
+				            </p>
+				          </div>
+				          <img src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}" alt="${s.name}" class="promo-img">
+				        </div>
+				        <span class="promo-price">
+				          <i class="fa-solid fa-tag"></i> Giá ưu đãi: 
+				          <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong>
+				        </span>
+				      </article>
+				    </c:forEach>
+				  </div>
+				</div>
+			    <button class="hero-nav" type="button" data-hero-direction="next" aria-label="Sản phẩm tiếp theo"><i
+			            class="fa-solid fa-chevron-right"></i></button>
+			</div>
         </section>
 
         <section class="featured-categories">
@@ -98,7 +222,7 @@
 	                            <p>${s.getDesc()}</p>
 	                            <span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
                         </a>
-	                            <a class="device-buy-btn" href="cart-add?id=${s.id}#featured-devices">Mua sản phẩm</a>
+	                            <a class="btn device-buy-btn" href="cart-add?id=${s.id}#featured-devices">Mua sản phẩm</a>
 	                        </div>
                     </c:forEach>
                     </div>
@@ -133,7 +257,7 @@
 	                        <p>${s.getDesc()}</p>
 	                        <span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
                     </a>
-	                        <a class="device-buy-btn" href="cart-add?id=${s.id}#new-devices">Mua sản phẩm</a>
+	                        <a class="btn device-buy-btn" href="cart-add?id=${s.id}#new-devices">Mua sản phẩm</a>
 	                    </div>
                 </c:forEach>
                 </div>
@@ -222,7 +346,7 @@
 	                        	<p>${s.getDesc()}</p>
 	                        	<span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
                         </a>
-	                        	<a class="device-buy-btn" href="cart-add?id=${s.id}#best-sellers">Mua sản phẩm</a>
+	                        	<a class="btn device-buy-btn" href="cart-add?id=${s.id}#best-sellers">Mua sản phẩm</a>
 	                        </div>
                     </c:forEach>
                     </div>

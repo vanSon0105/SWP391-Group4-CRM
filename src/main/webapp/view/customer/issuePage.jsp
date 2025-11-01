@@ -18,13 +18,17 @@
         }
 
         .issue-container {
-        	flex: 1;
-            width: 720px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 32px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
+        	display: flex;
+		    flex: 1;
+		    width: 720px;
+		    margin: 40px auto;
+		    background: #fff;
+		    padding: 32px;
+		    border-radius: 12px;
+		    box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
+		    justify-content: center;
+		    align-items: center;
+		    flex-direction: column;
         }
 
         h1 {
@@ -34,9 +38,10 @@
 
         label {
             display: block;
-            margin: 16px 0 6px;
+            margin: 16px 0 6px !important;
             font-weight: 600;
             color: #1f2d3d;
+            font-size: 1.8rem;
         }
 
         input[type="text"],
@@ -50,6 +55,8 @@
             box-sizing: border-box;
             background: #fff;
             outline: none;
+            font-size: 2rem;
+            transition: all 0.2s ease;
         }
 
         textarea {
@@ -70,33 +77,45 @@
             gap: 12px;
         }
 
-        .radio-group {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            margin: 18px 0;
-            flex-wrap: wrap;
-        }
+        select {
+		  background-color: #fff;
+		  font-size: 1.8rem;
+		  cursor: pointer;
+		  transition: all 0.2s ease;
+		}
 
-        .radio-group span {
-            font-weight: 600;
-            color: #1f2d3d;
-            margin-right: 8px;
-        }
+		select:hover,
+		input:hover,
+		textarea:hover {
+		  border-color: #2563eb;
+		  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+		}
 
-        .radio-group label {
-            margin: 0;
-            font-weight: 500;
-            color: #1f2d3d;
-        }
+		select:focus,
+		input:focus,
+		textarea:focus {
+		  border-color: #2563eb;
+		  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+		  outline: none;
+		}
+		
+		option {
+		  font-size: 1.7rem;
+		  padding: 10px;
+		  color: #1f2d3d;
+		  background: #fff;
+		}
+		
+		option:disabled {
+		  color: #9ca3af;
+		  background: #f9fafb;
+		}
+		
+		#warrantySection.disabled {
+		  opacity: 0.5;
+		  filter: grayscale(0.6);
+		}
 
-        .radio-group input {
-            margin-right: 6px;
-        }
-
-        #warrantySection.disabled {
-            opacity: 0.6;
-        }
 
         #warrantySection.disabled select {
             pointer-events: none;
@@ -108,6 +127,7 @@
             border: none;
             cursor: pointer;
             font-weight: 600;
+            font-size: 1.5rem;
         }
 
         .btn-secondary {
@@ -141,6 +161,11 @@
         option:disabled {
             color: #94a3b8;
         }
+        
+        input[readonly] {
+	        background-color: #eeeeee !important;
+	        cursor: not-allowed;
+	    }
     </style>
 </head>
 <body class="home-page">
@@ -158,12 +183,23 @@
 
 		<c:set var="selectedIssueType"
 		               value="${not empty param.issueType ? param.issueType : (empty selectedWarrantyId ? 'repair' : 'warranty')}" />
-        <form method="post" action="create-issue" style="margin-top: 10px;">
+        <form method="post" action="create-issue" style="margin-top: 10px; width: 100%;">
         	<label for="name">Họ tên</label>
-            <input type="text" id="name" name="name" value="${account.username}" required>
+        	<c:if test="${not empty account.username}">
+            	<input type="text" id="name" name="name" value="${account.username}" readonly>        	
+        	</c:if>
+        	<c:if test="${empty account.username}">
+            	<input type="text" id="name" name="name" value="" required>        	
+        	</c:if>
             
             <label for="email">Email</label>
-            <input type="text" id="email" name="email" value="${account.email}" required>
+            <c:if test="${not empty account.email}">     	
+	            <input type="text" id="email" name="email" value="${account.email}" readonly>
+        	</c:if>
+        	
+        	<c:if test="${empty account.email}">     	
+	            <input type="text" id="email" name="email" value="" required>
+        	</c:if>
             
             <label for="title">Tiêu đề sự cố</label>
             <input type="text" id="title" name="title" value="${param.title}" required>
@@ -171,22 +207,24 @@
             <label for="description">Mô tả chi tiết</label>
             <textarea id="description" name="description" required>${param.description}</textarea>
             
-            <div class="radio-group">
-                <span>Loại yêu cầu</span>
-                <label>
-                    <input type="radio" name="issueType" value="repair"
-                        <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
-                    Sửa chữa
-                </label>
-                <label>
-                    <input type="radio" name="issueType" value="warranty"
-                        <c:if test="${selectedIssueType ne 'warranty'}">checked</c:if>>
-                    Bảo hành
-                </label>
+            <div>
+                <label for="issueType">Loại yêu cầu</label>
+                <select id="issueType" name="issueType" required>
+                        <option value="warranty">-- Chọn yêu cầu --</option>
+                        <option value="warranty"
+                            <c:if test="${selectedIssueType ne 'warranty'}">checked</c:if>>
+                			Bảo hành
+                        </option>
+                        
+                        <option value="repair"
+                            <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
+                			Sửa chữa
+                        </option>
+                    </select>
             </div>
 
 			<div id="warrantySection">
-	            <label for="serialNo">Thiết bị đã mua</label>
+	            <label for="warrantyCardId">Thiết bị đã mua</label>
                     <select id="warrantyCardId" name="warrantyCardId">
                         <option value="">-- Chọn thiết bị --</option>
                         <c:forEach var="device" items="${list}">
