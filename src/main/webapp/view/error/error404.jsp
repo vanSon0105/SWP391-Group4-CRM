@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/error.css">
 </head>
 <body>
-<jsp:include page="/view/common/header.jsp"></jsp:include>
+<jsp:include page="../common/header.jsp"></jsp:include>
 <section class="shop-page error-404-page">
     <div class="card">
         <h1>404</h1>
@@ -17,6 +17,6 @@
         <a href="home">Home</a>
     </div>
 </section>
-<jsp:include page="/view/common/footer.jsp"></jsp:include>
+<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>

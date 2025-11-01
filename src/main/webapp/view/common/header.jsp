@@ -11,11 +11,11 @@
 
             <header class="header">
                 <h1 class="header-title">
-                    <a href="${pageContext.request.contextPath}/home" style="color: #fff;">TechShop</a>
+                <a href="home" style="position: relative;"><img alt="logo" src="${pageContext.request.contextPath}/assets/img/logo.png"></a>
                 </h1>
                 <div class="header-center">
                     <div class="category-menu" data-category-menu>
-                        <button class="search-bar-btn" type="button" data-category-toggle>
+                        <button class="btn search-bar-btn" type="button" data-category-toggle>
                             <span>Danh mục</span>
                             <span aria-hidden="true">☰</span>
                         </button>
@@ -44,49 +44,49 @@
                 <div class="header-bottom">
                     <c:if test="${sessionScope.account == null}">
                         <form action="login" method="get" style="display:inline;">
-                            <button type="submit" class="order-btn login-btn">
+                            <button type="submit" class="order-btn login-btn btn">
                                 Login
                             </button>
                         </form>
                     </c:if>
 
                     <c:if test="${sessionScope.account != null}">
-                        <a href="profile" class="order-btn account-btn">
+                        <a href="profile" class="btn order-btn account-btn">
                             <i class="fa-solid fa-user"></i>
                         </a>
                     </c:if>
                     
 					<c:if test="${sessionScope.account.roleId == 1}">
-					    <a href="admin" class="order-btn account-btn">
+					    <a href="admin" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-crown"></i>
 					    </a>
 					</c:if>
 					
 					<c:if test="${sessionScope.account.roleId == 2}">
-					    <a href="manager-issues" class="order-btn account-btn">
+					    <a href="manager-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-clipboard-check"></i>
 					    </a>
 					</c:if>
 					
 					<c:if test="${sessionScope.account.roleId == 3}">
-					    <a href="technical-issues" class="order-btn account-btn">
+					    <a href="technical-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-screwdriver-wrench"></i>
 					    </a>
 					</c:if>
 					
 					<c:if test="${sessionScope.account.roleId == 4}">
-					    <a href="support-issues" class="order-btn account-btn">
+					    <a href="support-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-headset"></i>
 					    </a>
 					</c:if>
 					
 					<c:if test="${sessionScope.account.roleId == 5}">
-					    <a href="support-tickets" class="order-btn account-btn">
+					    <a href="support-tickets" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-warehouse"></i>
 					    </a>
 					</c:if>
 
-                    <a href="cart" class="order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
+                    <a href="cart" class="btn order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
                 </div>
             </header>
             <script>

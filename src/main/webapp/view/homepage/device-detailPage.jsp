@@ -10,7 +10,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>NovaCare Shop - Chi tiết sản phẩm</title>
-<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/shop.css" />
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
 .left-column {
@@ -177,15 +177,6 @@
     font-size: 14px;
 }
 
-.cta-inline a.add-to-cart {
-    background: linear-gradient(90deg, #03d200, #61ed22);
-    color: white;
-}
-
-.cta-inline a.add-to-cart:hover {
-    box-shadow: 0 6px 16px rgba(34, 136, 0, 0.4);
-}
-
 .cta-inline a.buy-now {
     background: linear-gradient(90deg, #d2661a, #ff8a61);
     color: white;
@@ -193,16 +184,12 @@
 
 .cta-inline a.buy-now:hover {
     box-shadow: 0 6px 16px rgba(204, 82, 0, 0.4);
+    color: black;
 }
 
 .cta-inline a.back {
     background-color: #eee;
     color: #555;
-}
-
-.cta-inline a.back:hover {
-    background-color: #ddd;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .related-products {
@@ -392,9 +379,9 @@
         
         <div class="cta-inline">
        <!--<a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> -->
-          <a href="cart-add?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
-          <a href="checkout?id=${device.id}" class="buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
-          <a href="device-page" class="back">← Quay lại</a>
+          <a href="cart-add?id=${device.id}" class="btn order-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+          <a href="checkout?id=${device.id}" class="btn order-btn buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
+          <a href="device-page" class="btn back">← Quay lại</a>
         </div>
       </article>
 

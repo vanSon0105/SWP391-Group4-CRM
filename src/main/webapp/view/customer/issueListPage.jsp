@@ -10,11 +10,18 @@
 <title>TechShop</title>
 <style>
     body.home-page {
-      background: #f5f6fa;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(circle at top, #f0f9ff, #fff7ed 45%, #fef2f2);
     }
 
     .home-page main {
-      padding: 36px 24px !important;
+	    flex: 1;
+	    margin: 40px auto;
+	    background: #fff;
+	    padding: 32px !important;
+	    border-radius: 12px;
+	    box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
     }
 
     .issue-header {
@@ -42,7 +49,7 @@
       padding: 12px 16px;
       border-radius: 8px;
       margin-bottom: 16px;
-      font-size: 14px;
+      font-size: 2rem;
     }
 
     .status-reason {
@@ -69,13 +76,15 @@
       padding: 14px 16px !important;
       text-align: left;
       border-bottom: 1px solid #eef2f6;
-      font-size: 14px;
+      font-size: 2rem;
     }
 
     th {
       background: #f8fafc;
       font-weight: 600;
       color: #475569;
+      text-align: center;
+      font-size: 1.7rem;
     }
 
     tr:last-child td {
@@ -87,7 +96,7 @@
       align-items: center;
       padding: 4px 12px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 1.5rem;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: .04em;
@@ -106,6 +115,16 @@
     .status-in_progress {
       background: #dbeafe;
       color: #1d4ed8;
+    }
+    
+    .status-warranty {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    
+    .status-repair {
+      background: #fef3c7;
+      color: #b45309;
     }
 
     .status-awaiting_customer {
@@ -162,27 +181,28 @@
 
     .link-button {
         border-radius: 5px;
-    background: #ffd7d7;
-    border: 1px solid red;
-    color: #dc2626;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 4px;
-    margin-left: 12px;
-    transition: all 0.5s ease;
+	    background: #ffd7d7;
+	    border: 1px solid red;
+	    color: #dc2626;
+	    cursor: pointer;
+	    font-weight: 600;
+	    padding: 4px;
+	    margin-left: 12px;
+	    transition: all 0.5s ease;
+	    font-size: 2rem;
     }
 
     .action-view{
-      display: inline-block;
-      border-radius: 5px;
-    background: #cdddfc;
-    border: 1px solid #f7d3d3;
-    color: #0f172a;
-    cursor: pointer;
-    font-weight: 600;
-    padding: 4px;
-    margin-left: 12px;
-    transition: all 0.5s ease;
+	    display: inline-block;
+	    border-radius: 5px;
+	    background: #cdddfc;
+	    border: 1px solid #f7d3d3;
+	    color: #0f172a;
+	    cursor: pointer;
+	    font-weight: 600;
+	    padding: 4px;
+	    margin-left: 12px;
+	    transition: all 0.5s ease;
     }
 
     .link-button:hover,
@@ -210,8 +230,7 @@
         padding: 20px;
         border-radius: 12px;
         box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-        width: 90%;
-        max-width: 600px;
+        width: max-content;
         position: relative;
     }
 
@@ -236,10 +255,11 @@
     .task-detail-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 15px;
+        gap: 60px;
     }
     .task-detail-item {
-        font-size: 1.6rem;
+    	display: flex;
+        font-size: 2.5rem;
     }
     .task-detail-item strong {
         display: block;
@@ -418,11 +438,28 @@
 				            </div>
 				            <div class="task-detail-item">
 				                <strong>Trạng thái:</strong>
-				                <span>${issueDetail.supportStatus}</span>
+				                <span class="status-pill status-${issueDetail.supportStatus}">
+                                <c:choose>
+                                    <c:when test="${issueDetail.supportStatus == 'awaiting_customer'}">Chờ bổ sung</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'submitted'}">Đã chuyển kỹ thuật</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'in_progress'}">Đang xử lý</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'manager_rejected'}">Quản lí từ chối! Xem yêu cầu</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'customer_cancelled'}">Đã hủy theo yêu cầu khách</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'manager_review'}">Đang đợi quản lí duyệt</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'manager_approved'}">Đã duyệt tạo task</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'task_created'}">Đã tạo task</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'tech_in_progress'}">Đang thực hiện</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'resolved'}">Đã hoàn tất</c:when>
+                                    <c:otherwise>Tiếp nhận mới</c:otherwise>
+                                </c:choose>
+                            </span>
 				            </div>
 				            <div class="task-detail-item">
 				                <strong>Loại yêu cầu:</strong>
-				                <span>${issueDetail.issueType}</span>
+				                <span class="status-pill status-${issueDetail.issueType}">
+                                <c:if test="${issueDetail.issueType == 'repair'}">Sửa chữa</c:if>
+                                <c:if test="${issueDetail.issueType == 'warranty'}">Bảo hành</c:if>
+				                </span>
 				            </div>
 				            <div class="task-detail-item">
 				                <strong>Ngày tạo:</strong>

@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false"%>
-<%@ taglib prefix="c" uri="jakarta.tags.core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt"%>
 
 
@@ -11,8 +11,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop - Danh mục sản phẩm</title>
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/assets/css/shop.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
 
 
 <!-- Font Awesome -->
@@ -25,10 +24,6 @@
 <style>
 .sorts button:hover {
 	background: linear-gradient(90deg, #38bdf8, #22d3ee) !important;
-}
-
-body.shop-page.catalog-page .product-grid {
-	margin-top: 20px;
 }
 
 .container-paging {
@@ -144,9 +139,10 @@ body.shop-page.catalog-page .product-grid {
 								src="<%=request.getContextPath()%>/assets/img/laptop.jpg" />
 							<h3>${device.name}</h3>
 							<p>${device.desc}</p>
-							<strong> <fmt:formatNumber value="${device.price + 0}"
+							<strong>Giá: <fmt:formatNumber value="${device.price + 0}"
 									type="number" />
-							</strong> <a href="device-detail?id=${device.id}">Xem chi tiết</a>
+							</strong>
+							<a style="text-align: center;" class="btn order-btn" href="device-detail?id=${device.id}">Xem chi tiết</a>
 						</article>
 					</c:forEach>
 

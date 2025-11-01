@@ -9,7 +9,7 @@
     <title>Loi 500 - Su co may chu</title>
 </head>
 <body>
-<jsp:include page="/view/common/header.jsp"></jsp:include>
+<jsp:include page="../common/header.jsp"></jsp:include>
 <section class="shop-page error-500-page">
     <div class="card">
         <h1>500</h1>
@@ -18,6 +18,6 @@
         <a href="home">Home</a>
     </div>
 </section>
-<jsp:include page="/view/common/footer.jsp"></jsp:include>
+<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 </html>
