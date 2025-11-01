@@ -166,19 +166,54 @@ public class AccountController extends HttpServlet {
     
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if (!AuthorizationUtils.hasPermission(request.getSession(false), "UPDATE_ACCOUNT")) {
+        
+        if (!AuthorizationUtils.hasPermission(request.getSession(false), "UPDATE_ACCOUNT")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-    	
+
         try {
             int id = Integer.parseInt(request.getParameter("id"));
-            String email = request.getParameter("email");
-            String fullName = request.getParameter("fullName");
-            String phone = request.getParameter("phone");
+            String email = request.getParameter("email").trim();
+            String fullName = request.getParameter("fullName").trim();
+            String phone = request.getParameter("phone").trim();
             int roleId = Integer.parseInt(request.getParameter("roleId"));
-            String status = request.getParameter("status"); 
+            String status = request.getParameter("status");
 
+            StringBuilder errors = new StringBuilder();
+
+            if (email.isEmpty()) {
+                errors.append("Email không được để trống.<br>");
+            } else if (!email.matches("^\\S+@\\S+\\.\\S+$")) {
+                errors.append("Email không hợp lệ.<br>");
+            } else if (userDAO.existsByEmail(email) && !userDAO.isEmailOfUser(email, id)) {
+                errors.append("Email đã tồn tại.<br>");
+            }
+
+            if (fullName.isEmpty()) {
+                errors.append("Họ tên không được để trống.<br>");
+            } else if (!fullName.matches("^[a-zA-Z\\s]{2,50}$")) {
+                errors.append("Họ tên chỉ gồm chữ và khoảng trắng.<br>");
+            }
+
+            if (!phone.isEmpty() && !phone.matches("^\\d{9,12}$")) {
+                errors.append("Số điện thoại không hợp lệ (9-12 chữ số).<br>");
+            }
+
+            if (errors.length() > 0) {
+                User user = new User();
+                user.setId(id);
+                user.setEmail(email);
+                user.setFullName(fullName);
+                user.setPhone(phone);
+                user.setRoleId(roleId);
+                user.setStatus(status);
+
+                request.setAttribute("errorMessage", errors.toString());
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/view/admin/account/EditUser.jsp").forward(request, response);
+                return;
+            }
 
             User user = new User();
             user.setId(id);
@@ -193,17 +228,18 @@ public class AccountController extends HttpServlet {
             if (success) {
                 response.sendRedirect("account?msg=update_success");
             } else {
-                request.setAttribute("error", "Cập nhật thất bại. Vui lòng thử lại.");
+                request.setAttribute("errorMessage", "Cập nhật thất bại. Vui lòng thử lại.");
                 request.setAttribute("user", user);
                 request.getRequestDispatcher("/view/admin/account/EditUser.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Đã xảy ra lỗi trong quá trình cập nhật.");
+            request.setAttribute("errorMessage", "Đã xảy ra lỗi trong quá trình cập nhật.");
             request.getRequestDispatcher("/view/admin/account/EditUser.jsp").forward(request, response);
         }
     }
+
 
     private void searchUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -281,19 +317,50 @@ public class AccountController extends HttpServlet {
 
     private void addUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CREATE_ACCOUNT")) {
+        if (!AuthorizationUtils.hasPermission(request.getSession(false), "CREATE_ACCOUNT")) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return;
         }
-    	
+
         try {
-            String username = request.getParameter("username");
-            String email = request.getParameter("email");
+            String username = request.getParameter("username").trim();
+            String email = request.getParameter("email").trim();
             String password = request.getParameter("password");
-            String fullName = request.getParameter("fullName");
-            String phone = request.getParameter("phone");
+            String fullName = request.getParameter("fullName").trim();
+            String phone = request.getParameter("phone").trim();
             int roleId = Integer.parseInt(request.getParameter("roleId"));
             String status = request.getParameter("status");
+
+            StringBuilder errors = new StringBuilder();
+
+            if (!username.matches("^[a-zA-Z0-9_]{3,20}$")) {
+                errors.append("Tên đăng nhập không hợp lệ.<br>");
+            }
+            if (!email.matches("^\\S+@\\S+\\.\\S+$")) {
+                errors.append("Email không hợp lệ.<br>");
+            }
+            if (!password.matches("^(?=.*[a-zA-Z])(?=.*\\d).{6,}$")) {
+                errors.append("Mật khẩu phải ít nhất 6 ký tự và bao gồm chữ và số.<br>");
+            }
+            if (!fullName.matches("^[a-zA-Z\\s]{2,50}$")) {
+                errors.append("Họ tên không hợp lệ.<br>");
+            }
+            if (!phone.isEmpty() && !phone.matches("^\\d{9,12}$")) {
+                errors.append("Số điện thoại không hợp lệ.<br>");
+            }
+
+            if (userDAO.existsByUsername(username)) {
+                errors.append("Tên đăng nhập đã tồn tại.<br>");
+            }
+            if (userDAO.existsByEmail(email)) {
+                errors.append("Email đã tồn tại.<br>");
+            }
+
+            if (errors.length() > 0) {
+                request.setAttribute("errorMessage", errors.toString());
+                request.getRequestDispatcher("/view/admin/account/AddUser.jsp").forward(request, response);
+                return;
+            }
 
             User user = new User();
             user.setUsername(username);
@@ -304,35 +371,61 @@ public class AccountController extends HttpServlet {
             user.setRoleId(roleId);
             user.setStatus(status);
 
-            userDAO.addUser(user);
-            response.sendRedirect("account");
+            try {
+                userDAO.addUser(user);
+                response.sendRedirect("account?msg=add_success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("errorMessage", "Tên đăng nhập hoặc email đã tồn tại!");
+                request.getRequestDispatcher("/view/admin/account/AddUser.jsp").forward(request, response);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Thêm người dùng thất bại!");
-            listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
+            request.setAttribute("errorMessage", "Thêm người dùng thất bại!");
+            request.getRequestDispatcher("/view/admin/account/AddUser.jsp").forward(request, response);
         }
     }
+
     
     private void softDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            User currentUser = (User) request.getSession().getAttribute("account");
             int id = Integer.parseInt(request.getParameter("id"));
-            boolean success = userDAO.softDeleteUser(id);
 
+            User targetUser = userDAO.getUserById(id);
+            if (targetUser == null) {
+                request.setAttribute("mess", "Người dùng không tồn tại!");
+                listAllUsers(request, response, currentUser);
+                return;
+            }
+
+            if (currentUser.getId() == targetUser.getId()) {
+                request.setAttribute("mess", "Bạn không thể khóa chính mình!");
+                listAllUsers(request, response, currentUser);
+                return;
+            }
+
+            if (currentUser.getRoleId() == 1 && targetUser.getRoleId() == 1) {
+                request.setAttribute("mess", "Admin không thể khóa admin khác!");
+                listAllUsers(request, response, currentUser);
+                return;
+            }
+
+            boolean success = userDAO.softDeleteUser(id);
             if (success) {
                 request.setAttribute("mess", "Đã khóa người dùng thành công!");
             } else {
                 request.setAttribute("mess", "Không thể khóa người dùng!");
             }
 
-            
-            User currentUser = (User) request.getSession().getAttribute("account");
             listAllUsers(request, response, currentUser);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("mess", "Đã xảy ra lỗi trong quá trình khóa người dùng!");
             User currentUser = (User) request.getSession().getAttribute("account");
+            request.setAttribute("mess", "Đã xảy ra lỗi trong quá trình khóa người dùng!");
             listAllUsers(request, response, currentUser);
         }
     }

@@ -14,6 +14,8 @@ import jakarta.servlet.http.*;
 import dao.DeviceDAO;
 import dao.UserDAO;
 import model.User;
+import utils.PasswordUtils;
+
 
 @WebServlet("/profile")
 @MultipartConfig(maxFileSize = 1024 * 1024 * 20)
@@ -50,6 +52,9 @@ public class ProfileController extends HttpServlet {
         String action = request.getParameter("action");
         if ("edit".equalsIgnoreCase(action)) {
             request.getRequestDispatcher("/view/profile/UpdateProfile.jsp").forward(request, response);
+        } else if ("changePassword".equalsIgnoreCase(action)) {
+            request.setAttribute("showChangePassword", true);
+            request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
         } else {
             request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
         }
@@ -63,9 +68,58 @@ public class ProfileController extends HttpServlet {
             response.sendRedirect("login");
             return;
         }
-
+        
         User currentUser = (User) session.getAttribute("account");
+        String action = request.getParameter("action");
 
+        if ("changePassword".equalsIgnoreCase(action)) {
+            String currentPassword = request.getParameter("currentPassword");
+            String newPassword = request.getParameter("newPassword");
+            String confirmPassword = request.getParameter("confirmPassword");
+
+            StringBuilder passwordErrors = new StringBuilder();
+
+            if (!PasswordUtils.verifyPassword(currentPassword, currentUser.getPassword())) {
+                passwordErrors.append("Mật khẩu hiện tại không đúng. ");
+            }
+            if (!newPassword.equals(confirmPassword)) {
+                passwordErrors.append("Mật khẩu mới và xác nhận mật khẩu không khớp. ");
+            }
+            if (!newPassword.matches("^(?=.*[a-zA-Z])(?=.*\\d).{6,}$")) {
+                passwordErrors.append("Mật khẩu mới phải ít nhất 6 ký tự và bao gồm chữ và số. ");
+            }
+
+            if (passwordErrors.length() > 0) {
+                request.setAttribute("user", currentUser);
+                request.setAttribute("errorMessage", passwordErrors.toString());
+                request.setAttribute("showChangePassword", true);
+                request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+                return;
+            }
+
+            String hashedPassword = PasswordUtils.hashPassword(newPassword);
+            System.out.println("[DEBUG] Hashed new password: " + hashedPassword);
+
+            currentUser.setPassword(hashedPassword);
+            boolean updated = userDAO.updateUserPassword(currentUser);
+            System.out.println("[DEBUG] updateUserPassword returned: " + updated);
+
+            if (updated) {
+                request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
+                User freshUser = userDAO.getUserById(currentUser.getId());
+                session.setAttribute("account", freshUser);
+            } else {
+                request.setAttribute("errorMessage", "Đã xảy ra lỗi, vui lòng thử lại.");
+            }
+
+            request.setAttribute("user", currentUser);
+            request.setAttribute("showChangePassword", true);
+            request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
+            return;
+        }
+
+
+        //update profile
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");

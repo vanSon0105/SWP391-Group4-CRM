@@ -34,7 +34,8 @@
   <form action="${pageContext.request.contextPath}/account" method="post">
     <input type="hidden" name="action" value="update">
     <input type="hidden" name="id" value="${user.id}">
-
+	<input type="hidden" name="status" value="1">
+	
     <label>Tên đăng nhập:</label>
     <input type="text" name="username" value="${user.username}" readonly style="background:#f9fafb;">
 
@@ -55,11 +56,11 @@
       <option value="4" ${user.roleId == 4 ? 'selected' : ''}>Khách hàng</option>
     </select>
 
-    <label>Trạng thái:</label>
-    <select name="status">
-      <option value="1" ${user.status == 1 ? 'selected' : ''}>Hoạt động</option>
-      <option value="0" ${user.status == 0 ? 'selected' : ''}>Bị khóa</option>
-    </select>
+    
+    
+    <c:if test="${not empty errorMessage}">
+  <div style="color:red; text-align:center; font-weight:600;">${errorMessage}</div>
+</c:if>
 
     <div style="display:flex;justify-content:space-between;margin-top:10px;">
       <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
@@ -67,6 +68,64 @@
     </div>
   </form>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.querySelector('form');
+  const emailInput = document.getElementById('email');
+  const fullNameInput = document.getElementById('fullName');
+  const phoneInput = document.getElementById('phone');
+
+  const emailError = document.getElementById('emailError');
+  const fullNameError = document.getElementById('fullNameError');
+  const phoneError = document.getElementById('phoneError');
+
+  // Xóa lỗi khi nhập lại
+  [emailInput, fullNameInput, phoneInput].forEach(input => {
+    input.addEventListener('input', () => {
+      document.getElementById(input.id + 'Error').textContent = '';
+    });
+  });
+
+  emailInput.addEventListener('blur', () => {
+    const email = emailInput.value.trim();
+    if (email === '') {
+      emailError.textContent = 'Email không được để trống';
+      return;
+    }
+
+    fetch(window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/checkDuplicate?email=' + encodeURIComponent(email))
+    .then(res => res.text())
+    .then(data => {
+      if (data === 'EMAIL_EXISTS') {
+        emailError.textContent = 'Email đã tồn tại!';
+      }
+    })
+    .catch(() => {
+      emailError.textContent = 'Lỗi khi kiểm tra email';
+    });
+
+
+  form.addEventListener('submit', function(e) {
+    let valid = true;
+    if (emailInput.value.trim() === '') {
+      emailError.textContent = 'Email không được để trống';
+      valid = false;
+    }
+    if (phoneInput.value.trim() !== '' && !/^\d{10,11}$/.test(phoneInput.value.trim())) {
+      phoneError.textContent = 'Số điện thoại không hợp lệ';
+      valid = false;
+    }
+
+    if (emailError.textContent.includes('tồn tại')) {
+      valid = false;
+    }
+
+    if (!valid) e.preventDefault();
+  });
+});
+</script>
+
 
 </body>
 </html>

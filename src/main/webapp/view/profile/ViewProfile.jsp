@@ -276,7 +276,8 @@
                     <div class="submenu">
                         <a href="profile" class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
                         <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
-                        <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Thay đổi mật khẩu</a>
+                       <a href="javascript:void(0);" onclick="showChangePassword()" 
+   class="${param.action == 'changePassword' ? 'active' : ''}">Thay đổi mật khẩu</a>
                     </div>
                 </div>
             </nav>
@@ -337,6 +338,29 @@
 					</a>
 				</div>
             </div>
+            
+            <div id="change-password" class="profile-section" style="display: none; margin-top: 30px;">
+    <h2>Đổi mật khẩu</h2>
+    <form action="profile?action=changePassword" method="post">
+        <div class="form-group">
+            <label for="currentPassword">Mật khẩu hiện tại</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
+        </div>
+        <div class="form-group">
+            <label for="newPassword">Mật khẩu mới</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Xác nhận mật khẩu mới</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+        </div>
+        <div class="profile-actions">
+            <button type="submit" class="btn btn-edit">Cập nhật mật khẩu</button>
+        </div>
+    </form>
+</div>
+            
+            
         </section>
     </div>
 
@@ -357,6 +381,20 @@
                 }
             });
         });
+        
+        function showChangePassword() {
+            // Ẩn div hồ sơ cá nhân
+            document.getElementById('profile').style.display = 'none';
+            // Hiện div đổi mật khẩu
+            document.getElementById('change-password').style.display = 'block';
+
+            // Cập nhật active menu
+            document.querySelectorAll('.submenu a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+        }
+
     </script>
 </body>
 </html>

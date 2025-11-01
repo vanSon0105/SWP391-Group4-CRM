@@ -188,25 +188,34 @@
                                         </span>
                                     </td>
                                     <td style="display: flex; gap: 5px;">
-                                        <a href="account?action=detail&id=${u.id}" class="btn device-btn">Xem</a>
+    <!-- Xem chi tiết -->
+    <a href="account?action=detail&id=${u.id}" class="btn device-btn">Xem</a>
 
-                                        <c:if test="${u.status == 'active'}">
-	                                    	<a class="btn device-btn" href="account?action=edit&id=${u.id}">Sửa</a>
-	                                    	<a class="btn device-remove"
-	                                    	   href="account?action=delete&id=${u.id}"
-	                                    	   onclick="return confirm('Bạn có chắc muốn khóa người dùng này?');">
-	                                    	   Xóa
-	                                    	</a>
-	                                    </c:if>
+    <!-- Sửa / Xóa: Chỉ hiện nếu user đang active -->
+    <c:if test="${u.status == 'active'}">
+        <!-- Không khóa chính tài khoản đang đăng nhập và không khóa admin khác nếu mình là admin -->
+        <c:if test="${u.username != currentUsername && !(currentRole == 1 && (u.roleId+0) eq 1)}">
+            <a class="btn device-btn" href="account?action=edit&id=${u.id}">Sửa</a>
+            <a class="btn device-remove"
+               href="account?action=delete&id=${u.id}"
+               onclick="return confirm('Bạn có chắc muốn khóa người dùng này?');">
+               Xóa
+            </a>
+        </c:if>
+    </c:if>
 
-                                        <c:if test="${u.status == 'inactive'}">
-	                                    	<a class="btn device-btn"
-	                                    	   href="account?action=activate&id=${u.id}"
-	                                    	   onclick="return confirm('Bạn có muốn kích hoạt lại người dùng này?');">
-	                                    	   Mở khóa
-	                                    	</a>
-	                                    </c:if>
-                                    </td>
+    <!-- Mở khóa user inactive -->
+    <c:if test="${u.status == 'inactive'}">
+        <a class="btn device-btn"
+           href="account?action=activate&id=${u.id}"
+           onclick="return confirm('Bạn có muốn kích hoạt lại người dùng này?');">
+           Mở khóa
+        </a>
+    </c:if>
+	</td>
+
+
+
 	                            </tr>
 	                        </c:forEach>
                         </tbody>

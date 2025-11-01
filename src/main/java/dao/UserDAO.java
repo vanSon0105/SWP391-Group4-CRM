@@ -412,6 +412,44 @@ public boolean activateUser(int id) {
         }
     }
 
+public boolean isEmailOfUser(String email, int userId) {
+    String sql = "SELECT COUNT(*) FROM Users WHERE email = ? AND id = ?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, email);
+        ps.setInt(2, userId);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+public boolean updateUserPassword(User user) {
+    String sql = "UPDATE Users SET password=? WHERE id=?";
+    try (Connection conn = getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+         
+        ps.setString(1, user.getPassword());
+        ps.setInt(2, user.getId());
+        
+        int affectedRows = ps.executeUpdate();
+        System.out.println("[DEBUG] SQL executed. Rows affected: " + affectedRows);
+        System.out.println("[DEBUG] New password (hashed) for user ID " + user.getId() + ": " + user.getPassword());
+        
+        return affectedRows > 0;
+    } catch (SQLException e) {
+        System.err.println("[ERROR] updateUserPassword failed!");
+        e.printStackTrace();
+        return false;
+    }
+}
+
+
+
     
     
 }
