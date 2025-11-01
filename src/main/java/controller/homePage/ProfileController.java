@@ -102,7 +102,7 @@ public class ProfileController extends HttpServlet {
                 if (date.isAfter(LocalDate.now())) {
                     errors.append("Ngày sinh không được ở tương lai. ");
                 } else {
-                    birthday = Timestamp.valueOf(date.atStartOfDay());
+                	birthday = Timestamp.valueOf(date.atStartOfDay().plusHours(7));
                 }
             } catch (DateTimeParseException e) {
                 errors.append("Định dạng ngày sinh không hợp lệ. ");
