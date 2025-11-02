@@ -17,10 +17,19 @@
 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 <jsp:include page="../common/header.jsp"></jsp:include>
 <main class="sidebar-main">
-    <section class="panel">
-        <a class="btn device-btn" href="device-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
-                sách</span></a>
-    </section>
+	<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
+		<section class="panel">
+	        <a class="btn device-btn" href="device-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
+	                sách</span></a>
+	    </section>
+	</c:if>
+	
+	<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
+		<section class="panel">
+	        <a class="btn device-btn" href="des-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
+	                sách</span></a>
+	    </section>
+	</c:if>
 
     <section class="panel">
         <div class="device-detail">
@@ -66,14 +75,16 @@
 	                    </tr>
 	                </tbody>
 	            </table>
-	            <div class="device-action">
-	                <a id="edit-link" class="btn device-btn" href="device-update?id=${deviceDetail.id}">
-	                    <i class="fa-solid fa-pen"></i><span>Sửa thông tin</span>
-	                </a>
-	                <a id="delete-link" class="btn" href="device-remove?id=${deviceDetail.id}">
-	                    <i class="fa-solid fa-trash"></i><span>Xóa thiết bị</span>
-	                </a>
-	            </div>
+	            <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
+		            <div class="device-action">
+		                <a id="edit-link" class="btn device-btn" href="device-update?id=${deviceDetail.id}">
+		                    <i class="fa-solid fa-pen"></i><span>Sửa thông tin</span>
+		                </a>
+		                <a id="delete-link" class="btn" href="device-remove?id=${deviceDetail.id}">
+		                    <i class="fa-solid fa-trash"></i><span>Xóa thiết bị</span>
+		                </a>
+		            </div>
+	            </c:if>
             </div>
         </div>
     </section>

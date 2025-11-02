@@ -116,10 +116,13 @@
 }
 
 .hero-card strong.price {
-    font-size: 24px;
-    color: #ff6600;
-    font-weight: 700;
-    margin-top: 8px;
+    color: #fff !important;
+    font-weight: 600;
+    margin-top: auto;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d50000 60%, #000 60%);
+    font-size: 2.5rem;
 }
 
 .promotion {
@@ -165,7 +168,7 @@
     justify-content: center;
     padding: 12px 14px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 1.6rem;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.3s ease;
@@ -174,23 +177,20 @@
 
 .cta-inline a i {
     margin-right: 6px;
-    font-size: 14px;
+    font-size: 1.6rem;
 }
+
+.cta-inline a.back {
+  background: linear-gradient(90deg, #f5f5f5, #e0e0e0);
+  color: #555;
+}
+
 
 .cta-inline a.buy-now {
     background: linear-gradient(90deg, #d2661a, #ff8a61);
     color: white;
 }
 
-.cta-inline a.buy-now:hover {
-    box-shadow: 0 6px 16px rgba(204, 82, 0, 0.4);
-    color: black;
-}
-
-.cta-inline a.back {
-    background-color: #eee;
-    color: #555;
-}
 
 .related-products {
   margin-top: 60px;
@@ -264,25 +264,21 @@
     justify-content: center;
     width: 44px;
     height: 44px;
-    color: #007bff;
+    color: black;
     border: 1px solid #dee2e6;
     border-radius: 16px;
     background-color: #fff;
-    text-decoration: none;
     font-weight: 600;
-    transition: all 0.2s ease-in-out;
+    transition: transform 0.2s ease;
 }
 
 .page-item .page-link:hover {
-    background-color: #007bff;
-    color: #fff;
-    border-color: #007bff;
+    transform: translateY(-2px);
 }
 
 .page-item.active .page-link {
-    background-color: #007bff;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
     color: #fff;
-    border-color: #007bff;
 }
 
 .page-item.disabled .page-link {
@@ -296,19 +292,6 @@
     text-decoration: none !important;
 }
 
-.cta a.order-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.cta a.order-btn:hover {
-    opacity: 0.9;
-}
 
 .product-image {
     text-align: center;
@@ -317,6 +300,15 @@
 .product-image img {
     max-width: 100%;
     border-radius: 8px;
+}
+
+.related-price{
+	color: #fff !important;
+    font-weight: 600;
+    margin-top: auto;
+    padding: 6px 14px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d50000 60%, #000 60%);
 }
 </style>
 </head>
@@ -381,7 +373,7 @@
        <!--<a href="cart-add?id=${device.id}#hero-card" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> -->
           <a href="cart-add?id=${device.id}" class="btn order-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
           <a href="checkout?id=${device.id}" class="btn order-btn buy-now"><i class="fa-solid fa-bolt"></i> Mua ngay</a>
-          <a href="device-page" class="btn back">← Quay lại</a>
+          <a href="device-page" class="btn order-btn back">← Quay lại</a>
         </div>
       </article>
 
@@ -406,7 +398,7 @@
 	</div>
     <c:if test="${not empty relatedDevices}">
       <section class="related-products">
-  <h2>Sản phẩm liên quan</h2>
+  <h2 id="related-grid">Sản phẩm liên quan</h2>
   <div class="related-grid">
     <c:forEach var="rel" items="${relatedDevices}">
       <div class="hero-card" style="padding:16px; border:1px solid #ddd; border-radius:12px; text-align:center;">
@@ -419,12 +411,12 @@
           </c:otherwise>
         </c:choose>
         <h3 style="font-size:18px; color:#0066b3; margin:8px 0;">${rel.name}</h3>
-        <p style="font-size:16px; color:#ff6600; font-weight:700; margin:4px 0;">
+        <p class="related-price">Giá:
           <fmt:formatNumber value="${rel.price}" type="number" maxFractionDigits="0"/> đ
         </p>
         <div class="cta-inline">
-          <a href="device-detail?id=${rel.id}" class="buy-now"><i class="fa-solid fa-eye"></i> Xem chi tiết</a>
-          <a href="cart-add?id=${rel.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
+          <a href="device-detail?id=${rel.id}" class="btn order-btn buy-now"><i class="fa-solid fa-eye"></i> Xem chi tiết</a>
+          <a href="cart-add?id=${rel.id}" class="btn order-btn"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a>
         <!-- <a href="cart-add?id=${device.id}" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Thêm vào giỏ</a> --> 
         </div>
       </div>
@@ -437,7 +429,7 @@
 
         <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
           <a class="page-link"
-             href="device-detail?id=${device.id}&page=${currentPage - 1}">
+             href="device-detail?id=${device.id}&page=${currentPage - 1}#related-grid">
             &#10094;
           </a>
         </li>
@@ -458,13 +450,13 @@
 
         <c:forEach var="i" begin="${startPage}" end="${endPage}">
           <li class="page-item ${i == currentPage ? 'active' : ''}">
-            <a class="page-link" href="device-detail?id=${device.id}&page=${i}">${i}</a>
+            <a class="page-link" href="device-detail?id=${device.id}&page=${i}#related-grid">${i}</a>
           </li>
         </c:forEach>
 
         <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
           <a class="page-link"
-             href="device-detail?id=${device.id}&page=${currentPage + 1}">
+             href="device-detail?id=${device.id}&page=${currentPage + 1}#related-grid">
             &#10095;
           </a>
         </li>

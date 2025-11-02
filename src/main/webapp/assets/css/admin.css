@@ -32,6 +32,19 @@ a{
 }
 
 /* -----------------------------------dashboard.html */
+
+.topbar img{
+	width: 100px;
+    height: 100px;
+    margin-top: 8px;
+    object-fit: cover;
+    transition: all 0.5s ease;
+}
+
+.topbar img:hover{
+	scale: 1.1;	
+}
+
 .management-page.dashboard {
     min-height: 100vh;
     background: linear-gradient(135deg, #fce7f3, #fff7ed 45%, #e0f2fe 100%);
@@ -494,8 +507,8 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 	display: flex;
 	gap: 20px;
     position: relative;
-    min-width: 260px;
     height: 40px;
+	width: 100%;
 }
 
 .management-page.device-management .device-search input[type="search"] {
@@ -512,7 +525,7 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 
 .management-page.device-management .device-search i {
     position: absolute;
-    left: 34px;
+    left: 14px;
     top: 55%;
     transform: translateY(-50%);
     color: #64748b;

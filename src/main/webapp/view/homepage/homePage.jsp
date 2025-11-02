@@ -9,18 +9,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechShop</title>
     <style>
-		.banner-btn a {
-		  background: #ff9800;
-		  color: #fff;
-		  padding: 12px 24px;
-		  border-radius: 8px;
-		  transition: 0.3s;
+		.banner-btn a:not(a:first-child) {
+		  background: transparent !important;
+		  color: #fff !important;
+    	  border: 1px solid rgba(248, 250, 252, 0.65);
+    	  padding: 14px 28px;
+		  border-radius: 999px;
+		  text-decoration: none;
+		  font-weight: 600;
+		  box-shadow: 0 16px 30px rgba(248, 250, 252, 0.32);
 		}
-		.banner-btn a:hover {
-		  background: #ffa733;
-		  transform: translateY(-2px);
+		
+		.banner-btn .btn:first-child {
+		  background-color: #fff;
+		  color: #000;
+		  z-index: 1;
+		  border: 1px solid rgba(248, 250, 252, 0.65);
+    	  padding: 14px 28px;
+		  border-radius: 999px;
+		  text-decoration: none;
+		  font-weight: 600;
+		  box-shadow: 0 16px 30px rgba(248, 250, 252, 0.32);
 		}
-	
+		
+		.banner-btn .btn:first-child:hover {
+		  color: black;
+		}
+		
+		.banner-btn .btn:first-child::after {
+		  background-color: #fbbf24;
+		}
+		
 		.device-card {
 		  background: #fff;
 		  border-radius: 12px;
@@ -111,6 +130,36 @@
 		  font-size: 3.5rem;
 		  font-weight: 700;
 		}
+		
+		.promo-card {
+		  position: relative;
+		  background: #fff;
+		  border-radius: 12px;
+		  padding: 16px;
+		  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+		  transition: all 0.3s ease;
+		  overflow: hidden;
+		}
+		
+		.promo-card:hover {
+		  transform: translateY(-5px);
+		  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+		}
+		
+		.promo-link {
+		  position: absolute;
+		  inset: 0;
+		  z-index: 2;
+		}
+		
+		.promo-card * {
+		  pointer-events: none;
+		}
+		
+		.promo-link {
+		  pointer-events: auto;
+		  cursor: pointer;
+		}
     </style>
 </head>
 <body class="home-page">
@@ -121,9 +170,9 @@
                 <h2 id="banner-title">Mua sắm điện máy thăng hoa - Ưu đãi đến 20% cho toàn bộ thiết bị</h2>
                 <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của TechShop</p>
                 <div class="banner-btn">
-                    <a href="device-page">Khám phá sản phẩm</a>
-                    <a class="secondary" href="order-tracking">Theo dõi đơn hàng</a>
-                    <a class="secondary" href="issue">Theo dõi bảo hành</a>
+                    <a class="btn" href="device-page">Khám phá sản phẩm</a>
+                    <a class="btn" href="order-tracking">Theo dõi đơn hàng</a>
+                    <a class="btn" href="issue">Theo dõi bảo hành</a>
                 </div>
             </div>
             
@@ -136,21 +185,16 @@
 				  <div class="banner-promos-track">
 				    <c:forEach items="${bannerList}" var="s"> 
 				      <article class="promo-card">
+				      	<a href="device-detail?id=${s.id}" class="promo-link"></a>
 				        <div class="promo-card-item">
 				          <div class="container-item">
-				            <span class="promo-tag">
-				              <i class="fa-solid fa-bolt"></i> ${s.category.name}
-				            </span>
-				            <h3>
-				              <i class="fa-solid fa-gift"></i> ${s.name}
-				            </h3>
+				            <span class="promo-tag"><i class="fa-solid fa-bolt"></i> ${s.category.name}</span>
+				            <h3><i class="fa-solid fa-gift"></i> ${s.name}</h3>
 				            <p>
 				              <i class="fa-solid fa-exchange-alt"></i> Thu cũ đổi mới lên đến 
 				              <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong>
 				            </p>
-				            <p>
-				              <i class="fa-solid fa-shield-heart"></i> Bảo hành ${s.warrantyMonth} tháng
-				            </p>
+				            <p><i class="fa-solid fa-shield-heart"></i> Bảo hành ${s.warrantyMonth} tháng</p>
 				          </div>
 				          <img src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}" alt="${s.name}" class="promo-img">
 				        </div>
@@ -331,7 +375,7 @@
         <section class="device-list best-sellers" id="best-sellers">
             <div class="section-heading">
                 <h2 id="best-sellers-title">Thiết Bị Bán Chạy</h2>
-                <p>Duoc khach hang lua chon va danh gia cao nhat trong thang.</p>
+                <p>Được khách hàng lựa chọn và mua nhiều nhất.</p>
             </div>
             <div class="device-slider">
                 <div class="device-window">

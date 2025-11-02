@@ -1,12 +1,17 @@
 package dao;
 
+import java.security.SecureRandom;
 import java.sql.*;
 
 import java.util.*;
+
+import model.Device;
 import model.DeviceSerial;
 
 
 public class DeviceSerialDAO extends dal.DBContext {
+	private final DeviceDAO deviceDAO = new DeviceDAO();
+	private SecureRandom secureRandom = new java.security.SecureRandom();
 	
 	public List<DeviceSerial> getAllDeviceSerials(int id){
 		List<DeviceSerial> list = new ArrayList<DeviceSerial>();
@@ -84,20 +89,6 @@ public class DeviceSerialDAO extends dal.DBContext {
         return ds;
     }
 
-    public boolean addSerial(DeviceSerial ds) {
-        String sql = "INSERT INTO device_serials(device_id, serial_no, status, import_date) VALUES(?, ?, ?, ?)";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, ds.getDevice_id());
-            ps.setString(2, ds.getSerial_no());
-            ps.setString(3, ds.getStatus()); 
-            ps.setTimestamp(4, ds.getImport_date());
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     public boolean updateStatus(int serialId, String status) {
         String sql = "UPDATE device_serials SET stock_status = ? WHERE id = ?";
@@ -113,7 +104,7 @@ public class DeviceSerialDAO extends dal.DBContext {
     }
 
     public boolean statusSerial(int id, String mess) {
-        String sql = "UPDATE device_serials SET stock_status = ? WHERE id = ?;";
+        String sql = "UPDATE device_serials SET status = ? WHERE id = ?;";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
         	ps.setString(1, mess);
@@ -166,5 +157,67 @@ public class DeviceSerialDAO extends dal.DBContext {
 		}
 		return null;
 	}
+    
+    public boolean insertDeviceSerials(Device d, int quantity) {
+        String sql = "INSERT INTO device_serials (device_id, serial_no, import_date) VALUES (?, ?, NOW())";
+        String prefix = generatePrefix(d.getName());
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                int generatedCount = 0;
+
+                while (generatedCount < quantity) {
+                    String serial = generateRandomSerial(prefix, d.getId());
+                    if (checkSerialExists(serial, conn)) {
+                        continue;
+                    }
+                    ps.setInt(1, d.getId());
+                    ps.setString(2, serial);
+                    ps.addBatch();
+                    generatedCount++;
+                }
+
+                ps.executeBatch();
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private String generateRandomSerial(String prefix, int deviceId) {
+        int rand1 = secureRandom.nextInt(1000000); 
+        int rand2 = secureRandom.nextInt(1000000); 
+
+        return String.format("%s-%d-%06d-%06d",
+                prefix, deviceId, rand1, rand2);
+    }
+
+
+    private boolean checkSerialExists(String serial, Connection conn) throws SQLException {
+        String checkSql = "SELECT 1 FROM device_serials WHERE serial_no = ? LIMIT 1";
+        try (PreparedStatement checkPs = conn.prepareStatement(checkSql)) {
+            checkPs.setString(1, serial);
+            try (ResultSet rs = checkPs.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
+    private String generatePrefix(String deviceName) {
+        if (deviceName == null || deviceName.isBlank()) {
+            return "UNKNOWN";
+        }
+        String[] parts = deviceName.trim().split("\\s+");
+        String prefix = parts[0].toUpperCase().replaceAll("[^A-Z0-9]", "");
+        return prefix;
+    }
     
 }

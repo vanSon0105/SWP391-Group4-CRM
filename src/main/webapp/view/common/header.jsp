@@ -11,7 +11,9 @@
 
             <header class="header">
                 <h1 class="header-title">
-                <a href="home" style="position: relative;"><img alt="logo" src="${pageContext.request.contextPath}/assets/img/logo.png"></a>
+                	<a href="home" style="position: relative;">
+                		<img alt="logo" src="${pageContext.request.contextPath}/assets/img/logo.png">
+                	</a>
                 </h1>
                 <div class="header-center">
                     <div class="category-menu" data-category-menu>
@@ -81,7 +83,7 @@
 					</c:if>
 					
 					<c:if test="${sessionScope.account.roleId == 5}">
-					    <a href="support-tickets" class="btn order-btn account-btn">
+					    <a href="de-show" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-warehouse"></i>
 					    </a>
 					</c:if>

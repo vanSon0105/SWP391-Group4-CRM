@@ -54,6 +54,49 @@
 	body .panel h2{
 		margin-bottom: 0 !important;
 	}
+	
+	.modal-overlay {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        margin: auto;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        width: max-content;
+        position: relative;
+    }
+
+    .modal-close {
+        color: #aaa;
+        position: absolute;
+        top: -5px;
+        right: 5px;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px;
+    }
+
+    .modal-content h2 {
+        margin-top: 0;
+        color: #1f2d3d;
+        border-bottom: 1px solid #eef2f6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
 </style>
 </head>
 <body class="management-page device-management sidebar-collapsed">
@@ -62,13 +105,15 @@
 	 <main class="sidebar-main">
             <section class="panel">
                 <div class="device-toolbar">
-                    <div class="device-toolbar-actions">
-                        <a class="btn btn-add" href="device-add">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>Thêm thiết bị</span>
-                        </a>
-                    </div>
-                    <form class="device-search" action="device-show" method="get">
+                	<c:if test="${empty listDevices}">
+	                	<div class="device-toolbar-actions">
+	                        <a class="btn btn-add" href="des-add?id=${deviceId}&action=1">
+	                            <i class="fa-solid fa-plus"></i>
+	                            <span>Thêm device serials</span>
+	                        </a>
+	                    </div>
+	                </c:if>
+                    <form class="device-search" action="de-show" method="get">
 		                <input id="device-search" name="key" type="search" placeholder="Tìm theo mã, tên thiết bị . . ." value="${param.key}">
 		                <label for="device-search" class="sr-only"></label>
 		                
@@ -103,7 +148,7 @@
 						</c:choose>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
-		            	<a href="device-show" class="btn device-btn">Reset</a>
+		            	<a href="de-show" class="btn device-btn">Reset</a>
 		            </form>
                 </div>
             </section>
@@ -116,7 +161,7 @@
 	                </c:if>	
 
 	                <c:if test="${not empty listDeviceSerials || empty listDevices}">
-	                	<a class="btn device-btn" href="device-show#table-panel">Quay lại</a>       
+	                	<a class="btn device-btn" href="de-show#table-panel">Quay lại</a>       
 	                </c:if>	     
   
             	</div>
@@ -149,14 +194,7 @@
 		                                <td><span class="device-status"></i>${s.status}</span></td>
 		                                <td class="device-show-actions">
 		                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
-		                                    <a class="btn device-btn" href="device-serials?id=${s.id}#device-serial">Xem Serials</a>
-		                                    <c:if test="${s.status == 'active'}">
-		                                    	<a class="btn device-btn" href="device-update?id=${s.id}">Sửa</a>
-		                                    	<a class="btn device-remove" href="device-delete?id=${s.id}">Xóa</a>
-		                                    </c:if>
-		                                    <c:if test="${s.status == 'discontinued'}">
-		                                    	<a class="btn device-remove" href="device-active?id=${s.id}">Active</a>
-		                                    </c:if>
+		                                    <a class="btn device-btn" href="des-show?id=${s.id}#device-serial">Xem Serials</a>
 		                                </td>
 		                            </tr>
 		                          </c:forEach>
@@ -177,15 +215,15 @@
 						</table>
                    </c:if>
                    
-                   <c:if test="${not empty listDeviceSerials}"> 
+                   <c:if test="${not empty listDeviceSerials}">
                     <table class="device-table" id="device-serial">
                         <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Serial No</th>
-                                <th>Stock Status</th>
-                                <th>Status</th>
-                                <th>Import Date</th>
+                                <th>Trạng thái tồn kho</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày nhập</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -203,10 +241,11 @@
                    </c:if>
                 </div>
              </section>
+             
                <div class="pagination-pills">
 	           	<c:choose>
 			        <c:when test="${currentPage > 1}">
-			            <a href="device-show?page=${currentPage - 1}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">&#10094;</a>
+			            <a href="de-show?page=${currentPage - 1}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">&#10094;</a>
 			        </c:when>
 			        <c:otherwise>
 			            <a class="disabled">&#10094;</a>
@@ -226,18 +265,18 @@
 				  </c:if>
 				
 				  <c:if test="${start > 1}">
-				    <a href="device-show?page=1#&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">1</a>
+				    <a href="de-show?page=1#&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">1</a>
 				    <span>…</span>
 				  </c:if>
 				
 				  <c:forEach var="i" begin="${start}" end="${end}">
-				    <a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel"
+				    <a href="de-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel"
 				       class="${i == currentPage ? 'active' : ''}">${i}</a>
 				  </c:forEach>
 				
 				  <c:if test="${end < totalPages}">
 				    <span>…</span>
-				    <a href="device-show?page=${totalPages}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">
+				    <a href="de-show?page=${totalPages}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">
 				      ${totalPages}
 				    </a>
 				  </c:if>
@@ -245,14 +284,14 @@
             	
             	<c:if test="${totalPages < 10}">
 	            	<c:forEach var="i" begin="1" end="${totalPages}">
-	            		<a href="device-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel"
+	            		<a href="de-show?page=${i}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel"
 	               		class="${i == currentPage ? 'active' : ''}">${i}</a>
 	        		</c:forEach>           	
             	</c:if>
             	
             	<c:choose>
 	                <c:when test="${currentPage < totalPages}">
-	                	<a href = "device-show?page=${currentPage + 1}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">&#10095;</a>            	
+	                	<a href = "de-show?page=${currentPage + 1}&key=${param.key}&categoryId=${selectedCategory}&sortBy=${param.sortBy}&order=${param.order}#table-panel">&#10095;</a>            	
 	            	</c:when>
 	            	<c:otherwise>
 			            <a class="disabled">&#10095;</a>
@@ -260,5 +299,49 @@
 	            </c:choose>
             </div>
         </main>
+        
+        <c:if test="${addDeviceSerials}">
+		    <div id="taskDetailModal" class="modal-overlay">
+		        <div class="modal-content">
+		            <a class="modal-close" href="des-show?id=${deviceId}">&times;</a>
+		            <h2>Thêm thiết bị</h2>
+			        <div class="task-detail-grid">
+			        	<form class="device-form" action="des-add" method="post">
+			        		<input name="id" value="${device.id}" hidden>
+		                    <div class="form-field">
+		                        <label for="name">Tên device serials</label>
+		                        <input id="name" name="name" readonly value="${device.name}">
+		                    </div>
+		                    
+		                    <div class="form-field">
+		                        <label for="quantity">Số lượng device serials</label>
+		                        <input type="number" id="quantity" name="quantity" min="1">
+		                    </div>
+		
+			                <div class="form-actions">
+			                    <a class="btn ghost" href="des-show?id=${device.id}">Hủy</a>
+			                    <button class="btn primary" type="submit">Thêm</button>
+			                </div>
+			            </form>      
+			        </div>
+		        </div>
+		    </div>
+		    
+		    <script>
+		    	document.addEventListener("DOMContentLoaded", function() {
+				    var modal = document.getElementById("taskDetailModal");
+				    if (!modal) {
+				        return;
+				    }
+					modal.style.display = "flex";
+		
+					window.addEventListener('click', function(event) {
+					    if (event.target == modal) {
+					        modal.style.display = "none";
+					    }
+					});
+				});
+			</script>
+		</c:if>
 </body>
 </html>

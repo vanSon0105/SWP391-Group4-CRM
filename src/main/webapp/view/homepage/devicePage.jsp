@@ -26,27 +26,52 @@
 	background: linear-gradient(90deg, #38bdf8, #22d3ee) !important;
 }
 
-.container-paging {
-	text-align: center;
-	margin-top: 10px;
-	margin-bottom: 30px;
+.pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
-.pagination {
-	text-decoration: none;
-	background: white;
-	padding: 10px 14px;
-	border-radius: 10px;
-	text-align: center;
+.pagination-pills a {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.container-paging .active {
-	background-color: #22A1EB;
-	color: white !important;
+.pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+}
+
+.pagination-pills a:hover {
+    transform: translateY(-2px);
 }
 
 .pagination:visited {
   color: #333;
+}
+
+a.disabled {
+    color: black;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>
 
@@ -92,8 +117,8 @@
 						</c:forEach>
 					</div>
 					<div>
-						<label for="price">Mức giá</label> <select id="price"
-							onchange="this.form.submit()"  name="price">
+						<label for="price">Mức giá</label> 
+						<select style="margin-top: 10px;" id="price" onchange="this.form.submit()"  name="price">
 							<option value="" ${empty param.price ? 'selected' : ''}>Mọi
 								mức giá</option>
 							<option value="under5"
@@ -154,23 +179,21 @@
 		</main>
 	</form>
 
-	<div class="container-paging">
+	<div class="pagination-pills">
 		<c:choose>
 			<c:when test="${currentPage > 1}">
-				<a class="pagination"
-					href="device-page?page=${currentPage - 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
+				<a href="device-page?page=${currentPage - 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					&#10094;</a>
 			</c:when>
 			<c:otherwise>
-				<span class="pagination disabled">&#10094;</span>
+				<a class="disabled">&#10094;</a>
 			</c:otherwise>
 		</c:choose>
 
 		
 		<c:if test="${totalPages > 0}">
 			<c:if test="${startPage > 1}">
-				<a class="pagination"
-					href="device-page?page=1&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
+				<a href="device-page?page=1&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					1 </a>
 				<c:if test="${startPage > 2}">
 					<span>...</span>
@@ -179,7 +202,7 @@
 
 			
 			<c:forEach var="i" begin="${startPage}" end="${endPage}">
-				<a class="pagination ${i == currentPage ? 'active' : ''}"
+				<a class="${i == currentPage ? 'active' : ''}"
 					href="device-page?page=${i}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					${i} </a>
 			</c:forEach>  
@@ -189,8 +212,7 @@
 				<c:if test="${endPage < totalPages - 1}">
 					<span>...</span>
 				</c:if>
-				<a class="pagination"
-					href="device-page?page=${totalPages}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
+				<a href="device-page?page=${totalPages}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					${totalPages} </a>
 			</c:if>
 		</c:if>
@@ -198,12 +220,11 @@
 		
 		<c:choose>
 			<c:when test="${currentPage < totalPages}">
-				<a class="pagination"
-					href="device-page?page=${currentPage + 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
+				<a href="device-page?page=${currentPage + 1}&category=${param.category}&supplier=${param.supplier}&price=${param.price}&sortPrice=${param.sortPrice}&key=${param.key}">
 					&#10095; </a>
 			</c:when>
 			<c:otherwise> 
-				<span class="pagination disabled">&#10095;</span>
+				<a class="disabled">&#10095;</a>
 			</c:otherwise>
 		</c:choose>
 	</div>

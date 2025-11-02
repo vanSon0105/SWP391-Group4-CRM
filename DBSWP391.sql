@@ -1205,31 +1205,29 @@ INSERT INTO permissions (id, permission_name) VALUES
 (11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'DEVICE_MANAGEMENT'), (14, 'DEVICE_OVERVIEW'),
 (15, 'PRICING_MANAGEMENT'), (16, 'CREATE_IMPORT_EXPORT_ORDER'), (17, 'QUANTITY_CHECK'), (18, 'IMPORT_EXPORT_REPORTS'),
 (19, 'CRUD_SUPPLIER'), (20, 'DEVICE_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
-(22, 'SUPPLIER_INFO_INTEGRATION'), (23, 'ORDER_VALIDATION'), (24, 'CRUD_ORDER'), (25, 'ORDER_TRACKING'),
-(26, 'ORDER_REPORTS'), (27, 'INTEGRATION_PAYOS'), (28, 'PAYMENT_REPORTS'), (29, 'PAYMENT_CONFIRMATION'),
-(30, 'PAYMENT_REQUEST_CREATION'), (31, 'REVENUE_PROFIT_ANALYSIS'), (32, 'CUSTOMER_ORDER_REPORT'),
+(22, 'SUPPLIER_INFO_INTEGRATION'), (25, 'ORDER_TRACKING'),
+(26, 'ORDER_REPORTS'), (29, 'PAYMENT_CONFIRMATION'),
+(30, 'PAYMENT_REQUEST_CREATION'), (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
-(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK');
+(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE');
 
 -- Admin
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
 -- Technical Manager
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 12), (2, 13), (2, 14), (2, 15), (2, 19),
-(2, 20), (2, 21), (2, 22), (2, 23), (2, 24), (2, 25), (2, 26), (2, 28), (2, 31), (2, 32), (2, 33), (2, 34), (2, 36);
+(2, 20), (2, 21), (2, 22), (2, 25), (2, 26), (2, 32), (2, 33), (2, 34), (2, 36);
 -- Technical Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES (3, 3), (3, 42);
 INSERT INTO role_permission (role_id, permission_id) VALUES (4, 3), (4, 42);
-INSERT INTO role_permission (role_id, permission_id) VALUES (5, 3), (5, 42);
 INSERT INTO role_permission (role_id, permission_id) VALUES (6, 3), (6, 42);
 -- Customer Support Staff
 INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38);
 -- Storekeeper
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(5, 12), (5, 13), (5, 14), (5, 15), (5, 16), (5, 17), (5, 18), (5, 23), (5, 24), (5, 25), (5, 26), (5, 28),
-(5, 31), (5, 32), (5, 33), (5, 34);
+(5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3);
 -- Customer
-INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 24), (6, 25), (6, 26), (6, 27), (6, 30), (6, 37);
+INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 25), (6, 26), (6, 30), (6, 37);
 
 UPDATE devices
 SET is_featured = TRUE

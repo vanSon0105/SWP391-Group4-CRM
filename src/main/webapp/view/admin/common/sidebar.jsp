@@ -23,6 +23,9 @@
         <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
             <a href="device-show">Thiết bị</a>
         </c:if>
+        <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
+            <a href="de-show">Thiết bị</a>
+        </c:if>
         <c:if test="${permissions != null && permissions.contains('CATEGORY_MANAGEMENT')}">
             <a href="category-show">Danh mục</a>
         </c:if>

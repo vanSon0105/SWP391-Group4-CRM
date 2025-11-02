@@ -327,22 +327,6 @@ ul {
     gap: 16px;
 }
 
-.home-page .mega-banner .banner-btn a {
-    padding: 14px 28px;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 600;
-    color: #0f172a;
-    background: #f8fafc;
-    box-shadow: 0 16px 30px rgba(248, 250, 252, 0.32);
-}
-
-.home-page .mega-banner .banner-btn a.secondary {
-    background: transparent;
-    color: #f8fafc;
-    border: 1px solid rgba(248, 250, 252, 0.65);
-}
-
 .home-page .banner-promos {
     width: 98%;
     display: grid;
@@ -1070,7 +1054,7 @@ body.shop-page.catalog-page .toolbar {
 body.shop-page .filters {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px;
 }
 
 
@@ -1132,6 +1116,7 @@ body.shop-page.catalog-page .product-card strong {
     border-radius: 8px;
     background: linear-gradient(135deg, #d50000 60%, #000 60%);
     padding: 6px 14px;
+    text-align: center;
 }
 
 /* =============================================================device-detail.html */
