@@ -327,22 +327,6 @@ ul {
     gap: 16px;
 }
 
-.home-page .mega-banner .banner-btn a {
-    padding: 14px 28px;
-    border-radius: 999px;
-    text-decoration: none;
-    font-weight: 600;
-    color: #0f172a;
-    background: #f8fafc;
-    box-shadow: 0 16px 30px rgba(248, 250, 252, 0.32);
-}
-
-.home-page .mega-banner .banner-btn a.secondary {
-    background: transparent;
-    color: #f8fafc;
-    border: 1px solid rgba(248, 250, 252, 0.65);
-}
-
 .home-page .banner-promos {
     width: 98%;
     display: grid;
