@@ -113,7 +113,7 @@ public class DeviceController extends HttpServlet {
 	}
 	
 	public void viewDeviceDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT");
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT", "DEVICE_MANAGEMENT_NODELETE");
         if (currentUser == null) {
             return;
         }

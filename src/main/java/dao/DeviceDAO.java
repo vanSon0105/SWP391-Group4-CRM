@@ -455,7 +455,7 @@ public class DeviceDAO extends DBContext {
 	            + "LEFT JOIN ( "
 	            + "     SELECT device_id, COUNT(id) AS quantity "
 	            + "     FROM device_serials "
-	            + "     WHERE stock_status = 'in_stock' "
+	            + "     WHERE stock_status = 'in_stock' AND status = 'active'"
 	            + "     GROUP BY device_id "
 	            + ") AS stock ON d.id = stock.device_id "
 	            + "WHERE 1=1 ";

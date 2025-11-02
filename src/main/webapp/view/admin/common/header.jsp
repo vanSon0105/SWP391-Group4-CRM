@@ -9,10 +9,11 @@
 	
 <header class="topbar">
        <div class="topbar-left">
-       	<h1>
-            <a href="${pageContext.request.contextPath}/home">TechShop</a>        	
+       	<h1 class="header-title">
+            <a href="home" style="position: relative;"><img alt="logo" src="${pageContext.request.contextPath}/assets/img/logo.png"></a>        	
        	</h1>
-           <button class="sidebar-toggle" aria-label="Mở/đóng menu" aria-expanded="false"><i
+        
+        <button class="sidebar-toggle" aria-label="Mở/đóng menu" aria-expanded="false"><i
                    class="fa-solid fa-bars-staggered"></i></button>
        </div>
        <div class="topbar-right">

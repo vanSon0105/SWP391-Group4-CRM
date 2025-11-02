@@ -117,8 +117,8 @@ a.disabled {
 						</c:forEach>
 					</div>
 					<div>
-						<label for="price">Mức giá</label> <select id="price"
-							onchange="this.form.submit()"  name="price">
+						<label for="price">Mức giá</label> 
+						<select style="margin-top: 10px;" id="price" onchange="this.form.submit()"  name="price">
 							<option value="" ${empty param.price ? 'selected' : ''}>Mọi
 								mức giá</option>
 							<option value="under5"

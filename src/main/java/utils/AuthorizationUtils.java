@@ -43,7 +43,7 @@ public class AuthorizationUtils {
         return getPermissions(session).contains(permission);
     }
 
-    public static User requirePermission(HttpServletRequest request, HttpServletResponse response, String permission)
+    public static User requirePermission(HttpServletRequest request, HttpServletResponse response, String... requiredPermissions)
             throws IOException {
         HttpSession session = request.getSession(false);
         if (session == null) {
@@ -75,7 +75,15 @@ public class AuthorizationUtils {
         }
 
         Set<String> permissions = ensurePermissionsLoaded(session, user.getId());
-        if (!permissions.contains(permission)) {
+        boolean hasPermission = false;
+        for (String permission : requiredPermissions) {
+            if (permissions.contains(permission)) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
             return null;
         }

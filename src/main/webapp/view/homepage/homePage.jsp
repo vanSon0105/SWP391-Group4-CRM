@@ -24,6 +24,12 @@
 		  background-color: #fff;
 		  color: #000;
 		  z-index: 1;
+		  border: 1px solid rgba(248, 250, 252, 0.65);
+    	  padding: 14px 28px;
+		  border-radius: 999px;
+		  text-decoration: none;
+		  font-weight: 600;
+		  box-shadow: 0 16px 30px rgba(248, 250, 252, 0.32);
 		}
 		
 		.banner-btn .btn:first-child:hover {
