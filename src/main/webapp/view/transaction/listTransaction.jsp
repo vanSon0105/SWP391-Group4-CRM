@@ -13,24 +13,96 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.table-wrapper { overflow-x: auto; margin-top: 20px; }
-.transaction-table { width: 100%; border-collapse: collapse; }
-.transaction-table th, .transaction-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-.transaction-table th { background-color: #f7f7f7; }
-.status-confirmed { color: green; font-weight: bold; }
-.status-pending { color: orange; font-weight: bold; }
-.status-cancelled { color: red; font-weight: bold; }
+.table-wrapper {
+	overflow-x: auto;
+	margin-top: 20px;
+}
 
-.filter-form { margin-bottom: 15px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.filter-form input[type="text"], .filter-form select { padding: 6px 10px; border-radius: 5px; border: 1px solid #ccc; }
-.filter-form button { padding: 6px 15px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+.transaction-table {
+	width: 100%;
+	border-collapse: collapse;
+}
 
-.create-btn { margin-bottom: 15px; padding: 8px 20px; background-color: #28a745; color: #fff; border-radius: 5px; text-decoration: none; display: inline-block; }
+.transaction-table th, .transaction-table td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: center;
+}
 
-.pagination { margin-top: 15px; text-align: center; }
-.pagination a, .pagination strong { margin: 0 3px; padding: 5px 10px; text-decoration: none; border-radius: 5px; border: 1px solid #ddd; }
-.pagination strong { background-color: #007bff; color: #fff; border-color: #007bff; }
-.pagination a:hover { background-color: #f0f0f0; }
+.transaction-table th {
+	background-color: #f7f7f7;
+}
+
+.status-confirmed {
+	color: green;
+	font-weight: bold;
+}
+
+.status-pending {
+	color: orange;
+	font-weight: bold;
+}
+
+.status-cancelled {
+	color: red;
+	font-weight: bold;
+}
+
+.filter-form {
+	margin-bottom: 15px;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.filter-form input[type="text"], .filter-form select {
+	padding: 6px 10px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+}
+
+.filter-form button {
+	padding: 6px 15px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+.create-btn {
+	margin-bottom: 15px;
+	padding: 8px 20px;
+	background-color: #28a745;
+	color: #fff;
+	border-radius: 5px;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.pagination {
+	margin-top: 15px;
+	text-align: center;
+}
+
+.pagination a, .pagination strong {
+	margin: 0 3px;
+	padding: 5px 10px;
+	text-decoration: none;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+}
+
+.pagination strong {
+	background-color: #007bff;
+	color: #fff;
+	border-color: #007bff;
+}
+
+.pagination a:hover {
+	background-color: #f0f0f0;
+}
 </style>
 </head>
 <body class="management-page device-management sidebar-collapsed">

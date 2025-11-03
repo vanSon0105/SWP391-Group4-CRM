@@ -77,6 +77,17 @@ textarea { height: 70px; resize: vertical; }
     text-align: center;
     padding: 8px;
 }
+.btn-secondary { 
+    background-color: #6c757d; 
+    color: #fff; 
+    padding: 8px 16px; 
+    border-radius: 8px; 
+    text-decoration: none; 
+    font-weight: 600; 
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
 
 .device-table th { background-color: #f7f7f7; }
 </style>
@@ -170,7 +181,10 @@ textarea { height: 70px; resize: vertical; }
                     </tbody>
                 </table>
             </div>
-            <button type="submit" class="btn btn-submit">Create Transaction</button>
+            <div class="form-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+			    <button type="submit" class="btn btn-submit">Create Transaction</button>
+			    <a href="transactions" class="btn btn-secondary">Back to List</a>
+			</div>
         </form>
     </section>
 </main>
