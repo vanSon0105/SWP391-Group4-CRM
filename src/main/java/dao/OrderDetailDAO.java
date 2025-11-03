@@ -16,29 +16,38 @@ public class OrderDetailDAO extends DBContext{
 	 * return ps.executeUpdate() > 0; } catch (Exception e) { e.printStackTrace(); }
 	 * return false; }
 	 */
-	    public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
-	        List<OrderDetail> list = new ArrayList<>();
-	        String sql = "SELECT * FROM order_details WHERE order_id = ?";
-	        try (Connection conn = getConnection();
-	             PreparedStatement ps = conn.prepareStatement(sql)) {
-	            ps.setInt(1, orderId);
-	            try (ResultSet rs = ps.executeQuery()) {
-	                while (rs.next()) {
-	                    OrderDetail od = new OrderDetail(
-	                        rs.getInt("id"),
-	                        rs.getInt("order_id"),
-	                        rs.getInt("device_id"),
-	                        rs.getInt("quantity"),
-	                        rs.getDouble("price")
-	                    );
-	                    list.add(od);
-	                }
+	public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
+	    List<OrderDetail> list = new ArrayList<>();
+	    String sql = "SELECT od.id, od.order_id, od.device_id, od.quantity, od.price, d.name AS device_name " +
+	                 "FROM order_details od " +
+	                 "JOIN devices d ON od.device_id = d.id " +
+	                 "WHERE od.order_id = ?";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, orderId);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                OrderDetail od = new OrderDetail(
+	                    rs.getInt("id"),
+	                    rs.getInt("order_id"),
+	                    rs.getInt("device_id"),
+	                    rs.getInt("quantity"),
+	                    rs.getDouble("price")
+	                );
+	                od.setDeviceName(rs.getString("device_name")); 
+	                
+	                list.add(od);
 	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
 	        }
-	        return list;
+	    } catch (Exception e) {
+	        e.printStackTrace();
 	    }
+	    return list;
+	}
+
 
 	    public void updateOrderDetail(int id, int quantity, double price, int discount) {
 	        String sql = "UPDATE order_details SET quantity = ?, price = ?, discount = ? WHERE id = ?";

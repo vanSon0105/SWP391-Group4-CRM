@@ -4,6 +4,7 @@ public class OrderDetail {
 	private int id;              
     private int orderId;        
     private int deviceId;  
+    private String deviceName;
     private int quantity;        
     private double price;        
     private int discount;
@@ -47,6 +48,14 @@ public class OrderDetail {
 
     public void setDeviceId(int deviceId) {
         this.deviceId = deviceId;
+    }
+    
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public int getQuantity() {
