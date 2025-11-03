@@ -47,6 +47,12 @@ public class StorekeeperController extends HttpServlet {
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT_NODELETE");
+        if (currentUser == null) {
+            return;
+        }
+        
+        HttpSession s = request.getSession();
 		String idParam = request.getParameter("id");
 		int id = 0;
 		try {
@@ -60,9 +66,9 @@ public class StorekeeperController extends HttpServlet {
 		int quantity = Integer.parseInt(request.getParameter("quantity"));
 		boolean check = dsdao.insertDeviceSerials(d, quantity);
 		if(!check) {
-			request.setAttribute("mss", "Thêm device serials thất bại");
+			s.setAttribute("mess", "Thêm device serials thất bại");
 		} else {
-			request.setAttribute("mss", "Thêm device serials thành công");
+			s.setAttribute("mess", "Thêm device serials thành công");
 		}
 		response.sendRedirect("des-show?id="+id);
 	}
@@ -73,6 +79,9 @@ public class StorekeeperController extends HttpServlet {
         if (currentUser == null) {
             return;
         }
+        
+        HttpSession s = request.getSession();
+        s.removeAttribute("mess");
         
 	    String mess = (String) session.getAttribute("mess");
 	    if (mess != null) {
@@ -108,13 +117,28 @@ public class StorekeeperController extends HttpServlet {
 	}
 	
 	public void showDeviceSerialsList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));			
-
-		Device getDevice = dao.getDeviceById(id);
-		List<DeviceSerial> listDeviceSerials = dsdao.getAllDeviceSerials(getDevice.getId());
+		int id = Integer.parseInt(request.getParameter("id"));	
+		
+		String page = request.getParameter("page");
+		String key = request.getParameter("key");
+		String sortBy = request.getParameter("sortBy");
+	    String order = request.getParameter("order");
+	    
+		int currentPage = (page != null) ? Integer.parseInt(page) : 1;
+		int offset = (currentPage - 1) * recordsEachPage;
+		
+		List<DeviceSerial> listDeviceSerials = dsdao.getDeviceSerialsByPage(id, key, offset, recordsEachPage, sortBy, order);
+		int totalDeviceSerials = dsdao.getTotalDeviceSerials(id, key, sortBy, order);
+		int totalPages = (int) Math.ceil((double) totalDeviceSerials / recordsEachPage);
+		
+		request.setAttribute("totalDevices", totalDeviceSerials);
+		request.setAttribute("currentPage", currentPage);
+		request.setAttribute("totalPages", totalPages);
+		request.setAttribute("sortBy", sortBy);
+	    request.setAttribute("order", order);
 		request.setAttribute("deviceId", id);
 		request.setAttribute("listDeviceSerials", listDeviceSerials);
-		request.getRequestDispatcher("view/admin/storekeeper/show.jsp").forward(request, response);
+		request.getRequestDispatcher("view/admin/storekeeper/showSerials.jsp").forward(request, response);
 	}
 	
 	public void addDeviceSerials(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -142,7 +166,7 @@ public class StorekeeperController extends HttpServlet {
 		request.setAttribute("device", d);
 		request.setAttribute("deviceId", id);
 		request.setAttribute("listDeviceSerials", listDeviceSerials);
-		request.getRequestDispatcher("view/admin/storekeeper/show.jsp").forward(request, response);
+		request.getRequestDispatcher("view/admin/storekeeper/showSerials.jsp").forward(request, response);
 	}
 	
 

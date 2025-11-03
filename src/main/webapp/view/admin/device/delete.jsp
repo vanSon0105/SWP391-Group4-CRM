@@ -34,7 +34,7 @@ a{
                         <div><strong>Mã SP:</strong> <span id="device-id">${device.id}</span></div>
                         <div><strong>Tên:</strong>${device.name}</div>
                         <div><strong>Danh mục:</strong>${device.category.name}</div>
-                        <div><strong>Trạng thái hiện tại:</strong>${device.status}</div>
+                        <div><strong>Trạng thái hiện tại: </strong>${device.status}</div>
                     </div>
                 </div>
                 <p>Bạn có chắc chắn muốn xóa thiết bị này khỏi danh mục bán hàng?</p>
@@ -57,11 +57,8 @@ a{
 	                <h2>Danh sách thiết bị</h2>
 	                
 	                <c:if test="${not empty mess}">
-		               	<span style="color: red;font-size: 1.5rem;text-align: right;">${mess}</span>	
+		               	<span class="device-status" style="color: red;font-size: 1.5rem;text-align: right;">${mess}</span>	
 		            </c:if>	
-	                <c:if test="${not empty listDeviceSerials}"> 
-	                	<a class="btn device-btn" href="device-show#table-panel">Quay lại</a>            
-	                </c:if>	
             	</div>
                 <div class="table-wrapper">
             <c:if test="${not empty listDeviceSerials}">
@@ -78,11 +75,11 @@ a{
 	                   </thead>
 	                   <tbody>
 	                   	<c:forEach items="${listDeviceSerials}" var="s">
-	                        <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
+	                        <tr>
 	                        	<td>${s.id}</td>
 	                            <td>${s.serial_no}</td>
 	                            <td>${s.stock_status}</td>
-	                            <td>${s.status}</td>
+	                            <td><span style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>" class="device-status"></i>${s.status}</span></td>
 	                            <td>${s.import_date}</td>
 	                            
 	                            <c:if test="${s.stock_status == 'in_stock' or s.stock_status == 'out_stock'}">
