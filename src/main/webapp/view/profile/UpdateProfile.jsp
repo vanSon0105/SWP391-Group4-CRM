@@ -249,9 +249,9 @@
 					</div>
 					<div class="submenu">
 						<a href="profile" class="${param.action == null ? 'active' : ''}">Hồ
-							Sơ</a> <a href="account?action=list"
-							class="${param.action == 'list' ? 'active' : ''}">Xem Tài
-							Khoản</a>
+							Sơ</a> 
+							<a href="javascript:void(0);" onclick="showChangePassword()" 
+   class="${param.action == 'changePassword' ? 'active' : ''}">Thay đổi mật khẩu</a>
 					</div>
 				</div>
 			</nav>
@@ -307,8 +307,8 @@
 					</div>
 					
 					<div class="form-group">
-						<label for="email">Email</label> <input type="email" id="email"
-							name="email" value="${user.email}" required>
+					    <label for="email">Email</label> 
+					    <input type="email" id="email" name="email" value="${user.email}" readonly>
 					</div>
 					
 					<div class="form-group">
