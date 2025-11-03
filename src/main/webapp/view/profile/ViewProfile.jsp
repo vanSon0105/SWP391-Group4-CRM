@@ -275,7 +275,7 @@
                     </div>
                     <div class="submenu">
                         <a href="profile" class="${param.action == null ? 'active' : ''}">Hồ Sơ</a>
-                        <a href="account?action=list" class="${param.action == 'list' ? 'active' : ''}">Xem Tài Khoản</a>
+                      
                        <a href="javascript:void(0);" onclick="showChangePassword()" 
    class="${param.action == 'changePassword' ? 'active' : ''}">Thay đổi mật khẩu</a>
                     </div>
@@ -334,7 +334,7 @@
                     <div class="profile-actions">
 					<a href="profile?action=edit" class="btn btn-edit"> <i
 						class="fa fa-edit"></i> Chỉnh sửa hồ sơ
-					</a> <a href="home" class="btn btn-cancel"> <i class="fa fa-home"></i>Về trang chủ
+					</a> <a href="profile" class="btn btn-cancel"> <i class="fa fa-home"></i>Về trang chủ
 					</a>
 				</div>
             </div>
