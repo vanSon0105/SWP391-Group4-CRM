@@ -113,8 +113,7 @@ public class DeviceDAO extends DBContext {
 	                    rs.getString("description"),
 	                    rs.getTimestamp("created_at"),
 	                    rs.getBoolean("is_featured"),
-	                    rs.getInt("warrantyMonth"),
-	                    0
+	                    rs.getInt("warrantyMonth")
 	                );
 	            }
 	        }
@@ -125,25 +124,38 @@ public class DeviceDAO extends DBContext {
 	}
 
 	public List<Device> getAllDevices() {
-		List<Device> list = new ArrayList<>();
-		String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured FROM devices";
+	    List<Device> list = new ArrayList<>();
+	    String sql = "SELECT id, category_id, name, price, unit, image_url, description, created_at, is_featured FROM devices";
 
-		try (Connection conn = getConnection();
-				PreparedStatement pre = conn.prepareStatement(sql);
-				ResultSet rs = pre.executeQuery()) {
+	    try (Connection conn = getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql);
+	         ResultSet rs = pre.executeQuery()) {
 
-			while (rs.next()) {
-				Category c = new Category();
-            	c.setId(rs.getInt("category_id"));
-				list.add(new Device(rs.getInt("id"), c, rs.getString("name"),
-						rs.getDouble("price"), rs.getString("unit"), rs.getString("image_url"),rs.getString("description"),rs.getTimestamp("created_at"), rs.getBoolean("is_featured")));
-			}
+	        while (rs.next()) {
+	            Category c = new Category();
+	            c.setId(rs.getInt("category_id"));
 
-		} catch (SQLException e) {
-			System.out.println("Error get all devices: " + e.getMessage());
-		}
+	            Device d = new Device(
+	                rs.getInt("id"),
+	                c,
+	                rs.getString("name"),
+	                rs.getDouble("price"),
+	                rs.getString("unit"),
+	                rs.getString("image_url"),
+	                rs.getString("description"),
+	                rs.getTimestamp("created_at"),
+	                rs.getBoolean("is_featured")
+	                
+	            );
 
-		return list;
+	            list.add(d);
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace(); 
+	    }
+
+	    return list;
 	}
 
 	public List<Device> getFilteredDevices(Integer categoryId, Integer supplierId, String priceRange, String sortPrice,
@@ -284,8 +296,9 @@ public class DeviceDAO extends DBContext {
         		+ "GROUP BY d.id, d.name, d.price, d.description\r\n"
         		+ "ORDER BY total_sold DESC\r\n"
         		+ "LIMIT ?, ?;";
-        try (Connection conn = DBContext.getConnection();
-            PreparedStatement pre = conn.prepareStatement(sql)) {
+        try {
+        	connection = DBContext.getConnection();
+            PreparedStatement pre = connection.prepareStatement(sql);
             pre.setInt(1, offset);
             pre.setInt(2, recordsEachPage);
             ResultSet rs = pre.executeQuery();
@@ -301,6 +314,8 @@ public class DeviceDAO extends DBContext {
             }
         } catch (Exception e) {
             e.printStackTrace();;
+        }finally {
+        	closeConnection();
         }
         return list;
     }
@@ -417,7 +432,7 @@ public class DeviceDAO extends DBContext {
                 d.setId(rs.getInt("id"));
                 d.setName(rs.getString("name"));
                 d.setPrice(rs.getDouble("price"));
-                d.setImageUrl(rs.getString("image_url"));
+                d.setDesc(rs.getString("image_url"));
                 d.setDesc(rs.getString("description"));
                 list.add(d);
             }
@@ -455,65 +470,50 @@ public class DeviceDAO extends DBContext {
 	            + "LEFT JOIN ( "
 	            + "     SELECT device_id, COUNT(id) AS quantity "
 	            + "     FROM device_serials "
-	            + "     WHERE stock_status = 'in_stock' AND status = 'active'"
+	            + "     WHERE stock_status = 'in_stock' "
 	            + "     GROUP BY device_id "
 	            + ") AS stock ON d.id = stock.device_id "
-	            + "WHERE 1=1 ";
-
+	            +"WHERE 1=1 ";
+	    
 	    if (key != null && !key.trim().isEmpty()) {
-	        sql += "AND (d.name LIKE ? OR CAST(d.id AS CHAR) LIKE ?)";
+	    	sql += "AND (d.name LIKE ? OR CAST(d.id AS CHAR) LIKE ?)";
 	    }
-
+	    
 	    if (categoryId > 0) {
-	        sql += "AND d.category_id = ? ";
+	        sql += ("AND d.category_id = ? ");
 	    }
-	    if ("status".equalsIgnoreCase(sortBy)) {
-	        if ("active".equalsIgnoreCase(order) || "discontinued".equalsIgnoreCase(order)) {
-	            sql += "AND d.status = ? ";
-	        }
-
-	    }
-
-	    String sortColumn = "d.id"; 
-	    if ("price".equalsIgnoreCase(sortBy)) {
-	        sortColumn = "d.price";
-	    } else if ("name".equalsIgnoreCase(sortBy)) {
-	        sortColumn = "d.name";
-	    }
-
-	    String sortOrder = "ASC";
-	    if ("desc".equalsIgnoreCase(order)) {
-	        sortOrder = "DESC";
-	    }
+	    
+	    String sortColumn = "d.id";
+        if ("price".equalsIgnoreCase(sortBy)) {
+            sortColumn = "d.price";
+        } else if ("name".equalsIgnoreCase(sortBy)) {
+            sortColumn = "d.name";
+        }
+        
+        String sortOrder = "ASC";
+        if ("desc".equalsIgnoreCase(order)) {
+            sortOrder = "DESC";
+        }
 
 	    sql += "ORDER BY " + sortColumn + " " + sortOrder + " LIMIT ?, ?;";
 
 	    try (Connection connection = getConnection();
 	         PreparedStatement ps = connection.prepareStatement(sql)) {
-	        
-	        int index = 1;
+	    	int index = 1;
 	        if (key != null && !key.trim().isEmpty()) {
 	            String keyword = "%" + key + "%";
 	            ps.setString(index++, keyword);
 	            ps.setString(index++, keyword);
 	        }
-
+	        
 	        if (categoryId > 0) {
 	            ps.setInt(index++, categoryId);
 	        }
-
-	        if ("status".equalsIgnoreCase(sortBy)) {
-	            if ("active".equalsIgnoreCase(order)) {
-	                ps.setString(index++, "active");
-	            } else if ("discontinued".equalsIgnoreCase(order)) {
-	                ps.setString(index++, "discontinued");
-	            }
-
-	        }
-
+	        
+	        
+	        
 	        ps.setInt(index++, offset);
 	        ps.setInt(index, recordsEachPage);
-	        
 	        try (ResultSet rs = ps.executeQuery()) {
 	            while (rs.next()) {
 	                Category c = new Category();
@@ -631,7 +631,7 @@ public class DeviceDAO extends DBContext {
 	}
 	
 	public int insertDevice(Device device) {
-        String sql = "INSERT INTO devices (name, category_id, price, unit, image_url, description, is_featured, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO devices (name, category_id, price, unit, image_url, description, is_featured) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, device.getName());
@@ -641,7 +641,6 @@ public class DeviceDAO extends DBContext {
             ps.setString(5, device.getImageUrl());
             ps.setString(6, device.getDesc());
             ps.setBoolean(7, Boolean.TRUE.equals(device.getIsFeatured()));
-            ps.setString(8, device.getStatus());
 
             int affected = ps.executeUpdate();
             if (affected > 0) {
