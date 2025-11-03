@@ -5,6 +5,7 @@ import java.sql.*;
 
 import java.util.*;
 
+import model.Category;
 import model.Device;
 import model.DeviceSerial;
 
@@ -219,5 +220,106 @@ public class DeviceSerialDAO extends dal.DBContext {
         String prefix = parts[0].toUpperCase().replaceAll("[^A-Z0-9]", "");
         return prefix;
     }
+    
+    public int getTotalDeviceSerials(int id, String key, String sortBy, String order) {
+	    String sql = "SELECT COUNT(*) FROM device_serials WHERE device_id = ? ";
+	    
+	    if (key != null && !key.trim().isEmpty()) {
+	        sql += "AND (serial_no LIKE ? OR CAST(id AS CHAR) LIKE ?)";
+	    }
+	    
+	    if ("status".equalsIgnoreCase(sortBy)) {
+	        sql += " AND status = ? ";
+	    }
+	    
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)){
+	    	
+	    	int index = 1;
+	    	ps.setInt(index++, id);
+	    	if (key != null && !key.trim().isEmpty()) {
+	            String keyword = "%" + key + "%";
+	            ps.setString(index++, keyword);
+	            ps.setString(index++, keyword);
+	        }
+	    	
+	    	if ("status".equalsIgnoreCase(sortBy)) {
+	            ps.setString(index++, order);
+	        }
+	    	
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return 0;
+	}
+    
+    public List<DeviceSerial> getDeviceSerialsByPage(int id, String key, int offset, int recordsEachPage, String sortBy, String order) {
+	    List<DeviceSerial> list = new ArrayList<>();
+	    String sql = "SELECT * FROM device_serials WHERE device_id = ? ";
+	    
+    	if (key != null && !key.trim().isEmpty()) {
+    		sql += "AND (serial_no LIKE ? OR CAST(id AS CHAR) LIKE ?)";
+    	}
+    	
+    	if("status".equalsIgnoreCase(sortBy)) {
+    		sql += "AND status = ? ";
+    	}
+    	
+    	String sortColumn = "id";
+    	String sortOrder = "ASC";
+    	
+    	if ("status".equalsIgnoreCase(sortBy)) {
+            sortColumn = "id";
+            sortOrder = "ASC";
+        } else {
+            if ("serial_no".equalsIgnoreCase(sortBy)) {
+                sortColumn = "serial_no";
+            } else if ("import_date".equalsIgnoreCase(sortBy)) {
+                sortColumn = "import_date";
+            }
+            if ("desc".equalsIgnoreCase(order)) {
+                sortOrder = "DESC";
+            }
+        }
+    	sql += "ORDER BY " + sortColumn + " " + sortOrder + " LIMIT ?, ?;";
+
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	    	int index = 1;
+	    	ps.setInt(index++, id);
+	    	
+	    	if (key != null && !key.trim().isEmpty()) {
+    			String keyword = "%" + key + "%";
+    			ps.setString(index++, keyword);
+    			ps.setString(index++, keyword);
+    		}
+	    	
+	    	if("status".equalsIgnoreCase(sortBy)) {
+	    		ps.setString(index++, order);
+	    	}    		
+	    		
+	        ps.setInt(index++, offset);
+	        ps.setInt(index++, recordsEachPage);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	               DeviceSerial ds = new DeviceSerial();
+	               ds.setId(rs.getInt("id"));
+	               ds.setDevice_id(rs.getInt("device_id"));
+	               ds.setImport_date(rs.getTimestamp("import_date"));
+	               ds.setSerial_no(rs.getString("serial_no"));
+	               ds.setStatus(rs.getString("status"));
+	               ds.setStock_status(rs.getString("stock_status"));
+	               list.add(ds);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
     
 }
