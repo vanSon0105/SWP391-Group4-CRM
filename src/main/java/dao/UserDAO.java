@@ -297,6 +297,7 @@ public class UserDAO extends DBContext{
                 u.setRoleId(rs.getInt("role_id"));
                 u.setBirthday(rs.getTimestamp("birthday"));
                 u.setGender(rs.getString("gender"));
+                u.setPassword(rs.getString("password"));
                 return u;
             }
         } catch (SQLException e) {
@@ -518,24 +519,41 @@ public boolean isEmailOfUser(String email, int userId) {
 }
 
 public boolean updateUserPassword(User user) {
-    String sql = "UPDATE Users SET password=? WHERE id=?";
-    try (Connection conn = getConnection();
+    String sql = "UPDATE users SET password = ? WHERE id = ?";
+    try (Connection conn = DBContext.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
-         
         ps.setString(1, user.getPassword());
         ps.setInt(2, user.getId());
-        
-        int affectedRows = ps.executeUpdate();
-        System.out.println("[DEBUG] SQL executed. Rows affected: " + affectedRows);
-        System.out.println("[DEBUG] New password (hashed) for user ID " + user.getId() + ": " + user.getPassword());
-        
-        return affectedRows > 0;
-    } catch (SQLException e) {
-        System.err.println("[ERROR] updateUserPassword failed!");
+        int rows = ps.executeUpdate();
+        System.out.println("[DEBUG] Rows updated: " + rows);
+        return rows > 0;
+    } catch (Exception e) {
         e.printStackTrace();
         return false;
     }
 }
+
+public User getUserByEmail(String email) {
+    User user = null;
+    String sql = "SELECT * FROM Users WHERE email = ?";
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setString(1, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            user = new User();
+            user.setId(rs.getInt("id"));
+            user.setFullName(rs.getString("fullName"));
+            user.setEmail(rs.getString("email"));
+            user.setPassword(rs.getString("password"));
+            // thêm các field khác nếu cần
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return user;
+}
+
 
 
 
