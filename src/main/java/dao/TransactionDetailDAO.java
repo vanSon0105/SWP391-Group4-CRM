@@ -7,7 +7,6 @@ import model.TransactionDetail;
 
 public class TransactionDetailDAO extends DBContext {
 
-    // ✅ Thêm chi tiết + cập nhật tồn kho tổng
     public boolean addTransactionDetail(TransactionDetail detail, String type) {
         String insertSql = "INSERT INTO transaction_detail (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
         String updateStockSqlImport = "UPDATE devices SET quantity = quantity + ? WHERE id = ?";
@@ -16,7 +15,6 @@ public class TransactionDetailDAO extends DBContext {
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
-            // Thêm chi tiết phiếu
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setInt(1, detail.getTransactionId());
                 ps.setInt(2, detail.getDeviceId());
@@ -24,7 +22,6 @@ public class TransactionDetailDAO extends DBContext {
                 ps.executeUpdate();
             }
 
-            // Cập nhật tồn kho tổng
             if ("import".equalsIgnoreCase(type)) {
                 try (PreparedStatement ps = conn.prepareStatement(updateStockSqlImport)) {
                     ps.setInt(1, detail.getQuantity());
@@ -55,7 +52,6 @@ public class TransactionDetailDAO extends DBContext {
         return false;
     }
 
-    // Lấy tồn kho hiện tại
     private int getCurrentStock(int deviceId) {
         String sql = "SELECT quantity FROM devices WHERE id = ?";
         try (Connection conn = getConnection();

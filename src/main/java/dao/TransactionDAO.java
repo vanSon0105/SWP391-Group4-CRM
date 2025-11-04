@@ -117,4 +117,107 @@ public class TransactionDAO extends DBContext {
             return false;
         }
     }
+    
+    public List<Transaction> getTransactions(String typeFilter, String statusFilter, String keyword, int offset, int pageSize) {
+        List<Transaction> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("""
+            SELECT t.*, u.full_name AS storekeeper_name,
+                   s.name AS supplier_name, cu.full_name AS customer_name
+            FROM transactions t
+            LEFT JOIN users u ON t.storekeeper_id = u.id
+            LEFT JOIN suppliers s ON t.supplier_id = s.id
+            LEFT JOIN users cu ON t.user_id = cu.id
+            WHERE 1=1
+        """);
+
+        List<Object> params = new ArrayList<>();
+
+        if (typeFilter != null && !typeFilter.isEmpty()) {
+            sql.append(" AND t.type = ?");
+            params.add(typeFilter);
+        }
+
+        if (statusFilter != null && !statusFilter.isEmpty()) {
+            sql.append(" AND t.status = ?");
+            params.add(statusFilter);
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR t.note LIKE ?)");
+            String likeKeyword = "%" + keyword + "%";
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+            params.add(likeKeyword);
+        }
+
+        sql.append(" ORDER BY t.date DESC LIMIT ? OFFSET ?");
+        params.add(pageSize);
+        params.add(offset);
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Transaction t = new Transaction();
+                t.setId(rs.getInt("id"));
+                t.setStorekeeperId(rs.getInt("storekeeper_id"));
+                t.setUserId((Integer) rs.getObject("user_id"));
+                t.setSupplierId((Integer) rs.getObject("supplier_id"));
+                t.setType(rs.getString("type"));
+                t.setStatus(rs.getString("status"));
+                t.setDate(rs.getTimestamp("date"));
+                t.setNote(rs.getString("note"));
+                t.setStorekeeperName(rs.getString("storekeeper_name"));
+                t.setSupplierName(rs.getString("supplier_name"));
+                t.setUserName(rs.getString("customer_name"));
+                list.add(t);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public int countTransactions(String typeFilter, String statusFilter, String keyword) {
+        int count = 0;
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM transactions t LEFT JOIN users u ON t.storekeeper_id = u.id LEFT JOIN suppliers s ON t.supplier_id = s.id LEFT JOIN users cu ON t.user_id = cu.id WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (typeFilter != null && !typeFilter.isEmpty()) {
+            sql.append(" AND t.type = ?");
+            params.add(typeFilter);
+        }
+
+        if (statusFilter != null && !statusFilter.isEmpty()) {
+            sql.append(" AND t.status = ?");
+            params.add(statusFilter);
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR t.note LIKE ?)");
+            String likeKeyword = "%" + keyword + "%";
+            params.add(likeKeyword); params.add(likeKeyword); params.add(likeKeyword); params.add(likeKeyword);
+        }
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) count = rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
 }

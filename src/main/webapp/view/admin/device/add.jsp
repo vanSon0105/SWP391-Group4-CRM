@@ -15,14 +15,18 @@
 
 <style>
 	.image-preview {
-        margin-top: 12px;
+        left: -160px;
+	    bottom: -5px;
+	    position: absolute;
     }
     .image-preview img {
-        max-width: 220px;
+        width: 150px;
+    	height: 150px; 
         border-radius: 12px;
         border: 1px solid #d7dce6;
         background: #fff;
         padding: 6px;
+        object-fit: cover;
     }
     
     .form-field .error-message {
@@ -46,20 +50,25 @@
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {     
-        const fileInput = document.getElementById('image');
-        const previewImage = document.querySelector('.image-preview img');
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewImage.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('image');
+    const previewWrapper = document.querySelector('.image-preview');
+    const previewImg = document.getElementById('preview-img');
+
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                previewImg.src = ev.target.result;
+                previewWrapper.style.display = 'block'; 
             }
-        });
+            reader.readAsDataURL(file);
+        } else {
+            previewWrapper.style.display = 'none';  
+        }
     });
+});
 </script>
 </head>
 <body class="management-page device-management">
@@ -104,14 +113,14 @@
                     
                     <div class="form-field">
                         <label for="isFeatured">Nổi bật</label>
-                        <input style="margin-bottom: 7px;width: 30px; height: 30px;" type="checkbox" id="isFeatured"  name="isFeatured" value="true" <c:if test="${isFeatured}">checked</c:if>>
+                        <input style="margin-bottom: 7px;width: 30px; height: 100%;" type="checkbox" id="isFeatured"  name="isFeatured" value="true" <c:if test="${isFeatured}">checked</c:if>>
                     </div>
                     
                     <div class="form-field file-image">
 					    <label for="image">Ảnh</label>
 					    <input type="file" id="image" name="image" accept="image/*" style="width: 100%;">
-					    <div class="image-preview">
-                            <img src="${pageContext.request.contextPath}/assets/img/device/${device.imageUrl}" alt="Anh thiet bi hien tai">
+					    <div class="image-preview" style="display: none;">
+                            <img id="preview-img" src="${pageContext.request.contextPath}/assets/img/device/${device.imageUrl}" alt="Anh thiet bi hien tai">
                         </div>
 					</div>
                 </div>

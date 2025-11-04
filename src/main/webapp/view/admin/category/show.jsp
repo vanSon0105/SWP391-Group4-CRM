@@ -69,8 +69,8 @@
                         </a>
                     </div>
                     <form class="device-search" action="category-show" method="get">
-		                <label for="category-search" class="sr-only"></label>
 		                <input id="category-search" name="key" type="search" placeholder="Tìm theo tên danh mục . . ." value="${param.key}">
+		                <label for="category-search" class="sr-only"></label>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
 		            </form>

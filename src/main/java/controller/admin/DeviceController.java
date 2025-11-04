@@ -277,6 +277,8 @@ public class DeviceController extends HttpServlet {
         }
 		int id = Integer.parseInt(request.getParameter("id"));			
 		Device getDevice = dao.getDeviceById(id);
+		Category c = cdao.getCategoryById(getDevice.getCategory().getId());
+		getDevice.setCategory(c);
 		List<DeviceSerial> listDeviceSerials = dsdao.getAllDeviceSerials(getDevice.getId());
 		request.setAttribute("listDeviceSerials", listDeviceSerials);
 		request.setAttribute("device", getDevice);

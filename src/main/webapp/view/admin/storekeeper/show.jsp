@@ -21,6 +21,7 @@
 	    display: flex;
 	    justify-content: center;
 	    gap: 10px;
+	    padding: 0 0 20px 0;
 	}
 	
 	.device-management .pagination-pills a {
@@ -99,20 +100,12 @@
     }
 </style>
 </head>
-<body class="management-page device-management sidebar-collapsed">
+<body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	 <main class="sidebar-main">
             <section class="panel">
                 <div class="device-toolbar">
-                	<c:if test="${empty listDevices}">
-	                	<div class="device-toolbar-actions">
-	                        <a class="btn btn-add" href="des-add?id=${deviceId}&action=1">
-	                            <i class="fa-solid fa-plus"></i>
-	                            <span>Thêm device serials</span>
-	                        </a>
-	                    </div>
-	                </c:if>
                     <form class="device-search" action="de-show" method="get">
 		                <input id="device-search" name="key" type="search" placeholder="Tìm theo mã, tên thiết bị . . ." value="${param.key}">
 		                <label for="device-search" class="sr-only"></label>
@@ -157,13 +150,8 @@
             	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 	                <h2>Danh sách thiết bị</h2>
 	                <c:if test="${not empty mess}">
-	                	<span style="color: red;font-size: 1.5rem;">${mess}</span>	
-	                </c:if>	
-
-	                <c:if test="${not empty listDeviceSerials || empty listDevices}">
-	                	<a class="btn device-btn" href="de-show#table-panel">Quay lại</a>       
-	                </c:if>	     
-  
+	                	<span class="device-status" style="color: red;font-size: 1.5rem;">${mess}</span>	
+	                </c:if>	  
             	</div>
                 <div class="table-wrapper">
                     <c:if test="${not empty listDevices}"> 
@@ -203,7 +191,7 @@
                    <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thiết bị: <strong>${totalDevices}</strong></p>
                    </c:if>
                    
-                   <c:if test="${empty listDevices && empty listDeviceSerials}">
+                   <c:if test="${empty listDevices}">
 	                   <table class="device-table"> 
 	                   		<tbody>
 		                   		<tr>
@@ -213,31 +201,6 @@
 							    </tr>
 						    </tbody>
 						</table>
-                   </c:if>
-                   
-                   <c:if test="${not empty listDeviceSerials}">
-                    <table class="device-table" id="device-serial">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Serial No</th>
-                                <th>Trạng thái tồn kho</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày nhập</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        	<c:forEach items="${listDeviceSerials}" var="s">
-	                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
-	                            	<td>${s.id}</td>
-	                                <td>${s.serial_no}</td>
-	                                <td>${s.stock_status}</td>
-	                                <td>${s.status}</td>
-	                                <td>${s.import_date}</td>
-	                            </tr>
-	                          </c:forEach>
-                        </tbody>
-                    </table>
                    </c:if>
                 </div>
              </section>
@@ -299,49 +262,5 @@
 	            </c:choose>
             </div>
         </main>
-        
-        <c:if test="${addDeviceSerials}">
-		    <div id="taskDetailModal" class="modal-overlay">
-		        <div class="modal-content">
-		            <a class="modal-close" href="des-show?id=${deviceId}">&times;</a>
-		            <h2>Thêm thiết bị</h2>
-			        <div class="task-detail-grid">
-			        	<form class="device-form" action="des-add" method="post">
-			        		<input name="id" value="${device.id}" hidden>
-		                    <div class="form-field">
-		                        <label for="name">Tên device serials</label>
-		                        <input id="name" name="name" readonly value="${device.name}">
-		                    </div>
-		                    
-		                    <div class="form-field">
-		                        <label for="quantity">Số lượng device serials</label>
-		                        <input type="number" id="quantity" name="quantity" min="1">
-		                    </div>
-		
-			                <div class="form-actions">
-			                    <a class="btn ghost" href="des-show?id=${device.id}">Hủy</a>
-			                    <button class="btn primary" type="submit">Thêm</button>
-			                </div>
-			            </form>      
-			        </div>
-		        </div>
-		    </div>
-		    
-		    <script>
-		    	document.addEventListener("DOMContentLoaded", function() {
-				    var modal = document.getElementById("taskDetailModal");
-				    if (!modal) {
-				        return;
-				    }
-					modal.style.display = "flex";
-		
-					window.addEventListener('click', function(event) {
-					    if (event.target == modal) {
-					        modal.style.display = "none";
-					    }
-					});
-				});
-			</script>
-		</c:if>
 </body>
 </html>

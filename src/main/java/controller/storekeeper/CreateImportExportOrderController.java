@@ -24,7 +24,7 @@ public class CreateImportExportOrderController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "WAREHOUSE_TRANSACTION_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "TRANSACTION_MANAGEMENT");
         if (currentUser == null) return;
 
         List<Device> deviceList = deviceDAO.getAllDevices();

@@ -26,7 +26,7 @@
 	
 	<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
 		<section class="panel">
-	        <a class="btn device-btn" href="des-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
+	        <a class="btn device-btn" href="de-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
 	                sách</span></a>
 	    </section>
 	</c:if>
