@@ -118,7 +118,7 @@
             	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 	                <h2>Danh sách thiết bị</h2>
 	                <c:if test="${not empty mess}">
-	                	<span style="color: red;font-size: 1.5rem;">${mess}</span>	
+	                	<span class="device-status" style="color: red;font-size: 1.5rem;">${mess}</span>	
 	                </c:if>	    
             	</div>
                 <div class="table-wrapper">

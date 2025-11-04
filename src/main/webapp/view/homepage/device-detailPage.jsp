@@ -9,7 +9,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>NovaCare Shop - Chi tiết sản phẩm</title>
+<title>TechShop - Chi tiết sản phẩm</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
@@ -116,13 +116,12 @@
 }
 
 .hero-card strong.price {
-    color: #fff !important;
+    color: red !important;
     font-weight: 600;
     margin-top: auto;
-    padding: 6px 14px;
+    padding: 6px 0;
     border-radius: 8px;
-    background: linear-gradient(135deg, #d50000 60%, #000 60%);
-    font-size: 2.5rem;
+    font-size: 3.5rem;
 }
 
 .promotion {
@@ -362,7 +361,7 @@
           Giá bán: 
           <c:choose>
             <c:when test="${not empty device.price}">
-              <fmt:formatNumber value="${device.price}" type="number" maxFractionDigits="0" /> đ
+              <fmt:formatNumber value="${device.price}" type="number" maxFractionDigits="0" /> VNĐ
             </c:when>
             <c:otherwise>Chưa có thông tin</c:otherwise>
           </c:choose>
