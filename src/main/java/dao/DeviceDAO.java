@@ -806,5 +806,18 @@ public class DeviceDAO extends DBContext {
 
 	    return finalName;
 	}
+	
+	public boolean updateDevicePrice(int deviceId, double newPrice) {
+	    String sql = "UPDATE devices SET price = ? WHERE id = ?";
+	    try (Connection connection = getConnection();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+	        ps.setDouble(1, newPrice);
+	        ps.setInt(2, deviceId);
+	        return ps.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
 
 }

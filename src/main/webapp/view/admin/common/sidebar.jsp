@@ -50,7 +50,7 @@
             <a href="support-issues">Vấn đề của khách hàng</a>
         </c:if>
         <c:if test="${permissions != null && permissions.contains('TRANSACTION_MANAGEMENT')}">
-            <a href="create-transaction">Danh sách giao dịch</a>
+            <a href="transactions">Danh sách giao dịch</a>
         </c:if>
     </nav>
 </aside>

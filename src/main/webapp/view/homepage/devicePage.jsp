@@ -165,7 +165,7 @@ a.disabled {
 							<h3>${device.name}</h3>
 							<p>${device.desc}</p>
 							<strong>Giá: <fmt:formatNumber value="${device.price + 0}"
-									type="number" />
+									type="number" /> VNĐ
 							</strong>
 							<a style="text-align: center;" class="btn order-btn" href="device-detail?id=${device.id}">Xem chi tiết</a>
 						</article>

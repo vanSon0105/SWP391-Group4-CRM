@@ -218,6 +218,7 @@ CREATE TABLE transactions (
   storekeeper_id INT NOT NULL,
   user_id INT,
   supplier_id INT,
+  note text,
   date timestamp default current_timestamp,
   type ENUM('export','import') NOT NULL,
   status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
@@ -1209,7 +1210,7 @@ INSERT INTO permissions (id, permission_name) VALUES
 (26, 'ORDER_REPORTS'), (27, 'CREATE_TRANSACTION'), (29, 'PAYMENT_CONFIRMATION'),
 (30, 'PAYMENT_REQUEST_CREATION'), (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
-(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT');
+(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT'), (45, 'PRICE_UPDATE');
 
 -- Admin
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
@@ -1225,7 +1226,7 @@ INSERT INTO role_permission (role_id, permission_id) VALUES (6, 3), (6, 42);
 INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38);
 -- Storekeeper
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3), (5, 44), (5, 27);
+(5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3), (5, 44), (5, 27), (5, 45);
 -- Customer
 INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 25), (6, 26), (6, 30), (6, 37);
 

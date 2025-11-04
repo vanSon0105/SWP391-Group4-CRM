@@ -83,8 +83,8 @@
     .modal-close {
         color: #aaa;
         position: absolute;
-        top: -5px;
-        right: 5px;
+        top: -15px;
+        right: -4px;
         font-size: 28px;
         font-weight: bold;
         cursor: pointer;
@@ -98,6 +98,16 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
+    
+    .disabled{
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	    cursor: not-allowed;
+	    pointer-events: none;
+	    opacity: 0.5;
+	}
 </style>
 </head>
 <body class="management-page device-management">
@@ -106,6 +116,11 @@
 	 <main class="sidebar-main">
             <section class="panel">
                 <div class="device-toolbar">
+                
+                	<c:if test="${not empty mess}">
+	                	<span class="device-status" style="color: red;font-size: 1.5rem;">${mess}</span>	
+	                </c:if>
+                	
                     <form class="device-search" action="de-show" method="get">
 		                <input id="device-search" name="key" type="search" placeholder="Tìm theo mã, tên thiết bị . . ." value="${param.key}">
 		                <label for="device-search" class="sr-only"></label>
@@ -183,6 +198,7 @@
 		                                <td class="device-show-actions">
 		                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
 		                                    <a class="btn device-btn" href="des-show?id=${s.id}#device-serial">Xem Serials</a>
+		                                    <a class="btn device-btn" href="de-show?action=1&id=${s.id}">Cập Nhật Giá</a>
 		                                </td>
 		                            </tr>
 		                          </c:forEach>
@@ -262,5 +278,54 @@
 	            </c:choose>
             </div>
         </main>
+        
+        <c:if test="${updatePrice}">
+		    <div id="taskDetailModal" class="modal-overlay">
+		        <div class="modal-content">
+		            <a class="modal-close" href="de-show">&times;</a>
+		            <h2>Nhập giá thiết bị</h2>
+			        <div class="task-detail-grid">
+			        	<form class="device-form" action="de-price" method="post">
+			        		<input name="id" value="${device.id}" hidden>
+		                    <div class="form-field">
+		                        <label for="name">Tên thiết bị</label>
+		                        <input id="name" name="name" readonly value="${device.name}">
+		                    </div>
+		                    
+		                    <div class="form-field">
+		                        <label for="priceCurrent">Giá hiện tại</label>
+		                        <input id="priceCurrent" name="priceCurrent" placeholder="9490000" min="1" readonly value="${device.price}">
+		                    </div>
+		                    
+		                    <div class="form-field">
+		                        <label for="price">Giá mới</label>
+		                        <input id="price" type="number" name="price" placeholder="9490000" min="1">
+		                    </div>
+		
+			                <div class="form-actions">
+			                    <a class="btn ghost" href="de-show">Hủy</a>
+			                    <button class="btn primary" onclick="return confirm('Bạn có chắc chắn muốn cập nhật giá?')" type="submit">Cập nhật</button>
+			                </div>
+			            </form>      
+			        </div>
+		        </div>
+		    </div>
+		    
+		    <script>
+		    	document.addEventListener("DOMContentLoaded", function() {
+				    var modal = document.getElementById("taskDetailModal");
+				    if (!modal) {
+				        return;
+				    }
+					modal.style.display = "flex";
+		
+					window.addEventListener('click', function(event) {
+					    if (event.target == modal) {
+					        modal.style.display = "none";
+					    }
+					});
+				});
+			</script>
+		</c:if>
 </body>
 </html>
