@@ -17,7 +17,6 @@ public class Device {
 	private String status;
 	private int warrantyMonth;
 	private int currentStock;
-	private String warehouse;
 
 	public Device() {}
 
@@ -41,15 +40,26 @@ public class Device {
 		this.imageUrl = imageUrl;
 	}
 	
-	public int getCurrentStock() { return currentStock; }
-	public void setCurrentStock(int currentStock) { this.currentStock = currentStock; }
-	public String getWarehouse() {
-	    return warehouse;
+	
+	
+	public Device(int id, Category category, String name, double price, String unit, String imageUrl, String desc,
+			Timestamp created_at, Boolean isFeatured, String status, int warrantyMonth) {
+		super();
+		this.id = id;
+		this.category = category;
+		this.name = name;
+		this.price = price;
+		this.unit = unit;
+		this.imageUrl = imageUrl;
+		this.desc = desc;
+		this.created_at = created_at;
+		this.isFeatured = isFeatured;
+		this.status = status;
+		this.warrantyMonth = warrantyMonth;
 	}
 
-	public void setWarehouse(String warehouse) {
-	    this.warehouse = warehouse;
-	}
+	public int getCurrentStock() { return currentStock; }
+	public void setCurrentStock(int currentStock) { this.currentStock = currentStock; }
 	public Device(int id, Category category, String name, double price, String imageUrl, int device_inventory, String status) {
 		this.id = id;
 		this.category = category;

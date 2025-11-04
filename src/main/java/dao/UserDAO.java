@@ -8,6 +8,95 @@ import java.util.*;
 import dal.DBContext;
 
 public class UserDAO extends DBContext{
+	  public List<User> searchUsers(String keyword, int offset, int limit) {
+	        List<User> users = new ArrayList<>();
+	        String sql = "SELECT * FROM users WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            String likeKeyword = "%" + keyword + "%";
+	            ps.setString(1, likeKeyword);
+	            ps.setString(2, likeKeyword);
+	            ps.setString(3, likeKeyword);
+	            ps.setInt(4, limit);
+	            ps.setInt(5, offset);
+
+	            ResultSet rs = ps.executeQuery();
+	            while (rs.next()) {
+	                users.add(mapRowToUser(rs));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return users;
+	    }
+
+	    public List<User> filterUsersByRole(int roleId, int offset, int limit) {
+	        List<User> users = new ArrayList<>();
+	        String sql = "SELECT * FROM users WHERE role_id = ? LIMIT ? OFFSET ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, roleId);
+	            ps.setInt(2, limit);
+	            ps.setInt(3, offset);
+
+	            ResultSet rs = ps.executeQuery();
+	            while (rs.next()) {
+	                users.add(mapRowToUser(rs));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return users;
+	    }
+
+	    public int countSearchUsers(String keyword) {
+	        String sql = "SELECT COUNT(*) FROM users WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            String likeKeyword = "%" + keyword + "%";
+	            ps.setString(1, likeKeyword);
+	            ps.setString(2, likeKeyword);
+	            ps.setString(3, likeKeyword);
+
+	            ResultSet rs = ps.executeQuery();
+	            if (rs.next()) return rs.getInt(1);
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return 0;
+	    }
+
+	    public int countUsersByRole(int roleId) {
+	        String sql = "SELECT COUNT(*) FROM users WHERE role_id = ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, roleId);
+	            ResultSet rs = ps.executeQuery();
+	            if (rs.next()) return rs.getInt(1);
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return 0;
+	    }
+
+	    private User mapRowToUser(ResultSet rs) throws SQLException {
+	        User u = new User();
+	        u.setId(rs.getInt("id"));
+	        u.setUsername(rs.getString("username"));
+	        u.setEmail(rs.getString("email"));
+	        u.setFullName(rs.getString("full_name"));
+	        u.setPhone(rs.getString("phone"));
+	        u.setRoleId(rs.getInt("role_id"));
+	        u.setStatus(rs.getString("status"));
+	        return u;
+	    }
+	
     
     public List<User> getUsersByRole(int roleId) {
         List<User> list = new ArrayList<>();

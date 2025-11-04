@@ -598,7 +598,7 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 .management-page.device-management th,
 .management-page.device-management td {
     padding: 14px 18px;
-    text-align: left;
+    text-align: center;
     font-size: 15px;
 }
 
@@ -658,6 +658,7 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 }
 
 .management-page.device-management .device-form .form-field {
+	position: relative;
     display: grid;
     gap: 6px;
 }
