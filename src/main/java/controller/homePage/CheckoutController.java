@@ -180,6 +180,6 @@ public class CheckoutController extends HttpServlet {
 		cartDao.deleteCart(cartId); 
 		
 		session.setAttribute("finalPrice", finalPrice);
-		response.sendRedirect("view/homepage/banking.jsp");
+		request.getRequestDispatcher("view/homepage/banking.jsp").forward(request, response);
 	}
 }

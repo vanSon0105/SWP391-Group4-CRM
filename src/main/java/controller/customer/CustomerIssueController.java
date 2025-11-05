@@ -82,16 +82,23 @@ public class CustomerIssueController extends HttpServlet {
 			throws IOException, ServletException {
 		String title = req.getParameter("title");
 		String description = req.getParameter("description");
-		String warrantyCardIdParam = req.getParameter("warrantyCardId");
-		String issueType = req.getParameter("issueType");
-
+		
 		if (title == null || title.trim().isEmpty() || description == null || description.trim().isEmpty()) {
-			req.setAttribute("error", "Vui lòng nhập đầy đủ tiêu đề và mô tả sự cố!");
-			List<CustomerDevice> list = ciDao.getCustomerDevices(u.getId());
-			req.setAttribute("list", list);
-			req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
+			handleCreateError(req, resp, u, "Vui lòng nhập đầy đủ tiêu đề và mô tả sự cố!");
 			return;
 		}
+		
+		if(title.length() >= 100) {
+			handleCreateError(req, resp, u, "Tiêu đề không được vượt quá 100 ký tự!");
+			return;
+		}
+		
+		if(description.length() >= 1000) {
+			handleCreateError(req, resp, u, "Mô tả không được vượt quá 1000 ký tự!");
+			return;
+		}
+		String warrantyCardIdParam = req.getParameter("warrantyCardId");
+		String issueType = req.getParameter("issueType");
 
 		int warrantyId = 0;
 		if (warrantyCardIdParam != null && !warrantyCardIdParam.trim().isEmpty()) {
@@ -273,5 +280,13 @@ public class CustomerIssueController extends HttpServlet {
 		req.getRequestDispatcher("view/customer/issueListPage.jsp").forward(req, resp);
 		
 	}
+	
+	private void handleCreateError(HttpServletRequest req, HttpServletResponse resp, User user, String message)
+			throws ServletException, IOException {
+			req.setAttribute("error", message);
+			List<CustomerDevice> list = ciDao.getCustomerDevices(user.getId());
+			req.setAttribute("list", list);
+			req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
+		}
 	
 }

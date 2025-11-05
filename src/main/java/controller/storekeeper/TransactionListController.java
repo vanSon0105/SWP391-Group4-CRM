@@ -20,7 +20,7 @@ public class TransactionListController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "WAREHOUSE_TRANSACTION_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "TRANSACTION_MANAGEMENT");
         if (currentUser == null) return;
 
         String typeFilter = request.getParameter("type");

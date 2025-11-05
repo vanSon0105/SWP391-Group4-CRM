@@ -81,27 +81,49 @@
 	display: inline-block;
 }
 
-.pagination {
-	margin-top: 15px;
-	text-align: center;
+.device-management .pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.pagination a, .pagination strong {
-	margin: 0 3px;
-	padding: 5px 10px;
+.device-management .pagination-pills a {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
 	text-decoration: none;
-	border-radius: 5px;
-	border: 1px solid #ddd;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.pagination strong {
-	background-color: #007bff;
-	color: #fff;
-	border-color: #007bff;
+.device-management .pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
 }
 
-.pagination a:hover {
-	background-color: #f0f0f0;
+.device-management .pagination-pills a:hover {
+    transform: translateY(-2px);
+}
+
+.disabled{
+	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>
 </head>
@@ -189,17 +211,35 @@
             </table>
         </div>
 
-        <div class="pagination">
+        <div class="pagination-pills">
+        	<c:choose>
+		        <c:when test="${currentPage > 1}">
+		            <a href="?page=${currentPage - 1}&type=${typeFilter}&status=${statusFilter}&keyword=${fn:escapeXml(keyword)}">&#10094;</a>
+		        </c:when>
+		        <c:otherwise>
+		            <a class="disabled">&#10094;</a>
+		        </c:otherwise>
+		    </c:choose>
+		    
             <c:forEach var="i" begin="1" end="${totalPages}">
                 <c:choose>
                     <c:when test="${i == currentPage}">
-                        <strong>${i}</strong>
+                        <a class="${i == currentPage ? 'active' : ''}">${i}</a>
                     </c:when>
                     <c:otherwise>
-                        <a href="?page=${i}&type=${typeFilter}&status=${statusFilter}&keyword=${fn:escapeXml(keyword)}">${i}</a>
+                        <a class="${i == currentPage ? 'active' : ''}" href="?page=${i}&type=${typeFilter}&status=${statusFilter}&keyword=${fn:escapeXml(keyword)}">${i}</a>
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
+            
+            <c:choose>
+                <c:when test="${currentPage < totalPages}">
+                	<a href = "?page=${currentPage + 1}&type=${typeFilter}&status=${statusFilter}&keyword=${fn:escapeXml(keyword)}">&#10095;</a>            	
+            	</c:when>
+            	<c:otherwise>
+		            <a class="disabled">&#10095;</a>
+		        </c:otherwise>
+            </c:choose>
         </div>
 
     </section>
