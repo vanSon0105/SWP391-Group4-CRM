@@ -20,7 +20,7 @@ import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
 
-@WebServlet({"/issue", "/create-issue", "/issue-fill", "/issue-detail"})
+@WebServlet({"/issue", "/create-issue", "/issue-fill", "/issue-detail", "/issue-feedback"})
 public class CustomerIssueController extends HttpServlet {
 	private CustomerIssueDAO ciDao = new CustomerIssueDAO();
 	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
@@ -40,6 +40,9 @@ public class CustomerIssueController extends HttpServlet {
 			break;
 		case "/issue-fill":
 			forwardCustomerDetailsFill(req, resp, u);
+			break;
+		case "/issue-feedback":
+			forwardFeedbackForm(req, resp, u);
 			break;
 		case "/issue-detail":
 			forwardCustomerTaskDetails(req, resp, u);
@@ -66,6 +69,9 @@ public class CustomerIssueController extends HttpServlet {
 			break;
 		case "/issue-fill":
 			sendCustomerDetails(req, resp, u);
+			break;
+		case "/issue-feedback":
+			handleFeedbackSubmit(req, resp, u);
 			break;
 		default:
 			resp.sendRedirect("issue");
@@ -283,10 +289,107 @@ public class CustomerIssueController extends HttpServlet {
 	
 	private void handleCreateError(HttpServletRequest req, HttpServletResponse resp, User user, String message)
 			throws ServletException, IOException {
-			req.setAttribute("error", message);
-			List<CustomerDevice> list = ciDao.getCustomerDevices(user.getId());
-			req.setAttribute("list", list);
-			req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
+		req.setAttribute("error", message);
+		List<CustomerDevice> list = ciDao.getCustomerDevices(user.getId());
+		req.setAttribute("list", list);
+		req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
+	}
+	
+	private void forwardFeedbackForm(HttpServletRequest req, HttpServletResponse resp, User customer)
+			throws ServletException, IOException {
+		String idParam = req.getParameter("id");
+		if (idParam == null) {
+			resp.sendRedirect("issue");
+			return;
 		}
+
+		int issueId;
+		try {
+			issueId = Integer.parseInt(idParam);
+		} catch (NumberFormatException ex) {
+			resp.sendRedirect("issue?invalid=1");
+			return;
+		}
+
+		CustomerIssue issue = ciDao.getIssueById(issueId);
+		if (issue == null || issue.getCustomerId() != customer.getId()) {
+			resp.sendRedirect("issue?notfound=1");
+			return;
+		}
+
+		String status = issue.getSupportStatus();
+		if (status == null || !"resolved".equalsIgnoreCase(status)) {
+			resp.sendRedirect("issue?invalid=1");
+			return;
+		}
+
+		req.setAttribute("issue", issue);
+		if (req.getAttribute("feedbackDraft") == null) {
+			req.setAttribute("feedbackDraft", issue.getFeedback());
+		}
+		req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
+	}
+
+	private void handleFeedbackSubmit(HttpServletRequest req, HttpServletResponse resp, User customer)
+			throws ServletException, IOException {
+		final int FEEDBACK_MAX_LENGTH = 1000;
+
+		String issueIdParam = req.getParameter("issueId");
+		if (issueIdParam == null) {
+			resp.sendRedirect("issue");
+			return;
+		}
+
+		int issueId;
+		try {
+			issueId = Integer.parseInt(issueIdParam);
+		} catch (NumberFormatException ex) {
+			resp.sendRedirect("issue?invalid=1");
+			return;
+		}
+
+		CustomerIssue issue = ciDao.getIssueById(issueId);
+		if (issue == null || issue.getCustomerId() != customer.getId()) {
+			resp.sendRedirect("issue?notfound=1");
+			return;
+		}
+
+		String status = issue.getSupportStatus();
+		if (status == null || !"resolved".equalsIgnoreCase(status)) {
+			resp.sendRedirect("issue?invalid=1");
+			return;
+		}
+
+		String feedbackRaw = req.getParameter("feedback");
+		String feedback = feedbackRaw != null ? feedbackRaw.trim() : null;
+
+		if (feedback == null || feedback.isEmpty()) {
+			req.setAttribute("issue", issue);
+			req.setAttribute("feedbackDraft", feedbackRaw);
+			req.setAttribute("feedbackError", "Vui long nhap noi dung phan hoi.");
+			req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
+			return;
+		}
+
+		if (feedback.length() > FEEDBACK_MAX_LENGTH) {
+			req.setAttribute("issue", issue);
+			req.setAttribute("feedbackDraft", feedbackRaw);
+			req.setAttribute("feedbackError",
+					"Phan hoi khong duoc vuot qua " + FEEDBACK_MAX_LENGTH + " ky tu.");
+			req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
+			return;
+		}
+
+		boolean updated = ciDao.updateFeedback(issueId, feedback);
+		if (!updated) {
+			req.setAttribute("issue", issue);
+			req.setAttribute("feedbackDraft", feedbackRaw);
+			req.setAttribute("feedbackError", "Khong the luu phan hoi. Vui long thu lai sau.");
+			req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
+			return;
+		}
+
+		resp.sendRedirect("issue?feedback_saved=1");
+	}
 	
 }

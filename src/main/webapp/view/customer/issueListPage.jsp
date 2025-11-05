@@ -174,9 +174,14 @@
     }
 
     .action-link {
-        text-decoration: none;
-        color: #2563eb;
-        font-weight: 600;
+        padding: 4px;
+	    display: inline-block;
+	    border-radius: 5px;
+	    background: #00ffad;
+	    border: 1px solid #f7d3d3;
+	    text-decoration: none;
+	    color: #0f172a;
+	    font-weight: 600;
     }
 
     .link-button {
@@ -299,6 +304,10 @@
 			<div class="alert alert-success">Bạn đã hủy yêu cầu này. Nếu
 				cần hỗ trợ, hãy tạo yêu cầu mới.</div>
 		</c:if>
+		
+		<c:if test="${param.feedback_saved == '1'}">
+			<div class="alert alert-success">Phản hồi đã được gửi thành công.</div>
+		</c:if>
 
 <c:choose>
     <c:when test="${not empty list}">
@@ -360,8 +369,16 @@
                                    href="issue-detail?id=${s.id}">Xem Task</a>
  							</c:if>
                              
-                             <a class="action-view"
-                                   href="issue-detail?id=${s.id}&action=1">Xem Issue</a>
+                             <a class="action-view" href="issue-detail?id=${s.id}&action=1">Xem Issue</a>
+                             
+                             <c:if test="${status == 'resolved'}">
+								<a class="action-link" href="issue-feedback?id=${s.id}">
+									<c:choose>
+										<c:when test="${empty s.feedback}">Gửi phản hồi</c:when>
+										<c:otherwise>Cập nhật phản hồi</c:otherwise>
+									</c:choose>
+								</a>
+							</c:if>
                         </td>
                     </tr>
                 </c:forEach>
