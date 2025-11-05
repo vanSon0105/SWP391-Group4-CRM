@@ -33,13 +33,23 @@
             overflow: hidden;
             box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
         }
+        
+        .btn-link {
+             display: inline-flex;
+             padding: 8px 14px;
+             border-radius: 6px;
+             background: #2563eb;
+             color: #fff;
+             text-decoration: none;
+             font-weight: 600;
+         }
 
         th,
         td {
             padding: 12px 16px;
             border-bottom: 1px solid #e2e8f0;
             font-size: 14px;
-            text-align: left;
+            text-align: center;
         }
 
         th {
@@ -187,6 +197,10 @@
             background: #e2e8f0;
             color: #0f172a;
         }
+        
+        .sidebar-toggle{
+        	display: none !important;
+        }
     </style>
 </head>
 
@@ -258,11 +272,11 @@
                                             <option value="cancelled" ${assignment.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
                                         </select>
                                         <button type="submit">Lưu</button>
+                                        <a class="btn-link" href="technical-issues?id=${assignment.id}">Xem</a>                                    
 	                                    <c:if test="${assignment.status == 'cancelled'}">
 		                                    <button type="button" class="btn-show-reason" data-reason="${fn:escapeXml(assignment.note)}">Hiển thị lý do</button>
 		                                </c:if>
                                     </form>
-                                    
                                 </td>
                             </tr>
                         </c:forEach>

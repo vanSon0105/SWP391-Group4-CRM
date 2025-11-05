@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.CustomerIssue;
 import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
@@ -25,6 +26,12 @@ public class TechnicalStaffController extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		User staff = getUser(req, resp);
 		if (staff == null) {
+			return;
+		}
+		
+		String detailParam = req.getParameter("id");
+		if (detailParam != null) {
+			handleDetailView(req, resp, staff, detailParam);
 			return;
 		}
 
@@ -147,6 +154,33 @@ public class TechnicalStaffController extends HttpServlet {
 		} else {
 			issueDao.updateSupportStatus(issueId, "task_created");
 		}
+	}
+	
+	private void handleDetailView(HttpServletRequest req, HttpServletResponse resp, User staff, String detailParam) throws ServletException, IOException {
+		int detailId;
+		try {
+			detailId = Integer.parseInt(detailParam);
+		} catch (NumberFormatException ex) {
+			resp.sendRedirect("technical-issues?invalid=1");
+			return;
+		}
+		
+		TaskDetail detail = taskDetailDao.getAssignmentDetailForStaff(detailId, staff.getId());
+		if (detail == null) {
+			resp.sendRedirect("technical-issues?invalid=1");
+			return;
+		}
+		
+		List<TaskDetail> teammates = taskDetailDao.getTaskDetailsWithStaffInfo(detail.getTaskId());
+		CustomerIssue issue = null;
+		if (detail.getCustomerIssueId() != null) {
+			issue = issueDao.getIssueById(detail.getCustomerIssueId());
+		}
+		
+		req.setAttribute("assignmentDetail", detail);
+		req.setAttribute("teamAssignments", teammates);
+		req.setAttribute("issueDetail", issue);
+		req.getRequestDispatcher("view/admin/technicalstaff/taskDetail.jsp").forward(req, resp);
 	}
 	
 }
