@@ -210,6 +210,10 @@
             font-size: 20px;
             color: #0f172a;
         }
+        
+        .sidebar-toggle{
+        	display: none !important;
+        }
     </style>
 </head>
 

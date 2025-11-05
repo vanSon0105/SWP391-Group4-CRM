@@ -55,6 +55,71 @@ body form {
 	box-shadow: 0 0 4px rgba(33, 150, 243, 0.4);
 }
 
+.checkbox-group {
+	display: grid;
+	gap: 10px;
+}
+
+.staff-option {
+	display: flex;
+	flex-direction: column;
+	padding: 10px 12px;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	background: #f8fafc;
+	gap: 4px;
+}
+
+.staff-option-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.staff-info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.staff-option.unavailable {
+	opacity: 0.75;
+}
+
+.staff-option input {
+	margin-right: 0;
+}
+
+.staff-name {
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.staff-status {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	width: fit-content;
+}
+
+.staff-status.available {
+	background: #bbf7d0;
+	color: #047857;
+}
+
+.staff-status.busy {
+	background: #fee2e2;
+	color: #b91c1c;
+}
+
+.staff-note {
+	font-size: 12px;
+	color: #64748b;
+}
+
 form a:hover,
 form button {
 	cursor:pointer;
@@ -135,14 +200,31 @@ form button {
 					<small style="color:red">${errorStaffLimit}</small>
 					<div class="checkbox-group">
 						<c:forEach var="staff" items="${technicalStaffList}">
-							<p>
-								<input type="checkbox" name="technicalStaffIds"
-									value="${staff.id}"
-									${assignedStaffIds != null && assignedStaffIds.contains(staff.id) ? 'checked' : ''}>
-								${staff.username}
-							</p>
+							<c:set var="isAssigned"
+								value="${assignedStaffIds != null && assignedStaffIds.contains(staff.id)}" />
+							<c:set var="isAvailable" value="${staff.available}" />
+							<label class="staff-option ${!isAvailable ? 'unavailable' : ''}">
+								<div class="staff-option-row">
+									<input type="checkbox" name="technicalStaffIds"
+										value="${staff.id}"
+										${isAssigned ? 'checked' : ''}
+										${!isAvailable && !isAssigned ? 'disabled' : ''}>
+									<div class="staff-info">
+										<span class="staff-name">${staff.username}</span>
+										<span class="staff-status ${isAvailable ? 'available' : 'busy'}">
+											${isAvailable ? 'Rảnh' : 'Đang bận'}
+										</span>
+									</div>
+								</div>
+								<c:if test="${!isAvailable}">
+									<span class="staff-note">
+										${isAssigned ? '(Đang tham gia task này)' : '(Không thể giao mới)'}
+									</span>
+								</c:if>
+							</label>
 						</c:forEach>
 					</div>
+					<small style="color:red">${errorStaffAvailability}</small>
 
 					<label>Deadline</label> 
 					<input type="date" name="deadline"
