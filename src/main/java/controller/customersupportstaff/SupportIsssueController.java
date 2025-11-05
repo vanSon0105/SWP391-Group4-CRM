@@ -54,7 +54,7 @@ public class SupportIsssueController extends HttpServlet {
 		
 		List<CustomerIssue> newIssues = iDao.getUnassignedIssues();
 		List<CustomerIssue> myIssues = iDao.getIssuesAssignedToStaff(staff.getId());
-		List<CustomerIssue> awaitingCustomerIssues = iDao.getIssuesBySupportStatus("awaiting_customer");
+//		List<CustomerIssue> awaitingCustomerIssues = iDao.getIssuesBySupportStatus("awaiting_customer");
 		List<CustomerIssue> managerReviewIssues = iDao
 				.getIssuesBySupportStatuses(new String[] { "manager_review", "submitted" });
 		List<CustomerIssue> resolvedIssues = iDao.getIssuesBySupportStatus("resolved");
@@ -161,7 +161,6 @@ public class SupportIsssueController extends HttpServlet {
 		req.setAttribute("customerCancelled", customerCancelled);
 		req.setAttribute("managerRejected", managerRejected);
 		req.setAttribute("managerApproved", managerApproved);
-		req.setAttribute("lockedForSupport", taskLocked);
 		req.setAttribute("managerPending", managerPending);
 		req.setAttribute("lockedForSupport", taskLocked);
 		req.setAttribute("awaitingCustomer", awaitingCustomer);

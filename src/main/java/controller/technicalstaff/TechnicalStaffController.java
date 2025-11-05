@@ -6,6 +6,7 @@ import java.util.List;
 
 import dao.CustomerIssueDAO;
 import dao.TaskDetailDAO;
+import dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,6 +22,7 @@ import utils.AuthorizationUtils;
 public class TechnicalStaffController extends HttpServlet {
 	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
 	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
+	private UserDAO userDao = new UserDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -147,9 +149,10 @@ public class TechnicalStaffController extends HttpServlet {
 			}
 		}
 
-		if (allCompleted) {
-			issueDao.updateSupportStatus(issueId, "resolved");
-		} else if (anyInProgress) {
+//		if (allCompleted) {
+//			issueDao.updateSupportStatus(issueId, "resolved");
+//		} else 
+		if (anyInProgress) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
 		} else {
 			issueDao.updateSupportStatus(issueId, "task_created");
@@ -171,7 +174,7 @@ public class TechnicalStaffController extends HttpServlet {
 			return;
 		}
 		
-		List<TaskDetail> teammates = taskDetailDao.getTaskDetailsWithStaffInfo(detail.getTaskId());
+		List<TaskDetail> teammates = taskDetailDao.getStaffInfoWithTaskDetailId(detail.getTaskId());
 		CustomerIssue issue = null;
 		if (detail.getCustomerIssueId() != null) {
 			issue = issueDao.getIssueById(detail.getCustomerIssueId());

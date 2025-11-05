@@ -24,7 +24,6 @@
                         <div class="category-panel" data-category-panel>
                             <a href="device-page">Thiết bị</a>
                             <a href="create-issue">Gửi bảo hành/sửa chữa</a>
-                            <a href="checkout.jsp">Thanh toán</a>
                             <a href="order-tracking">Đơn hàng</a>
                             <a href="issue">Lịch sử yêu cầu</a>
                             <c:if test="${sessionScope.account != null}">

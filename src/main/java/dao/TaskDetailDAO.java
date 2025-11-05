@@ -34,14 +34,14 @@ public class TaskDetailDAO extends DBContext{
 	}
 
 
-    public List<TaskDetail> getTaskDetailsWithStaffInfo(int taskId) {
+    public List<TaskDetail> getStaffInfoWithTaskDetailId(int taskId) {
         List<TaskDetail> list = new ArrayList<>();
-        String sql = "SELECT td.*, u.full_name AS technicalStaffName, u.email AS staffEmail, " +
-                     "ub.full_name AS assignedByName " +
-                     "FROM task_details td " +
-                     "JOIN users u ON td.technical_staff_id = u.id " +
-                     "LEFT JOIN users ub ON td.assigned_by = ub.id " +
-                     "WHERE td.task_id = ?";
+        String sql = "SELECT td.*, u.username AS technicalStaffName, u.email AS staffEmail, u2.username AS managerName\r\n"
+        		+ "FROM task_details td\r\n"
+        		+ "JOIN tasks t ON td.task_id = t.id\r\n"
+        		+ "JOIN users u ON td.technical_staff_id = u.id \r\n"
+        		+ "JOIN users u2 ON t.manager_id = u2.id\r\n"
+        		+ "WHERE td.task_id = ?;";
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -54,14 +54,13 @@ public class TaskDetailDAO extends DBContext{
                 td.setId(rs.getInt("id"));
                 td.setTaskId(rs.getInt("task_id"));
                 td.setTechnicalStaffId(rs.getInt("technical_staff_id"));
-                td.setAssignedBy(rs.getObject("assigned_by") != null ? rs.getInt("assigned_by") : null);
                 td.setAssignedAt(rs.getTimestamp("assigned_at"));
                 td.setDeadline(rs.getTimestamp("deadline"));
                 td.setStatus(rs.getString("status"));
                 td.setNote(rs.getString("note"));
                 td.setUpdatedAt(rs.getTimestamp("updated_at"));
                 td.setTechnicalStaffName(rs.getString("technicalStaffName"));
-                td.setAssignedByName(rs.getString("assignedByName"));
+                td.setAssignedByName(rs.getString("managerName"));
                 list.add(td);
             }
 

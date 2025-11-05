@@ -312,7 +312,7 @@
 		                    </div>
 		                </c:if>
 		                <div class="actions">
-		                    <c:if test="${taskDetail.status == 'completed'}">
+		                    <c:if test="${taskDetail.status == 'completed' and issue.supportStatus == 'tech_in_progress'}">
 		                    	<a class="btn btn-success" href="support-issues?action=updateStatus&id=${taskDetail.customerIssueId}">Cập nhật trạng thái</a>
 		                    </c:if>
 		                    <a class="btn btn-secondary" href="support-issues">Quay lại</a>
