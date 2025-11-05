@@ -202,6 +202,7 @@ public class SupportIsssueController extends HttpServlet {
 		String contactPhone = req.getParameter("contactPhone");
 		String deviceSerial = req.getParameter("deviceSerial");
 		String summary = req.getParameter("summary");
+		
 		boolean forward = "on".equalsIgnoreCase(req.getParameter("forwardToManager"));
 
 		if (customerName == null || customerName.trim().isEmpty()) {

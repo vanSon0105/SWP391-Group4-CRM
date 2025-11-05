@@ -182,6 +182,12 @@ public class TaskFormController extends HttpServlet {
 			}
 			
 			for (Integer staffId : selectedStaffs) {
+				if (!userDao.isTechnicalStaffAvailable(staffId)) {
+					request.setAttribute("errorStaffAvailability",
+							"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
+					forwardToForm(request, res);
+					return;
+				}
 				int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
 				if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
 					request.setAttribute("errorStaffLimit",
@@ -248,6 +254,12 @@ public class TaskFormController extends HttpServlet {
 			
 			for (Integer staffId : newStaffIds) {
 				if (!existingStaffIds.contains(staffId)) {
+					if (!userDao.isTechnicalStaffAvailable(staffId)) {
+						req.setAttribute("errorStaffAvailability",
+								"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
+						forwardToForm(req, res);
+						return;
+					}
 					int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
 					if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
 						req.setAttribute("errorStaffLimit",

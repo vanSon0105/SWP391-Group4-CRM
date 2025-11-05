@@ -201,6 +201,58 @@
         .sidebar-toggle{
         	display: none !important;
         }
+        
+        .availability-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .availability-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #0f172a;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .availability-pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .availability-pill.available {
+            background: #bbf7d0;
+            color: #047857;
+        }
+
+        .availability-pill.busy {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .availability-form button {
+            background: linear-gradient(90deg, #2563eb, #1d4ed8);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .availability-form button.busy-action {
+            background: linear-gradient(90deg, #f97316, #fb7185);
+        }
     </style>
 </head>
 
@@ -219,6 +271,28 @@
         <c:if test="${param.invalid == '1'}">
             <div class="alert alert-warning">Yêu cầu không hợp lệ</div>
         </c:if>
+        
+        <c:if test="${not empty availabilityMessage}">
+            <div class="alert ${availabilityMessageType eq 'error' ? 'alert-error' : 'alert-success'}">
+                ${availabilityMessage}
+            </div>
+        </c:if>
+        
+        <div class="availability-card">
+            <div class="availability-info">
+                <span>Trạng thái hiện tại:</span>
+                <span class="availability-pill ${staffAvailable ? 'available' : 'busy'}">
+                    ${staffAvailable ? 'Rảnh' : 'Đang bận'}
+                </span>
+            </div>
+            <form class="availability-form" method="post" action="technical-issues">
+                <input type="hidden" name="action" value="toggleAvailability" />
+                <input type="hidden" name="available" value="${staffAvailable ? 'false' : 'true'}" />
+                <button type="submit" class="${staffAvailable ? 'busy-action' : ''}">
+                    ${staffAvailable ? 'Bận' : 'Rảnh'}
+                </button>
+            </form>
+        </div>
 
         <c:choose>
             <c:when test="${not empty assignments}">

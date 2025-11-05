@@ -20,7 +20,7 @@ CREATE TABLE users (
   birthday DATE,
   role_id INT,
   status ENUM('active', 'inactive') DEFAULT 'active',
-  is_available TINYINT(1) DEFAULT 1,
+  is_available boolean DEFAULT true,
   username_changed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP,

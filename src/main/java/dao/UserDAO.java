@@ -94,6 +94,7 @@ public class UserDAO extends DBContext{
 	        u.setPhone(rs.getString("phone"));
 	        u.setRoleId(rs.getInt("role_id"));
 	        u.setStatus(rs.getString("status"));
+	        u.setAvailable(rs.getBoolean("is_available"));
 	        return u;
 	    }
 	
@@ -112,6 +113,7 @@ public class UserDAO extends DBContext{
                 u.setFullName(rs.getString("full_name"));
                 u.setEmail(rs.getString("email"));
                 u.setRoleId(rs.getInt("role_id")); 
+                u.setAvailable(rs.getBoolean("is_available"));
                 list.add(u);
             }
         } catch (Exception e) {
@@ -192,6 +194,7 @@ public class UserDAO extends DBContext{
                 u.setRoleId(rs.getInt("role_id"));
                 u.setCreatedAt(rs.getTimestamp("created_at"));
                 u.setLastLoginAt(rs.getTimestamp("last_login_at"));
+                u.setAvailable(rs.getBoolean("is_available"));
                 return u;
             }
         } catch (SQLException e) {
@@ -245,7 +248,7 @@ public class UserDAO extends DBContext{
     
     public List<User> getAllTechnicalStaff() {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT id, username, full_name, email FROM users WHERE role_id = 3";
+        String sql = "SELECT id, username, full_name, email, is_available FROM users WHERE role_id = 3";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement pre = conn.prepareStatement(sql);
@@ -257,6 +260,7 @@ public class UserDAO extends DBContext{
                 u.setUsername(rs.getString("username"));
                 u.setFullName(rs.getString("full_name"));
                 u.setEmail(rs.getString("email"));
+                u.setAvailable(rs.getBoolean("is_available"));
                 list.add(u);
             }
 
@@ -265,6 +269,39 @@ public class UserDAO extends DBContext{
         }
 
         return list;
+    }
+    
+    public boolean updateStaffAvailability(int userId, boolean available) {
+        String sql = "UPDATE users SET is_available = ? WHERE id = ? AND role_id = 3";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, available);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean isTechnicalStaffAvailable(int userId) {
+        String sql = "SELECT is_available FROM users WHERE id = ? AND role_id = 3";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    boolean available = rs.getBoolean("is_available");
+                    if (rs.wasNull()) {
+                        return true;
+                    }
+                    return available;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
     
     public void updatePassword(String email, String newPassword) {
@@ -546,7 +583,7 @@ public User getUserByEmail(String email) {
             user.setFullName(rs.getString("fullName"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
-            // thêm các field khác nếu cần
+            user.setAvailable(rs.getBoolean("is_available"));
         }
     } catch (Exception e) {
         e.printStackTrace();

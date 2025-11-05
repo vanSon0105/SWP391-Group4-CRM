@@ -31,6 +31,19 @@ public class TechnicalStaffController extends HttpServlet {
 			return;
 		}
 		
+		HttpSession session = req.getSession();
+		Object availabilityMsg = session.getAttribute("availabilityMessage");
+		if (availabilityMsg != null) {
+			req.setAttribute("availabilityMessage", availabilityMsg);
+			session.removeAttribute("availabilityMessage");
+		}
+		Object availabilityType = session.getAttribute("availabilityMessageType");
+		if (availabilityType != null) {
+			req.setAttribute("availabilityMessageType", availabilityType);
+			session.removeAttribute("availabilityMessageType");
+		}
+		req.setAttribute("staffAvailable", staff.isAvailable());
+		
 		String detailParam = req.getParameter("id");
 		if (detailParam != null) {
 			handleDetailView(req, resp, staff, detailParam);
@@ -49,7 +62,11 @@ public class TechnicalStaffController extends HttpServlet {
 			return;
 		}
 		
-		int id = staff.getId();
+		String action = req.getParameter("action");
+		if ("toggleAvailability".equals(action)) {
+			handleAvailabilityToggle(req, resp, staff);
+			return;
+		}
 
 		String assignmentIdParam = req.getParameter("assignmentId");
 		String status = req.getParameter("status");
@@ -149,10 +166,9 @@ public class TechnicalStaffController extends HttpServlet {
 			}
 		}
 
-//		if (allCompleted) {
-//			issueDao.updateSupportStatus(issueId, "resolved");
-//		} else 
-		if (anyInProgress) {
+		if (allCompleted) {
+			issueDao.updateSupportStatus(issueId, "tech_in_progress");
+		} else if (anyInProgress) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
 		} else {
 			issueDao.updateSupportStatus(issueId, "task_created");
@@ -184,6 +200,31 @@ public class TechnicalStaffController extends HttpServlet {
 		req.setAttribute("teamAssignments", teammates);
 		req.setAttribute("issueDetail", issue);
 		req.getRequestDispatcher("view/admin/technicalstaff/taskDetail.jsp").forward(req, resp);
+	}
+	
+	private void handleAvailabilityToggle(HttpServletRequest req, HttpServletResponse resp, User staff) throws IOException {
+		String availableParam = req.getParameter("available");
+		boolean desiredAvailable;
+		if (availableParam == null) {
+			desiredAvailable = !staff.isAvailable();
+		} else {
+			desiredAvailable = Boolean.parseBoolean(availableParam);
+		}
+		
+		boolean updated = userDao.updateStaffAvailability(staff.getId(), desiredAvailable);
+		HttpSession session = req.getSession();
+		
+		if (updated) {
+			staff.setAvailable(desiredAvailable);
+			session.setAttribute(AuthorizationUtils.SESSION_ACCOUNT, staff);
+			session.setAttribute("availabilityMessage",
+					desiredAvailable ? "Trạng thái đã chuyển 'Rảnh'" : "Trạng thái đã chuyển sang 'Bận'");
+			session.setAttribute("availabilityMessageType", "success");
+		} else {
+			session.setAttribute("availabilityMessage", "Không thể cập nhật trạng thái. Vui lòng thử lại");
+			session.setAttribute("availabilityMessageType", "error");
+		}
+		resp.sendRedirect("technical-issues");
 	}
 	
 }

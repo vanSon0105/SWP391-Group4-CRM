@@ -187,6 +187,12 @@
 		    background: #fee2e2;
 		    color: #991b1b;
 		}
+		
+		.summary-text{
+			line-height: 1.5;
+		    overflow-wrap: anywhere;
+		    word-break: break-word;
+		}
     </style>
 </head>
 
@@ -308,7 +314,7 @@
 		                        <p>Email: <strong>${issueDetail.contactEmail}</strong></p>
 		                        <p>Số điện thoại: <strong>${issueDetail.contactPhone}</strong></p>
 		                        <p>Serial thiết bị: <strong>${issueDetail.deviceSerial}</strong></p>
-		                        <p>Tổng hợp: <strong>${issueDetail.summary}</strong></p>
+		                        <p class="summary-text">Tổng hợp: <strong>${issueDetail.summary}</strong></p>
 		                    </div>
 		                </c:if>
 		                <div class="actions">
