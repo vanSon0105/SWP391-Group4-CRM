@@ -98,7 +98,7 @@ public class IssuePaymentDAO extends DBContext {
 				ps.setInt(1, issueId);
 				ps.setDouble(2, amount);
 				ps.setString(3, note);
-				ps.setInt(8, createdBy);
+				ps.setInt(4, createdBy);
 				if (ps.executeUpdate() > 0) {
 					try (ResultSet rs = ps.getGeneratedKeys()) {
 						if (rs.next()) {

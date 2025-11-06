@@ -363,9 +363,6 @@
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
                             </span>
-                             <c:if test="${status == 'manager_rejected' && not empty s.feedback}">
-                                <div class="status-reason">Lý do: ${s.feedback}</div>
-                            </c:if>
                         </td>
                         <td>
                             <c:if test="${status == 'awaiting_customer'}">
@@ -499,6 +496,12 @@
                                 <c:if test="${issueDetail.issueType == 'warranty'}">Bảo hành</c:if>
 				                </span>
 				            </div>
+				            
+				            <div class="task-detail-item">
+				                <strong>Lí do: </strong>
+				                <span>${issueDetail.feedback}</span>
+				            </div>
+				            
 				            <div class="task-detail-item">
 				                <strong>Ngày tạo:</strong>
 				                <span><fmt:formatDate value="${issueDetail.createdAt}" pattern="dd/MM/yyyy HH:mm" /></span>
