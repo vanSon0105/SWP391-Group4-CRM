@@ -142,12 +142,10 @@
             <div class="error" style="color:red; font-weight:bold; margin-bottom:10px;">${error}</div>
         </c:if>
 
-        <!-- Create button -->
         <a href="${pageContext.request.contextPath}/create-transaction" class="create-btn">
             <i class="fa fa-plus"></i> Create Import/Export Order
         </a>
 
-        <!-- Filter + Search Form -->
         <form method="get" action="${pageContext.request.contextPath}/transactions" class="filter-form">
             <input type="text" name="keyword" placeholder="Search by storekeeper, user, supplier, note..." value="${fn:escapeXml(keyword)}"/>
             <select name="type">
