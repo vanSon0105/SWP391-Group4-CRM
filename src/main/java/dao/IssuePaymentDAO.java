@@ -363,5 +363,110 @@ public class IssuePaymentDAO extends DBContext {
 	    }
 	    return 0;
 	}
+	
+	public List<IssuePayment> getPaymentsByCustomer(int customerId, String status, String keyword, int page) throws SQLException {
+	    List<IssuePayment> list = new ArrayList<>();
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("SELECT ip.* ")
+	       .append("FROM issue_payments ip ")
+	       .append("JOIN customer_issues ci ON ip.issue_id = ci.id ")
+	       .append("WHERE ci.customer_id = ? ");
+
+	    if (status != null && !status.isEmpty()) {
+	        sql.append(" AND ip.status = ? ");
+	    }
+
+	    if (keyword != null && !keyword.trim().isEmpty()) {
+	        sql.append(" AND (ip.shipping_full_name LIKE ? OR ip.shipping_phone LIKE ? OR ip.shipping_address LIKE ?) ");
+	    }
+
+	    sql.append(" ORDER BY ip.created_at DESC ")
+	       .append(" LIMIT ? OFFSET ? ");
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+	        int idx = 1;
+	        ps.setInt(idx++, customerId);
+
+	        if (status != null && !status.isEmpty()) {
+	            ps.setString(idx++, status);
+	        }
+
+	        if (keyword != null && !keyword.trim().isEmpty()) {
+	            String kw = "%" + keyword.trim() + "%";
+	            ps.setString(idx++, kw);
+	            ps.setString(idx++, kw);
+	            ps.setString(idx++, kw);
+	        }
+
+	        ps.setInt(idx++, PAGE_SIZE);
+	        ps.setInt(idx, (page - 1) * PAGE_SIZE); 
+
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            IssuePayment p = new IssuePayment();
+	            p.setId(rs.getInt("id"));
+	            p.setIssueId(rs.getInt("issue_id"));
+	            p.setAmount(rs.getDouble("amount"));
+	            p.setNote(rs.getString("note"));
+	            p.setShippingFullName(rs.getString("shipping_full_name"));
+	            p.setShippingPhone(rs.getString("shipping_phone"));
+	            p.setShippingAddress(rs.getString("shipping_address"));
+	            p.setShippingNote(rs.getString("shipping_note"));
+	            p.setStatus(rs.getString("status"));
+	            p.setCreatedBy(rs.getInt("created_by"));
+	            p.setApprovedBy((Integer) rs.getObject("approved_by"));
+	            p.setConfirmedBy((Integer) rs.getObject("confirmed_by"));
+	            p.setCreatedAt(rs.getTimestamp("created_at"));
+	            p.setUpdatedAt(rs.getTimestamp("updated_at"));
+	            p.setPaidAt(rs.getTimestamp("paid_at"));
+	            list.add(p);
+	        }
+	    }
+	    return list;
+	}
+
+	public int countPaymentsByCustomer(int customerId, String status, String keyword) throws SQLException {
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("SELECT COUNT(*) ")
+	       .append("FROM issue_payments ip ")
+	       .append("JOIN customer_issues ci ON ip.issue_id = ci.id ")
+	       .append("WHERE ci.customer_id = ? ");
+
+	    if (status != null && !status.isEmpty()) {
+	        sql.append(" AND ip.status = ? ");
+	    }
+
+	    if (keyword != null && !keyword.trim().isEmpty()) {
+	        sql.append(" AND (ip.shipping_full_name LIKE ? OR ip.shipping_phone LIKE ? OR ip.shipping_address LIKE ?) ");
+	    }
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+	        int idx = 1;
+	        ps.setInt(idx++, customerId);
+
+	        if (status != null && !status.isEmpty()) {
+	            ps.setString(idx++, status);
+	        }
+
+	        if (keyword != null && !keyword.trim().isEmpty()) {
+	            String kw = "%" + keyword.trim() + "%";
+	            ps.setString(idx++, kw);
+	            ps.setString(idx++, kw);
+	            ps.setString(idx++, kw);
+	        }
+
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    return 0;
+	}
+
+
 
 }

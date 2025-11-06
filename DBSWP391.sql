@@ -1278,4 +1278,12 @@ INSERT INTO cart_details (price, quantity, cart_id, device_id) VALUES
 (24990000, 1, 4, 3),
 (54990000, 1, 4, 2);
 
+INSERT INTO issue_payments 
+(issue_id, amount, note, shipping_full_name, shipping_phone, shipping_address, shipping_note, status, created_by, approved_by, confirmed_by, created_at, updated_at, paid_at)
+VALUES
+(1, 1500.00, 'Thanh toán lỗi sản phẩm', 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', 'Nhanh giup', 'awaiting_support', 1, NULL, NULL, '2025-10-01 10:00:00', '2025-10-01 11:00:00', NULL),
+(2, 2500.50, 'Bồi thường trễ hàng', 'Tran Thi B', '0987654321', '456 Tran Hung Dao, Ha Noi', '', 'awaiting_customer', 2, NULL, NULL, '2025-10-01 12:00:00', '2025-10-01 13:00:00', NULL),
+(3, 1000.00, 'Hoàn tiền', 'Le Van C', '0911222333', '789 Le Lai, Hai Phong', 'Goi truoc khi gui', 'paid', 3, 1, 2, '2025-10-01 13:00:00', '2025-10-01 14:00:00', '2025-10-01 15:00:00'),
+(4, 3200.75, 'Thiết bị hỏng', 'Pham Thi D', '0909876543', '321 Hai Ba Trung, Da Nang', '', 'closed', 1, 2, 3, '2025-10-01 14:00:00', '2025-10-01 15:00:00', '2025-10-01 16:00:00'),
+(5, 500.00, 'Sai mẫu', 'Hoang Van E', '0933444555', '654 Nguyen Trai, Ha Noi', 'Nhanh giup', 'awaiting_support', 2, NULL, NULL, '2025-10-01 15:00:00', '2025-10-01 16:00:00', NULL);
 
