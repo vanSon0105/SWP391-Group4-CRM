@@ -29,20 +29,17 @@ public class CustomerIssueDAO extends DBContext {
 
 	public List<CustomerDevice> getCustomerDevices(int customerId) {
 		List<CustomerDevice> list = new ArrayList<>();
-		String sql = "SELECT wc.id AS warranty_id, d.name AS device_name, ds.serial_no "
-				+ "FROM warranty_cards wc "
-				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id "
-				+ "JOIN devices d ON d.id = ds.device_id "
-				+ "WHERE wc.customer_id = ? "
-				+ "ORDER BY wc.start_at DESC";
+		String sql = "SELECT wc.id AS warranty_id, d.name AS device_name, ds.serial_no " + "FROM warranty_cards wc "
+				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id " + "JOIN devices d ON d.id = ds.device_id "
+				+ "WHERE wc.customer_id = ? " + "ORDER BY wc.start_at DESC";
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, customerId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				int warrantyId = rs.getInt("warranty_id");
 				boolean active = hasActiveIssue(warrantyId);
-				list.add(new CustomerDevice(warrantyId, rs.getString("device_name"),
-						rs.getString("serial_no"), active));
+				list.add(
+						new CustomerDevice(warrantyId, rs.getString("device_name"), rs.getString("serial_no"), active));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -251,46 +248,62 @@ public class CustomerIssueDAO extends DBContext {
 	}
 
 	public List<CustomerIssue> getIssuesWithoutTask() {
-		List<CustomerIssue> list = new ArrayList<>();
-		String sql = "SELECT ci.* " + "FROM customer_issues ci " + "LEFT JOIN tasks t ON ci.id = t.customer_issue_id "
-				+ "WHERE t.customer_issue_id IS NULL " + "AND ci.support_status = 'manager_approved' "
-				+ "ORDER BY ci.created_at DESC";
+	    List<CustomerIssue> list = new ArrayList<>();
+	    String sql = "SELECT ci.* FROM customer_issues ci "
+	               + "WHERE ci.support_status = 'manager_approved' "
+	               + "AND NOT EXISTS ("
+	               + "  SELECT 1 FROM tasks t WHERE t.customer_issue_id = ci.id AND t.is_cancelled = FALSE"
+	               + ") "
+	               + "ORDER BY ci.created_at DESC";
 
-		try (Connection conn = getConnection();
-				PreparedStatement ps = conn.prepareStatement(sql);
-				ResultSet rs = ps.executeQuery()) {
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
-				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
-						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback")));
+				list.add(new CustomerIssue(
+						rs.getInt("id"),
+						rs.getString("title")));
 			}
 
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return list;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
 	}
+
+
 
 	public List<CustomerIssue> getIssuesForTask(int currentIssueId) {
-		List<CustomerIssue> list = new ArrayList<>();
-		String sql = "SELECT ci.* " + "FROM customer_issues ci " + "LEFT JOIN tasks t ON ci.id = t.customer_issue_id "
-				+ "WHERE (t.customer_issue_id IS NULL OR ci.id = ?) " + "AND ci.support_status = 'manager_approved' ";
+	    List<CustomerIssue> list = new ArrayList<>();
+	    String sql = "SELECT * FROM customer_issues WHERE id = ? " +
+	                 "UNION " +
+	                 "SELECT ci.* FROM customer_issues ci " +
+	                 "WHERE ci.support_status = 'manager_approved' " +
+	                 "AND NOT EXISTS ( " +
+	                 "  SELECT 1 FROM tasks t " +
+	                 "  WHERE t.customer_issue_id = ci.id " +
+	                 "    AND t.is_cancelled = FALSE " +
+	                 ") " +
+	                 "ORDER BY created_at DESC";
 
-		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, currentIssueId);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
-						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
-						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback")));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return list;
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, currentIssueId);
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            list.add(new CustomerIssue(
+	                rs.getInt("id"),
+	                rs.getString("title")
+	            ));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
 	}
+
+
 
 }

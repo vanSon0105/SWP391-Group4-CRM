@@ -108,6 +108,9 @@ th {
 						<c:when test="${task.status == 'completed'}">
 							<span style="color: #10b981;">Hoàn thành</span>
 						</c:when>
+						<c:when test="${task.status == 'cancelled'}">
+							<span style="color: red;">Đã hủy</span>
+						</c:when>
 						<c:otherwise>
 							<span>Không xác định</span>
 						</c:otherwise>
@@ -116,9 +119,12 @@ th {
 			</div>
 			<div class="btn-gr"
 				style="margin-top: 14px; display: flex; gap: 10px;">
-				<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
-
+				<c:if
+					test="${task.status != 'completed' and task.status != 'cancelled'}">
+					<a href="task-form?id=${task.id}" title="Update Task">Chỉnh sửa</a>
+				</c:if>
 			</div>
+
 			<table>
 				<thead>
 					<tr>

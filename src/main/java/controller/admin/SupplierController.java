@@ -12,6 +12,7 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,33 +31,23 @@ public class SupplierController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	User currentUser = AuthorizationUtils.requirePermission(request, response, "SUPPLIER_INFORMATION_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "SUPPLIER_INFORMATION_MANAGEMENT");
+        if (currentUser == null) return;
 
         String action = request.getParameter("action");
-        if (action == null || action.isEmpty()) {
-        	action = "list";
-        }
+        if (action == null || action.isEmpty()) action = "list";
 
         switch (action) {
             case "add":
-            	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CRUD_SUPPLIER")) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                }
+                checkPermission(request, response, "CRUD_SUPPLIER");
                 showAddForm(request, response);
                 break;
             case "edit":
-            	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CRUD_SUPPLIER")) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                }
+                checkPermission(request, response, "CRUD_SUPPLIER");
                 showEditForm(request, response);
                 break;
             case "delete":
-            	if (!AuthorizationUtils.hasPermission(request.getSession(false), "CRUD_SUPPLIER")) {
-                    response.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                }
+                checkPermission(request, response, "CRUD_SUPPLIER");
                 deleteSupplier(request, response);
                 break;
             case "restore":
@@ -72,20 +63,66 @@ public class SupplierController extends HttpServlet {
                 viewSupplierWithHistory(request, response);
                 break;
             case "search":
-                searchSupplier(request, response);
+                searchSuppliers(request, response);
+                break;
+            case "filter":
+                filterSuppliers(request, response);
                 break;
             default:
-                listSuppliers(request, response);
-                break;
+                searchSuppliers(request, response);
         }
     }
 
-    private void listSuppliers(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        List<Supplier> suppliers = supplierDAO.getAllSuppliers();
+    private void checkPermission(HttpServletRequest request, HttpServletResponse response, String permission) throws IOException {
+        if (!AuthorizationUtils.hasPermission(request.getSession(false), permission)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+        }
+    }
 
+    private void searchSuppliers(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String keyword = request.getParameter("keyword");
+        if (keyword != null) keyword = keyword.replace("+", " ").trim();
+        else keyword = "";
+
+        int page = parsePageParam(request.getParameter("page"));
         int pageSize = 5;
-        String pageParam = request.getParameter("page");
+        int totalSuppliers = supplierDAO.countSuppliersByKeyword(keyword);
+        int totalPages = calculateTotalPages(totalSuppliers, pageSize, page);
+
+        List<Supplier> suppliersPage = supplierDAO.searchSuppliersWithPaging(keyword, page, pageSize);
+
+        request.setAttribute("suppliers", suppliersPage);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("action", "list");
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+    }
+
+    private void filterSuppliers(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String statusFilter = request.getParameter("status");
+        String addressFilter = request.getParameter("address");
+        if (addressFilter != null) addressFilter = addressFilter.trim().toLowerCase();
+
+        int page = parsePageParam(request.getParameter("page"));
+        int pageSize = 5;
+        int totalSuppliers = supplierDAO.countSuppliersByFilter(statusFilter, addressFilter);
+        int totalPages = calculateTotalPages(totalSuppliers, pageSize, page);
+
+        List<Supplier> suppliersPage = supplierDAO.filterSuppliers(statusFilter, addressFilter, page, pageSize);
+
+        request.setAttribute("suppliers", suppliersPage);
+        request.setAttribute("statusFilter", statusFilter);
+        request.setAttribute("addressFilter", addressFilter);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("action", "filter");
+        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+    }
+
+    private int parsePageParam(String pageParam) {
         int page = 1;
         if (pageParam != null) {
             try {
@@ -95,33 +132,20 @@ public class SupplierController extends HttpServlet {
                 page = 1;
             }
         }
+        return page;
+    }
 
-        int totalSuppliers = suppliers.size();
-        int totalPages = (int) Math.ceil((double) totalSuppliers / pageSize);
+    private int calculateTotalPages(int totalItems, int pageSize, int currentPage) {
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
         if (totalPages == 0) totalPages = 1;
-
-        if (page > totalPages) {
-            page = totalPages;
-        }
-
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, totalSuppliers);
-
-        List<Supplier> suppliersPage = new ArrayList<>();
-        if (totalSuppliers > 0) {
-            suppliersPage = suppliers.subList(start, end);
-        }
-
-        request.setAttribute("suppliers", suppliersPage);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("action", "list");
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+        if (currentPage > totalPages) currentPage = totalPages;
+        return totalPages;
     }
 
     private void listDeletedSuppliers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<Supplier> suppliers = supplierDAO.getDeletedSuppliers();
+        if (suppliers == null) suppliers = new ArrayList<>();
         request.setAttribute("suppliers", suppliers);
         request.setAttribute("action", "trash");
         request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
@@ -130,7 +154,10 @@ public class SupplierController extends HttpServlet {
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("action", "add");
-        request.setAttribute("suppliers", supplierDAO.getAllSuppliers());
+        List<Supplier> suppliers = supplierDAO.getAllSuppliers();
+        request.setAttribute("suppliers", suppliers);
+        request.setAttribute("currentPage", 1);
+        request.setAttribute("totalPages", 1);
         request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
@@ -139,12 +166,15 @@ public class SupplierController extends HttpServlet {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             Supplier supplier = supplierDAO.getSupplierById(id);
-            if (supplier == null) {
-                request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
-            } else {
-                request.setAttribute("supplier", supplier);
-            }
+            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
+            else request.setAttribute("supplier", supplier);
             request.setAttribute("action", "edit");
+
+            List<Supplier> suppliers = supplierDAO.getAllSuppliers();
+            request.setAttribute("suppliers", suppliers);
+            request.setAttribute("currentPage", 1);
+            request.setAttribute("totalPages", 1);
+
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
         }
@@ -156,15 +186,11 @@ public class SupplierController extends HttpServlet {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             Supplier supplier = supplierDAO.getSupplierById(id);
-            if (supplier == null) {
-                request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
-            } else {
-                request.setAttribute("supplier", supplier);
-            }
+            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
+            else request.setAttribute("supplier", supplier);
             request.setAttribute("action", "view");
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
-            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
         }
         request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
@@ -174,57 +200,16 @@ public class SupplierController extends HttpServlet {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             Supplier supplier = supplierDAO.getSupplierById(id);
-            if (supplier == null) {
-                request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
-            } else {
+            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
+            else {
                 request.setAttribute("supplier", supplier);
                 List<SupplierDetail> history = detailDAO.getDetailsBySupplierId(id);
                 request.setAttribute("history", history);
             }
             request.setAttribute("action", "viewHistory");
-            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
-            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
         }
-    }
-
-    private void searchSupplier(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String keyword = request.getParameter("keyword");
-        if (keyword != null) {
-            keyword = keyword.replace("+", " ").trim();
-        }
-
-        if (keyword == null || keyword.isEmpty()) {
-            request.setAttribute("error", "Vui lòng nhập từ khóa tìm kiếm!");
-            listSuppliers(request, response);
-            return;
-        }
-        if (keyword.length() > 50) {
-            request.setAttribute("error", "Từ khóa quá dài (tối đa 50 ký tự)!");
-            listSuppliers(request, response);
-            return;
-        }
-        if (!keyword.matches("[a-zA-Z0-9@._\\p{L}\\s-]+")) {
-            request.setAttribute("error", "Từ khóa chứa ký tự không hợp lệ!");
-            listSuppliers(request, response);
-            return;
-        }
-
-        List<Supplier> all = supplierDAO.getAllSuppliers();
-        List<Supplier> result = new ArrayList<>();
-        for (Supplier s : all) {
-            if ((s.getName() != null && s.getName().toLowerCase().contains(keyword.toLowerCase()))
-                    || (s.getEmail() != null && s.getEmail().toLowerCase().contains(keyword.toLowerCase()))
-                    || (s.getPhone() != null && s.getPhone().contains(keyword))) {
-                result.add(s);
-            }
-        }
-
-        request.setAttribute("suppliers", result);
-        request.setAttribute("keyword", keyword);
-        request.setAttribute("action", "list");
         request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
     }
 
@@ -254,15 +239,13 @@ public class SupplierController extends HttpServlet {
         }
     }
 
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         request.setCharacterEncoding("UTF-8");
-
         User currentUser = AuthorizationUtils.requirePermission(request, response, "CRUD_SUPPLIER");
-        if (currentUser == null) {
-            return;
-        }
+        if (currentUser == null) return;
 
         String action = request.getParameter("action");
         String name = request.getParameter("name");
@@ -270,58 +253,49 @@ public class SupplierController extends HttpServlet {
         String email = request.getParameter("email");
         String address = request.getParameter("address");
 
-        if (name == null || name.trim().isEmpty()) {
-            request.setAttribute("error", "Tên nhà cung cấp không được để trống!");
-            forwardToForm(request, response, action);
-            return;
-        }
-        if (!name.matches("^[\\p{L}0-9\\s.'-]{2,100}$")) {
-            request.setAttribute("error", "Tên nhà cung cấp chỉ được chứa chữ, số và ký tự hợp lệ!");
-            forwardToForm(request, response, action);
-            return;
+        Integer id = null;
+        if ("update".equals(action)) {
+            try {
+                id = Integer.parseInt(request.getParameter("id"));
+            } catch (NumberFormatException ignored) {}
         }
 
-        if ("add".equals(action)) {
-            if (phone == null || phone.trim().isEmpty()) {
-                request.setAttribute("error", "Số điện thoại không được để trống khi thêm mới!");
-                forwardToForm(request, response, action);
-                return;
+        String error = validateSupplierInput(action, name, phone, email, address, id);
+        if (error != null) {
+            Supplier supplier = new Supplier();
+            if (id != null) supplier.setId(id);
+            supplier.setName(name);
+            supplier.setPhone(phone);
+            supplier.setEmail(email);
+            supplier.setAddress(address);
+
+            request.setAttribute("error", error);
+            request.setAttribute("supplier", supplier);
+
+            if ("add".equals(action)) {
+                request.setAttribute("action", "add");
             }
-            if (email == null || email.trim().isEmpty()) {
-                request.setAttribute("error", "Email không được để trống khi thêm mới!");
-                forwardToForm(request, response, action);
-                return;
+
+            if ("update".equals(action)) {
+                request.setAttribute("action", "edit");
             }
-            if (address == null || address.trim().isEmpty()) {
-                request.setAttribute("error", "Địa chỉ không được để trống khi thêm mới!");
-                forwardToForm(request, response, action);
-                return;
-            }
-        }
 
-        if (phone != null && !phone.isEmpty() && !phone.matches("^[0-9]{9,11}$")) {
-            request.setAttribute("error", "Số điện thoại phải gồm 9–11 chữ số!");
-            forwardToForm(request, response, action);
-            return;
-        }
+            List<Supplier> suppliers = supplierDAO.getAllSuppliers();
+            request.setAttribute("suppliers", suppliers);
+            request.setAttribute("currentPage", 1);
+            request.setAttribute("totalPages", 1);
 
-        if (email != null && !email.isEmpty() && !email.matches("^[\\w.%+-]+@[\\w.-]+\\.[A-Za-z]{2,6}$")) {
-            request.setAttribute("error", "Email không hợp lệ!");
-            forwardToForm(request, response, action);
-            return;
-        }
-
-        if (address != null && address.length() > 255) {
-            request.setAttribute("error", "Địa chỉ quá dài (tối đa 255 ký tự)!");
-            forwardToForm(request, response, action);
+            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
             return;
         }
 
         Supplier supplier = new Supplier();
+        if (id != null) supplier.setId(id);
         supplier.setName(name.trim());
-        supplier.setPhone(phone);
-        supplier.setEmail(email);
-        supplier.setAddress(address);
+        supplier.setPhone(phone.trim());
+        supplier.setEmail(email.trim());
+        supplier.setAddress(address.trim());
+        supplier.setStatus(1);
 
         try {
             if ("add".equals(action)) {
@@ -329,7 +303,6 @@ public class SupplierController extends HttpServlet {
                 response.sendRedirect("supplier?action=list&message=" +
                         URLEncoder.encode("Thêm nhà cung cấp thành công!", "UTF-8"));
             } else if ("update".equals(action)) {
-                supplier.setId(Integer.parseInt(request.getParameter("id")));
                 supplierDAO.updateSupplier(supplier);
                 response.sendRedirect("supplier?action=list&message=" +
                         URLEncoder.encode("Cập nhật thông tin thành công!", "UTF-8"));
@@ -343,9 +316,47 @@ public class SupplierController extends HttpServlet {
         }
     }
 
-    private void forwardToForm(HttpServletRequest request, HttpServletResponse response, String action)
-            throws ServletException, IOException {
-        request.setAttribute("action", action);
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+    private String validateSupplierInput(String action, String name, String phone, String email, String address, Integer id) {
+        if (name != null) name = name.trim();
+        if (phone != null) phone = phone.trim();
+        if (email != null) email = email.trim();
+        if (address != null) address = address.trim();
+
+        if (name == null || name.isEmpty())
+            return "Tên nhà cung cấp không được để trống!";
+        if (!name.matches("^[\\p{L}0-9\\s.'-]{2,100}$"))
+            return "Tên nhà cung cấp chỉ được chứa chữ, số và ký tự hợp lệ (2-100 ký tự)!";
+
+        if (phone == null || phone.isEmpty())
+            return "Số điện thoại không được để trống!";
+        if (!phone.matches("^[0-9]{9,10}$"))
+            return "Số điện thoại phải gồm 9–10 chữ số!";
+        try {
+            if (supplierDAO.existsPhone(phone, id))
+                return "Số điện thoại đã tồn tại!";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if (email == null || email.isEmpty())
+            return "Email không được để trống!";
+        if (!email.matches("^[\\w.%+-]+@[\\w.-]+\\.com$"))
+            return "Email không hợp lệ! Chỉ cho phép đuôi .com";
+        try {
+            if (supplierDAO.existsEmail(email, id))
+                return "Email đã tồn tại!";
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        if (address == null || address.isEmpty())
+            return "Địa chỉ không được để trống!";
+        if (address.length() > 255)
+            return "Địa chỉ quá dài (tối đa 255 ký tự)!";
+        if (!address.matches("^[\\p{L}0-9\\s.,'\\-/]+$"))
+            return "Địa chỉ chỉ được chứa chữ, số và ký tự cơ bản (.,'-/)!";
+
+
+        return null;
     }
 }
