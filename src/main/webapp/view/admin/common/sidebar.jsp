@@ -19,6 +19,7 @@
     <nav>
         <c:if test="${permissions != null && permissions.contains('DEVICE_OVERVIEW')}">
             <a href="admin">Dashboard</a>
+            <a href="sales-report">Sales report</a>
         </c:if>
         <c:choose>
 			<c:when test="${permissions != null && permissions.contains('DEVICE_OVERVIEW')}">

@@ -163,20 +163,26 @@ CREATE TABLE task_details (
   foreign key (technical_staff_id) references users(id)
 );
 
-CREATE VIEW task_with_status AS
-SELECT t.id, t.title, t.description, t.manager_id, t.customer_issue_id, t.is_cancelled,
-    CASE
-		WHEN t.is_cancelled = true then 'cancelled'
-        WHEN COUNT(td.id) = 0 THEN 'pending' 
-        WHEN SUM(td.status = 'in_progress') > 0 THEN 'in_progress'
-        WHEN SUM(td.status = 'pending') = COUNT(td.id) THEN 'pending'
-        WHEN SUM(td.status = 'completed') = COUNT(td.id) THEN 'completed'
-        WHEN SUM(td.status = 'cancelled') = COUNT(td.id) THEN 'cancelled'
-        ELSE 'in_progress'
-    END AS status 
+CREATE OR REPLACE VIEW task_with_status AS
+SELECT
+  t.id,
+  t.title,
+  t.description,
+  t.manager_id,
+  t.customer_issue_id,
+  t.is_cancelled,
+  CASE
+    WHEN t.is_cancelled = TRUE THEN 'cancelled'
+    WHEN COUNT(td.id) = 0 THEN 'pending'
+    WHEN SUM(CASE WHEN td.status = 'cancelled' THEN 1 ELSE 0 END) = COUNT(td.id) THEN 'cancelled'
+    WHEN SUM(CASE WHEN td.status = 'completed' THEN 1 ELSE 0 END) = COUNT(td.id) THEN 'completed'
+    WHEN SUM(CASE WHEN td.status = 'in_progress' THEN 1 ELSE 0 END) > 0 THEN 'in_progress'
+    WHEN SUM(CASE WHEN td.status = 'pending' THEN 1 ELSE 0 END) = COUNT(td.id) THEN 'pending'
+    ELSE 'in_progress'
+  END AS status
 FROM tasks t
 LEFT JOIN task_details td ON t.id = td.task_id
-GROUP BY t.id, t.title, t.description, t.manager_id, t.customer_issue_id;
+GROUP BY t.id, t.title, t.description, t.manager_id, t.customer_issue_id, t.is_cancelled;
 
 
 CREATE TABLE customer_issue_details (
@@ -1025,7 +1031,9 @@ INSERT INTO payments
 (7, NULL, 320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-22 16:05:00', NULL),
 (8, NULL, 575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
 (9, NULL, 640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', 'Trong giờ hành chính', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
-(10, NULL, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
+(10, NULL, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00'),
+(20, NULL, 15280000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', 'Trong giờ hành chính', NULL, 'success', '2025-10-06 07:07:00', '2025-10-06 07:15:00'),
+(21, NULL, 14990000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-10-07 00:00:00', '2025-10-07 00:15:00');
 
 
 INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES
@@ -1177,11 +1185,11 @@ INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
 (102, 2, 3), (102, 11, 10), (102, 14, 100);
 
 INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, support_staff_id, feedback, support_status, created_at) VALUES
-(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, NULL, 'submitted', '2025-10-01 10:00:00'),
-(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, NULL, 'submitted', '2025-10-02 11:00:00'),
+(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, NULL, 'task_created', '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, NULL, 'task_created', '2025-10-02 11:00:00'),
 (10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, 7, NULL, 'task_created', '2025-10-03 09:30:00'),
 (11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, 7, NULL, 'task_created', '2025-10-04 16:45:00'),
-(11,'ISS-0005', 'Màn hình lỗi', 'iPad Air bị lỗi', 31, 7, NULL, 'task_created', '2025-10-04 16:55:00');
+(11,'ISS-0005', 'Màn hình lỗi', 'iPad Air bị lỗi', 31, 7, NULL, 'manager_approved', '2025-10-04 16:55:00');
 
 INSERT INTO customer_issue_details (issue_id, support_staff_id, customer_full_name, contact_email, contact_phone, device_serial, summary, forward_to_manager) VALUES
 (1, 7, 'Hieu Pham', 'customer01@example.com', '0906789012', 'IP15-SN0001','Khách hàng phản ánh máy nóng khi sạc. Đã kiểm tra sơ bộ và xác nhận hiện tượng.', TRUE),

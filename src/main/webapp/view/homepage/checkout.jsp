@@ -22,7 +22,6 @@ table tbody tr {
 table tbody tr td {
 	padding: 10px 0px;
 }
-
 </style>
 
 <body class="shop-page checkout-page home-page">
@@ -35,25 +34,31 @@ table tbody tr td {
 			<section class="checkout-grid">
 				<div class="panel" style="background: rgba(255, 255, 255, 0.97);">
 					<h2>Thông tin thanh toán</h2>
-					<div style="display: flex; gap: 20px;margin-bottom:10px">
+					<div style="display: flex; gap: 20px; margin-bottom: 10px">
 						<div style="display: grid; gap: 8px; width: 50%; height: 45px">
-							<label for="fullname">Họ tên</label> <input id="fullname"
-								name="fullname" type="text" placeholder="Nguyễn Minh Anh"
-								maxlength="50" required>
-								<small style="color:red">${errorFullname}</small>
+							<label for="fullname">Họ tên</label> 
+							<input id="fullname"
+								name="fullname" type="text" placeholder="${user.fullName}"
+								value="${param.fullName != null ? param.fullName : user.fullName}"
+								maxlength="50" required> 
+								<small style="color: red">${errorFullname}</small>
 						</div>
 						<div style="display: grid; gap: 8px; width: 50%; height: 45px">
-							<label for="phone">Số điện thoại</label> <input id="phone"
-								name="phone" type="text" placeholder="0901 234 567" required>
-								<small style="color:red">${errorPhone}</small>
+							<label for="phone">Số điện thoại</label>
+							 <input id="phone"
+								name="phone" type="text" placeholder="${user.phone}"
+								value="${param.phone != null ? param.phone : user.phone}"
+								required> 
+								<small style="color: red">${errorPhone}</small>
 						</div>
 
 					</div>
-					<div style="display: grid; gap: 8px;; margin-top:32px">
+					<div style="display: grid; gap: 8px;; margin-top: 32px">
 						<label for="address">Địa chỉ</label>
 						<textarea id="address" name="address"
-							placeholder="Số nhà, đường, phường, quận, thành phố" maxlength="200" required></textarea>
-						<small style="color:red">${errorAddress}</small>
+							placeholder="Số nhà, đường, phường, quận, thành phố"
+							maxlength="200" required></textarea>
+						<small style="color: red">${errorAddress}</small>
 					</div>
 					<div style="display: grid; gap: 8px;">
 						<label for="time">Thời gian giao hàng</label> <select id="time"
@@ -76,8 +81,9 @@ table tbody tr td {
 					<div style="display: grid; gap: 8px;">
 						<label for="note">Ghi chú cho kỹ thuật</label>
 						<textarea id="note" name="note"
-							placeholder="Ví dụ: cần bàn giao, hướng dẫn sao lưu dữ liệu" maxlength="200"></textarea>
-							<small style="color:red">${errorNote}</small>
+							placeholder="Ví dụ: cần bàn giao, hướng dẫn sao lưu dữ liệu"
+							maxlength="200"></textarea>
+						<small style="color: red">${errorNote}</small>
 					</div>
 				</div>
 
@@ -95,7 +101,7 @@ table tbody tr td {
 						<tbody>
 							<c:forEach var="cart" items="${listCart}">
 								<tr>
-									<td>${cart.device.name} x ${cart.quantity}</td>
+									<td>${cart.device.name}x${cart.quantity}</td>
 									<td><fmt:formatNumber value="${cart.totalPrice}"
 											type="number" /></td>
 								</tr>
@@ -128,8 +134,7 @@ table tbody tr td {
 						</p>
 					</div>
 					<div class="cta" style="margin-top: 20px">
-						<button type="submit" class="cta-btn">Xác nhận
-							thanh toán</button> 
+						<button type="submit" class="cta-btn">Xác nhận thanh toán</button>
 						<a href="cart" class="cta-btn"
 							style="background: linear-gradient(90deg, #f97316, #fb7185); box-shadow: 0 18px 36px rgba(249, 115, 22, 0.28);">Quay
 							lại giỏ hàng</a>

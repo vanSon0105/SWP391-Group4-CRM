@@ -92,21 +92,27 @@ public class TaskFormController extends HttpServlet {
 				} 
 			}
 
-			List<CustomerIssue> issueList = issueDao.getAllIssues();
-			List<User> staffList = userDao.getAllTechnicalStaff();
-			
-			CustomerIssue currentIssue = null;
-			if (issueIdFromParam != 0) {
-				for (CustomerIssue ci : issueList) {
-					if (ci.getId() == issueIdFromParam) {
-						currentIssue = ci;
-						break;
-					}
-				}
-				if (currentIssue == null) {
-					currentIssue = issueDao.getIssueById(issueIdFromParam);
-				}
-			}
+			 List<CustomerIssue> issueList;
+		        if (issueIdFromParam != 0) {
+		            issueList = issueDao.getIssuesForTask(issueIdFromParam);
+		        } else {
+		            issueList = issueDao.getIssuesWithoutTask();
+		        }
+
+		        List<User> staffList = userDao.getAllTechnicalStaff();
+
+		        CustomerIssue currentIssue = null;
+		        if (issueIdFromParam != 0) {
+		            for (CustomerIssue ci : issueList) {
+		                if (ci.getId() == issueIdFromParam) {
+		                    currentIssue = ci;
+		                    break;
+		                }
+		            }
+		            if (currentIssue == null) {
+		                currentIssue = issueDao.getIssueById(issueIdFromParam);
+		            }
+		        }
 
 			request.setAttribute("task", task);
 			request.setAttribute("taskDetail", taskDetail);
