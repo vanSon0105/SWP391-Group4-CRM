@@ -1,19 +1,23 @@
 package controller.storekeeper;
 
 import dao.TransactionDAO;
+import dao.TransactionDetailDAO;
 import model.Transaction;
+import model.TransactionDetail;
+import model.User;
+import utils.AuthorizationUtils;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
+
 import java.io.IOException;
 import java.util.*;
-import model.User;
-import utils.AuthorizationUtils;
 
 @WebServlet("/transactions")
 public class TransactionListController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final TransactionDAO transactionDAO = new TransactionDAO();
+    private final TransactionDetailDAO detailDAO = new TransactionDetailDAO();
     private static final int PAGE_SIZE = 10;
 
     @Override
@@ -39,6 +43,12 @@ public class TransactionListController extends HttpServlet {
 
         List<Transaction> transactions = transactionDAO.getTransactions(typeFilter, statusFilter, keyword, offset, PAGE_SIZE);
         if (transactions == null) transactions = new ArrayList<>();
+
+        for (Transaction t : transactions) {
+            List<TransactionDetail> details = detailDAO.getTransactionDetailsByTransactionId(t.getId());
+            System.out.println("Transaction " + t.getId() + " has " + details.size() + " devices");
+            t.setDetails(details);
+        }
 
         int totalRecords = transactionDAO.countTransactions(typeFilter, statusFilter, keyword);
         int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
