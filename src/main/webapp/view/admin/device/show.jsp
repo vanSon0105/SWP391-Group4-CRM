@@ -122,7 +122,6 @@
 	                </c:if>	    
             	</div>
                 <div class="table-wrapper">
-                    
 	                    <table class="device-table">
 	                        <thead>
 	                            <tr>
