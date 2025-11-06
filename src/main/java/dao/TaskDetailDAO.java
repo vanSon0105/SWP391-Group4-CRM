@@ -231,15 +231,29 @@ public class TaskDetailDAO extends DBContext{
     }
     
     public void cancelTask(int taskId) {
-        String sql = "UPDATE tasks SET is_cancelled = TRUE WHERE id = ?";
+        String updateTaskSql = "UPDATE tasks SET is_cancelled = TRUE WHERE id = ?";
+        String updateIssueSql = 
+            "UPDATE customer_issues " +
+            "SET support_status = 'manager_approved' " +
+            "WHERE id = (SELECT customer_issue_id FROM tasks WHERE id = ?)";
+
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, taskId);
-            ps.executeUpdate();
+             PreparedStatement ps1 = conn.prepareStatement(updateTaskSql);
+             PreparedStatement ps2 = conn.prepareStatement(updateIssueSql)) {
+
+            conn.setAutoCommit(false); 
+            
+            ps1.setInt(1, taskId);
+            ps1.executeUpdate();
+            ps2.setInt(1, taskId);
+            ps2.executeUpdate();
+
+            conn.commit(); 
         } catch (Exception e) {
-			e.printStackTrace();
-		}
+            e.printStackTrace();
+        }
     }
+
     
     public void add(TaskDetail detail) {
         String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_at, deadline, status) VALUES (?, ?, ?, ?, ?)";
