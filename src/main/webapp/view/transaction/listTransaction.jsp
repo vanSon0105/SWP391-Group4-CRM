@@ -142,12 +142,10 @@
             <div class="error" style="color:red; font-weight:bold; margin-bottom:10px;">${error}</div>
         </c:if>
 
-        <!-- Create button -->
         <a href="${pageContext.request.contextPath}/create-transaction" class="create-btn">
             <i class="fa fa-plus"></i> Create Import/Export Order
         </a>
 
-        <!-- Filter + Search Form -->
         <form method="get" action="${pageContext.request.contextPath}/transactions" class="filter-form">
             <input type="text" name="keyword" placeholder="Search by storekeeper, user, supplier, note..." value="${fn:escapeXml(keyword)}"/>
             <select name="type">
@@ -174,6 +172,7 @@
                         <th>Type</th>
                         <th>Storekeeper</th>
                         <th>Supplier / User</th>
+                        <th>Devices</th>
                         <th>Note</th>
                         <th>Status</th>
                         <th>Created At</th>
@@ -195,7 +194,19 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td><c:out value="${t.note != null ? t.note : ''}"/></td>
+                            <td>
+							    <c:choose>
+							        <c:when test="${not empty t.details}">
+							            <c:forEach var="d" items="${t.details}">
+							                ${d.deviceName} (x${d.quantity})<br/>
+							            </c:forEach>
+							        </c:when>
+							        <c:otherwise>
+							            No devices
+							        </c:otherwise>
+							    </c:choose>
+							</td>
+							<td><c:out value="${t.note != null ? t.note : ''}"/></td>
                             <td class="status-${t.status}"><c:out value="${t.status}"/></td>
                             <td>
                                 <c:if test="${not empty t.date}">
