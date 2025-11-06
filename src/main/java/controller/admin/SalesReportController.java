@@ -25,8 +25,25 @@ public class SalesReportController extends HttpServlet {
         req.setAttribute("totalOrders", summary.get("totalOrders"));
         req.setAttribute("avgOrder", summary.get("avgOrder"));
 
-        req.setAttribute("monthlyData", dao.getMonthlyData());
+        List<Sale> dbData = dao.getMonthlyData(); 
+        Map<Integer, Sale> monthMap = new java.util.HashMap<>();
+        for (Sale s : dbData) {
+            monthMap.put(s.getMonth(), s);
+        }
+
+        List<Sale> fullYearData = new java.util.ArrayList<>();
+        int currentYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
+        for (int m = 1; m <= 12; m++) {
+            if (monthMap.containsKey(m)) {
+                fullYearData.add(monthMap.get(m));
+            } else {
+                fullYearData.add(new Sale(m, currentYear, 0, 0));
+            }
+        }
+
+        req.setAttribute("monthlyData", fullYearData);
 
         req.getRequestDispatcher("view/admin/dashboard/saleReport.jsp").forward(req, resp);
     }
+
 }
