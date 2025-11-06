@@ -4,6 +4,141 @@ import java.util.*;
 import model.Supplier;
 
 public class SupplierDAO extends dal.DBContext {
+	public List<Supplier> filterSuppliers(String statusFilter, String addressFilter, int page, int pageSize) {
+	    List<Supplier> list = new ArrayList<>();
+	    String sql = "SELECT * FROM suppliers WHERE 1=1";
+
+	    if (statusFilter != null && !statusFilter.isEmpty()) {
+	        sql += " AND status = ?";
+	    }
+	    if (addressFilter != null && !addressFilter.isEmpty()) {
+	        sql += " AND LOWER(address) LIKE ?";
+	    }
+
+	    sql += " ORDER BY id ASC LIMIT ? OFFSET ?";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        int index = 1;
+	        if (statusFilter != null && !statusFilter.isEmpty()) {
+	            ps.setInt(index++, Integer.parseInt(statusFilter));
+	        }
+	        if (addressFilter != null && !addressFilter.isEmpty()) {
+	            ps.setString(index++, "%" + addressFilter.trim().toLowerCase() + "%");
+	        }
+
+	        ps.setInt(index++, pageSize);
+	        ps.setInt(index, (page - 1) * pageSize);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                list.add(new Supplier(
+	                    rs.getInt("id"),
+	                    rs.getString("name"),
+	                    rs.getString("phone"),
+	                    rs.getString("email"),
+	                    rs.getString("address"),
+	                    rs.getInt("status")
+	                ));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
+	public int countSuppliersByFilter(String statusFilter, String addressFilter) {
+	    String sql = "SELECT COUNT(*) FROM suppliers WHERE 1=1";
+
+	    if (statusFilter != null && !statusFilter.isEmpty()) {
+	        sql += " AND status = ?";
+	    }
+	    if (addressFilter != null && !addressFilter.isEmpty()) {
+	        sql += " AND LOWER(address) LIKE ?";
+	    }
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        int index = 1;
+	        if (statusFilter != null && !statusFilter.isEmpty()) {
+	            ps.setInt(index++, Integer.parseInt(statusFilter));
+	        }
+	        if (addressFilter != null && !addressFilter.isEmpty()) {
+	            ps.setString(index++, "%" + addressFilter.trim().toLowerCase() + "%");
+	        }
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return 0;
+	}
+	
+	public List<Supplier> searchSuppliersWithPaging(String keyword, int page, int pageSize) {
+	    List<Supplier> list = new ArrayList<>();
+	    String sql = "SELECT * FROM suppliers " +
+	                 "WHERE status = 1 " +
+	                 "AND (LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR phone LIKE ?) " +
+	                 "ORDER BY id ASC " +
+	                 "LIMIT ? OFFSET ?";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        String key = "%" + (keyword == null ? "" : keyword.trim().toLowerCase()) + "%";
+	        ps.setString(1, key);
+	        ps.setString(2, key);
+	        ps.setString(3, "%" + (keyword == null ? "" : keyword.trim()) + "%");
+	        ps.setInt(4, pageSize);
+	        ps.setInt(5, (page - 1) * pageSize);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                list.add(new Supplier(
+	                    rs.getInt("id"),
+	                    rs.getString("name"),
+	                    rs.getString("phone"),
+	                    rs.getString("email"),
+	                    rs.getString("address"),
+	                    rs.getInt("status")
+	                ));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
+	public int countSuppliersByKeyword(String keyword) {
+	    String sql = "SELECT COUNT(*) FROM suppliers " +
+	                 "WHERE status = 1 " +
+	                 "AND (LOWER(name) LIKE ? OR LOWER(email) LIKE ? OR phone LIKE ?)";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        String key = "%" + (keyword == null ? "" : keyword.trim().toLowerCase()) + "%";
+	        ps.setString(1, key);
+	        ps.setString(2, key);
+	        ps.setString(3, "%" + (keyword == null ? "" : keyword.trim()) + "%");
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return 0;
+	}
 	
 	public List<Supplier> searchSuppliers(String keyword) {
 	    List<Supplier> list = new ArrayList<>();
@@ -37,25 +172,23 @@ public class SupplierDAO extends dal.DBContext {
 	public List<Supplier> getDeletedSuppliers() {
 	    List<Supplier> list = new ArrayList<>();
 	    String sql = "SELECT * FROM suppliers WHERE status = 0";
-
 	    try (Connection conn = getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql);
 	         ResultSet rs = ps.executeQuery()) {
 
 	        while (rs.next()) {
-	            Supplier supplier = new Supplier(
-	            		rs.getInt("id"),
-	                    rs.getString("name"),
-	                    rs.getString("phone"),
-	                    rs.getString("email"),
-	                    rs.getString("address"),
-	                    rs.getInt("status")
-	            );
-	            list.add(supplier);
+	            list.add(new Supplier(
+	                rs.getInt("id"),
+	                rs.getString("name"),
+	                rs.getString("phone"),
+	                rs.getString("email"),
+	                rs.getString("address"),
+	                rs.getInt("status")
+	            ));
 	        }
 
 	    } catch (SQLException e) {
-	        System.out.println("Error getDeletedSuppliers: " + e.getMessage());
+	        e.printStackTrace();
 	    }
 
 	    return list;
@@ -118,6 +251,30 @@ public class SupplierDAO extends dal.DBContext {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public boolean existsPhone(String phone, Integer id) {
+        String sql = "SELECT COUNT(*) FROM suppliers WHERE phone = ? AND status = 1";
+        if (id != null) sql += " AND id != ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, phone);
+            if (id != null) ps.setInt(2, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
+    }
+
+    public boolean existsEmail(String email, Integer id) {
+        String sql = "SELECT COUNT(*) FROM suppliers WHERE email = ? AND status = 1";
+        if (id != null) sql += " AND id != ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, email);
+            if (id != null) ps.setInt(2, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt(1) > 0;
+        } catch (SQLException e) { e.printStackTrace(); }
+        return false;
     }
 
     public void deleteSupplier(int id) {

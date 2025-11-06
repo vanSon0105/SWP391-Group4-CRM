@@ -1,429 +1,470 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page isELIgnored="false" %>
-	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-	<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Quản lý nhà cung cấp</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-	:root {
-        --primary: #2563eb;
-        --primary-hover: #1d4ed8;
-        --neutral: #6b7280;
-        --bg: #f5f7fb;
-        --card: #fff;
-        --text: #111827;
-        --danger: #ef4444;
-        --warning: #f59e0b;
-        --info: #0ea5e9;
-        --success: #10b981;
-        --radius: 10px;
-        --shadow: 0 6px 18px rgba(0, 0, 0, .08);
-        --border: #e5e7eb;
-    }
-    
-	.device-btn{
-	    color: black !important;
-	}
-	.device-management .pagination-pills {
-	    display: flex;
-	    justify-content: center;
-	    gap: 10px;
-	}
-	
-	.device-management .pagination-pills a {
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		text-decoration: none;
-	    width: 44px;
-	    height: 44px;
-	    padding: 0;
-	    border-radius: 16px;
-	    border: 1px solid rgba(15, 23, 42, 0.15);
-	    background: rgba(255, 255, 255, 0.9);
-	    color: #1f2937;
-	    font-weight: 600;
-	    cursor: pointer;
-	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-	}
-	
-	.device-management .pagination-pills a.active {
-	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-	    color: #f8fafc;
-	    border-color: transparent;
-	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-	}
-	
-	.device-management .pagination-pills a:hover {
-	    transform: translateY(-2px);
-	}
+:root {
+	--primary: #2563eb;
+	--primary-hover: #1d4ed8;
+	--neutral: #6b7280;
+	--bg: #f5f7fb;
+	--card: #fff;
+	--text: #111827;
+	--danger: #ef4444;
+	--warning: #f59e0b;
+	--info: #0ea5e9;
+	--success: #10b981;
+	--radius: 10px;
+	--shadow: 0 6px 18px rgba(0, 0, 0, .08);
+	--border: #e5e7eb;
+}
 
-	body .panel h2{
-		margin-bottom: 0 !important;
-	}
-	
-	.supplier-form {
-	    display: flex;
-	    flex-direction: column;
-	    gap: 16px;
-	    max-width: 600px;
-	    background: #ffffff;
-	    padding: 24px 28px;
-	    border-radius: 16px;
-	    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-	    margin-top: 20px;
-	}
-	
-	.supplier-form label {
-	    font-weight: 600;
-	    color: #1e293b;
-	    display: flex;
-	    flex-direction: column;
-	    font-size: 15px;
-	}
-	
-	.supplier-form input {
-	    margin-top: 6px;
-	    padding: 10px 12px;
-	    border: 1px solid #cbd5e1;
-	    border-radius: 8px;
-	    font-size: 15px;
-	    color: #0f172a;
-	    transition: all 0.2s ease;
-	}
-	
-	.supplier-form input:focus {
-	    outline: none;
-	    border-color: #3b82f6;
-	    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-	}
-	
-	.supplier-form .form-actions {
-	    display: flex;
-	    justify-content: flex-end;
-	    gap: 10px;
-	    margin-top: 10px;
-	}
-	
-	.supplier-form .btn-primary {
-	    background: linear-gradient(135deg, #3b82f6, #2563eb);
-	    color: white;
-	    padding: 8px 18px;
-	    border: none;
-	    border-radius: 8px;
-	    cursor: pointer;
-	    font-weight: 600;
-	    transition: transform 0.2s ease, box-shadow 0.2s ease;
-	}
-	
-	.supplier-form .btn-primary:hover {
-	    transform: translateY(-2px);
-	    box-shadow: 0 8px 18px rgba(59, 130, 246, 0.3);
-	}
-	
-	.supplier-form .btn-secondary {
-	    background: #e2e8f0;
-	    color: #1e293b;
-	    padding: 8px 18px;
-	    border-radius: 8px;
-	    text-decoration: none;
-	    font-weight: 600;
-	    transition: background 0.2s ease;
-	}
-	
-	.supplier-form .btn-secondary:hover {
-	    background: #cbd5e1;
-	}
-		
-	
-	.pagination {
-         display: flex;
-         justify-content: center;
-         padding-left: 0;
-         list-style: none;
-         margin-top: 20px;
-         font-family: Arial, sans-serif;
-     }
+.device-btn {
+	color: black !important;
+}
 
-     .page-item {
-         margin: 0 5px;
-     }
+.btn-primary {
+	background: linear-gradient(135deg, #3b82f6, #2563eb);
+	color: #fff;
+	padding: 8px 18px;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: all 0.2s ease;
+}
 
-     .page-link {
-         display: block;
-         padding: 8px 14px;
-         border: 1px solid #ddd;
-         color: #007bff;
-         text-decoration: none;
-         cursor: pointer;
-         border-radius: 4px;
-         transition: background-color 0.3s, color 0.3s;
-         user-select: none;
-     }
+.btn-primary:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 18px rgba(59, 130, 246, .3);
+}
 
-     .page-link:hover:not(.disabled):not(.active) {
-         background-color: #e9f5ff;
-         color: #0056b3;
-     }
+.btn-secondary {
+	background: #e2e8f0;
+	color: #1e293b;
+	padding: 8px 18px;
+	border-radius: 8px;
+	text-decoration: none;
+	font-weight: 600;
+	transition: background 0.2s ease;
+}
 
-     .page-item.active .page-link {
-         background-color: #007bff;
-         color: white;
-         border-color: #007bff;
-         cursor: default;
-     }
+.btn-secondary:hover {
+	background: #cbd5e1;
+}
 
-     .page-item.disabled .page-link {
-         color: #aaa;
-         border-color: #ddd;
-         cursor: default;
-         pointer-events: none;
-     }
+.btn-danger {
+	background: #ef4444;
+	color: #fff;
+	padding: 8px 18px;
+	border: none;
+	border-radius: 8px;
+	text-decoration: none;
+	font-weight: 600;
+}
 
-     .page-link span {
-         font-size: 16px;
-         font-weight: bold;
-         line-height: 1;
-     }
-     
-     .management-page.device-management .table-wrapper{
-     	border: none !important;
-     }
-     
-     .detail-box {
-         background: var(--card);
-         border: 1px solid var(--border);
-         border-radius: var(--radius);
-         box-shadow: var(--shadow);
-         padding: 24px 28px;
-         margin-top: 12px;
-         margin-bottom: 24px;
-     }
+.btn-add {
+	background: linear-gradient(135deg, #3b82f6, #2563eb);
+	color: #fff;
+}
+
+.supplier-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	max-width: 600px;
+	background: #fff;
+	padding: 24px 28px;
+	border-radius: 16px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+	margin-top: 20px;
+}
+
+.supplier-form label {
+	font-weight: 600;
+	color: #1e293b;
+	display: flex;
+	flex-direction: column;
+	font-size: 15px;
+}
+
+.supplier-form input {
+	margin-top: 6px;
+	padding: 10px 12px;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	font-size: 15px;
+	color: #0f172a;
+	transition: all 0.2s ease;
+}
+
+.supplier-form input:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 3px rgba(59, 130, 246, .2);
+}
+
+.supplier-form .form-actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.table-wrapper table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 10px;
+}
+
+.table-wrapper th, .table-wrapper td {
+	border: 1px solid #ddd;
+	padding: 10px;
+	text-align: left;
+}
+
+.table-wrapper th {
+	background: #f3f4f6;
+}
+
+.pagination {
+	display: flex;
+	justify-content: center;
+	padding-left: 0;
+	list-style: none;
+	margin-top: 20px;
+	font-family: Arial, sans-serif;
+}
+
+.page-item {
+	margin: 0 5px;
+}
+
+.page-link {
+	display: block;
+	padding: 8px 14px;
+	border: 1px solid #ddd;
+	color: #007bff;
+	text-decoration: none;
+	cursor: pointer;
+	border-radius: 4px;
+	transition: all 0.3s ease;
+}
+
+.page-link:hover:not(.disabled):not(.active) {
+	background: #e9f5ff;
+	color: #0056b3;
+}
+
+.page-item.active .page-link {
+	background: #007bff;
+	color: #fff;
+	border-color: #007bff;
+	cursor: default;
+}
+
+.page-item.disabled .page-link {
+	color: #aaa;
+	border-color: #ddd;
+	cursor: default;
+	pointer-events: none;
+}
+
+.detail-box {
+	background: var(--card);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow: var(--shadow);
+	padding: 24px 28px;
+	margin-top: 12px;
+	margin-bottom: 24px;
+}
+
+.device-filter {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin-top: 10px;
+	align-items: center;
+}
+
+.device-filter label {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	font-size: 14px;
+	font-weight: 500;
+	color: #1e293b;
+	gap: 6px;
+}
+
+.device-filter input, .device-filter select {
+	padding: 6px 10px;
+	border: 1px solid #cbd5e1;
+	border-radius: 6px;
+	font-size: 14px;
+	color: #0f172a;
+	min-width: 160px;
+	transition: all 0.2s ease;
+}
+
+.device-filter input:focus, .device-filter select:focus {
+	outline: none;
+	border-color: #3b82f6;
+	box-shadow: 0 0 0 2px rgba(59, 130, 246, .2);
+}
+
+.device-filter button, .device-filter a {
+	padding: 8px 14px;
+	border-radius: 8px;
+	font-weight: 600;
+	text-decoration: none;
+	border: none;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.device-filter button {
+	background: linear-gradient(135deg, #3b82f6, #2563eb);
+	color: #fff;
+}
+
+.device-filter button:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(59, 130, 246, .25);
+}
+
+.device-filter a {
+	background: #e2e8f0;
+	color: #1e293b;
+	text-align: center;
+}
+
+.device-filter a:hover {
+	background: #cbd5e1;
+}
+
+@media ( max-width :768px) {
+	.device-filter {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.device-filter label {
+		flex-direction: column;
+		gap: 4px;
+	}
+	.device-filter input, .device-filter select, .device-filter button,
+		.device-filter a {
+		width: 100%;
+	}
+}
+
+.error {
+	color: red;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+
+.message {
+	color: green;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
 </style>
 </head>
 <body class="management-page device-management">
-	<jsp:include page="../common/sidebar.jsp"></jsp:include>
-	<jsp:include page="../common/header.jsp"></jsp:include>
-	 <main class="sidebar-main">
-            <section class="panel">
-                <div class="device-toolbar">
-                    <div class="device-toolbar-actions">
-                        <a class="btn btn-add" href="supplier?action=add">
-                            <i class="fa-solid fa-plus"></i>
-                            <span>Thêm nhà cung cấp</span>
-                        </a>
-                        
-                        <a href="supplier?action=trash" class="btn btn-danger">Thùng rác</a>
-                    </div>
-                    
-                        
-                    <form class="device-search" action="supplier" method="get">
-                    	<input type="hidden" name="action" value="search">
-		                <label for="supplier-search" class="sr-only"></label>
-		                <input id="supplier-search" name="keyword" type="search" placeholder="Tìm theo tên, email, số điện thoại..." value="${param.keyword}">
-		                <button type="submit" class="btn device-btn">Tìm</button>
-		                <a href="supplier?action=list" class="btn device-btn"
-                             style="padding:6px 10px;font-size:14px;">Reset</a>
-		            </form>
+<jsp:include page="../common/sidebar.jsp"></jsp:include>
+<jsp:include page="../common/header.jsp"></jsp:include>
+
+<main class="sidebar-main">
+    <section class="panel">
+        <div class="device-toolbar">
+            <div class="device-toolbar-actions">
+                <a class="btn btn-add" href="supplier?action=add"><i class="fa-solid fa-plus"></i> Thêm nhà cung cấp</a>
+                <a href="supplier?action=trash" class="btn btn-danger">Thùng rác</a>
+            </div>
+
+            <form class="device-search" action="supplier" method="get" style="margin-top:10px;">
+                <input type="hidden" name="action" value="search">
+                <input name="keyword" type="search" placeholder="Tìm theo tên, email, số điện thoại..." value="${param.keyword}">
+                <button type="submit" class="btn device-btn">Tìm</button>
+                <a href="supplier?action=list" class="btn device-btn" style="padding:6px 10px;font-size:14px;">Reset</a>
+            </form>
+
+            <form class="device-filter" action="supplier" method="get">
+                <input type="hidden" name="action" value="filter">
+                <label>Trạng thái:
+                    <select name="status">
+                        <option value="">Tất cả</option>
+                        <option value="1" ${param.status=='1'?'selected':''}>Hoạt động</option>
+                        <option value="0" ${param.status=='0'?'selected':''}>Ngừng hoạt động</option>
+                    </select>
+                </label>
+                <label>Địa chỉ:
+                    <input type="text" name="address" placeholder="Nhập địa chỉ" value="${param.address}">
+                </label>
+                <button type="submit">Lọc</button>
+                <a href="supplier?action=list">Reset</a>
+            </form>
+        </div>
+
+        <c:if test="${action=='add' || action=='edit'}">
+            <h3>${action=='add'?'Thêm mới':'Cập nhật'} nhà cung cấp</h3>
+
+            <c:if test="${not empty requestScope.error}">
+                <div class="error">${requestScope.error}</div>
+            </c:if>
+            <c:if test="${not empty param.error}">
+                <div class="error">${param.error}</div>
+            </c:if>
+
+            <c:if test="${not empty param.message}">
+                <div class="message">${param.message}</div>
+            </c:if>
+            <c:if test="${not empty requestScope.message}">
+                <div class="message">${requestScope.message}</div>
+            </c:if>
+
+            <form action="supplier" method="post" class="supplier-form">
+                <input type="hidden" name="action" value="${action=='add'?'add':'update'}">
+                <c:if test="${action=='edit'}">
+                    <input type="hidden" name="id" value="${supplier.id}">
+                </c:if>
+                <label>Tên: <input type="text" name="name" value="${supplier.name}"></label>
+                <label>SĐT: <input type="text" name="phone" value="${supplier.phone}"></label>
+                <label>Email: <input type="email" name="email" value="${supplier.email}"></label>
+                <label>Địa chỉ: <input type="text" name="address" value="${supplier.address}"></label>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a href="supplier?action=list" class="btn btn-secondary">Hủy</a>
                 </div>
-                
-                <c:if test="${action == 'add' || action == 'edit'}">
-                     <h3>
-                         <c:out value="${action == 'add' ? 'Thêm mới' : 'Cập nhật'}" /> nhà cung cấp
-                     </h3>
+            </form>
+        </c:if>
+    </section>
 
-                     <form action="supplier" method="post" class="supplier-form">
-                         <input type="hidden" name="action" value="${action == 'add' ? 'add' : 'update'}" />
-                         
-                         <c:if test="${action == 'edit'}">
-                             <input type="hidden" name="id" value="${supplier.id}" />
-                         </c:if>
+    <section class="panel" id="table-panel">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <h2>Danh sách nhà cung cấp</h2>
+            <c:if test="${not empty param.message}"><div class="message">${param.message}</div></c:if>
+            <c:if test="${not empty param.error}"><div class="error">${param.error}</div></c:if>
+        </div>
 
-                         <label>Tên: <input type="text" name="name" value="${supplier.name}"
-                                 required></label>
-                                 
-                         <label>SĐT: <input type="text" name="phone"
-                                 value="${supplier.phone}"></label>
-                                 
-                         <label>Email: <input type="email" name="email"
-                                 value="${supplier.email}"></label>
-                                 
-                         <label>Địa chỉ: <input type="text" name="address"
-                                 value="${supplier.address}"></label>
-
-                         <div class="form-actions">
-                             <button type="submit" class="btn btn-primary">Lưu</button>
-                             <a href="supplier?action=list" class="btn btn-secondary">Hủy</a>
-                         </div>
-                     </form>
-                 </c:if>
-            </section>
-
-            <section class="panel" id="table-panel">
-            	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-	                <h2>Danh sách nhà cung cấp</h2>
-	                
-	                <c:if test="${not empty param.message}">
-                        <div class="message">${param.message}</div>
-                    </c:if>
-                    
-                    <c:if test="${not empty param.error}">
-                        <div class="error">${param.error}</div>
-                    </c:if>     
-            	</div>
-                <div class="table-wrapper">
-                <c:if test="${action == 'list' || action == 'trash'}">
-	                    <table class="device-table">
-	                        <thead>
-	                            <tr>
-                                    <th>ID</th>
-                                    <th>Tên nhà cung cấp</th>
-                                    <th>Số điện thoại</th>
-                                    <th>Email</th>
-                                    <th>Địa chỉ</th>
-                                    <th>Thao tác</th>
-                                </tr>
-	                        </thead>
-	                        <tbody>
-	                        <c:choose>
-                    		<c:when test="${not empty suppliers}"> 
-	                        	<c:forEach items="${suppliers}" var="s">
-		                            <tr>
-		                            	<td>${s.id}</td>
+        <div class="table-wrapper">
+            <c:if test="${action=='list' || action=='trash' || action=='filter'}">
+                <table class="device-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Tên nhà cung cấp</th><th>SĐT</th><th>Email</th><th>Địa chỉ</th><th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:choose>
+                            <c:when test="${not empty suppliers}">
+                                <c:forEach items="${suppliers}" var="s" varStatus="status">
+                                    <tr>
+                                        <td>${s.id}</td>
                                         <td>${s.name}</td>
                                         <td>${s.phone}</td>
                                         <td>${s.email}</td>
                                         <td>${s.address}</td>
                                         <td>
-                                        	<c:choose>
-                                        		<c:when test="${action == 'trash'}">
-                                        			<a href="supplier?action=restore&id=${s.id}"
-                                                        class="btn device-btn">Khôi phục</a>
-                                                        
-                                                    <a href="supplier?action=deletePermanent&id=${s.id}"
-                                                        class="btn device-remove"
-                                                        onclick="return confirm('Xóa vĩnh viễn?');">Xóa
-                                                        vĩnh viễn</a>
-	                                            </c:when>
-	                                            <c:otherwise>
-		                                            <a href="supplier?action=viewHistory&id=${s.id}"
-		                                                class="btn device-btn">Xem</a>
-		                                                
-			                                    	<a class="btn device-btn" href="supplier?action=edit&id=${s.id}">Sửa</a>
-			                                    	
-			                                    	<a class="btn device-remove" href="supplier?action=delete&id=${s.id}"
-			                                    	onclick="return confirm('Bạn có chắc muốn dừng nhà cung cấp này?');" >Xóa</a>
-		                                    	</c:otherwise>
-		                                    </c:choose>
+                                            <c:choose>
+                                                <c:when test="${action=='trash'}">
+                                                    <a href="supplier?action=restore&id=${s.id}" class="btn device-btn">Khôi phục</a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a href="supplier?action=viewHistory&id=${s.id}" class="btn device-btn">Xem</a>
+                                                    <a href="supplier?action=edit&id=${s.id}" class="btn device-btn">Sửa</a>
+                                                    <a href="supplier?action=delete&id=${s.id}" class="btn device-remove" onclick="return confirm('Bạn có chắc muốn dừng nhà cung cấp này?');">Xóa</a>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </td>
-		                            </tr>
-		                          </c:forEach>
-			                   </c:when>
-			                   <c:otherwise>
-                                   <tr>
-                                       <td colspan="6" style="color:gray;">Không có dữ liệu</td>
-                                   </tr>
-                               </c:otherwise>
-			                   </c:choose>
-	                        </tbody>
-	                    </table>
-                   </c:if>
-                   
-                   <c:if test="${(action == 'view' || action == 'viewHistory') && not empty supplier}">
-                        <div class="detail-wrapper">
-                            <div class="detail-box">
-                                <h3>Chi tiết nhà cung cấp</h3>
-                                <p><b>ID:</b> ${supplier.id}</p>
-                                <p><b>Tên:</b> ${supplier.name}</p>
-                                <p><b>SĐT:</b> ${supplier.phone}</p>
-                                <p><b>Email:</b> ${supplier.email}</p>
-                                <p><b>Địa chỉ:</b> ${supplier.address}</p>
-                                <a href="supplier?action=list" class="btn btn-secondary">Quay lại</a>
-                            </div>
-                            <c:if test="${action == 'viewHistory' && not empty history}">
-                                <div class="detail-box" style="margin-top: 24px;">
-                                    <h3>Lịch sử cung cấp thiết bị</h3>
-                                    <div class="table-wrap">
-                                        <table>
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Device ID</th>
-                                                    <th>Tên thiết bị</th>
-                                                    <th>Ngày</th>
-                                                    <th>Giá</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <c:forEach var="h" items="${history}" varStatus="status">
-                                                    <tr>
-                                                        <td>${status.index + 1}</td>
-                                                        <td>${h.deviceId}</td>
-                                                        <td>${h.deviceName}</td>
-                                                        <td>${h.date}</td>
-                                                        <td>${h.price}</td>
-                                                    </tr>
-                                                </c:forEach>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </c:if>
+                                    </tr>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <tr><td colspan="6" style="color:gray;">Không có dữ liệu</td></tr>
+                            </c:otherwise>
+                        </c:choose>
+                    </tbody>
+                </table>
+            </c:if>
+
+            <c:if test="${(action=='view' || action=='viewHistory') && not empty supplier}">
+                <div class="detail-wrapper">
+                    <div class="detail-box">
+                        <h3>Chi tiết nhà cung cấp</h3>
+                        <p><b>ID:</b> ${supplier.id}</p>
+                        <p><b>Tên:</b> ${supplier.name}</p>
+                        <p><b>SĐT:</b> ${supplier.phone}</p>
+                        <p><b>Email:</b> ${supplier.email}</p>
+                        <p><b>Địa chỉ:</b> ${supplier.address}</p>
+                        <a href="supplier?action=list" class="btn btn-secondary">Quay lại</a>
+                    </div>
+                    <c:if test="${action=='viewHistory' && not empty history}">
+                        <div class="detail-box">
+                            <h3>Lịch sử cung cấp thiết bị</h3>
+                            <table>
+                                <thead>
+                                    <tr><th>#</th><th>Device ID</th><th>Tên thiết bị</th><th>Ngày</th><th>Giá</th></tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="h" items="${history}" varStatus="status">
+                                        <tr>
+                                            <td>${status.index+1}</td>
+                                            <td>${h.deviceId}</td>
+                                            <td>${h.deviceName}</td>
+                                            <td>${h.date}</td>
+                                            <td>${h.price}</td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
                         </div>
                     </c:if>
                 </div>
-                <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thiết bị: <strong><c:out value="${fn:length(suppliers)}" /></strong></p>
-             </section>
-             
-              <nav style="margin-top: 20px;">
-                 <ul class="pagination">
-                     <c:choose>
-                         <c:when test="${currentPage > 1}">
-                             <li class="page-item">
-                                 <a class="page-link"
-                                     href="supplier?action=${action}&page=${currentPage - 1}">
-                                     <span>&laquo;</span>
-                                 </a>
-                             </li>
-                         </c:when>
-                         <c:otherwise>
-                             <li class="page-item disabled">
-                                 <span class="page-link">&laquo;</span>
-                             </li>
-                         </c:otherwise>
-                     </c:choose>
-                     <c:forEach var="i" begin="1" end="${totalPages}">
-                         <li class="page-item ${i == currentPage ? 'active' : ''}">
-                             <a class="page-link" href="supplier?action=${action}&page=${i}">${i}</a>
-                         </li>
-                     </c:forEach>
-                     <c:choose>
-                         <c:when test="${currentPage < totalPages}">
-                             <li class="page-item">
-                                 <a class="page-link"
-                                     href="supplier?action=${action}&page=${currentPage + 1}"
-                                     aria-label="Next">
-                                     <span>&raquo;</span>
-                                 </a>
-                             </li>
-                         </c:when>
-                         <c:otherwise>
-                             <li class="page-item disabled">
-                                 <span class="page-link">&raquo;</span>
-                             </li>
-                         </c:otherwise>
-                     </c:choose>
-                 </ul>
-             </nav>
-        </main>
+            </c:if>
+        </div>
+
+        <p style="margin-top:12px; color:#6b7280; text-align:center;">
+            Tổng số nhà cung cấp: <strong><c:out value="${fn:length(suppliers)}"/></strong>
+        </p>
+
+        <nav style="margin-top:20px;">
+            <ul class="pagination">
+                <c:choose>
+                    <c:when test="${currentPage > 1}">
+                        <li class="page-item"><a class="page-link" href="supplier?action=${action}&page=${currentPage-1}"><span>&laquo;</span></a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    </c:otherwise>
+                </c:choose>
+                <c:forEach var="i" begin="1" end="${totalPages}">
+                    <li class="page-item ${i==currentPage?'active':''}"><a class="page-link" href="supplier?action=${action}&page=${i}">${i}</a></li>
+                </c:forEach>
+                <c:choose>
+                    <c:when test="${currentPage < totalPages}">
+                        <li class="page-item"><a class="page-link" href="supplier?action=${action}&page=${currentPage+1}"><span>&raquo;</span></a></li>
+                    </c:when>
+                    <c:otherwise>
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    </c:otherwise>
+                </c:choose>
+            </ul>
+        </nav>
+    </section>
+</main>
 </body>
 </html>
