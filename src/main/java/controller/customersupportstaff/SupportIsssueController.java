@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.CustomerIssueDetail;
 import model.DeviceSerial;
+import model.IssuePayment;
 import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import dao.CustomerIssueDAO;
 import dao.CustomerIssueDetailDAO;
 import dao.DeviceSerialDAO;
+import dao.IssuePaymentDAO;
 import dao.TaskDetailDAO;
 import dao.UserDAO;
 
@@ -33,6 +35,7 @@ public class SupportIsssueController extends HttpServlet {
 	private UserDAO userDao = new UserDAO();
 	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	private TaskDetailDAO tdDao = new TaskDetailDAO();
+	private IssuePaymentDAO paymentDao = new IssuePaymentDAO();
        
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -54,10 +57,8 @@ public class SupportIsssueController extends HttpServlet {
 		
 		List<CustomerIssue> newIssues = iDao.getUnassignedIssues();
 		List<CustomerIssue> myIssues = iDao.getIssuesAssignedToStaff(staff.getId());
-//		List<CustomerIssue> awaitingCustomerIssues = iDao.getIssuesBySupportStatus("awaiting_customer");
-		List<CustomerIssue> managerReviewIssues = iDao
-				.getIssuesBySupportStatuses(new String[] { "manager_review", "submitted" });
-		List<CustomerIssue> resolvedIssues = iDao.getIssuesBySupportStatus("resolved");
+		List<CustomerIssue> managerReviewIssues = iDao.getIssuesBySupportStatuses(new String[] { "manager_review", "submitted" });
+		List<CustomerIssue> resolvedIssues = iDao.getIssuesBySupportStatuses(new String[] {"resolved"});
 
 		int awaitingCustomerCount = 0;
 		int inProgressCount = 0;
@@ -98,6 +99,11 @@ public class SupportIsssueController extends HttpServlet {
 		
 		if ("request_details".equalsIgnoreCase(action)) {
 			sendRequestDetails(request, response, staff);
+			return;
+		}
+		
+		if ("payment_open".equalsIgnoreCase(action)) {
+			openPaymentForCustomer(request, response, staff);
 			return;
 		}
 		response.sendRedirect("support-issues");
@@ -147,6 +153,11 @@ public class SupportIsssueController extends HttpServlet {
         
 		req.setAttribute("issue", issue);
 		req.setAttribute("issueDetail", viewDetail);
+		IssuePayment payment = paymentDao.getByIssueId(issueId);
+		req.setAttribute("issuePayment", payment);
+		req.setAttribute("paymentAwaitingSupport", payment != null && payment.isAwaitingSupport());
+		req.setAttribute("paymentAwaitingCustomer", payment != null && payment.isAwaitingCustomer());
+		req.setAttribute("paymentPaid", payment != null && payment.isPaid());
 		
 		String status = issue.getSupportStatus();
 		boolean managerRejected = "manager_rejected".equalsIgnoreCase(status);
@@ -223,6 +234,11 @@ public class SupportIsssueController extends HttpServlet {
 			req.setAttribute("issueDetail", detail);
 			req.setAttribute("awaitingCustomer", awaitingCustomer);
 			req.setAttribute("needsCustomerInfo", needsAdditionalCustomerInfo(dDao.getByIssueId(issueId, serialNo), customer));
+			IssuePayment paymentInfo = paymentDao.getByIssueId(issueId);
+			req.setAttribute("issuePayment", paymentInfo);
+			req.setAttribute("paymentAwaitingSupport", paymentInfo != null && paymentInfo.isAwaitingSupport());
+			req.setAttribute("paymentAwaitingCustomer", paymentInfo != null && paymentInfo.isAwaitingCustomer());
+			req.setAttribute("paymentPaid", paymentInfo != null && paymentInfo.isPaid());
 			req.getRequestDispatcher("view/admin/supportstaff/issueReviewPage.jsp").forward(req, resp);
 			return;
 		}
@@ -259,6 +275,47 @@ public class SupportIsssueController extends HttpServlet {
         }
 		iDao.updateSupportStatus(issueId, "resolved");
 		resp.sendRedirect("support-issues?saved=2");
+	}
+	
+	private void openPaymentForCustomer(HttpServletRequest req, HttpServletResponse resp, User staff) throws IOException {
+		String issueIdParam = req.getParameter("issueId");
+		if (issueIdParam == null) {
+			resp.sendRedirect("support-issues");
+			return;
+		}
+
+		int issueId;
+		try {
+			issueId = Integer.parseInt(issueIdParam);
+		} catch (NumberFormatException ex) {
+			resp.sendRedirect("support-issues?notfound=1");
+			return;
+		}
+
+		CustomerIssue issue = iDao.getIssueById(issueId);
+		if (issue == null) {
+			resp.sendRedirect("support-issues?notfound=1");
+			return;
+		}
+
+		if (issue.getSupportStaffId() != 0 && issue.getSupportStaffId() != staff.getId()) {
+			resp.sendRedirect("support-issues?locked=1");
+			return;
+		}
+
+		IssuePayment payment = paymentDao.getByIssueId(issueId);
+		if (payment == null || !payment.isAwaitingSupport()) {
+			resp.sendRedirect("support-issues?paymentInvalid=1");
+			return;
+		}
+
+		boolean ok = paymentDao.approveForCustomer(payment.getId(), staff.getId());
+		if (!ok) {
+			resp.sendRedirect("support-issues?paymentInvalid=1");
+			return;
+		}
+
+		resp.sendRedirect("support-issues?action=review&id=" + issueId + "&paymentReady=1");
 	}
 	
 	private void sendRequestDetails(HttpServletRequest req, HttpServletResponse resp, User staff)

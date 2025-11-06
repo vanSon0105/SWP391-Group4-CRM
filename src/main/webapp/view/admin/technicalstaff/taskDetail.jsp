@@ -282,7 +282,16 @@
                     <p><strong>Mã issue:</strong> ${issue.issueCode}</p>
                     <p><strong>Tiêu đề:</strong> ${issue.title}</p>
                     <p><strong>Mô tả:</strong> <br>${issue.description}</p>
-                    <p><strong>Trạng thái hỗ trợ:</strong> ${issue.supportStatus}</p>
+                    <p><strong>Trạng thái hỗ trợ:</strong>
+                    	<c:choose>
+                             <c:when test="${issue.supportStatus == 'customer_cancelled'}">Đã hủy theo yêu cầu khách</c:when>
+                             <c:when test="${issue.supportStatus == 'task_created'}">Đã tạo task</c:when>
+                             <c:when test="${issue.supportStatus == 'tech_in_progress'}">Đang thực hiện</c:when>
+                             <c:when test="${issue.supportStatus == 'resolved'}">Đã hoàn tất</c:when>
+                             <c:otherwise>Đang xử lý</c:otherwise>
+                         </c:choose>
+                    </p>
+                    <p><strong>Loại yêu cầu:</strong> ${issue.issueType}</p>
                 </section>
             </c:if>
 

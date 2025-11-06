@@ -174,9 +174,14 @@
     }
 
     .action-link {
-        text-decoration: none;
-        color: #2563eb;
-        font-weight: 600;
+        padding: 4px;
+	    display: inline-block;
+	    border-radius: 5px;
+	    background: #00ffad;
+	    border: 1px solid #f7d3d3;
+	    text-decoration: none;
+	    color: #0f172a;
+	    font-weight: 600;
     }
 
     .link-button {
@@ -284,20 +289,40 @@
 
 		<c:if test="${param.created == '1'}">
 			<div class="alert alert-success">Đã gửi yêu cầu thành công! Bộ
-				phận hỗ trợ sẽ liên hệ với bạn sớm nhất.</div>
+				phận hỗ trợ sẽ liên hệ với bạn sớm nhất</div>
 		</c:if>
 		<c:if test="${param.details == '1'}">
 			<div class="alert alert-success">Đã gửi form thông tin cho nhân
-				viên hỗ trợ.</div>
+				viên hỗ trợ</div>
 		</c:if>
 		<c:if test="${param.invalid == '1'}">
 			<div class="alert alert-warning">Yêu cầu bổ sung không hợp lệ
-				hoặc đã được xử lý.</div>
+				hoặc đã được xử lý</div>
 		</c:if>
 
 		<c:if test="${param.cancelled == '1'}">
 			<div class="alert alert-success">Bạn đã hủy yêu cầu này. Nếu
-				cần hỗ trợ, hãy tạo yêu cầu mới.</div>
+				cần hỗ trợ, hãy tạo yêu cầu mới</div>
+		</c:if>
+		
+		<c:if test="${param.feedback_saved == '1'}">
+			<div class="alert alert-success">Phản hồi đã được gửi thành công</div>
+		</c:if>
+		
+		<c:if test="${param.payment == '1'}">
+			<div class="alert alert-success">Đã thanh toán thành công</div>
+		</c:if>
+
+		<c:if test="${param.payment_invalid == '1'}">
+			<div class="alert">Lỗi thanh toán. Vui lòng thử lại</div>
+		</c:if>
+
+		<c:if test="${param.payment_required == '1'}">
+			<div class="alert alert-warning">Bạn cần hoàn tất thanh toán trước khi gửi phản hồi</div>
+		</c:if>
+
+		<c:if test="${param.feedback_done == '1'}">
+			<div class="alert alert-info">Phản hồi đã được gửi</div>
 		</c:if>
 
 <c:choose>
@@ -315,6 +340,7 @@
             <tbody>
                 <c:forEach var="s" items="${list}">
                     <c:set var="status" value="${empty s.supportStatus ? 'new' : s.supportStatus}" />
+                    <c:set var="payment" value="${issuePayments[s.id]}" />
                     <tr>
                         <td>${s.issueCode}</td>
                         <td>${s.title}</td>
@@ -360,8 +386,20 @@
                                    href="issue-detail?id=${s.id}">Xem Task</a>
  							</c:if>
                              
-                             <a class="action-view"
-                                   href="issue-detail?id=${s.id}&action=1">Xem Issue</a>
+                            <a class="action-view" href="issue-detail?id=${s.id}&action=1">Xem Issue</a>
+                            
+                            <c:if test="${status == 'resolved' && payment != null && payment.status == 'awaiting_customer'}">
+								<a class="link-button" href="issue-pay?issueId=${s.id}">Thanh toán</a>
+							</c:if>
+
+							<c:if test="${status == 'resolved' && payment != null && payment.status == 'paid'}">
+								<a class="action-link" href="issue-feedback?id=${s.id}">
+									<c:choose>
+										<c:when test="${empty s.feedback}">Gửi phản hồi</c:when>
+										<c:otherwise>Cập nhật phản hồi</c:otherwise>
+									</c:choose>
+								</a>
+							</c:if>
                         </td>
                     </tr>
                 </c:forEach>
