@@ -46,13 +46,23 @@ public class TransactionDAO extends DBContext {
     public List<Transaction> getAllTransactions() {
         List<Transaction> list = new ArrayList<>();
         String sql = """
-            SELECT t.*, u.full_name AS storekeeper_name,
-                   s.name AS supplier_name, cu.full_name AS customer_name
+            SELECT 
+                t.*, 
+                u.full_name AS storekeeper_name,
+                s.name AS supplier_name, 
+                cu.full_name AS customer_name,
+                COALESCE(
+                    GROUP_CONCAT(CONCAT(d.name, ' (x', td.quantity, ')') SEPARATOR ', '),
+                    'No devices'
+                ) AS device_list
             FROM transactions t
             LEFT JOIN users u ON t.storekeeper_id = u.id
             LEFT JOIN suppliers s ON t.supplier_id = s.id
             LEFT JOIN users cu ON t.user_id = cu.id
-            ORDER BY t.date DESC
+            LEFT JOIN transaction_details td ON t.id = td.transaction_id
+            LEFT JOIN devices d ON td.device_id = d.id
+            GROUP BY t.id
+            ORDER BY t.id DESC
         """;
 
         try (Connection conn = getConnection();
@@ -72,6 +82,7 @@ public class TransactionDAO extends DBContext {
                 t.setStorekeeperName(rs.getString("storekeeper_name"));
                 t.setSupplierName(rs.getString("supplier_name"));
                 t.setUserName(rs.getString("customer_name"));
+                t.setDeviceList(rs.getString("device_list")); 
                 list.add(t);
             }
 
@@ -120,13 +131,19 @@ public class TransactionDAO extends DBContext {
     
     public List<Transaction> getTransactions(String typeFilter, String statusFilter, String keyword, int offset, int pageSize) {
         List<Transaction> list = new ArrayList<>();
+
         StringBuilder sql = new StringBuilder("""
-            SELECT t.*, u.full_name AS storekeeper_name,
-                   s.name AS supplier_name, cu.full_name AS customer_name
+            SELECT t.*, 
+                   u.full_name AS storekeeper_name,
+                   s.name AS supplier_name, 
+                   cu.full_name AS customer_name,
+                   GROUP_CONCAT(CONCAT(d.name, ' (x', td.quantity, ')') SEPARATOR ', ') AS device_list
             FROM transactions t
             LEFT JOIN users u ON t.storekeeper_id = u.id
             LEFT JOIN suppliers s ON t.supplier_id = s.id
             LEFT JOIN users cu ON t.user_id = cu.id
+            LEFT JOIN transaction_details td ON t.id = td.transaction_id
+            LEFT JOIN devices d ON td.device_id = d.id
             WHERE 1=1
         """);
 
@@ -143,15 +160,21 @@ public class TransactionDAO extends DBContext {
         }
 
         if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR t.note LIKE ?)");
+            sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR t.note LIKE ? OR d.name LIKE ?)");
             String likeKeyword = "%" + keyword + "%";
+            params.add(likeKeyword);
             params.add(likeKeyword);
             params.add(likeKeyword);
             params.add(likeKeyword);
             params.add(likeKeyword);
         }
 
-        sql.append(" ORDER BY t.date DESC LIMIT ? OFFSET ?");
+        sql.append("""
+            GROUP BY t.id
+            ORDER BY t.date DESC
+            LIMIT ? OFFSET ?
+        """);
+
         params.add(pageSize);
         params.add(offset);
 
@@ -176,6 +199,7 @@ public class TransactionDAO extends DBContext {
                 t.setStorekeeperName(rs.getString("storekeeper_name"));
                 t.setSupplierName(rs.getString("supplier_name"));
                 t.setUserName(rs.getString("customer_name"));
+                t.setDeviceList(rs.getString("device_list"));
                 list.add(t);
             }
 

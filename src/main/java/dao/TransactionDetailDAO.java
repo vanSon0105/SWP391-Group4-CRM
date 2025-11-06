@@ -6,9 +6,25 @@ import dal.DBContext;
 import model.TransactionDetail;
 
 public class TransactionDetailDAO extends DBContext {
+	
+	public void addTransactionDetail(int transactionId, List<TransactionDetail> details) {
+	    String sql = "INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        for (TransactionDetail td : details) {
+	            ps.setInt(1, transactionId);
+	            ps.setInt(2, td.getDeviceId());
+	            ps.setInt(3, td.getQuantity());
+	            ps.addBatch();
+	        }
+	        ps.executeBatch();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 
     public boolean addTransactionDetail(TransactionDetail detail, String type) {
-        String insertSql = "INSERT INTO transaction_detail (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
+        String insertSql = "INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
         String updateStockSqlImport = "UPDATE devices SET quantity = quantity + ? WHERE id = ?";
         String updateStockSqlExport = "UPDATE devices SET quantity = quantity - ? WHERE id = ? AND quantity >= ?";
 
@@ -69,7 +85,7 @@ public class TransactionDetailDAO extends DBContext {
         List<TransactionDetail> list = new ArrayList<>();
         String sql = """
             SELECT td.*, d.name AS device_name
-            FROM transaction_detail td
+            FROM transaction_details td
             JOIN devices d ON td.device_id = d.id
             WHERE td.transaction_id = ?
         """;

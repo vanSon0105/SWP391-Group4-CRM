@@ -186,7 +186,7 @@ public class CreateImportExportOrderController extends HttpServlet {
                 }
             }
 
-            request.getSession().setAttribute("message", "✅ Tạo đơn " + type + " thành công!");
+            request.getSession().setAttribute("message", "Tạo đơn " + type + " thành công!");
             response.sendRedirect(request.getContextPath() + "/create-transaction");
 
         } catch (Exception e) {
