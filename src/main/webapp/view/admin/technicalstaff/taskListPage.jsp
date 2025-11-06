@@ -278,6 +278,10 @@
             </div>
         </c:if>
         
+        <c:if test="${param.forbidden == '1'}">
+		    <div class="alert alert-warning">Bạn không có quyền thao tác bill cho yêu cầu này</div>
+		</c:if>
+        
         <div class="availability-card">
             <div class="availability-info">
                 <span>Trạng thái hiện tại:</span>
@@ -350,6 +354,10 @@
 	                                    <c:if test="${assignment.status == 'cancelled'}">
 		                                    <button type="button" class="btn-show-reason" data-reason="${fn:escapeXml(assignment.note)}">Hiển thị lý do</button>
 		                                </c:if>
+		                                
+	                                    <c:if test="${assignment.customerIssueId != null and assignment.status == 'completed'}">
+                                            <a class="btn-link" style="background:#0f766e;" href="technical-billing?issueId=${assignment.customerIssueId}">Tạo bill</a>
+	                                    </c:if>
                                     </form>
                                 </td>
                             </tr>

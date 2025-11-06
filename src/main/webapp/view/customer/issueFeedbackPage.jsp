@@ -113,6 +113,12 @@
                     Mã yêu cầu: <strong>${issue.issueCode}</strong><br>
                     Tiêu đề: <strong>${issue.title}</strong>
                 </div>
+                
+                <c:if test="${not empty issuePayment}">
+                    <div class="meta">
+                        Số tiền đã thanh toán: <strong>${issuePayment.amount}</strong>
+                    </div>
+                </c:if>
 
                 <c:if test="${not empty feedbackError}">
                     <div class="alert alert-error">${feedbackError}</div>

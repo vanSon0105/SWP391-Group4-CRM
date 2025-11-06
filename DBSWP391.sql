@@ -107,7 +107,6 @@ CREATE TABLE order_detail_serials (
 CREATE TABLE payments (
   id INT PRIMARY KEY AUTO_INCREMENT,
   order_id INT UNIQUE NOT NULL,
-  payment_url VARCHAR(255),
   amount DECIMAL(14,0) NOT NULL,
   full_name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
@@ -202,6 +201,28 @@ CREATE TABLE suppliers (
   email VARCHAR(100),
   address VARCHAR(255),
   status tinyint default 1
+);
+
+CREATE TABLE issue_payments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  issue_id INT UNIQUE NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  note VARCHAR(500),
+  shipping_full_name VARCHAR(100),
+  shipping_phone VARCHAR(20),
+  shipping_address VARCHAR(255),
+  shipping_note VARCHAR(500),
+  status ENUM('awaiting_support','awaiting_customer','paid','closed') DEFAULT 'awaiting_support',
+  created_by INT NOT NULL,
+  approved_by INT,
+  confirmed_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  paid_at TIMESTAMP NULL,
+  FOREIGN KEY (issue_id) REFERENCES customer_issues(id),
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (approved_by) REFERENCES users(id),
+  FOREIGN KEY (confirmed_by) REFERENCES users(id)
 );
 
 CREATE TABLE supplier_details (
@@ -1015,17 +1036,17 @@ INSERT INTO order_detail_serials (order_detail_id, device_serial_id) VALUES
 
 
 INSERT INTO payments 
-(order_id, payment_url, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at) VALUES
-(1, NULL, 350000, 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
-(2, NULL, 420000, 'Tran Thi B', '0905123456', '45 Nguyen Trai, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-16 09:12:00', NULL),
-(3, NULL, 515000, 'Le Hoang C', '0977123456', '88 Bach Dang, Da Nang', 'Cuối tuần', NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
-(4, NULL, 290000, 'Pham Quynh D', '0988654321', '12 Tran Hung Dao, Hai Phong', 'Cuối tuần', 'Giao buổi tối', 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
-(5, NULL, 810000, 'Do Minh E', '0911222333', '34 Nguyen Van Cu, Can Tho', 'Cuối tuần', NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
-(6, NULL, 460000, 'Bui Anh F', '0922233444', '56 Vo Van Tan, Da Nang', 'Tối (18:00 - 21:00)', NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
-(7, NULL, 320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-22 16:05:00', NULL),
-(8, NULL, 575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
-(9, NULL, 640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', 'Trong giờ hành chính', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
-(10, NULL, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
+(order_id, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at) VALUES
+(1, 350000, 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(2, 420000, 'Tran Thi B', '0905123456', '45 Nguyen Trai, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-16 09:12:00', NULL),
+(3,  515000, 'Le Hoang C', '0977123456', '88 Bach Dang, Da Nang', 'Cuối tuần', NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
+(4,  290000, 'Pham Quynh D', '0988654321', '12 Tran Hung Dao, Hai Phong', 'Cuối tuần', 'Giao buổi tối', 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(5,  810000, 'Do Minh E', '0911222333', '34 Nguyen Van Cu, Can Tho', 'Cuối tuần', NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
+(6, 460000, 'Bui Anh F', '0922233444', '56 Vo Van Tan, Da Nang', 'Tối (18:00 - 21:00)', NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
+(7,  320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-22 16:05:00', NULL),
+(8,  575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
+(9,  640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', 'Trong giờ hành chính', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
+(10, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
 
 
 INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES

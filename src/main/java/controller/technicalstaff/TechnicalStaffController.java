@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import dao.CustomerIssueDAO;
+import dao.IssuePaymentDAO;
 import dao.TaskDetailDAO;
 import dao.UserDAO;
 import jakarta.servlet.ServletException;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
+import model.IssuePayment;
 import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
@@ -23,6 +25,7 @@ public class TechnicalStaffController extends HttpServlet {
 	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
 	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
 	private UserDAO userDao = new UserDAO();
+	private IssuePaymentDAO paymentDao = new IssuePaymentDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -130,14 +133,14 @@ public class TechnicalStaffController extends HttpServlet {
 		}
 	}
 
-	private void syncIssueStatus(int taskId, Integer issueId, String latestStatus, int initiatingStaffId) {
+	private String syncIssueStatus(int taskId, Integer issueId, String latestStatus, int initiatingStaffId) {
 		if (issueId == null) {
-			return;
+			return null;
 		}
 
 		List<TaskDetail> details = taskDetailDao.getTaskDetail(taskId);
 		if (details == null || details.isEmpty()) {
-			return;
+			return null;
 		}
 		if ("cancelled".equalsIgnoreCase(latestStatus)) {
 			for (TaskDetail detail : details) {
@@ -147,7 +150,7 @@ public class TechnicalStaffController extends HttpServlet {
 				}
 			}
 			issueDao.updateSupportStatus(issueId, "cancelled");
-			return;
+			return "cancelled";
 		}
 
 		details = taskDetailDao.getTaskDetail(taskId);
@@ -168,10 +171,13 @@ public class TechnicalStaffController extends HttpServlet {
 
 		if (allCompleted) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
+			return "tech_in_progress";
 		} else if (anyInProgress) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
+			return "tech_in_progress";
 		} else {
 			issueDao.updateSupportStatus(issueId, "task_created");
+			return "task_created";
 		}
 	}
 	

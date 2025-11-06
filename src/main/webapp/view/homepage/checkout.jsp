@@ -23,6 +23,15 @@ table tbody tr td {
 	padding: 10px 0px;
 }
 
+input{
+	padding: 12px 14px !important;
+    border-radius: 14px;
+    border: 1px solid rgba(45, 212, 191, 0.35);
+    background: rgba(255, 255, 255, 0.96);
+    font-size: 15px;
+    color: #0f172a;
+}
+
 </style>
 
 <body class="shop-page checkout-page home-page">

@@ -172,10 +172,6 @@ public class CustomerIssueDAO extends DBContext {
 		return false;
 	}
 
-	public List<CustomerIssue> getIssuesBySupportStatus(String status) {
-		return getIssuesBySupportStatuses(new String[] { status });
-	}
-
 	public List<CustomerIssue> getIssuesBySupportStatuses(String[] statuses) {
 		List<CustomerIssue> list = new ArrayList<>();
 		if (statuses == null || statuses.length == 0) {
