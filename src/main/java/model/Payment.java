@@ -36,6 +36,23 @@ public class Payment {
 		this.createdAt = createdAt;
 		this.paidAt = paidAt;
 	}
+	
+	
+	public Payment(int id, int orderId, double amount, String fullName, String phone, String address,
+			String deliveryTime, String technicalNote, String status, Timestamp createdAt, Timestamp paidAt) {
+		super();
+		this.id = id;
+		this.orderId = orderId;
+		this.amount = amount;
+		this.fullName = fullName;
+		this.phone = phone;
+		this.address = address;
+		this.deliveryTime = deliveryTime;
+		this.technicalNote = technicalNote;
+		this.status = status;
+		this.createdAt = createdAt;
+		this.paidAt = paidAt;
+	}
 	public int getId() {
 		return id;
 	}

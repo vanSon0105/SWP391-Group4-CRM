@@ -11,11 +11,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 import dal.DBContext;
 import model.IssuePayment;
 
 public class IssuePaymentDAO extends DBContext {
+	
+	private static final int PAGE_SIZE = 10;
 
 	private IssuePayment mapRow(ResultSet rs) throws SQLException {
 		IssuePayment p = new IssuePayment();
@@ -267,4 +270,98 @@ public class IssuePaymentDAO extends DBContext {
 		}
 		return false;
 	}
+	
+	public List<IssuePayment> getPayments(String status, String sortField, int page, String search) throws SQLException {
+	    List<IssuePayment> list = new ArrayList<>();
+	    StringBuilder sql = new StringBuilder("SELECT * FROM issue_payments WHERE 1=1 ");
+	    
+	    if (status != null && !status.isEmpty()) {
+	        sql.append(" AND status = ? ");
+	    }
+
+	    if (search != null && !search.trim().isEmpty()) {
+	        sql.append(" AND (shipping_full_name LIKE ? OR shipping_phone LIKE ? OR shipping_address LIKE ?) ");
+	    }
+
+	    if (sortField == null || sortField.isEmpty()) {
+	        sortField = "created_at";
+	    }
+	    sql.append(" ORDER BY ").append(sortField).append(" DESC ");
+	    sql.append(" LIMIT ? OFFSET ? ");
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+	        int idx = 1;
+	        if (status != null && !status.isEmpty()) {
+	            ps.setString(idx++, status);
+	        }
+
+	        if (search != null && !search.trim().isEmpty()) {
+	            String searchLike = "%" + search.trim() + "%";
+	            ps.setString(idx++, searchLike);
+	            ps.setString(idx++, searchLike);
+	            ps.setString(idx++, searchLike);
+	        }
+
+	        ps.setInt(idx++, PAGE_SIZE);
+	        ps.setInt(idx, (page - 1) * PAGE_SIZE);
+
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            IssuePayment p = new IssuePayment();
+	            p.setId(rs.getInt("id"));
+	            p.setIssueId(rs.getInt("issue_id"));
+	            p.setAmount(rs.getDouble("amount"));
+	            p.setNote(rs.getString("note"));
+	            p.setShippingFullName(rs.getString("shipping_full_name"));
+	            p.setShippingPhone(rs.getString("shipping_phone"));
+	            p.setShippingAddress(rs.getString("shipping_address"));
+	            p.setShippingNote(rs.getString("shipping_note"));
+	            p.setStatus(rs.getString("status"));
+	            p.setCreatedBy(rs.getInt("created_by"));
+	            p.setApprovedBy((Integer) rs.getObject("approved_by"));
+	            p.setConfirmedBy((Integer) rs.getObject("confirmed_by"));
+	            p.setCreatedAt(rs.getTimestamp("created_at"));
+	            p.setUpdatedAt(rs.getTimestamp("updated_at"));
+	            p.setPaidAt(rs.getTimestamp("paid_at"));
+	            list.add(p);
+	        }
+	    }
+	    return list;
+	}
+
+	public int countPayments(String status, String search) throws SQLException {
+	    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM issue_payments WHERE 1=1 ");
+	    if (status != null && !status.isEmpty()) {
+	        sql.append(" AND status = ? ");
+	    }
+
+	    if (search != null && !search.trim().isEmpty()) {
+	        sql.append(" AND (shipping_full_name LIKE ? OR shipping_phone LIKE ? OR shipping_address LIKE ?) ");
+	    }
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+	        int idx = 1;
+	        if (status != null && !status.isEmpty()) {
+	            ps.setString(idx++, status);
+	        }
+
+	        if (search != null && !search.trim().isEmpty()) {
+	            String searchLike = "%" + search.trim() + "%";
+	            ps.setString(idx++, searchLike);
+	            ps.setString(idx++, searchLike);
+	            ps.setString(idx++, searchLike);
+	        }
+
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1);
+	        }
+	    }
+	    return 0;
+	}
+
 }
