@@ -340,7 +340,7 @@
 					
 		
 		            <c:if test="${not lockedForSupport and (needsCustomerInfo or awaitingCustomer or managerRejected)}">
-	                    <form method="post" action="support-issues">
+	                    <form style="margin-top: 10px;" method="post" action="support-issues">
 	                        <input type="hidden" name="action" value="request_details">
 	                        <input type="hidden" name="issueId" value="${issue.id}">
 	                        <button type="submit" class="btn btn-secondary">
