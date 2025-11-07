@@ -1,4 +1,4 @@
-package controller.admin;
+               package controller.admin;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -68,12 +68,15 @@ public class PaymentController extends HttpServlet {
 		int totalPayments = paymentDao.getFilteredPaymentCount(status, search);
 		int totalPages = (int) Math.ceil((double) totalPayments / PAYMENT_PER_PAGE);
 		int offset = (page - 1) * PAYMENT_PER_PAGE;
+		int currentPage = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
 
 		List<Payment> paymentList = paymentDao.getFilteredPayments(status, sortCreatedAt, sortPaidAt, search,
 				PAYMENT_PER_PAGE, offset);
 
+		
 		req.setAttribute("totalPayments", totalPayments);
 		req.setAttribute("totalPages", totalPages);
+		req.setAttribute("currentPage", currentPage);
 		req.setAttribute("paymentList", paymentList);
 		req.getRequestDispatcher("view/admin/paymentmanagement/PaymentList.jsp").forward(req, resp);
 	}

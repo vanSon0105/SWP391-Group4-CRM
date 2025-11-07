@@ -16,45 +16,46 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.device-btn {
-	color: black !important;
-}
-
-.management-page.device-management .panel a{
-    border: 1px solid;
-    font-size: 1.5rem;
-}
 
 body .panel h2 {
 	margin-bottom: 0 !important;
 }
 
-.pagination-wrapper {
-	display: flex;
+.device-management .pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-bottom: 20px;
+}
+
+.device-management .pagination-pills a {
+	display: inline-flex;
 	justify-content: center;
-	margin-top: 20px;
-	gap: 8px;
-}
-
-.page-link {
-	display: inline-block;
-	padding: 8px 14px;
+	align-items: center;
 	text-decoration: none;
-	border-radius: 8px;
-	background: #fff;
-	color: #1d4ed8;
-	font-weight: 500;
-	transition: all 0.2s ease;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* .page-link:hover {
-  background: #2563eb;
-} */
-.page-link.active {
-	background: #1d4ed8;
-	color: white;
-	box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+.device-management .pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
 }
+
+.device-management .pagination-pills a:hover {
+    transform: translateY(-2px);
+}
+
 
 .status-badge {
 	display: inline-block;
@@ -86,68 +87,74 @@ body .panel h2 {
 	color: #991b1b;
 }
 
-		.hidden {
-            display: none;
-        }
+.hidden {
+    display: none;
+}
 
-        .summary-modal-overlay {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(15, 23, 42, 0.45);
-            z-index: 999;
-        }
-        
-        .summary-modal-overlay.hidden {
-            display: none;
-        }
+.summary-modal-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 999;
+}
 
-        .summary-modal {
-            width: min(480px, 90%);
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
+.summary-modal-overlay.hidden {
+    display: none;
+}
 
-        .summary-modal h2 {
-            margin: 0;
-            font-size: 18px;
-            color: #0f172a;
-        }
+.summary-modal {
+    width: min(480px, 90%);
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.18);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
-        .summary-modal textarea {
-            resize: vertical;
-            min-height: 120px;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #cbd5f5;
-            font-family: inherit;
-            font-size: 14px;
-            color: #0f172a;
-        }
+.summary-modal h2 {
+    margin: 0;
+    font-size: 18px;
+    color: #0f172a;
+}
 
-        .summary-modal textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-        }
+.summary-modal textarea {
+    resize: vertical;
+    min-height: 120px;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    font-family: inherit;
+    font-size: 14px;
+    color: #0f172a;
+}
 
-        .summary-modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
+.summary-modal textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
 
-        .btn-secondary {
-            background: #e2e8f0;
-            color: #0f172a;
-        }
+.summary-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+
+.disabled{
+	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+}
 </style>
 </head>
 <body class="management-page device-management">
@@ -164,8 +171,7 @@ body .panel h2 {
 
 
 				<form class="device-search" action="task-list" method="get">
-					<select id="status" name="status"
-						style="border-radius: 6px; padding: 8px 10px"
+					<select class="btn device-btn" id="status" name="status"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.status ? 'selected' : '' }>All
 							status</option>
@@ -287,16 +293,34 @@ body .panel h2 {
 				</c:if>
 
 			</div>
-			<div class="pagination-wrapper">
+			</section>
+			<div class="pagination-pills">
+				<c:choose>
+			        <c:when test="${currentPage > 1}">
+			            <a href="task-list?page=${currentPage - 1}&status=${param.status}&search=${param.search}"></a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+			    
 				<c:forEach var="i" begin="1" end="${totalPages}">
-					<a
-						href="task-list?page=${i}&status=${param.status}&search=${param.search}"
-						class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}">
+					<a href="task-list?page=${i}&status=${param.status}&search=${param.search}"
+						class="${param.page == null && i == 1 || param.page == i ? 'active' : ''}">
 						${i} </a>
 				</c:forEach>
+				
+				<c:choose>
+	                <c:when test="${currentPage < totalPages}">
+	                	<a href="task-list?page=${currentPage + 1}&status=${param.status}&search=${param.search}"></a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
 			</div>
 			
-		</section>
+		
 	</main>
 </body>
 </html>

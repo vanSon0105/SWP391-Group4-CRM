@@ -1,6 +1,8 @@
 package dao;
 import java.util.*;
 import java.sql.*;
+
+import model.OrderDetail;
 import model.Payment;
 import dal.DBContext;
 
@@ -8,20 +10,19 @@ public class PaymentDAO extends DBContext {
 	
 	public int addNewPayment(Payment payment) {
 		String sql = "INSERT INTO payments \r\n"
-				+ "(order_id, payment_url, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)";
+				+ "(order_id, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)";
 		
 		try (Connection conn = getConnection();
 			 PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 			pre.setInt(1, payment.getOrderId());
-			pre.setString(2, null);
-			pre.setDouble(3, payment.getAmount());
-			pre.setString(4, payment.getFullName());
-			pre.setString(5, payment.getPhone());
-			pre.setString(6, payment.getAddress());
-			pre.setString(7, payment.getDeliveryTime());
-			pre.setString(8, payment.getTechnicalNote());
-			pre.setTimestamp(9, payment.getPaidAt());
+			pre.setDouble(2, payment.getAmount());
+			pre.setString(3, payment.getFullName());
+			pre.setString(4, payment.getPhone());
+			pre.setString(5, payment.getAddress());
+			pre.setString(6, payment.getDeliveryTime());
+			pre.setString(7, payment.getTechnicalNote());
+			pre.setTimestamp(8, payment.getPaidAt());
 			pre.executeUpdate();
 			ResultSet rs = pre.getGeneratedKeys();
 			
@@ -95,7 +96,6 @@ public class PaymentDAO extends DBContext {
 						list.add(new Payment(
 								rs.getInt("id"),
 								rs.getInt("order_id"),
-								rs.getString("payment_url"),
 								rs.getDouble("amount"),
 								rs.getString("full_name"),
 								rs.getString("phone"),
@@ -130,6 +130,64 @@ public class PaymentDAO extends DBContext {
 	    } catch (Exception e) { e.printStackTrace(); }
 	    return 0;
 	}
+	
+	public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
+	    List<OrderDetail> list = new ArrayList<>();
+	    String sql = "SELECT od.id, od.device_id, d.name AS device_name, "
+	            + "od.quantity, od.price, ods.device_serial_id, wc.id AS warranty_card_id "
+	            + "FROM order_details od "
+	            + "JOIN devices d ON od.device_id = d.id "
+	            + "JOIN order_detail_serials ods ON od.id = ods.order_detail_id "
+	            + "LEFT JOIN warranty_cards wc ON ods.device_serial_id = wc.device_serial_id "
+	            + "WHERE od.order_id = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, orderId);
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            OrderDetail o = new OrderDetail();
+	            o.setId(rs.getInt("id"));
+	            o.setDeviceId(rs.getInt("device_id"));
+	            o.setDeviceName(rs.getString("device_name"));
+	            o.setQuantity(rs.getInt("quantity"));
+	            o.setPrice(rs.getDouble("price"));
+	            o.setDeviceSerialId(rs.getInt("device_serial_id"));
+	            o.setWarrantyCardId(rs.getInt("warranty_card_id"));
+	            list.add(o);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
+	public Payment getPaymentById(int id) {
+	    String sql = "SELECT * FROM payments WHERE id = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, id);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            Payment p = new Payment();
+	            p.setId(rs.getInt("id"));
+	            p.setFullName(rs.getString("full_name"));
+	            p.setPhone(rs.getString("phone"));
+	            p.setAddress(rs.getString("address"));
+	            p.setDeliveryTime(rs.getString("delivery_time"));
+	            p.setTechnicalNote(rs.getString("technical_note"));
+	            p.setStatus(rs.getString("status"));
+	            p.setCreatedAt(rs.getTimestamp("created_at"));
+	            p.setPaidAt(rs.getTimestamp("paid_at"));
+	            
+	           
+	            return p;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
 
 	
 }

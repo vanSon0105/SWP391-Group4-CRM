@@ -130,33 +130,43 @@ public class UserDAO extends DBContext{
         try (Connection conn = DBContext.getConnection();
              PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
 
+           
             checkStmt.setString(1, user.getUsername());
             checkStmt.setString(2, user.getEmail());
             ResultSet rs = checkStmt.executeQuery();
-
             if (rs.next()) {
-                return false;
+                return false; 
             }
 
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, user.getUsername());
-            stmt.setString(2, PasswordUtils.hashPassword(user.getPassword()));
-            stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getImageUrl());
-            stmt.setString(5, user.getFullName());
-            stmt.setString(6, user.getPhone());
-            stmt.setString(7, user.getGender());
-            stmt.setTimestamp(8, user.getBirthday());
-            stmt.setInt(9, user.getRoleId());
-            stmt.setString(10, user.getStatus());
-            stmt.executeUpdate();
-            return true;
+           
+            int roleId = (user.getRoleId() == 0) ? 6 : user.getRoleId();
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, user.getUsername());
+                stmt.setString(2, PasswordUtils.hashPassword(user.getPassword()));
+                stmt.setString(3, user.getEmail());
+                stmt.setString(4, user.getImageUrl());
+                stmt.setString(5, user.getFullName());
+                stmt.setString(6, user.getPhone());
+                stmt.setString(7, user.getGender());
+                stmt.setTimestamp(8, user.getBirthday());
+                stmt.setInt(9, roleId);
+                stmt.setString(10, "ACTIVE");
+
+
+                System.out.println(">> role_id: " + roleId);
+
+                stmt.executeUpdate();
+                return true;
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return false;
     }
+
     
     public boolean hasChangedUsername(int userId) {
         String sql = "SELECT username_changed FROM users WHERE id = ?";
@@ -304,17 +314,23 @@ public class UserDAO extends DBContext{
         return true;
     }
     
-    public void updatePassword(String email, String newPassword) {
+    public boolean updatePassword(String email, String newPassword) {
         String sql = "UPDATE users SET password = ? WHERE email = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, PasswordUtils.hashPassword(newPassword));
+
+        	ps.setString(1, newPassword);
             ps.setString(2, email);
-            ps.executeUpdate();
+
+            int rows = ps.executeUpdate();
+            return rows > 0; 
+
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
+
     
     public User getUserById(int id) {
         String sql = "SELECT * FROM users WHERE id=?";
@@ -580,7 +596,7 @@ public User getUserByEmail(String email) {
         if (rs.next()) {
             user = new User();
             user.setId(rs.getInt("id"));
-            user.setFullName(rs.getString("fullName"));
+            user.setFullName(rs.getString("full_name"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
             user.setAvailable(rs.getBoolean("is_available"));

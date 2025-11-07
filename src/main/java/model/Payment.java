@@ -6,7 +6,7 @@ public class Payment {
 	private int id;
 	private int orderId;
 	private String paymentUrl;
-//	private String paymentMethod;
+	private String paymentMethod;
 	private double amount;
 	private String fullName;
 	private String phone;
@@ -24,8 +24,25 @@ public class Payment {
 			Timestamp paidAt) {
 		super();
 		this.id = id;
-		this.orderId = orderId;
+		this.orderId = orderId;	
 		this.paymentUrl = paymentUrl;
+		this.amount = amount;
+		this.fullName = fullName;
+		this.phone = phone;
+		this.address = address;
+		this.deliveryTime = deliveryTime;
+		this.technicalNote = technicalNote;
+		this.status = status;
+		this.createdAt = createdAt;
+		this.paidAt = paidAt;
+	}
+	
+	
+	public Payment(int id, int orderId, double amount, String fullName, String phone, String address,
+			String deliveryTime, String technicalNote, String status, Timestamp createdAt, Timestamp paidAt) {
+		super();
+		this.id = id;
+		this.orderId = orderId;
 		this.amount = amount;
 		this.fullName = fullName;
 		this.phone = phone;
@@ -109,6 +126,15 @@ public class Payment {
 	public void setPaidAt(Timestamp paidAt) {
 		this.paidAt = paidAt;
 	}
+	
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+	
+	
 	@Override
 	public String toString() {
 		return "Payment [id=" + id + ", orderId=" + orderId + ", paymentUrl=" + paymentUrl + ", paymentMethod="
@@ -116,5 +142,6 @@ public class Payment {
 				+ address + ", deliveryTime=" + deliveryTime + ", technicalNote=" + technicalNote + ", status=" + status
 				+ ", createdAt=" + createdAt + ", paidAt=" + paidAt + "]";
 	}
+	
 	
 }

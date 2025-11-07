@@ -13,25 +13,6 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.table-wrapper {
-	overflow-x: auto;
-	margin-top: 20px;
-}
-
-.transaction-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-.transaction-table th, .transaction-table td {
-	border: 1px solid #ddd;
-	padding: 10px;
-	text-align: center;
-}
-
-.transaction-table th {
-	background-color: #f7f7f7;
-}
 
 .status-confirmed {
 	color: green;
@@ -56,30 +37,6 @@
 	flex-wrap: wrap;
 }
 
-.filter-form input[type="text"], .filter-form select {
-	padding: 6px 10px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-}
-
-.filter-form button {
-	padding: 6px 15px;
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
-.create-btn {
-	margin-bottom: 15px;
-	padding: 8px 20px;
-	background-color: #28a745;
-	color: #fff;
-	border-radius: 5px;
-	text-decoration: none;
-	display: inline-block;
-}
 
 .device-management .pagination-pills {
     display: flex;
@@ -133,8 +90,6 @@
 
 <main class="sidebar-main">
     <section class="panel">
-        <h2>Danh sách giao dịch nhập/xuất kho</h2>
-
         <c:if test="${not empty message}">
             <div class="message" style="color:green; font-weight:bold; margin-bottom:10px;">${message}</div>
         </c:if>
@@ -142,87 +97,94 @@
             <div class="error" style="color:red; font-weight:bold; margin-bottom:10px;">${error}</div>
         </c:if>
 
-        <a href="${pageContext.request.contextPath}/create-transaction" class="create-btn">
+        <!-- Create button -->
+        <a style="margin-bottom: 20px;" href="${pageContext.request.contextPath}/create-transaction" class="btn btn-add">
             <i class="fa fa-plus"></i> Create Import/Export Order
         </a>
 
         <form method="get" action="${pageContext.request.contextPath}/transactions" class="filter-form">
-            <input type="text" name="keyword" placeholder="Search by storekeeper, user, supplier, note..." value="${fn:escapeXml(keyword)}"/>
-            <select name="type">
+            <input class="btn device-btn" type="text" name="keyword" placeholder="Search by storekeeper, user, supplier, note..." value="${fn:escapeXml(keyword)}"/>
+            <select class="btn device-btn" name="type">
                 <option value="">All Types</option>
                 <option value="import" ${typeFilter=='import'?'selected':''}>Import</option>
                 <option value="export" ${typeFilter=='export'?'selected':''}>Export</option>
             </select>
-            <select name="status">
+            <select class="btn device-btn" name="status">
                 <option value="">All Status</option>
                 <option value="pending" ${statusFilter=='pending'?'selected':''}>Pending</option>
                 <option value="confirmed" ${statusFilter=='confirmed'?'selected':''}>Confirmed</option>
                 <option value="cancelled" ${statusFilter=='cancelled'?'selected':''}>Cancelled</option>
             </select>
-            <button type="submit"><i class="fa fa-filter"></i> Filter</button>
-            <a href="${pageContext.request.contextPath}/transactions" style="padding:6px 15px; background-color:#6c757d; color:#fff; border-radius:5px; text-decoration:none;">
+            <button class="btn device-btn" type="submit"><i class="fa fa-filter"></i> Filter</button>
+            <a class="btn device-btn" href="${pageContext.request.contextPath}/transactions">
 		        <i class="fa fa-undo"></i> Reset
 		    </a>
         </form>
-        <div class="table-wrapper">
-            <table class="transaction-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Type</th>
-                        <th>Storekeeper</th>
-                        <th>Supplier / User</th>
-                        <th>Devices</th>
-                        <th>Note</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <c:forEach var="t" items="${transactions}">
-                        <tr>
-                            <td>${t.id}</td>
-                            <td><c:out value="${t.type}"/></td>
-                            <td><c:out value="${t.storekeeperName}"/></td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${t.type == 'import'}">
-                                        <c:out value="${t.supplierName != null ? t.supplierName : 'N/A'}"/>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:out value="${t.userName != null ? t.userName : 'N/A'}"/>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-							    <c:choose>
-							        <c:when test="${not empty t.details}">
-							            <c:forEach var="d" items="${t.details}">
-							                ${d.deviceName} (x${d.quantity})<br/>
-							            </c:forEach>
-							        </c:when>
-							        <c:otherwise>
-							            No devices
-							        </c:otherwise>
-							    </c:choose>
-							</td>
-							<td><c:out value="${t.note != null ? t.note : ''}"/></td>
-                            <td class="status-${t.status}"><c:out value="${t.status}"/></td>
-                            <td>
-                                <c:if test="${not empty t.date}">
-                                    <fmt:formatDate value="${t.date}" pattern="yyyy-MM-dd HH:mm"/>
-                                </c:if>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    <c:if test="${empty transactions}">
-                        <tr><td colspan="7">No transactions found.</td></tr>
-                    </c:if>
-                </tbody>
-            </table>
-        </div>
+       </section>
+        <section class="panel" id="table-panel">
+        	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        		<h2 style="margin: 0;">Danh sách giao dịch nhập/xuất kho</h2>
+        	</div>
+	        <div class="table-wrapper">
+	            <table class="transaction-table">
+	                <thead>
+	                    <tr>
+	                        <th>ID</th>
+	                        <th>Type</th>
+	                        <th>Storekeeper</th>
+	                        <th>Supplier / User</th>
+	                        <th>Devices</th>
+	                        <th>Note</th>
+	                        <th>Status</th>
+	                        <th>Created At</th>
+	                    </tr>
+	                </thead>
+	                <tbody>
+	                    <c:forEach var="t" items="${transactions}">
+	                        <tr>
+	                            <td>${t.id}</td>
+	                            <td><c:out value="${t.type}"/></td>
+	                            <td><c:out value="${t.storekeeperName}"/></td>
+	                            <td>
+	                                <c:choose>
+	                                    <c:when test="${t.type == 'import'}">
+	                                        <c:out value="${t.supplierName != null ? t.supplierName : 'N/A'}"/>
+	                                    </c:when>
+	                                    <c:otherwise>
+	                                        <c:out value="${t.userName != null ? t.userName : 'N/A'}"/>
+	                                    </c:otherwise>
+	                                </c:choose>
+	                            </td>
+	                            <td>
+								    <c:choose>
+								        <c:when test="${not empty t.details}">
+								            <c:forEach var="d" items="${t.details}">
+								                ${d.deviceName} (x${d.quantity})<br/>
+								            </c:forEach>
+								        </c:when>
+								        <c:otherwise>
+								            No devices
+								        </c:otherwise>
+								    </c:choose>
+								</td>
 
-        <div class="pagination-pills">
+	                            <td><c:out value="${t.note != null ? t.note : ''}"/></td>
+	                            <td class="status-${t.status}"><c:out value="${t.status}"/></td>
+	                            <td>
+	                                <c:if test="${not empty t.date}">
+	                                    <fmt:formatDate value="${t.date}" pattern="yyyy-MM-dd HH:mm"/>
+	                                </c:if>
+	                            </td>
+	                        </tr>
+	                    </c:forEach>
+	                    <c:if test="${empty transactions}">
+	                        <tr><td colspan="7">No transactions found.</td></tr>
+	                    </c:if>
+	                </tbody>
+	            </table>
+	        </div>
+		</section>
+        <div class="pagination-pills" style="padding-bottom: 20px;">
         	<c:choose>
 		        <c:when test="${currentPage > 1}">
 		            <a href="?page=${currentPage - 1}&type=${typeFilter}&status=${statusFilter}&keyword=${fn:escapeXml(keyword)}">&#10094;</a>
@@ -252,8 +214,6 @@
 		        </c:otherwise>
             </c:choose>
         </div>
-
-    </section>
 </main>
 </body>
 </html>

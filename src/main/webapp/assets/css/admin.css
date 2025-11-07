@@ -14,7 +14,7 @@ html {
 
 body {
 	background: linear-gradient(180deg, #f8fafc, #ffffff);
-	height: 100vh;
+	height: 100%;
 	margin: 0;
     font-size: 1.8rem;
     font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
@@ -457,13 +457,12 @@ body:not(.sidebar-collapsed) .sidebar-main {
 /*show device*/
 .management-page.device-management .sidebar-main {
     background: transparent;
-    padding: 96px 36px 52px;
+    padding: 96px 36px 0;
     display: grid;
     gap: 24px;
 }
 
-.management-page.device-management .panel a,
-.management-page.device-management button  {
+.management-page.device-management .panel a{
 	font-size: 1.5rem;
 }
 
@@ -1565,4 +1564,10 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     background: rgba(254, 215, 170, 0.26);
     color: #92400e;
     font-size: 14px;
+}
+
+.device-table th, .device-table td {
+    text-align: center; /* canh giữa nội dung */
+    vertical-align: middle; /* căn giữa theo chiều dọc */
+    padding: 8px;
 }

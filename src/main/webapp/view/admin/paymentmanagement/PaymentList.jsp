@@ -27,31 +27,11 @@
 	align-items: center;
 	margin: 16px auto;
 	justify-content: space-between;
-	margin-top: 30px;
 	background: white;
-	padding: 16px;
 	border-radius: 12px;
-	border: 0.5px solid #2B90C6;
 }
 
-.filters button, .filters a {
-	padding: 8px 8px;
-	background: #3b82f6;
-	color: white;
-	border-radius: 6px;
-	font-size: 14px;
-}
 
-.filters form {
-	width: 100%;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-}
-
-.device-btn {
-	color: black !important;
-}
 
 .device-management .pagination-pills {
 	display: flex;
@@ -77,10 +57,6 @@
 		ease;
 }
 
-.management-page.device-management .panel a{
-    border: 1px solid;
-    font-size: 1.5rem;
-}
 
 .device-management .pagination-pills a.active {
 	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95),
@@ -98,61 +74,44 @@ body .panel h2 {
 	margin-bottom: 0 !important;
 }
 
-button {
-	padding: 6px 12px;
-	background-color: #28a745;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 14px;
+
+.device-management .pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
-button:hover {
-	background-color: #218838;
+.device-management .pagination-pills a {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-button {
-	padding: 10px 12px !important;
+.device-management .pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
 }
 
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 8px;
+.device-management .pagination-pills a:hover {
+    transform: translateY(-2px);
 }
-
-.page-link {
-  display: inline-block;
-  padding: 8px 14px;
-  text-decoration: none;
-  border-radius: 8px;
-  background: #fff;
-  color: #1d4ed8;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-/* .page-link:hover {
-  background: #2563eb;
-} */
-
-.page-link.active {
-  background: #1d4ed8;
-  color:white;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
-}
-
 
 th, td {
 	padding: 14px 5px !important;
 	font-size: 1.3rem !important;
-}
-
-button {
-	width: 80px;
-	font-size: 1rem !important;
 }
 
 .status {
@@ -188,19 +147,33 @@ button {
 	color: #374151;
 	border: 1px solid #9ca3af;
 }
+
+.action-btn{
+	display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.disabled{
+	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+}
 </style>
 
 <body class="management-page device-management">
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
-
-		<section class="panel" id="table-panel">
-			<h2>Danh sách thanh toán</h2>
+		<section class="panel">
 			<div class="filters">
-				<form action="payment-list" method="get">
-					<select id="status" name="status"
-						style="border-radius: 6px; padding: 8px 10px"
+				<form style="width: 100%; display: flex; gap: 30px; justify-content: center;" action="payment-list" method="get">
+					<select class="btn device-btn" id="status" name="status"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.status ? 'selected' : ''}>All
 							status</option>
@@ -210,8 +183,8 @@ button {
 							${param.status == 'success' ? 'selected' : ''}>Success</option>
 						<option value="failed"
 							${param.status == 'failed' ? 'selected' : ''}>Failed</option>
-					</select> <select id="sortCreatedAt" name="sortCreatedAt"
-						style="border-radius: 6px; padding: 8px 10px"
+					</select> 
+					<select class="btn device-btn" id="sortCreatedAt" name="sortCreatedAt"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.sortCreatedAt ? 'selected' : ''}>Sắp
 							xếp theo ngày tạo</option>
@@ -221,8 +194,8 @@ button {
 						<option value="desc"
 							${param.sortCreatedAt == 'desc' ? 'selected' : ''}>Giảm
 							dần</option>
-					</select> <select id="sortPaidAt" name="sortPaidAt"
-						style="border-radius: 6px; padding: 8px 10px"
+					</select> 
+					<select class="btn device-btn" id="sortPaidAt" name="sortPaidAt"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.sortPaidAt ? 'selected' : ''}>Sắp
 							xếp theo ngày thanh toán</option>
@@ -233,12 +206,16 @@ button {
 					</select>
 					<div>
 
-						<input type="search" name="search"
-							placeholder="Enter keywords to search..." value="${param.search}"
-							style="border-radius: 7px; padding: 8px 16px; border: 1px solid #000" />
-						<button type="submit" class="search-button">Search</button>
+						<input class="btn device-btn" type="search" name="search"
+							placeholder="Enter keywords to search..." value="${param.search}"/>
+						<button class="btn device-btn" type="submit">Search</button>
 					</div>
 				</form>
+			</div>
+		</section>
+		<section class="panel" id="table-panel">
+			<div style="display: flex;justify-content: space-between;align-items: center;margin-bottom: 20px;">
+				<h2>Danh sách thanh toán</h2>			
 			</div>
 			<div class="table-wrapper">
 				<table class="device-table">
@@ -283,17 +260,21 @@ button {
 										</c:choose></td>
 								<td>${p.createdAt}</td>
 								<td>${p.paidAt}</td>
-								<td><input type="hidden" name="paymentId" value="${p.id}" />
+								<td class="action-btn">
+								<input type="hidden" name="paymentId" value="${p.id}" />
+								 	<a href="payment-detail?id=${p.id}" class="btn device-btn">
+       									Xem
+   									</a>
 
 									<c:if test="${p.status == 'pending'}">
-										<button style="background-color: #1976D2" name="action"
+										<button class="btn device-btn" name="action"
 											type="submit" value="success"
 											onclick="return confirm('Xác nhận thanh toán thành công cho đơn hàng này?')">
-											Confirm</button>
-										<button style="background-color: #E70043" name="action"
+											Xác nhận</button>
+										<button class="btn device-btn" name="action"
 											type="submit" value="failed"
 											onclick="return confirm('Bạn có chắc muốn từ chối thanh toán này không?')">
-											Deny</button>
+											Từ chối</button>
 									</c:if></td>
 								</form>
 							</tr>
@@ -303,14 +284,30 @@ button {
 				</table>
 				
 				<p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thanh toán: <strong>${totalPayments}</strong></p>
-
 			</div>
-			<div class="pagination-wrapper">
+			</section>
+			<div class="pagination-pills" style="padding-bottom: 20px;">
+				<c:choose>
+	                <c:when test="${currentPage > 1}">
+	                	<a href = "payment-list?page=${currentPage - 1}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">&#10094;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+	            </c:choose>
+				
 				<c:forEach var="i" begin="1" end="${totalPages}">
-					<a
-						class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}"
-						href="payment-list?page=${i}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">${i}</a>
+					<a class="${i == currentPage ? 'active' : ''}" href="payment-list?page=${i}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">${i}</a>
 				</c:forEach>
+				
+				<c:choose>
+	                <c:when test="${currentPage < totalPages}">
+	                	<a href = "payment-list?page=${currentPage + 1}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">&#10095;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
 			</div>
 	</main>
 </body>

@@ -62,7 +62,7 @@ public class TransactionDetailDAO extends DBContext {
             conn.commit();
             return true;
         } catch (SQLException e) {
-            System.out.println("❌ SQL Error in addTransactionDetail: " + e.getMessage());
+            System.out.println("SQL Error in addTransactionDetail: " + e.getMessage());
             e.printStackTrace();
         }
         return false;
@@ -71,7 +71,7 @@ public class TransactionDetailDAO extends DBContext {
     private int getCurrentStock(int deviceId) {
         String sql = "SELECT quantity FROM devices WHERE id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, deviceId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("quantity");

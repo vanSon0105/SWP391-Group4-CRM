@@ -31,7 +31,7 @@ public class SendOTPController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String action = request.getParameter("action"); // "register" hoặc "forgot"
+        String action = request.getParameter("action"); 
         String email = request.getParameter("email");
 
         if (email == null || email.trim().isEmpty()) {
@@ -55,12 +55,17 @@ public class SendOTPController extends HttpServlet {
 
         HttpSession session = request.getSession();
 
-        // Nếu đăng ký, lưu tempUser vào session
         if ("register".equals(action)) {
             String name = request.getParameter("name");
             String username = request.getParameter("username");
             String phone = request.getParameter("phone");
             String password = request.getParameter("password");
+
+            if(password == null || password.isEmpty()) {
+                request.setAttribute("error", "Mật khẩu không được để trống!");
+                forward(request, response, action);
+                return;
+            }
 
             User tempUser = new User();
             tempUser.setFullName(name);
@@ -68,18 +73,17 @@ public class SendOTPController extends HttpServlet {
             tempUser.setEmail(email);
             tempUser.setPhone(phone);
             tempUser.setPassword(password); // lưu tạm
-
             session.setAttribute("tempUser", tempUser);
-            session.setAttribute("otpSent", true);
         }
 
-        // Tạo OTP và lưu session
+    
         String otp = String.format("%06d", new Random().nextInt(999999));
         session.setAttribute("otp", otp);
-        session.setAttribute("email", email);
+        session.setAttribute("otpEmail", email);
+        session.setAttribute("otpTime", System.currentTimeMillis());
         session.setMaxInactiveInterval(5 * 60);
 
-        // Gửi email
+      
         final String from = "techshop.corporation@gmail.com";
         final String pass = "uvatgwuvzzutcohc";
 
@@ -101,20 +105,27 @@ public class SendOTPController extends HttpServlet {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
 
             if ("register".equals(action)) {
+                
+                session.setAttribute("otpPurpose", "register");
+
                 message.setSubject("NovaCare - Mã xác thực đăng ký tài khoản");
                 message.setText("Xin chào,\n\nMã OTP để đăng ký tài khoản của bạn là: " + otp
-                        + "\nMã này có hiệu lực trong 5 phút.\n\nTrân trọng,\nNovaCare");
-            } else {
-                message.setSubject("NovaCare - Mã OTP đặt lại mật khẩu");
-                message.setText("Xin chào " + user.getFullName() + ",\nMã OTP đặt lại mật khẩu: " + otp);
-            }
+                        + "\nMã này có hiệu lực trong 5 phút.\n\nTrân trọng,\nTechShop");
 
-            Transport.send(message);
-
-            request.setAttribute("mss", "Đã gửi mã OTP đến email của bạn.");
-            if ("register".equals(action)) {
+                Transport.send(message);
+                request.setAttribute("mss", "Đã gửi mã OTP đến email của bạn.");
                 request.getRequestDispatcher("/view/authentication/verifyRegisterOTP.jsp").forward(request, response);
-            } else {
+
+            } else if ("forgot".equals(action)) {
+              
+                session.setAttribute("otpPurpose", "reset");
+
+                message.setSubject("NovaCare - Mã OTP đặt lại mật khẩu");
+                message.setText("Xin chào " + user.getFullName() + ",\nMã OTP đặt lại mật khẩu: " + otp
+                        + "\nMã này có hiệu lực trong 5 phút.\n\nTrân trọng,\nNovaCare");
+
+                Transport.send(message);
+                request.setAttribute("mss", "Đã gửi mã OTP đến email của bạn.");
                 request.getRequestDispatcher("/view/authentication/verifyOTP.jsp").forward(request, response);
             }
 
@@ -123,6 +134,7 @@ public class SendOTPController extends HttpServlet {
             request.setAttribute("error", "Không thể gửi email. Vui lòng thử lại sau.");
             forward(request, response, action);
         }
+
     }
 
     private void forward(HttpServletRequest request, HttpServletResponse response, String action)
@@ -130,8 +142,7 @@ public class SendOTPController extends HttpServlet {
         if ("register".equals(action)) {
             request.getRequestDispatcher("/view/authentication/register.jsp").forward(request, response);
         } else {
-            request.getRequestDispatcher("/view/authentication/forgotPassword.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/authentication/forgot-password.jsp").forward(request, response);
         }
     }
 }
-

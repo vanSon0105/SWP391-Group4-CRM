@@ -36,7 +36,7 @@ public class LoginController extends HttpServlet {
     		session.removeAttribute("loginAlertMessage");
     		session.removeAttribute("loginAlertType");
     	}
-//		session.removeAttribute("mss");
+
         switch (path) {
             case "/forgot-password":
             	req.getRequestDispatcher("/view/authentication/forgot-password.jsp").forward(req, resp);  

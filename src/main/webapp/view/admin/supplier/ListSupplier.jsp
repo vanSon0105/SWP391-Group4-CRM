@@ -30,55 +30,6 @@
 	--border: #e5e7eb;
 }
 
-.device-btn {
-	color: black !important;
-}
-
-.btn-primary {
-	background: linear-gradient(135deg, #3b82f6, #2563eb);
-	color: #fff;
-	padding: 8px 18px;
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	font-weight: 600;
-	transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 8px 18px rgba(59, 130, 246, .3);
-}
-
-.btn-secondary {
-	background: #e2e8f0;
-	color: #1e293b;
-	padding: 8px 18px;
-	border-radius: 8px;
-	text-decoration: none;
-	font-weight: 600;
-	transition: background 0.2s ease;
-}
-
-.btn-secondary:hover {
-	background: #cbd5e1;
-}
-
-.btn-danger {
-	background: #ef4444;
-	color: #fff;
-	padding: 8px 18px;
-	border: none;
-	border-radius: 8px;
-	text-decoration: none;
-	font-weight: 600;
-}
-
-.btn-add {
-	background: linear-gradient(135deg, #3b82f6, #2563eb);
-	color: #fff;
-}
-
 .supplier-form {
 	display: flex;
 	flex-direction: column;
@@ -120,22 +71,6 @@
 	justify-content: flex-end;
 	gap: 10px;
 	margin-top: 10px;
-}
-
-.table-wrapper table {
-	width: 100%;
-	border-collapse: collapse;
-	margin-top: 10px;
-}
-
-.table-wrapper th, .table-wrapper td {
-	border: 1px solid #ddd;
-	padding: 10px;
-	text-align: left;
-}
-
-.table-wrapper th {
-	background: #f3f4f6;
 }
 
 .pagination {
@@ -193,7 +128,6 @@
 
 .device-filter {
 	display: flex;
-	flex-wrap: wrap;
 	gap: 12px;
 	margin-top: 10px;
 	align-items: center;
@@ -255,21 +189,6 @@
 	background: #cbd5e1;
 }
 
-@media ( max-width :768px) {
-	.device-filter {
-		flex-direction: column;
-		align-items: stretch;
-	}
-	.device-filter label {
-		flex-direction: column;
-		gap: 4px;
-	}
-	.device-filter input, .device-filter select, .device-filter button,
-		.device-filter a {
-		width: 100%;
-	}
-}
-
 .error {
 	color: red;
 	font-weight: 600;
@@ -280,6 +199,58 @@
 	color: green;
 	font-weight: 600;
 	margin-bottom: 12px;
+}
+
+.device-tool-container{
+	width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.device-management .pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.device-management .pagination-pills a {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.device-management .pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+}
+
+.device-management .pagination-pills a:hover {
+    transform: translateY(-2px);
+}
+
+.disabled{
+	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>
 </head>
@@ -293,31 +264,32 @@
         <div class="device-toolbar">
             <div class="device-toolbar-actions">
                 <a class="btn btn-add" href="supplier?action=add"><i class="fa-solid fa-plus"></i> Thêm nhà cung cấp</a>
-                <a href="supplier?action=trash" class="btn btn-danger">Thùng rác</a>
+                <a href="supplier?action=trash" class="btn device-remove">Thùng rác</a>
             </div>
 
-            <form class="device-search" action="supplier" method="get" style="margin-top:10px;">
-                <input type="hidden" name="action" value="search">
-                <input name="keyword" type="search" placeholder="Tìm theo tên, email, số điện thoại..." value="${param.keyword}">
-                <button type="submit" class="btn device-btn">Tìm</button>
-                <a href="supplier?action=list" class="btn device-btn" style="padding:6px 10px;font-size:14px;">Reset</a>
-            </form>
-
-            <form class="device-filter" action="supplier" method="get">
-                <input type="hidden" name="action" value="filter">
-                <label>Trạng thái:
-                    <select name="status">
-                        <option value="">Tất cả</option>
-                        <option value="1" ${param.status=='1'?'selected':''}>Hoạt động</option>
-                        <option value="0" ${param.status=='0'?'selected':''}>Ngừng hoạt động</option>
-                    </select>
-                </label>
-                <label>Địa chỉ:
-                    <input type="text" name="address" placeholder="Nhập địa chỉ" value="${param.address}">
-                </label>
-                <button type="submit">Lọc</button>
-                <a href="supplier?action=list">Reset</a>
-            </form>
+			<div class="device-tool-container">
+	            <form class="device-search" action="supplier" method="get" style="margin-top:10px;">
+	                <input type="hidden" name="action" value="search">
+	                <input name="keyword" type="search" placeholder="Tìm theo tên, email, số điện thoại..." value="${param.keyword}">
+	                <button type="submit" class="btn device-btn">Tìm</button>
+	            </form>
+	
+	            <form class="device-filter" action="supplier" method="get">
+	                <input type="hidden" name="action" value="filter">
+	                <label>
+	                    <select name="status" class="btn device-btn">
+	                        <option value="">Tất cả</option>
+	                        <option value="1" ${param.status=='1'?'selected':''}>Hoạt động</option>
+	                        <option value="0" ${param.status=='0'?'selected':''}>Ngừng hoạt động</option>
+	                    </select>
+	                </label>
+	                <label>
+	                    <input class="btn device-btn" type="text" name="address" placeholder="Nhập địa chỉ" value="${param.address}">
+	                </label>
+	                <button class="btn device-btn" type="submit">Lọc</button>
+	                <a href="supplier?action=list" class="btn device-btn">Reset</a>
+	            </form>
+            </div>
         </div>
         <c:if test="${action=='add' || action=='edit'}">
             <h3>${action=='add'?'Thêm mới':'Cập nhật'} nhà cung cấp</h3>
@@ -335,8 +307,8 @@
                 <label>Email: <input type="email" name="email" value="${supplier.email}"></label>
                 <label>Địa chỉ: <input type="text" name="address" value="${supplier.address}"></label>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Lưu</button>
-                    <a href="supplier?action=list" class="btn btn-secondary">Hủy</a>
+                    <button type="submit" class="btn btn-device-btn">Lưu</button>
+                    <a href="supplier?action=list" class="btn device-btn">Hủy</a>
                 </div>
             </form>
         </c:if>
@@ -385,32 +357,29 @@
         <p style="margin-top:12px; color:#6b7280; text-align:center;">
             Tổng số nhà cung cấp: <strong><c:out value="${fn:length(suppliers)}"/></strong>
         </p>
-        <nav style="margin-top:20px;">
-            <ul class="pagination">
-                <c:choose>
-                    <c:when test="${currentPage > 1}">
-                        <li class="page-item"><a class="page-link" href="supplier?action=${action}&page=${currentPage-1}">&laquo;</a></li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                    </c:otherwise>
-                </c:choose>
-
-                <c:forEach var="i" begin="1" end="${totalPages}">
-                    <li class="page-item ${i==currentPage?'active':''}"><a class="page-link" href="supplier?action=${action}&page=${i}">${i}</a></li>
-                </c:forEach>
-
-                <c:choose>
-                    <c:when test="${currentPage < totalPages}">
-                        <li class="page-item"><a class="page-link" href="supplier?action=${action}&page=${currentPage+1}">&raquo;</a></li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                    </c:otherwise>
-                </c:choose>
-            </ul>
-        </nav>
     </section>
+
+         <div class="pagination-pills" style="padding-bottom: 20px;">
+             <c:choose>
+                 <c:when test="${currentPage > 1}">
+                     <a href="supplier?action=${action}&page=${currentPage-1}"><span>&laquo;</span></a>
+                 </c:when>
+                 <c:otherwise>
+		            <a class="disabled">&#10094;</a>
+		        </c:otherwise>
+             </c:choose>
+             <c:forEach var="i" begin="1" end="${totalPages}">
+                 <a class="${i == currentPage ? 'active' : ''}" href="supplier?action=${action}&page=${i}">${i}</a>
+             </c:forEach>
+             <c:choose>
+                 <c:when test="${currentPage < totalPages}">
+                     <a href="supplier?action=${action}&page=${currentPage+1}"><span>&raquo;</span></a>
+                 </c:when>
+                 <c:otherwise>
+		            <a class="disabled">&#10095;</a>
+		        </c:otherwise>
+             </c:choose>
+         </div>
 </main>
 </body>
 </html>

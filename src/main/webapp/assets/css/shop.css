@@ -466,7 +466,7 @@ ul {
     border-radius: 18px;
     border: 1px solid rgba(14, 165, 233, 0.28);
     box-shadow: 0 15px 32px rgba(14, 165, 233, 0.18);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: all 0.5s ease;
 }
 
 .home-page .shortcut-card:hover {

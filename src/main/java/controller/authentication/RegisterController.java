@@ -1,7 +1,5 @@
 package controller.authentication;
 
-import dao.UserDAO;
-import model.User;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,43 +11,33 @@ import java.io.IOException;
 
 @WebServlet("/register")
 public class RegisterController extends HttpServlet {
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		req.getRequestDispatcher("view/authentication/register.jsp").forward(req, resp);
-	}
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
 
-        request.setCharacterEncoding("UTF-8");
-        HttpSession session = request.getSession();
-        session.setAttribute("mss", "Đăng Ký Tài Khoản Thành Công");
-        String name = request.getParameter("name");
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String phone = request.getParameter("phone");
-        String password = request.getParameter("password");
-        int roleId = 6;
-
-        User user = new User();
-        user.setFullName(name);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPhone(phone);
-        user.setPassword(password);
-        user.setRoleId(roleId);
-        user.setStatus("active");
-        user.setImageUrl("");
-
-        UserDAO dao = new UserDAO();
-        boolean success = dao.registerUser(user);
-
-        if (success) {
-        	session.setAttribute("mss", "Đăng Ký Tài Khoản Thành Công");
-            response.sendRedirect("login");
-        } else {
-            request.setAttribute("error", "Tên đăng nhập hoặc email đã tồn tại!");
-            response.sendRedirect("register");
+        if (session.getAttribute("tempUser") == null) {
+            session.setAttribute("error", "Bạn phải xác thực email trước khi đăng ký!");
+            resp.sendRedirect(req.getContextPath() + "/view/authentication/register.jsp"); // gửi OTP
+            return;
         }
+
+        req.getRequestDispatcher("/view/authentication/register.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+
+     
+        if (session.getAttribute("tempUser") == null) {
+            session.setAttribute("error", "Bạn phải xác thực email trước khi đăng ký!");
+            resp.sendRedirect(req.getContextPath() + "/view/authentication/verifyRegisterOTP.jsp");
+            return;
+        }
+
+
+        resp.sendRedirect(req.getContextPath() + "/verifyRegisterOTP"); 
     }
 }
+

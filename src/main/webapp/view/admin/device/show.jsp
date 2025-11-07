@@ -54,6 +54,16 @@
 	body .panel h2{
 		margin-bottom: 0 !important;
 	}
+	
+	.disabled{
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	    cursor: not-allowed;
+	    pointer-events: none;
+	    opacity: 0.5;
+	}
 </style>
 </head>
 <body class="management-page device-management">
@@ -122,7 +132,6 @@
 	                </c:if>	    
             	</div>
                 <div class="table-wrapper">
-                    
 	                    <table class="device-table">
 	                        <thead>
 	                            <tr>
@@ -156,7 +165,7 @@
 		                                    	<a class="btn device-remove" href="device-delete?id=${s.id}">Xóa</a>
 		                                    </c:if>
 		                                    <c:if test="${s.status == 'discontinued'}">
-		                                    	<a class="btn device-remove" href="device-active?id=${s.id}">Active</a>
+		                                    	<a class="btn device-btn" href="device-active?id=${s.id}">Active</a>
 		                                    </c:if>
 		                                </td>
 		                            </tr>

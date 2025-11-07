@@ -20,7 +20,8 @@
         	<p style="color: green;">${sessionScope.mss}</p>
         </c:if>
         	
-        <form action="VerifyOTPController" method="post" style="display:grid; gap:12px;">
+        <form action="${pageContext.request.contextPath}/verify-otp" method="post">
+
             <div style="display:grid; gap:8px; text-align:left;">
                 <label for="otp">Mã OTP</label>
                 <input id="otp" name="otp" type="text" placeholder="Nhập mã gồm 6 chữ số" required>
@@ -28,7 +29,7 @@
 
             <div style="display:grid; gap:8px; text-align:left;">
                 <label for="newPassword">Mật khẩu mới</label>
-                <input id="newPassword" name="newPassword" type="password" placeholder="********" required>
+                <input id="newPassword" name="newPassword" type="password" placeholder="*******" required>
             </div>
 
             <button type="submit">Xác nhận</button>
