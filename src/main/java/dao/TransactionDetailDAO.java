@@ -48,7 +48,7 @@ public class TransactionDetailDAO extends DBContext {
                 int current = getCurrentStock(detail.getDeviceId());
                 if (current < detail.getQuantity()) {
                     conn.rollback();
-                    System.out.println("❌ Not enough stock for device ID " + detail.getDeviceId());
+                    System.out.println(" Not enough stock for device ID " + detail.getDeviceId());
                     return false;
                 }
                 try (PreparedStatement ps = conn.prepareStatement(updateStockSqlExport)) {

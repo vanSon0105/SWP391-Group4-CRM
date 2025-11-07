@@ -12,7 +12,6 @@ import jakarta.servlet.http.*;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,10 +56,8 @@ public class SupplierController extends HttpServlet {
                 listDeletedSuppliers(request, response);
                 break;
             case "view":
-                viewSupplier(request, response);
-                break;
             case "viewHistory":
-                viewSupplierWithHistory(request, response);
+                viewSupplierWithOptionalHistory(request, response, action);
                 break;
             case "search":
                 searchSuppliers(request, response);
@@ -77,6 +74,25 @@ public class SupplierController extends HttpServlet {
         if (!AuthorizationUtils.hasPermission(request.getSession(false), permission)) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
+    }
+    private void showAddForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("action", "add");
+        request.getRequestDispatcher("/view/admin/supplier/AddSupplier.jsp").forward(request, response);
+    }
+
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            Supplier supplier = supplierDAO.getSupplierById(id);
+            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
+            else request.setAttribute("supplier", supplier);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Dữ liệu không hợp lệ!");
+        }
+        request.setAttribute("action", "edit");
+        request.getRequestDispatcher("/view/admin/supplier/EditSupplier.jsp").forward(request, response);
     }
 
     private void searchSuppliers(HttpServletRequest request, HttpServletResponse response)
@@ -97,7 +113,7 @@ public class SupplierController extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("action", "list");
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/supplier/ListSupplier.jsp").forward(request, response);
     }
 
     private void filterSuppliers(HttpServletRequest request, HttpServletResponse response)
@@ -119,27 +135,7 @@ public class SupplierController extends HttpServlet {
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("action", "filter");
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
-    }
-
-    private int parsePageParam(String pageParam) {
-        int page = 1;
-        if (pageParam != null) {
-            try {
-                page = Integer.parseInt(pageParam);
-                if (page < 1) page = 1;
-            } catch (NumberFormatException e) {
-                page = 1;
-            }
-        }
-        return page;
-    }
-
-    private int calculateTotalPages(int totalItems, int pageSize, int currentPage) {
-        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
-        if (totalPages == 0) totalPages = 1;
-        if (currentPage > totalPages) currentPage = totalPages;
-        return totalPages;
+        request.getRequestDispatcher("/view/admin/supplier/ListSupplier.jsp").forward(request, response);
     }
 
     private void listDeletedSuppliers(HttpServletRequest request, HttpServletResponse response)
@@ -148,69 +144,28 @@ public class SupplierController extends HttpServlet {
         if (suppliers == null) suppliers = new ArrayList<>();
         request.setAttribute("suppliers", suppliers);
         request.setAttribute("action", "trash");
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/supplier/ListSupplier.jsp").forward(request, response);
     }
 
-    private void showAddForm(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        request.setAttribute("action", "add");
-        List<Supplier> suppliers = supplierDAO.getAllSuppliers();
-        request.setAttribute("suppliers", suppliers);
-        request.setAttribute("currentPage", 1);
-        request.setAttribute("totalPages", 1);
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
-    }
-
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+    private void viewSupplierWithOptionalHistory(HttpServletRequest request, HttpServletResponse response, String action)
             throws ServletException, IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             Supplier supplier = supplierDAO.getSupplierById(id);
-            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
-            else request.setAttribute("supplier", supplier);
-            request.setAttribute("action", "edit");
-
-            List<Supplier> suppliers = supplierDAO.getAllSuppliers();
-            request.setAttribute("suppliers", suppliers);
-            request.setAttribute("currentPage", 1);
-            request.setAttribute("totalPages", 1);
-
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Dữ liệu không hợp lệ!");
-        }
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
-    }
-
-    private void viewSupplier(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            Supplier supplier = supplierDAO.getSupplierById(id);
-            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
-            else request.setAttribute("supplier", supplier);
-            request.setAttribute("action", "view");
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Dữ liệu không hợp lệ!");
-        }
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
-    }
-
-    private void viewSupplierWithHistory(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            Supplier supplier = supplierDAO.getSupplierById(id);
-            if (supplier == null) request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
-            else {
+            if (supplier == null) {
+                request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
+            } else {
                 request.setAttribute("supplier", supplier);
-                List<SupplierDetail> history = detailDAO.getDetailsBySupplierId(id);
-                request.setAttribute("history", history);
+                if ("viewHistory".equals(action)) {
+                    List<SupplierDetail> history = detailDAO.getDetailsBySupplierId(id);
+                    request.setAttribute("history", history);
+                }
             }
-            request.setAttribute("action", "viewHistory");
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
         }
-        request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+        request.setAttribute("action", action);
+        request.getRequestDispatcher("/view/admin/supplier/ListSupplier.jsp").forward(request, response);
     }
 
     private void deleteSupplier(HttpServletRequest request, HttpServletResponse response)
@@ -238,7 +193,6 @@ public class SupplierController extends HttpServlet {
                     URLEncoder.encode("Khôi phục thất bại!", "UTF-8"));
         }
     }
-
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -271,21 +225,10 @@ public class SupplierController extends HttpServlet {
 
             request.setAttribute("error", error);
             request.setAttribute("supplier", supplier);
+            request.setAttribute("action", "add".equals(action) ? "add" : "edit");
 
-            if ("add".equals(action)) {
-                request.setAttribute("action", "add");
-            }
-
-            if ("update".equals(action)) {
-                request.setAttribute("action", "edit");
-            }
-
-            List<Supplier> suppliers = supplierDAO.getAllSuppliers();
-            request.setAttribute("suppliers", suppliers);
-            request.setAttribute("currentPage", 1);
-            request.setAttribute("totalPages", 1);
-
-            request.getRequestDispatcher("/view/admin/account/supplier.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/admin/supplier/" +
+                    ("add".equals(action) ? "AddSupplier.jsp" : "EditSupplier.jsp")).forward(request, response);
             return;
         }
 
@@ -311,9 +254,26 @@ public class SupplierController extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("supplier?action=list&error=" +
-                    URLEncoder.encode("Lỗi hệ thống: " + e.getMessage(), "UTF-8"));
         }
+    }
+    private int parsePageParam(String pageParam) {
+        int page = 1;
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) page = 1;
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        return page;
+    }
+
+    private int calculateTotalPages(int totalItems, int pageSize, int currentPage) {
+        int totalPages = (int) Math.ceil((double) totalItems / pageSize);
+        if (totalPages == 0) totalPages = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        return totalPages;
     }
 
     private String validateSupplierInput(String action, String name, String phone, String email, String address, Integer id) {
@@ -355,7 +315,6 @@ public class SupplierController extends HttpServlet {
             return "Địa chỉ quá dài (tối đa 255 ký tự)!";
         if (!address.matches("^[\\p{L}0-9\\s.,'\\-/]+$"))
             return "Địa chỉ chỉ được chứa chữ, số và ký tự cơ bản (.,'-/)!";
-
 
         return null;
     }
