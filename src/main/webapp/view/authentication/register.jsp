@@ -44,7 +44,7 @@
         <div style="display:grid; gap:8px; text-align:left;">
             <label for="name">Họ và tên</label>
             <input id="name" name="name" type="text" 
-                   value="${sessionScope.tempUser != null ? sessionScope.tempUser.name : ''}" 
+                   value="${sessionScope.tempUser != null ? sessionScope.tempUser.fullName : ''}" 
                    placeholder="Nhập họ và tên" required>
         </div>
 

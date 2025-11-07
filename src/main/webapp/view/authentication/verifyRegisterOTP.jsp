@@ -30,7 +30,7 @@
         <p class="success">${success}</p>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/register" method="post">       
+    <form action="${pageContext.request.contextPath}/verify-otp" method="post">       
         <div style="display:grid; gap:8px; text-align:left;">
             <label for="otp">Mã OTP</label>
             <input id="otp" name="otp" type="text" placeholder="Nhập mã OTP" required>

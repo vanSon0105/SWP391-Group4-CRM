@@ -1565,3 +1565,9 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     color: #92400e;
     font-size: 14px;
 }
+
+.device-table th, .device-table td {
+    text-align: center; /* canh giữa nội dung */
+    vertical-align: middle; /* căn giữa theo chiều dọc */
+    padding: 8px;
+}
