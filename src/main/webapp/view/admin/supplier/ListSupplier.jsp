@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
@@ -255,6 +255,7 @@
 </style>
 </head>
 <body class="management-page device-management">
+
 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 <jsp:include page="../common/header.jsp"></jsp:include>
 
@@ -290,29 +291,17 @@
 	            </form>
             </div>
         </div>
-
         <c:if test="${action=='add' || action=='edit'}">
             <h3>${action=='add'?'Thêm mới':'Cập nhật'} nhà cung cấp</h3>
 
-            <c:if test="${not empty requestScope.error}">
-                <div class="error">${requestScope.error}</div>
-            </c:if>
-            <c:if test="${not empty param.error}">
-                <div class="error">${param.error}</div>
-            </c:if>
-
-            <c:if test="${not empty param.message}">
-                <div class="message">${param.message}</div>
-            </c:if>
-            <c:if test="${not empty requestScope.message}">
-                <div class="message">${requestScope.message}</div>
-            </c:if>
+            <c:if test="${not empty requestScope.error}"><div class="error">${requestScope.error}</div></c:if>
+            <c:if test="${not empty param.error}"><div class="error">${param.error}</div></c:if>
+            <c:if test="${not empty param.message}"><div class="message">${param.message}</div></c:if>
+            <c:if test="${not empty requestScope.message}"><div class="message">${requestScope.message}</div></c:if>
 
             <form action="supplier" method="post" class="supplier-form">
                 <input type="hidden" name="action" value="${action=='add'?'add':'update'}">
-                <c:if test="${action=='edit'}">
-                    <input type="hidden" name="id" value="${supplier.id}">
-                </c:if>
+                <c:if test="${action=='edit'}"><input type="hidden" name="id" value="${supplier.id}"></c:if>
                 <label>Tên: <input type="text" name="name" value="${supplier.name}"></label>
                 <label>SĐT: <input type="text" name="phone" value="${supplier.phone}"></label>
                 <label>Email: <input type="email" name="email" value="${supplier.email}"></label>
@@ -323,15 +312,6 @@
                 </div>
             </form>
         </c:if>
-    </section>
-
-    <section class="panel" id="table-panel">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2>Danh sách nhà cung cấp</h2>
-            <c:if test="${not empty param.message}"><div class="message">${param.message}</div></c:if>
-            <c:if test="${not empty param.error}"><div class="error">${param.error}</div></c:if>
-        </div>
-
         <div class="table-wrapper">
             <c:if test="${action=='list' || action=='trash' || action=='filter'}">
                 <table class="device-table">
@@ -371,41 +351,6 @@
                         </c:choose>
                     </tbody>
                 </table>
-            </c:if>
-
-            <c:if test="${(action=='view' || action=='viewHistory') && not empty supplier}">
-                <div class="detail-wrapper">
-                    <div class="detail-box">
-                        <h3>Chi tiết nhà cung cấp</h3>
-                        <p><b>ID:</b> ${supplier.id}</p>
-                        <p><b>Tên:</b> ${supplier.name}</p>
-                        <p><b>SĐT:</b> ${supplier.phone}</p>
-                        <p><b>Email:</b> ${supplier.email}</p>
-                        <p><b>Địa chỉ:</b> ${supplier.address}</p>
-                        <a href="supplier?action=list" class="btn device-btn">Quay lại</a>
-                    </div>
-                    <c:if test="${action=='viewHistory' && not empty history}">
-                        <div class="detail-box">
-                            <h3>Lịch sử cung cấp thiết bị</h3>
-                            <table>
-                                <thead>
-                                    <tr><th>#</th><th>Device ID</th><th>Tên thiết bị</th><th>Ngày</th><th>Giá</th></tr>
-                                </thead>
-                                <tbody>
-                                    <c:forEach var="h" items="${history}" varStatus="status">
-                                        <tr>
-                                            <td>${status.index+1}</td>
-                                            <td>${h.deviceId}</td>
-                                            <td>${h.deviceName}</td>
-                                            <td>${h.date}</td>
-                                            <td>${h.price}</td>
-                                        </tr>
-                                    </c:forEach>
-                                </tbody>
-                            </table>
-                        </div>
-                    </c:if>
-                </div>
             </c:if>
         </div>
 

@@ -190,7 +190,6 @@ public class CreateImportExportOrderController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "❌ " + e.getMessage());
             doGet(request, response);
         }
     }
