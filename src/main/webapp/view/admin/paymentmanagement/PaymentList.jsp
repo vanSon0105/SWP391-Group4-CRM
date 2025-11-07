@@ -57,10 +57,6 @@
 		ease;
 }
 
-.management-page.device-management .panel a{
-    border: 1px solid;
-    font-size: 1.5rem;
-}
 
 .device-management .pagination-pills a.active {
 	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95),
@@ -79,34 +75,39 @@ body .panel h2 {
 }
 
 
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 8px;
+.device-management .pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
 }
 
-.page-link {
-  display: inline-block;
-  padding: 8px 14px;
-  text-decoration: none;
-  border-radius: 8px;
-  background: #fff;
-  color: #1d4ed8;
-  font-weight: 500;
-  transition: all 0.2s ease;
+.device-management .pagination-pills a {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	text-decoration: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-/* .page-link:hover {
-  background: #2563eb;
-} */
-
-.page-link.active {
-  background: #1d4ed8;
-  color:white;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+.device-management .pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
 }
 
+.device-management .pagination-pills a:hover {
+    transform: translateY(-2px);
+}
 
 th, td {
 	padding: 14px 5px !important;
@@ -145,6 +146,23 @@ th, td {
 	background-color: #e5e7eb;
 	color: #374151;
 	border: 1px solid #9ca3af;
+}
+
+.action-btn{
+	display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.disabled{
+	background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
 }
 </style>
 
@@ -196,7 +214,9 @@ th, td {
 			</div>
 		</section>
 		<section class="panel" id="table-panel">
-			<h2>Danh sách thanh toán</h2>
+			<div style="display: flex;justify-content: space-between;align-items: center;margin-bottom: 20px;">
+				<h2>Danh sách thanh toán</h2>			
+			</div>
 			<div class="table-wrapper">
 				<table class="device-table">
 					<thead>
@@ -240,22 +260,21 @@ th, td {
 										</c:choose></td>
 								<td>${p.createdAt}</td>
 								<td>${p.paidAt}</td>
+								<td class="action-btn">
 								<input type="hidden" name="paymentId" value="${p.id}" />
-								
-								 	<a href="payment-detail?id=${p.id}" 
-       								style="background-color: #16a34a; padding: 8px 12px; border-radius: 6px; color: white; text-decoration: none;">
-       									View
+								 	<a href="payment-detail?id=${p.id}" class="btn device-btn">
+       									Xem
    									</a>
 
 									<c:if test="${p.status == 'pending'}">
-										<button class="btn device-btn" style="color: #fff; background-color: #1976D2; padding: 7px 12px;" name="action"
+										<button class="btn device-btn" name="action"
 											type="submit" value="success"
 											onclick="return confirm('Xác nhận thanh toán thành công cho đơn hàng này?')">
-											Confirm</button>
-										<button class="btn device-btn" style="color: #fff; background-color: #E70043; padding: 7px 12px;" name="action"
+											Xác nhận</button>
+										<button class="btn device-btn" name="action"
 											type="submit" value="failed"
 											onclick="return confirm('Bạn có chắc muốn từ chối thanh toán này không?')">
-											Deny</button>
+											Từ chối</button>
 									</c:if></td>
 								</form>
 							</tr>
@@ -265,14 +284,30 @@ th, td {
 				</table>
 				
 				<p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thanh toán: <strong>${totalPayments}</strong></p>
-
 			</div>
-			<div class="pagination-wrapper">
+			</section>
+			<div class="pagination-pills" style="padding-bottom: 20px;">
+				<c:choose>
+	                <c:when test="${currentPage > 1}">
+	                	<a href = "payment-list?page=${currentPage - 1}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">&#10094;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+	            </c:choose>
+				
 				<c:forEach var="i" begin="1" end="${totalPages}">
-					<a
-						class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}"
-						href="payment-list?page=${i}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">${i}</a>
+					<a class="${i == currentPage ? 'active' : ''}" href="payment-list?page=${i}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">${i}</a>
 				</c:forEach>
+				
+				<c:choose>
+	                <c:when test="${currentPage < totalPages}">
+	                	<a href = "payment-list?page=${currentPage + 1}&status=${param.status}&sortCreatedAt=${param.sortCreatedAt}&sortPaidAt=${param.sortPaidAt}&method=${param.method}&search=${param.search}">&#10095;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
 			</div>
 	</main>
 </body>

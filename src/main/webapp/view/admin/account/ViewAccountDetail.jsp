@@ -6,80 +6,85 @@
 <head>
   <meta charset="UTF-8">
   <title>Chi tiết người dùng | TechShop</title>
-  <style>
-    body{font-family:system-ui;background:#f5f7fb;margin:0;padding:20px}
-    .card{max-width:900px;margin:auto;background:#fff;padding:24px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
-    .grid{display:flex;gap:20px;align-items:flex-start}
-    .avatar{width:160px;height:160px;border-radius:10px;background:#f0f2f5;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .avatar img{width:100%;height:100%;object-fit:cover}
-    .info{flex:1}
-    .row{display:flex;gap:10px;margin:8px 0}
-    .label{width:140px;color:#6b7280;font-weight:700}
-    .value{flex:1}
-    .btn{display:inline-block;padding:8px 12px;border-radius:8px;text-decoration:none;font-weight:600}
-    .btn-back{background:#e5e7eb;color:#111}
-    .btn-edit{background:#f59e0b;color:#111;margin-left:8px}
-    section{
-    	height: 100%;
-    	display: flex;
-    	flex-direction: column;
-    	justify-content: center;
-    	align-items: center;
-    }
-  </style>
 </head>
-<body>
-
+<body class="management-page device-management">
+<jsp:include page="../common/sidebar.jsp"></jsp:include>
 <jsp:include page="../common/header.jsp"></jsp:include>
+<main class="sidebar-main">
+    <c:if test="${not empty error}">
+      <p style="color:#ef4444">${error}</p>
+    </c:if>
+	  
+	<section class="panel">
+        <a class="btn device-btn" href="account"><i class="fa-solid fa-arrow-left"></i><span>Về danh
+                sách</span></a>
+    </section>
 
-<section>
-<div class="card">
-  <h2>Chi tiết người dùng</h2>
-
-  <c:if test="${not empty error}">
-    <p style="color:#ef4444">${error}</p>
-  </c:if>
-
-  <c:if test="${not empty userDetail}">
-    <div class="grid">
-      <div class="avatar">
-        <c:choose>
-          <c:when test="${not empty userDetail.imageUrl}">
-            <img src="${pageContext.request.contextPath}/${userDetail.imageUrl}" alt="avatar">
-          </c:when>
-          <c:otherwise>
-            <img src="${pageContext.request.contextPath}/static/images/default-avatar.png" alt="avatar">
-          </c:otherwise>
-        </c:choose>
-      </div>
-
-      <div class="info">
-        <div class="row"><div class="label">ID</div><div class="value">${userDetail.id}</div></div>
-        <div class="row"><div class="label">Tên đăng nhập</div><div class="value">${userDetail.username}</div></div>
-        <div class="row"><div class="label">Họ tên</div><div class="value">${userDetail.fullName}</div></div>
-        <div class="row"><div class="label">Email</div><div class="value">${userDetail.email}</div></div>
-        <div class="row"><div class="label">Số điện thoại</div><div class="value">${empty userDetail.phone ? '-' : userDetail.phone}</div></div>
-        <div class="row"><div class="label">Vai trò</div><div class="value">${userDetail.role}</div></div>
-        <div class="row"><div class="label">Trạng thái</div>
-          <div class="value">
-            <c:choose>
-              <c:when test="${userDetail.status == 'active'}"><span style="color:#10b981;font-weight:700">Hoạt động</span></c:when>
-              <c:otherwise><span style="color:#ef4444;font-weight:700">Bị khóa</span></c:otherwise>
-            </c:choose>
-          </div>
-        </div>
-        <div class="row"><div class="label">Tạo lúc</div><div class="value">${userDetail.createdAt}</div></div>
-        <div class="row"><div class="label">Lần đăng nhập cuối</div><div class="value">${userDetail.lastLoginAt}</div></div>
-
-        <div style="margin-top:16px">
-          <a href="account" class="btn btn-back">Quay lại</a>
-          <a href="account?action=edit&id=${userDetail.id}" class="btn btn-edit">Sửa</a>
-        </div>
-      </div>
-    </div>
-  </c:if>
-
-</div>
-</section>
+	<section class="panel">
+		<div class="device-detail">
+			<div class="device-img">
+                <c:choose>
+		          <c:when test="${not empty userDetail.imageUrl}">
+		            <img src="${pageContext.request.contextPath}/${userDetail.imageUrl}" alt="avatar">
+		          </c:when>
+		          <c:otherwise>
+		            <img src="${pageContext.request.contextPath}/static/images/default-avatar.png" alt="avatar">
+		          </c:otherwise>
+		        </c:choose>
+            </div>
+			<div class="device-container">		
+			    <table class="device-table">
+			    	<tbody>
+			    		<tr>
+	                        <th>ID</th>
+	                        <td>${userDetail.id}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Tên đăng nhập</th>
+	                        <td>${userDetail.username}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Họ tên</th>
+	                        <td>${userDetail.fullName}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Email</th>
+	                        <td>${userDetail.email}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Số điện thoại</th>
+	                        <td>${userDetail.phone}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Vai trò</th>
+	                        <td>${userDetail.role}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Trạng thái</th>
+	                        <td>
+	                        	<c:choose>
+					              <c:when test="${userDetail.status == 'active'}"><span style="color:#10b981;font-weight:700">Hoạt động</span></c:when>
+					              <c:otherwise><span style="color:#ef4444;font-weight:700">Bị khóa</span></c:otherwise>
+					            </c:choose>
+	                        </td>
+	                    </tr>
+	                    <tr>
+	                        <th>Tạo lúc</th>
+	                        <td>${userDetail.createdAt}</td>
+	                    </tr>
+	                    <tr>
+	                        <th>Lần đăng nhập cuối</th>
+	                        <td>${userDetail.lastLoginAt}</td>
+	                    </tr>
+			    </table>
+			        
+			        <div class="device-action">
+		                <a href="account" class="btn device-btn">Quay lại</a>
+			          	<a href="account?action=edit&id=${userDetail.id}" class="btn device-btn">Sửa</a>
+		            </div>
+			</div>
+		</div>
+	</section>
+</main>
 </body>
 </html>

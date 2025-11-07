@@ -133,6 +133,7 @@
 	                        <th>Type</th>
 	                        <th>Storekeeper</th>
 	                        <th>Supplier / User</th>
+	                        <th>Devices</th>
 	                        <th>Note</th>
 	                        <th>Status</th>
 	                        <th>Created At</th>
@@ -154,6 +155,19 @@
 	                                    </c:otherwise>
 	                                </c:choose>
 	                            </td>
+	                            <td>
+								    <c:choose>
+								        <c:when test="${not empty t.details}">
+								            <c:forEach var="d" items="${t.details}">
+								                ${d.deviceName} (x${d.quantity})<br/>
+								            </c:forEach>
+								        </c:when>
+								        <c:otherwise>
+								            No devices
+								        </c:otherwise>
+								    </c:choose>
+								</td>
+
 	                            <td><c:out value="${t.note != null ? t.note : ''}"/></td>
 	                            <td class="status-${t.status}"><c:out value="${t.status}"/></td>
 	                            <td>

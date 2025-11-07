@@ -45,9 +45,11 @@ public class TaskListPageController extends HttpServlet {
 			int totalTasks = taskDao.getFilteredTasksCount(status, search);
 			int totalPages = (int) Math.ceil((double) totalTasks / TASK_PER_PAGE);
 			if (totalPages == 0) totalPages = 1;
+			int currentPage = (pageParam != null) ? Integer.parseInt(pageParam) : 1;
 			
 			List<Task> listTask = taskDao.getFilteredTasksWithStatus(status, search, TASK_PER_PAGE, offset);
 			
+			request.setAttribute("currentPage", currentPage);
 			request.setAttribute("totalTasks", totalTasks);
 			request.setAttribute("currentPage", page);
 			request.setAttribute("totalPages", totalPages);

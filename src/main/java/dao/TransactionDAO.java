@@ -80,7 +80,7 @@ public class TransactionDAO extends DBContext {
                 t.setDate(rs.getTimestamp("date"));
                 t.setNote(rs.getString("note"));
                 t.setStorekeeperName(rs.getString("storekeeper_name"));
-                t.setSupplierName(rs.getString("supplier_name"));
+t.setSupplierName(rs.getString("supplier_name"));
                 t.setUserName(rs.getString("customer_name"));
                 t.setDeviceList(rs.getString("device_list")); 
                 list.add(t);
@@ -160,7 +160,7 @@ public class TransactionDAO extends DBContext {
         }
 
         if (keyword != null && !keyword.isEmpty()) {
-            sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR t.note LIKE ? OR d.name LIKE ?)");
+sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR t.note LIKE ? OR d.name LIKE ?)");
             String likeKeyword = "%" + keyword + "%";
             params.add(likeKeyword);
             params.add(likeKeyword);
@@ -234,7 +234,7 @@ public class TransactionDAO extends DBContext {
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
+ps.setObject(i + 1, params.get(i));
             }
             ResultSet rs = ps.executeQuery();
             if (rs.next()) count = rs.getInt(1);

@@ -24,11 +24,13 @@
 	    </section>
 	</c:if>
 	
-	<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
-		<section class="panel">
-	        <a class="btn device-btn" href="de-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
-	                sách</span></a>
-	    </section>
+	<c:if test="${account.roleId != 1}">
+		<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
+			<section class="panel">
+		        <a class="btn device-btn" href="de-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
+		                sách</span></a>
+		    </section>
+		</c:if>
 	</c:if>
 
     <section class="panel">
