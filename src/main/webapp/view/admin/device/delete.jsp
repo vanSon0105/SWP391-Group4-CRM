@@ -44,7 +44,7 @@ a{
                     
                     <form method="post" action="device-delete?id=${device.id}"
         				onsubmit="return confirm('Bạn chắc chắn muốn xóa?');">
-	                    <button style="width: 100%;height: 100%;" id="confirm-delete" class="btn device-btn" type="submit">
+	                    <button style="width: 100%;height: 100%;" id="confirm-delete" class="btn device-remove" type="submit">
       						<i class="fa-solid fa-trash"></i><span>Xác nhận xóa</span>
     					</button>       				
         			</form>
@@ -89,7 +89,7 @@ a{
 										    <input type="hidden" name="id" value="${s.id}">
 										    <input type="hidden" name="deviceId" value="${device.id}">
 										    <c:if test="${s.status == 'active'}">
-											    <button class="btn device-btn" type="submit">
+											    <button class="btn device-remove" type="submit">
 											        <i class="fa-solid fa-trash"></i><span>Xóa</span>
 											    </button>
 										    </c:if>

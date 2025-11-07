@@ -15,23 +15,9 @@
 <style>
 	:root{
       --primary:#2563eb; 
-      --primary-hover:#1d4ed8;
       --neutral:#6b7280; 
-      --bg:#f5f7fb; 
-      --card:#fff; 
-      --text:#111827;
-      --danger:#ef4444; 
-      --warning:#f59e0b; 
-      --info:#0ea5e9; 
-      --success:#10b981;
-      --radius:10px; 
-      --shadow:0 6px 18px rgba(0,0,0,.08);
       --border:#e5e7eb;
     }
-    
-	.device-btn{
-	    color: black !important;
-	}
 	.device-management .pagination-pills {
 	    display: flex;
 	    justify-content: center;
@@ -106,6 +92,16 @@
          margin-right: auto;
          color: var(--neutral)
      }
+     
+     .disabled{
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	    cursor: not-allowed;
+	    pointer-events: none;
+	    opacity: 0.5;
+	}
 </style>
 </head>
 <body class="management-page device-management">
@@ -121,25 +117,27 @@
                         <span>Thêm tài khoản mới</span>
                     </a>
                 </div>
-
-                <form class="device-search" action="account" method="get">
-                	<input type="hidden" name="action" value="search">
-	                <input id="account-search" name="keyword" type="search"
-	                       placeholder="Tìm theo tên, email, username..." value="${param.keyword}">
-	                <button type="submit" class="btn device-btn">Tìm</button>
-	            </form>
-
-	            <form action="account" method="get" class="device-search">
-                    <input type="hidden" name="action" value="filter">
-                    <select name="roleId" class="btn device-btn">
-                        <option value="">-- Lọc vai trò --</option>
-                        <option value="1" ${filterRole==1 ? 'selected' : '' }>Quản trị viên</option>
-                        <option value="2" ${filterRole==2 ? 'selected' : '' }>Nhân viên</option>
-                        <option value="3" ${filterRole==3 ? 'selected' : '' }>Kỹ thuật viên</option>
-                        <option value="4" ${filterRole==4 ? 'selected' : '' }>Khách hàng</option>
-                    </select>
-                    <button type="submit" class="btn device-btn">Lọc</button>
-                </form>
+				
+				<div style="display: flex; gap: 20px;">
+	                <form class="device-search" action="account" method="get">
+	                	<input type="hidden" name="action" value="search">
+		                <input id="account-search" name="keyword" type="search"
+		                       placeholder="Tìm theo tên, email, username..." value="${param.keyword}">
+		                <button type="submit" class="btn device-btn">Tìm</button>
+		            </form>
+	
+		            <form action="account" method="get" class="device-search">
+	                    <input type="hidden" name="action" value="filter">
+	                    <select name="roleId" class="btn device-btn">
+	                        <option value="">-- Lọc vai trò --</option>
+	                        <option value="1" ${filterRole==1 ? 'selected' : '' }>Quản trị viên</option>
+	                        <option value="2" ${filterRole==2 ? 'selected' : '' }>Nhân viên</option>
+	                        <option value="3" ${filterRole==3 ? 'selected' : '' }>Kỹ thuật viên</option>
+	                        <option value="4" ${filterRole==4 ? 'selected' : '' }>Khách hàng</option>
+	                    </select>
+	                    <button type="submit" class="btn device-btn">Lọc</button>
+	                </form>
+	             </div>
             </div>
         </section>
 
@@ -239,25 +237,30 @@
             </div>
          </section>
          
-         <c:if test="${totalPages > 1}">
-				  <div class="pager">
-				    <span class="info">Trang ${currentPage} / ${totalPages}</span>
-				
-				    <c:if test="${currentPage > 1}">
-				      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage - 1}">«</a>
-				    </c:if>
+         <div class="pagination-pills" style="padding-bottom: 20px;">	 
+				    <c:choose>
+		                 <c:when test="${currentPage > 1}">
+		                     <a href="account?page=${currentPage - 1}">&#10094;</a>
+		                 </c:when>
+		                 <c:otherwise>
+				            <a class="disabled">&#10094;</a>
+				        </c:otherwise>
+		             </c:choose>
 				
 				    <c:forEach var="i" begin="1" end="${totalPages}">
-				      <a class="page-btn ${i == currentPage ? 'active' : ''}"
-				         href="${pageContext.request.contextPath}/account?page=${i}">${i}</a>
+				      <a class="${i == currentPage ? 'active' : ''}"
+				         href="account?page=${i}">${i}</a>
 				    </c:forEach>
-				
-				    <c:if test="${currentPage < totalPages}">
-				      <a class="page-btn" href="${pageContext.request.contextPath}/account?page=${currentPage + 1}">»</a>
-				    </c:if>
-				  </div>
-			</c:if>
-			
+				    
+				    <c:choose>
+		                 <c:when test="${currentPage > 1}">
+		                     <a href="account?page=${currentPage + 1}">&#10095;</a>
+		                 </c:when>
+		                 <c:otherwise>
+				            <a class="disabled">&#10095;</a>
+				        </c:otherwise>
+		             </c:choose>
+		 </div>
          
     </main>
 </body>

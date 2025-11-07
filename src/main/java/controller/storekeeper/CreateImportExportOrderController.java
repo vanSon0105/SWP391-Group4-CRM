@@ -70,7 +70,7 @@ public class CreateImportExportOrderController extends HttpServlet {
             Integer userId = null;
 
             if ("import".equalsIgnoreCase(type)) {
-                String sParam = request.getParameter("supplierId");
+            	String sParam = request.getParameter("supplierId");
                 if (sParam == null || sParam.isEmpty()) {
                     throw new Exception("Chưa chọn nhà cung cấp!");
                 }
@@ -135,8 +135,7 @@ public class CreateImportExportOrderController extends HttpServlet {
                     throw new Exception("Số lượng phải lớn hơn 0 cho thiết bị ID: " + deviceId);
                 }
 
-                if (deviceDAO.getDeviceById(deviceId) == null) {
-                    throw new Exception("Thiết bị ID " + deviceId + " không tồn tại!");
+                if (deviceDAO.getDeviceById(deviceId) == null) {throw new Exception("Thiết bị ID " + deviceId + " không tồn tại!");
                 }
 
                 deviceQuantityMap.put(deviceId, quantity);
