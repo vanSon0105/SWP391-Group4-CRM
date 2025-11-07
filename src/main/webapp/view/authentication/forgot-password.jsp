@@ -31,7 +31,6 @@
     <h1>Đặt lại mật khẩu</h1>
     <p>Nhập email để nhận mã OTP đặt lại mật khẩu.</p>
 
-    <!-- ✅ Hiển thị thông báo lỗi / thành công -->
     <c:if test="${not empty error}">
         <p class="error">${error}</p>
     </c:if>
@@ -40,7 +39,7 @@
         <p class="success">${mss}</p>
     </c:if>
 
-    <!-- ✅ Gửi OTP quên mật khẩu -->
+  
     <form action="${pageContext.request.contextPath}/send-otp" method="post">
         <input type="hidden" name="action" value="forgot">
         <div style="display:grid; gap:8px; text-align:left;">

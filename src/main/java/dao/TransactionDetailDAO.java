@@ -7,7 +7,7 @@ import model.TransactionDetail;
 
 public class TransactionDetailDAO extends DBContext {
 
-    // ✅ Thêm chi tiết + cập nhật tồn kho tổng
+    //Thêm chi tiết + cập nhật tồn kho tổng
     public boolean addTransactionDetail(TransactionDetail detail, String type) {
         String insertSql = "INSERT INTO transaction_detail (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
         String updateStockSqlImport = "UPDATE devices SET quantity = quantity + ? WHERE id = ?";

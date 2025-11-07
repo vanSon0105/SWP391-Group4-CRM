@@ -6,8 +6,8 @@ import java.sql.Timestamp;
 public class Order {
     private int id;
     private int customerId;           
-    private BigDecimal totalAmount;   // Dùng BigDecimal cho tiền
-    private BigDecimal discount;      // Dùng BigDecimal cho tiền
+    private BigDecimal totalAmount;  
+    private BigDecimal discount;      
     private String status;
     private Timestamp date;
 

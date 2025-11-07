@@ -37,6 +37,7 @@
   </servlet>
   
   
+  
   <servlet-mapping>
   	<servlet-name>PaymentController</servlet-name>
   	<url-pattern>/PaymentController</url-pattern>
@@ -45,6 +46,7 @@
   	<servlet-name>CheckoutController</servlet-name>
   	<url-pattern>/CheckoutController</url-pattern>
   </servlet-mapping>
+  
   
 
   <welcome-file-list>

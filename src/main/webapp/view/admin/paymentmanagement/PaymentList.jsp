@@ -283,7 +283,12 @@ button {
 										</c:choose></td>
 								<td>${p.createdAt}</td>
 								<td>${p.paidAt}</td>
-								<td><input type="hidden" name="paymentId" value="${p.id}" />
+								<input type="hidden" name="paymentId" value="${p.id}" />
+								
+								 	<a href="payment-detail?id=${p.id}" 
+       								style="background-color: #16a34a; padding: 8px 12px; border-radius: 6px; color: white; text-decoration: none;">
+       									View
+   									</a>
 
 									<c:if test="${p.status == 'pending'}">
 										<button style="background-color: #1976D2" name="action"
