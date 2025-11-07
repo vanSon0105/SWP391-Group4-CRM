@@ -6,17 +6,31 @@ import dal.DBContext;
 import model.TransactionDetail;
 
 public class TransactionDetailDAO extends DBContext {
+	
+	public void addTransactionDetail(int transactionId, List<TransactionDetail> details) {
+	    String sql = "INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        for (TransactionDetail td : details) {
+	            ps.setInt(1, transactionId);
+	            ps.setInt(2, td.getDeviceId());
+	            ps.setInt(3, td.getQuantity());
+	            ps.addBatch();
+	        }
+	        ps.executeBatch();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 
-    //Thêm chi tiết + cập nhật tồn kho tổng
     public boolean addTransactionDetail(TransactionDetail detail, String type) {
-        String insertSql = "INSERT INTO transaction_detail (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
+        String insertSql = "INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES (?, ?, ?)";
         String updateStockSqlImport = "UPDATE devices SET quantity = quantity + ? WHERE id = ?";
         String updateStockSqlExport = "UPDATE devices SET quantity = quantity - ? WHERE id = ? AND quantity >= ?";
 
         try (Connection conn = getConnection()) {
             conn.setAutoCommit(false);
 
-            // Thêm chi tiết phiếu
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 ps.setInt(1, detail.getTransactionId());
                 ps.setInt(2, detail.getDeviceId());
@@ -24,7 +38,6 @@ public class TransactionDetailDAO extends DBContext {
                 ps.executeUpdate();
             }
 
-            // Cập nhật tồn kho tổng
             if ("import".equalsIgnoreCase(type)) {
                 try (PreparedStatement ps = conn.prepareStatement(updateStockSqlImport)) {
                     ps.setInt(1, detail.getQuantity());
@@ -55,7 +68,6 @@ public class TransactionDetailDAO extends DBContext {
         return false;
     }
 
-    // Lấy tồn kho hiện tại
     private int getCurrentStock(int deviceId) {
         String sql = "SELECT quantity FROM devices WHERE id = ?";
         try (Connection conn = getConnection();
@@ -73,7 +85,7 @@ public class TransactionDetailDAO extends DBContext {
         List<TransactionDetail> list = new ArrayList<>();
         String sql = """
             SELECT td.*, d.name AS device_name
-            FROM transaction_detail td
+            FROM transaction_details td
             JOIN devices d ON td.device_id = d.id
             WHERE td.transaction_id = ?
         """;

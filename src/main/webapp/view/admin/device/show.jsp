@@ -56,10 +56,16 @@
 	}
 </style>
 </head>
-<body class="management-page device-management sidebar-collapsed">
+<body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	 <main class="sidebar-main">
+	 		<c:if test="${empty listDevices}"> 
+		 		<section class="panel">
+		            <a class="btn device-btn" href="device-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh sách</span></a>
+		        </section>
+	        </c:if>
+	        <c:if test="${not empty listDevices}"> 
             <section class="panel">
                 <div class="device-toolbar">
                     <div class="device-toolbar-actions">
@@ -112,16 +118,10 @@
             	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 	                <h2>Danh sách thiết bị</h2>
 	                <c:if test="${not empty mess}">
-	                	<span style="color: red;font-size: 1.5rem;">${mess}</span>	
-	                </c:if>	
-
-	                <c:if test="${not empty listDeviceSerials || empty listDevices}">
-	                	<a class="btn device-btn" href="device-show#table-panel">Quay lại</a>       
-	                </c:if>	     
-  
+	                	<span class="device-status" style="color: red;font-size: 1.5rem;">${mess}</span>	
+	                </c:if>	    
             	</div>
                 <div class="table-wrapper">
-                    <c:if test="${not empty listDevices}"> 
 	                    <table class="device-table">
 	                        <thead>
 	                            <tr>
@@ -137,7 +137,7 @@
 	                        </thead>
 	                        <tbody>
 	                        	<c:forEach items="${listDevices}" var="s">
-		                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
+		                            <tr>
 		                            	<td>${s.id}</td>
 			                            <td><img class="device-thumb" src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}" alt="Anh thiet bi"></td>
 		                                <td>${s.name}</td>
@@ -146,7 +146,7 @@
 		                                	<fmt:formatNumber value="${s.price}" type="number"/> VNĐ
 		                                </td>
 		                                <td>${s.device_inventory}</td>
-		                                <td><span class="device-status"></i>${s.status}</span></td>
+		                                <td><span style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>" class="device-status"></i>${s.status}</span></td>
 		                                <td class="device-show-actions">
 		                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
 		                                    <a class="btn device-btn" href="device-serials?id=${s.id}#device-serial">Xem Serials</a>
@@ -190,11 +190,11 @@
                         </thead>
                         <tbody>
                         	<c:forEach items="${listDeviceSerials}" var="s">
-	                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
+	                            <tr>
 	                            	<td>${s.id}</td>
 	                                <td>${s.serial_no}</td>
 	                                <td>${s.stock_status}</td>
-	                                <td>${s.status}</td>
+	                                <td><span class="device-status" style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">${s.status}</span></td>
 	                                <td>${s.import_date}</td>
 	                            </tr>
 	                          </c:forEach>

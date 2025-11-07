@@ -187,6 +187,12 @@
 		    background: #fee2e2;
 		    color: #991b1b;
 		}
+		
+		.summary-text{
+			line-height: 1.5;
+		    overflow-wrap: anywhere;
+		    word-break: break-word;
+		}
     </style>
 </head>
 
@@ -257,19 +263,27 @@
                     </c:if>
                     
                     <c:if test="${param.requested == '1'}">
-		                <div class="alert alert-info">Đã gửi yêu cầu. Vui lòng chờ khách hàng bổ sung thông tin.</div>
+		                <div class="alert alert-info">Đã gửi yêu cầu. Vui lòng chờ khách hàng bổ sung thông tin</div>
 		            </c:if>
 		            
 		            <c:if test="${param.infoComplete == '1'}">
-                        <div class="alert alert-info">Hồ sơ khách hàng đã có thông tin liên hệ cần thiết - không có lời nhắc nào được gửi đi.</div>
+                        <div class="alert alert-info">Hồ sơ khách hàng đã có thông tin liên hệ cần thiết - không có lời nhắc nào được gửi đi</div>
                     </c:if>
 		            
 		            <c:if test="${awaitingCustomer}">
-		                <div class="alert alert-info">Đang chờ khách hàng phản hồi. Bạn có thể gửi lại form nếu cân nhắc.</div>
+		                <div class="alert alert-info">Đang chờ khách hàng phản hồi. Bạn có thể gửi lại form nếu cân nhắc</div>
 		            </c:if>
 		            
+		            <c:if test="${param.paymentReady == '1'}">
+					    <div class="alert alert-info">Đã mở bill thanh toán thành công</div>
+					</c:if>
+					
+					<c:if test="${param.paymentInvalid == '1'}">
+					    <div class="alert alert-error">Không thể cập nhật trạng thái thanh toán. Vui lòng thử lại</div>
+					</c:if>
+		            
 		            <c:if test="${managerRejected}">
-					    <div class="alert alert-warning">Quản lý kỹ thuật đã từ chối yêu cầu. Bạn hãy bổ sung thông tin và gửi lại.
+					    <div class="alert alert-warning">Quản lý kỹ thuật đã từ chối yêu cầu. Bạn hãy bổ sung thông tin và gửi lại
 					        <c:if test="${not empty issue.feedback}">
 					            <br/>Lý do: ${issue.feedback}
 					        </c:if>
@@ -277,18 +291,56 @@
 					</c:if>
 					
 					<c:if test="${customerCancelled}">
-                        <div class="alert alert-warning">Khách hàng đã hủy yêu cầu. Vui lòng liên hệ lại nếu cần mở lại hồ sơ.</div>
+                        <div class="alert alert-warning">Khách hàng đã hủy yêu cầu. Vui lòng liên hệ lại nếu cần mở lại hồ sơ</div>
                     </c:if>
                     
 					<c:if test="${managerApproved}">
-					    <div class="alert alert-info">Quản lý kỹ thuật đã chấp thuận thông tin. Đang chờ tạo task kỹ thuật.</div>
+					    <div class="alert alert-info">Quản lý kỹ thuật đã chấp thuận thông tin. Đang chờ tạo task kỹ thuật</div>
 					</c:if>
+					
+					<c:if test="${issuePayment != null && paymentAwaitingCustomer}">
+					    <div class="alert alert-info">Bill đã gửi cho khách. Đang chờ thanh toán</div>
+					</c:if>
+					
+					<c:if test="${issuePayment != null && paymentPaid}">
+					    <div class="alert alert-info">Khách đã thanh toán. Đang chờ khách gửi phản hồi</div>
+					</c:if>
+
+				
 					<c:if test="${lockedForSupport}">
 					    <div classD="alert alert-info">Task kỹ thuật đã được tạo. Bạn chỉ có thể xem thông tin đã gửi.</div>
 					</c:if>
+
+					<div class="readonly-block">
+					    <h3>Thanh toán dịch vụ</h3>
+					    <c:choose>
+					        <c:when test="${issuePayment == null}">
+					            <p>Chưa có bill từ kỹ thuật viên.</p>
+					        </c:when>
+					        <c:otherwise>
+					            <p>Số tiền: 
+					                <strong>
+					                    <fmt:formatNumber value="${issuePayment.amount}" type="number" maxFractionDigits="0"/>
+					                </strong>
+					            </p>
+					            <p>Trạng thái bill: <strong>${issuePayment.status}</strong></p>
+					            <c:if test="${not empty issuePayment.note}">
+					                <p>Ghi chú: <strong>${issuePayment.note}</strong></p>
+					            </c:if>
+					            <c:if test="${issuePayment.paidAt != null}">
+					                <p>Thanh toán lúc: 
+					                    <strong>
+					                        <fmt:formatDate value="${issuePayment.paidAt}" pattern="dd/MM/yyyy HH:mm"/>
+					                    </strong>
+					                </p>
+					            </c:if>
+					        </c:otherwise>
+					    </c:choose>
+					</div>
+					
 		
 		            <c:if test="${not lockedForSupport and (needsCustomerInfo or awaitingCustomer or managerRejected)}">
-	                    <form method="post" action="support-issues">
+	                    <form style="margin-top: 10px;" method="post" action="support-issues">
 	                        <input type="hidden" name="action" value="request_details">
 	                        <input type="hidden" name="issueId" value="${issue.id}">
 	                        <button type="submit" class="btn btn-secondary">
@@ -308,11 +360,11 @@
 		                        <p>Email: <strong>${issueDetail.contactEmail}</strong></p>
 		                        <p>Số điện thoại: <strong>${issueDetail.contactPhone}</strong></p>
 		                        <p>Serial thiết bị: <strong>${issueDetail.deviceSerial}</strong></p>
-		                        <p>Tổng hợp: <strong>${issueDetail.summary}</strong></p>
+		                        <p class="summary-text">Tổng hợp: <strong>${issueDetail.summary}</strong></p>
 		                    </div>
 		                </c:if>
 		                <div class="actions">
-		                    <c:if test="${taskDetail.status == 'completed'}">
+		                    <c:if test="${taskDetail.status == 'completed' and issue.supportStatus == 'tech_in_progress'}">
 		                    	<a class="btn btn-success" href="support-issues?action=updateStatus&id=${taskDetail.customerIssueId}">Cập nhật trạng thái</a>
 		                    </c:if>
 		                    <a class="btn btn-secondary" href="support-issues">Quay lại</a>
@@ -352,15 +404,20 @@
 					        <div class="actions">
 					            <a class="btn btn-secondary" href="support-issues">Quay lại</a>
 					            <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+					            
 					        </div>
 					    </form>
 					</c:if>
 					
-					<c:if test="${not lockedForSupport and awaitingCustomer and empty issueDetail}">
-					    <div class="actions">
-					        <a class="btn btn-secondary" href="support-issues">Quay lại</a>
-					    </div>
-					</c:if>
+					<div class="actions">
+			            <c:if test="${paymentAwaitingSupport}">
+						    <form method="post" action="support-issues" style="margin-top:12px;">
+						        <input type="hidden" name="action" value="payment_open">
+						        <input type="hidden" name="issueId" value="${issue.id}">
+						        <button style="padding: 12.8px 18px;" type="submit" class="btn btn-primary">Mở cho khách thanh toán</button>
+						    </form>
+						</c:if>
+					</div>
               </div>
          </div>
     </main>

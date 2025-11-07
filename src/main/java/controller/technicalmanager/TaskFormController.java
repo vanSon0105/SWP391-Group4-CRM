@@ -92,21 +92,27 @@ public class TaskFormController extends HttpServlet {
 				} 
 			}
 
-			List<CustomerIssue> issueList = issueDao.getAllIssues();
-			List<User> staffList = userDao.getAllTechnicalStaff();
-			
-			CustomerIssue currentIssue = null;
-			if (issueIdFromParam != 0) {
-				for (CustomerIssue ci : issueList) {
-					if (ci.getId() == issueIdFromParam) {
-						currentIssue = ci;
-						break;
-					}
-				}
-				if (currentIssue == null) {
-					currentIssue = issueDao.getIssueById(issueIdFromParam);
-				}
-			}
+			 List<CustomerIssue> issueList;
+		        if (issueIdFromParam != 0) {
+		            issueList = issueDao.getIssuesForTask(issueIdFromParam);
+		        } else {
+		            issueList = issueDao.getIssuesWithoutTask();
+		        }
+
+		        List<User> staffList = userDao.getAllTechnicalStaff();
+
+		        CustomerIssue currentIssue = null;
+		        if (issueIdFromParam != 0) {
+		            for (CustomerIssue ci : issueList) {
+		                if (ci.getId() == issueIdFromParam) {
+		                    currentIssue = ci;
+		                    break;
+		                }
+		            }
+		            if (currentIssue == null) {
+		                currentIssue = issueDao.getIssueById(issueIdFromParam);
+		            }
+		        }
 
 			request.setAttribute("task", task);
 			request.setAttribute("taskDetail", taskDetail);
@@ -182,6 +188,12 @@ public class TaskFormController extends HttpServlet {
 			}
 			
 			for (Integer staffId : selectedStaffs) {
+				if (!userDao.isTechnicalStaffAvailable(staffId)) {
+					request.setAttribute("errorStaffAvailability",
+							"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
+					forwardToForm(request, res);
+					return;
+				}
 				int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
 				if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
 					request.setAttribute("errorStaffLimit",
@@ -248,6 +260,12 @@ public class TaskFormController extends HttpServlet {
 			
 			for (Integer staffId : newStaffIds) {
 				if (!existingStaffIds.contains(staffId)) {
+					if (!userDao.isTechnicalStaffAvailable(staffId)) {
+						req.setAttribute("errorStaffAvailability",
+								"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
+						forwardToForm(req, res);
+						return;
+					}
 					int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
 					if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
 						req.setAttribute("errorStaffLimit",

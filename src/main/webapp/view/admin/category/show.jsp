@@ -53,7 +53,16 @@
 	body .panel h2{
 		margin-bottom: 0 !important;
 	}
-}
+	
+	.disabled{
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	    cursor: not-allowed;
+	    pointer-events: none;
+	    opacity: 0.5;
+	}
 </style>
 </head>
 <body class="management-page device-management">
@@ -69,8 +78,8 @@
                         </a>
                     </div>
                     <form class="device-search" action="category-show" method="get">
-		                <label for="category-search" class="sr-only"></label>
 		                <input id="category-search" name="key" type="search" placeholder="Tìm theo tên danh mục . . ." value="${param.key}">
+		                <label for="category-search" class="sr-only"></label>
 					    
 		                <button class="btn device-btn" type="submit"><i class="fa-solid fa-magnifying-glass"></i>Search</button>
 		            </form>

@@ -10,20 +10,19 @@ public class PaymentDAO extends DBContext {
 	
 	public int addNewPayment(Payment payment) {
 		String sql = "INSERT INTO payments \r\n"
-				+ "(order_id, payment_url, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
-				+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)";
+				+ "(order_id, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at)  "
+				+ "VALUES (?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), ?)";
 		
 		try (Connection conn = getConnection();
 			 PreparedStatement pre = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)){
 			pre.setInt(1, payment.getOrderId());
-			pre.setString(2, null);
-			pre.setDouble(3, payment.getAmount());
-			pre.setString(4, payment.getFullName());
-			pre.setString(5, payment.getPhone());
-			pre.setString(6, payment.getAddress());
-			pre.setString(7, payment.getDeliveryTime());
-			pre.setString(8, payment.getTechnicalNote());
-			pre.setTimestamp(9, payment.getPaidAt());
+			pre.setDouble(2, payment.getAmount());
+			pre.setString(3, payment.getFullName());
+			pre.setString(4, payment.getPhone());
+			pre.setString(5, payment.getAddress());
+			pre.setString(6, payment.getDeliveryTime());
+			pre.setString(7, payment.getTechnicalNote());
+			pre.setTimestamp(8, payment.getPaidAt());
 			pre.executeUpdate();
 			ResultSet rs = pre.getGeneratedKeys();
 			
@@ -97,7 +96,6 @@ public class PaymentDAO extends DBContext {
 						list.add(new Payment(
 								rs.getInt("id"),
 								rs.getInt("order_id"),
-								rs.getString("payment_url"),
 								rs.getDouble("amount"),
 								rs.getString("full_name"),
 								rs.getString("phone"),

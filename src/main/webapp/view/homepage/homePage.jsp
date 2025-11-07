@@ -117,14 +117,6 @@
 		  font-weight: 600;
 		}
 		
-		.promo-price {
-		  display: inline-flex;
-		  align-items: center;
-		  gap: 6px;
-		  padding: 6px 14px;
-		  border-radius: 8px;
-		  background: linear-gradient(135deg, #d50000 60%, #000 60%);
-		}
 		
 		.promo-price strong {
 		  font-size: 3.5rem;
@@ -160,14 +152,50 @@
 		  pointer-events: auto;
 		  cursor: pointer;
 		}
+		
+		body.home-page main {
+		    padding: 0;
+		    display: grid;
+		    gap: 0;
+		}
+		
+		.adverse {
+		    display: flex;
+		    padding: 5px;
+		    justify-content: center;
+		    gap: 30px;
+		    align-items: center;
+		    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		}
+		
+		.adverse span {
+		    font-size: 1.8rem;
+		    font-weight: bold;
+		    display: flex;
+		    align-items: center;
+		    gap: 10px;
+		}
+		
+		.adverse i {
+		    font-size: 2rem;
+		    color: #ff8100;
+		}
+
     </style>
 </head>
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
     <main>
+		<div class="adverse">
+		    <span><i class="fas fa-cogs"></i> Bảo hành siêu nhanh</span>
+		    <span><i class="fas fa-store"></i> TechShop uy tín hàng đầu</span>
+		    <span><i class="fas fa-shopping-cart"></i> Mua hàng dễ dàng</span>
+		    <span><i class="fas fa-headset"></i> Hỗ trợ nhanh chóng</span>
+		</div>
+
         <section class="mega-banner" aria-labelledby="banner-title">
             <div class="mega-banner-content">
-                <h2 id="banner-title">Mua sắm điện máy thăng hoa - Ưu đãi đến 20% cho toàn bộ thiết bị</h2>
+                <h2 id="banner-title">Mua sắm siêu rẻ, siêu nhanh - Ưu đãi đến 20% cho toàn bộ thiết bị</h2>
                 <p>Từ laptop, smartphone đến dịch vụ sửa chữa. Chỉ một lần chạm là bạn được chăm sóc tận tình cùng đội ngũ kỹ thuật của TechShop</p>
                 <div class="banner-btn">
                     <a class="btn" href="device-page">Khám phá sản phẩm</a>
@@ -192,7 +220,7 @@
 				            <h3><i class="fa-solid fa-gift"></i> ${s.name}</h3>
 				            <p>
 				              <i class="fa-solid fa-exchange-alt"></i> Thu cũ đổi mới lên đến 
-				              <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong>
+				              <strong><fmt:formatNumber value="${s.price}" type="number" /> VNĐ</strong>
 				            </p>
 				            <p><i class="fa-solid fa-shield-heart"></i> Bảo hành ${s.warrantyMonth} tháng</p>
 				          </div>
@@ -200,7 +228,7 @@
 				        </div>
 				        <span class="promo-price">
 				          <i class="fa-solid fa-tag"></i> Giá ưu đãi: 
-				          <strong><fmt:formatNumber value="${s.price}" type="number" /> VND</strong>
+				          <strong><fmt:formatNumber value="${s.price}" type="number" /> VNĐ</strong>
 				        </span>
 				      </article>
 				    </c:forEach>
@@ -211,7 +239,7 @@
 			</div>
         </section>
 
-        <section class="featured-categories">
+        <section style="padding: 15px;" class="featured-categories">
             <a class="shortcut-card" href="device-page?category=1">
                 <span class="shortcut-icon">💻</span>
                 <span class="shortcut-label">Laptop &amp; PC</span>
@@ -264,7 +292,7 @@
 	                        	</div>
 	                            <h4>${s.getName()}</h4>
 	                            <p>${s.getDesc()}</p>
-	                            <span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
+	                            <span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VNĐ</span>
                         </a>
 	                            <a class="btn device-buy-btn" href="cart-add?id=${s.id}#featured-devices">Mua sản phẩm</a>
 	                        </div>
@@ -299,7 +327,7 @@
 	                       	</div>
 	                        <h4>${s.getName()}</h4>
 	                        <p>${s.getDesc()}</p>
-	                        <span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
+	                        <span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VNĐ</span>
                     </a>
 	                        <a class="btn device-buy-btn" href="cart-add?id=${s.id}#new-devices">Mua sản phẩm</a>
 	                    </div>
@@ -388,7 +416,7 @@
 		                       	</div>
 	                            <h4>${s.getName()}</h4>
 	                        	<p>${s.getDesc()}</p>
-	                        	<span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VND</span>
+	                        	<span>Giá: <fmt:formatNumber value="${s.price}" type="number" /> VNĐ</span>
                         </a>
 	                        	<a class="btn device-buy-btn" href="cart-add?id=${s.id}#best-sellers">Mua sản phẩm</a>
 	                        </div>

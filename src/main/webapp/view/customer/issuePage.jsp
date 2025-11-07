@@ -143,7 +143,7 @@
         .alert {
             padding: 12px 16px;
             border-radius: 8px;
-            margin-bottom: 16px;
+            margin-top: 16px;
             font-size: 14px;
         }
 

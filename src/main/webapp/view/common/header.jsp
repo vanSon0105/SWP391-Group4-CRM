@@ -11,7 +11,7 @@
 
             <header class="header">
                 <h1 class="header-title">
-                	<a href="home" style="position: relative;">
+                	<a href="${pageContext.request.contextPath}/home" style="position: relative;">
                 		<img alt="logo" src="${pageContext.request.contextPath}/assets/img/logo.png">
                 	</a>
                 </h1>
@@ -22,13 +22,12 @@
                             <span aria-hidden="true">☰</span>
                         </button>
                         <div class="category-panel" data-category-panel>
-                            <a href="device-page">Thiết bị</a>
-                            <a href="create-issue">Gửi bảo hành/sửa chữa</a>
-                            <a href="checkout.jsp">Thanh toán</a>
-                            <a href="order-tracking">Đơn hàng</a>
-                            <a href="issue">Lịch sử yêu cầu</a>
+                            <a href="${pageContext.request.contextPath}/device-page">Thiết bị</a>
+                            <a href="${pageContext.request.contextPath}/create-issue">Gửi bảo hành/sửa chữa</a>
+                            <a href="${pageContext.request.contextPath}/order-tracking">Đơn hàng</a>
+                            <a href="${pageContext.request.contextPath}/issue">Lịch sử yêu cầu</a>
                             <c:if test="${sessionScope.account != null}">
-                                <form action="logout" method="post" style="display:inline;">
+                                <form action="${pageContext.request.contextPath}/logout" method="post" style="display:inline;">
                                     <button type="submit" class="order-btn logout-btn">
                                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                                     </button>

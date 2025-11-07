@@ -135,7 +135,7 @@ public class ProfileController extends HttpServlet {
         //update profile
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
-        String email = request.getParameter("email");
+        String email = currentUser.getEmail();
         String gender = request.getParameter("gender");
         String birthdayStr = request.getParameter("birthday");
 
@@ -222,7 +222,7 @@ public class ProfileController extends HttpServlet {
         }
 
         currentUser.setFullName(fullName.trim());
-        currentUser.setEmail(email.trim());
+        currentUser.setEmail(currentUser.getEmail());
         currentUser.setPhone(phone.trim());
         currentUser.setGender(gender.trim());
         currentUser.setBirthday(birthday);

@@ -19,13 +19,16 @@
     <nav>
         <c:if test="${permissions != null && permissions.contains('DEVICE_OVERVIEW')}">
             <a href="admin">Dashboard</a>
+            <a href="sales-report">Sales report</a>
         </c:if>
-        <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
-            <a href="device-show">Thiết bị</a>
-        </c:if>
-        <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
-            <a href="de-show">Thiết bị</a>
-        </c:if>
+        <c:choose>
+			<c:when test="${permissions != null && permissions.contains('DEVICE_OVERVIEW')}">
+				<a href="device-show">Thiết bị</a>
+			</c:when>
+			<c:otherwise>
+				<a href="de-show">Thiết bị</a>
+			</c:otherwise>
+		   </c:choose>
         <c:if test="${permissions != null && permissions.contains('CATEGORY_MANAGEMENT')}">
             <a href="category-show">Danh mục</a>
         </c:if>
@@ -44,9 +47,8 @@
         <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
             <a href="manager-issues">Task cần giao</a>
         </c:if>
-        
-        <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_RESPONDING')}">
-            <a href="support-issues">Vấn đề của khách hàng</a>
+        <c:if test="${permissions != null && permissions.contains('TRANSACTION_MANAGEMENT')}">
+            <a href="transactions">Danh sách giao dịch</a>
         </c:if>
     </nav>
 </aside>
@@ -56,6 +58,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var toggleBtn = document.querySelector('.sidebar-toggle');
     var sidebar = document.querySelector('.sidebar');
     if (!toggleBtn || !sidebar) return;
+    
+    document.body.classList.add('sidebar-collapsed');
+    toggleBtn.setAttribute('aria-expanded', 'false');
+    sidebar.setAttribute('aria-hidden', 'true');
 
     toggleBtn.addEventListener('click', function () {
         var isCollapsed = document.body.classList.contains('sidebar-collapsed');

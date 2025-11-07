@@ -41,7 +41,8 @@ public class CheckoutController extends HttpServlet {
 		    response.sendRedirect("view/authentication/login.jsp");
 		    return;
 		}
-
+		request.setAttribute("user", user);
+		
 		loadCheckoutData(request, response);
 		request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
 	}
@@ -180,6 +181,6 @@ public class CheckoutController extends HttpServlet {
 		cartDao.deleteCart(cartId); 
 		
 		session.setAttribute("finalPrice", finalPrice);
-		response.sendRedirect("view/homepage/banking.jsp");
+		request.getRequestDispatcher("view/homepage/banking.jsp").forward(request, response);
 	}
 }

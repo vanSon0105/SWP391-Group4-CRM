@@ -210,6 +210,10 @@
             font-size: 20px;
             color: #0f172a;
         }
+        
+        .sidebar-toggle{
+        	display: none !important;
+        }
     </style>
 </head>
 
@@ -243,19 +247,17 @@
 	    </section>
 	    
         <c:if test="${param.saved == '1'}">
-            <div class="alert alert-success">Đã lưu thông tin khách hàng.
-            </div>
+            <div class="alert alert-success">Đã lưu thông tin khách hàng</div>
         </c:if>
         
         <c:if test="${param.saved == '2'}">
-            <div class="alert alert-success">Cập nhật trạng thái thành công.
-            </div>
+            <div class="alert alert-success">Cập nhật trạng thái thành công</div>
         </c:if>
         <c:if test="${param.locked == '1'}">
-            <div class="alert alert-warning">Yêu cầu đã được một nhân viên hỗ trợ khác xử lý.</div>
+            <div class="alert alert-warning">Yêu cầu đã được một nhân viên hỗ trợ khác xử lý</div>
         </c:if>
         <c:if test="${param.notfound == '1'}">
-            <div class="alert alert-error">Không tìm thấy yêu cầu cần xử lý.</div>
+            <div class="alert alert-error">Không tìm thấy yêu cầu cần xử lý</div>
         </c:if>
 
         <div class="section">

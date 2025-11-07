@@ -20,6 +20,7 @@ CREATE TABLE users (
   birthday DATE,
   role_id INT,
   status ENUM('active', 'inactive') DEFAULT 'active',
+  is_available boolean DEFAULT true,
   username_changed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP,
@@ -106,7 +107,6 @@ CREATE TABLE order_detail_serials (
 CREATE TABLE payments (
   id INT PRIMARY KEY AUTO_INCREMENT,
   order_id INT UNIQUE NOT NULL,
-  payment_url VARCHAR(255),
   amount DECIMAL(14,0) NOT NULL,
   full_name VARCHAR(100) NOT NULL,
   phone VARCHAR(20) NOT NULL,
@@ -162,20 +162,26 @@ CREATE TABLE task_details (
   foreign key (technical_staff_id) references users(id)
 );
 
-CREATE VIEW task_with_status AS
-SELECT t.id, t.title, t.description, t.manager_id, t.customer_issue_id, t.is_cancelled,
-    CASE
-		WHEN t.is_cancelled = true then 'cancelled'
-        WHEN COUNT(td.id) = 0 THEN 'pending' 
-        WHEN SUM(td.status = 'in_progress') > 0 THEN 'in_progress'
-        WHEN SUM(td.status = 'pending') = COUNT(td.id) THEN 'pending'
-        WHEN SUM(td.status = 'completed') = COUNT(td.id) THEN 'completed'
-        WHEN SUM(td.status = 'cancelled') = COUNT(td.id) THEN 'cancelled'
-        ELSE 'in_progress'
-    END AS status 
+CREATE OR REPLACE VIEW task_with_status AS
+SELECT
+  t.id,
+  t.title,
+  t.description,
+  t.manager_id,
+  t.customer_issue_id,
+  t.is_cancelled,
+  CASE
+    WHEN t.is_cancelled = TRUE THEN 'cancelled'
+    WHEN COUNT(td.id) = 0 THEN 'pending'
+    WHEN SUM(CASE WHEN td.status = 'cancelled' THEN 1 ELSE 0 END) = COUNT(td.id) THEN 'cancelled'
+    WHEN SUM(CASE WHEN td.status = 'completed' THEN 1 ELSE 0 END) = COUNT(td.id) THEN 'completed'
+    WHEN SUM(CASE WHEN td.status = 'in_progress' THEN 1 ELSE 0 END) > 0 THEN 'in_progress'
+    WHEN SUM(CASE WHEN td.status = 'pending' THEN 1 ELSE 0 END) = COUNT(td.id) THEN 'pending'
+    ELSE 'in_progress'
+  END AS status
 FROM tasks t
 LEFT JOIN task_details td ON t.id = td.task_id
-GROUP BY t.id, t.title, t.description, t.manager_id, t.customer_issue_id;
+GROUP BY t.id, t.title, t.description, t.manager_id, t.customer_issue_id, t.is_cancelled;
 
 
 CREATE TABLE customer_issue_details (
@@ -203,6 +209,28 @@ CREATE TABLE suppliers (
   status tinyint default 1
 );
 
+CREATE TABLE issue_payments (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  issue_id INT UNIQUE NOT NULL,
+  amount DECIMAL(12,2) NOT NULL,
+  note VARCHAR(500),
+  shipping_full_name VARCHAR(100),
+  shipping_phone VARCHAR(20),
+  shipping_address VARCHAR(255),
+  shipping_note VARCHAR(500),
+  status ENUM('awaiting_support','awaiting_customer','paid','closed') DEFAULT 'awaiting_support',
+  created_by INT NOT NULL,
+  approved_by INT,
+  confirmed_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  paid_at TIMESTAMP NULL,
+  FOREIGN KEY (issue_id) REFERENCES customer_issues(id),
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (approved_by) REFERENCES users(id),
+  FOREIGN KEY (confirmed_by) REFERENCES users(id)
+);
+
 CREATE TABLE supplier_details (
   id INT PRIMARY KEY AUTO_INCREMENT,
   supplier_id INT NOT NULL,
@@ -218,6 +246,7 @@ CREATE TABLE transactions (
   storekeeper_id INT NOT NULL,
   user_id INT,
   supplier_id INT,
+  note text,
   date timestamp default current_timestamp,
   type ENUM('export','import') NOT NULL,
   status ENUM('pending','confirmed','cancelled') DEFAULT 'pending',
@@ -1013,17 +1042,17 @@ INSERT INTO order_detail_serials (order_detail_id, device_serial_id) VALUES
 
 
 INSERT INTO payments 
-(order_id, payment_url, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at) VALUES
-(1, NULL, 350000, 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
-(2, NULL, 420000, 'Tran Thi B', '0905123456', '45 Nguyen Trai, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-16 09:12:00', NULL),
-(3, NULL, 515000, 'Le Hoang C', '0977123456', '88 Bach Dang, Da Nang', 'Cuối tuần', NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
-(4, NULL, 290000, 'Pham Quynh D', '0988654321', '12 Tran Hung Dao, Hai Phong', 'Cuối tuần', 'Giao buổi tối', 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
-(5, NULL, 810000, 'Do Minh E', '0911222333', '34 Nguyen Van Cu, Can Tho', 'Cuối tuần', NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
-(6, NULL, 460000, 'Bui Anh F', '0922233444', '56 Vo Van Tan, Da Nang', 'Tối (18:00 - 21:00)', NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
-(7, NULL, 320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-22 16:05:00', NULL),
-(8, NULL, 575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
-(9, NULL, 640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', 'Trong giờ hành chính', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
-(10, NULL, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
+(order_id, amount, full_name, phone, address, delivery_time, technical_note, status, created_at, paid_at) VALUES
+(1, 350000, 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(2, 420000, 'Tran Thi B', '0905123456', '45 Nguyen Trai, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-16 09:12:00', NULL),
+(3,  515000, 'Le Hoang C', '0977123456', '88 Bach Dang, Da Nang', 'Cuối tuần', NULL, 'success', '2025-09-12 10:05:00', '2025-09-12 10:05:00'),
+(4,  290000, 'Pham Quynh D', '0988654321', '12 Tran Hung Dao, Hai Phong', 'Cuối tuần', 'Giao buổi tối', 'success', '2025-09-15 14:35:00', '2025-09-15 14:35:00'),
+(5,  810000, 'Do Minh E', '0911222333', '34 Nguyen Van Cu, Can Tho', 'Cuối tuần', NULL, 'success', '2025-09-18 09:20:00', '2025-09-18 09:20:00'),
+(6, 460000, 'Bui Anh F', '0922233444', '56 Vo Van Tan, Da Nang', 'Tối (18:00 - 21:00)', NULL, 'success', '2025-09-20 11:50:00', '2025-09-20 11:50:00'),
+(7,  320000, 'Ngo Tuan G', '0944333222', '78 Cach Mang Thang 8, HCM', 'Tối (18:00 - 21:00)', NULL, 'pending', '2025-09-22 16:05:00', NULL),
+(8,  575000, 'Phan Hong H', '0909123123', '90 Dinh Tien Hoang, Ha Noi', 'Trong giờ hành chính', NULL, 'success', '2025-09-24 18:15:00', '2025-09-24 18:15:00'),
+(9,  640000, 'Vu Khang I', '0939343434', '23 Ly Thuong Kiet, Hue', 'Trong giờ hành chính', NULL, 'success', '2025-09-25 08:25:00', '2025-09-25 08:25:00'),
+(10, 720000, 'Nguyen Duy J', '0966543210', '22 Tran Phu, Nha Trang', 'Cuối tuần', 'Giao sáng', 'success', '2025-09-26 13:10:00', '2025-09-26 13:10:00');
 
 
 INSERT INTO transactions (id, storekeeper_id, user_id, supplier_id, date, type, status) VALUES
@@ -1175,11 +1204,11 @@ INSERT INTO transaction_details (transaction_id, device_id, quantity) VALUES
 (102, 2, 3), (102, 11, 10), (102, 14, 100);
 
 INSERT INTO customer_issues (customer_id, issue_code, title, description, warranty_card_id, support_staff_id, feedback, support_status, created_at) VALUES
-(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, NULL, 'submitted', '2025-10-01 10:00:00'),
-(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, NULL, 'submitted', '2025-10-02 11:00:00'),
+(6, 'ISS-0001', 'Máy nóng', 'iPhone 15 nóng khi sạc', 1, 7, NULL, 'task_created', '2025-10-01 10:00:00'),
+(7, 'ISS-0002', 'Pin yếu', 'iPhone 15 tụt pin nhanh', 11, 7, NULL, 'task_created', '2025-10-02 11:00:00'),
 (10,'ISS-0003', 'Kẹt giấy', 'HP LaserJet kẹt giấy thường xuyên', 18, 7, NULL, 'task_created', '2025-10-03 09:30:00'),
 (11,'ISS-0004', 'Màn hình sọc', 'iPad Air bị sọc dọc', 31, 7, NULL, 'task_created', '2025-10-04 16:45:00'),
-(11,'ISS-0005', 'Màn hình lỗi', 'iPad Air bị lỗi', 31, 7, NULL, 'task_created', '2025-10-04 16:55:00');
+(11,'ISS-0005', 'Màn hình lỗi', 'iPad Air bị lỗi', 31, 7, NULL, 'manager_approved', '2025-10-04 16:55:00');
 
 INSERT INTO customer_issue_details (issue_id, support_staff_id, customer_full_name, contact_email, contact_phone, device_serial, summary, forward_to_manager) VALUES
 (1, 7, 'Hieu Pham', 'customer01@example.com', '0906789012', 'IP15-SN0001','Khách hàng phản ánh máy nóng khi sạc. Đã kiểm tra sơ bộ và xác nhận hiện tượng.', TRUE),
@@ -1205,11 +1234,11 @@ INSERT INTO permissions (id, permission_name) VALUES
 (11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'DEVICE_MANAGEMENT'), (14, 'DEVICE_OVERVIEW'),
 (15, 'PRICING_MANAGEMENT'), (16, 'CREATE_IMPORT_EXPORT_ORDER'), (17, 'QUANTITY_CHECK'), (18, 'IMPORT_EXPORT_REPORTS'),
 (19, 'CRUD_SUPPLIER'), (20, 'DEVICE_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
-(22, 'SUPPLIER_INFO_INTEGRATION'), (25, 'ORDER_TRACKING'),
-(26, 'ORDER_REPORTS'), (29, 'PAYMENT_CONFIRMATION'),
+(22, 'SUPPLIER_INFO_INTEGRATION'), (25, 'ORDER_TRACKING'), (28, 'PAYMENT_REPORTS'),
+(26, 'ORDER_REPORTS'), (27, 'CREATE_TRANSACTION'), (29, 'PAYMENT_CONFIRMATION'),
 (30, 'PAYMENT_REQUEST_CREATION'), (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
-(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE');
+(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), (42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT'), (45, 'PRICE_UPDATE');
 
 -- Admin
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
@@ -1225,7 +1254,7 @@ INSERT INTO role_permission (role_id, permission_id) VALUES (6, 3), (6, 42);
 INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38);
 -- Storekeeper
 INSERT INTO role_permission (role_id, permission_id) VALUES
-(5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3);
+(5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3), (5, 44), (5, 27), (5, 45);
 -- Customer
 INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 25), (6, 26), (6, 30), (6, 37);
 
@@ -1249,4 +1278,12 @@ INSERT INTO cart_details (price, quantity, cart_id, device_id) VALUES
 (24990000, 1, 4, 3),
 (54990000, 1, 4, 2);
 
+INSERT INTO issue_payments 
+(issue_id, amount, note, shipping_full_name, shipping_phone, shipping_address, shipping_note, status, created_by, approved_by, confirmed_by, created_at, updated_at, paid_at)
+VALUES
+(1, 1500.00, 'Thanh toán lỗi sản phẩm', 'Nguyen Van A', '0912345678', '123 Le Loi, Ha Noi', 'Nhanh giup', 'awaiting_support', 1, NULL, NULL, '2025-10-01 10:00:00', '2025-10-01 11:00:00', NULL),
+(2, 2500.50, 'Bồi thường trễ hàng', 'Tran Thi B', '0987654321', '456 Tran Hung Dao, Ha Noi', '', 'awaiting_customer', 2, NULL, NULL, '2025-10-01 12:00:00', '2025-10-01 13:00:00', NULL),
+(3, 1000.00, 'Hoàn tiền', 'Le Van C', '0911222333', '789 Le Lai, Hai Phong', 'Goi truoc khi gui', 'paid', 3, 1, 2, '2025-10-01 13:00:00', '2025-10-01 14:00:00', '2025-10-01 15:00:00'),
+(4, 3200.75, 'Thiết bị hỏng', 'Pham Thi D', '0909876543', '321 Hai Ba Trung, Da Nang', '', 'closed', 1, 2, 3, '2025-10-01 14:00:00', '2025-10-01 15:00:00', '2025-10-01 16:00:00'),
+(5, 500.00, 'Sai mẫu', 'Hoang Van E', '0933444555', '654 Nguyen Trai, Ha Noi', 'Nhanh giup', 'awaiting_support', 2, NULL, NULL, '2025-10-01 15:00:00', '2025-10-01 16:00:00', NULL);
 

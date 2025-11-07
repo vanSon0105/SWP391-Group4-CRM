@@ -8,6 +8,96 @@ import java.util.*;
 import dal.DBContext;
 
 public class UserDAO extends DBContext{
+	  public List<User> searchUsers(String keyword, int offset, int limit) {
+	        List<User> users = new ArrayList<>();
+	        String sql = "SELECT * FROM users WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ? LIMIT ? OFFSET ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            String likeKeyword = "%" + keyword + "%";
+	            ps.setString(1, likeKeyword);
+	            ps.setString(2, likeKeyword);
+	            ps.setString(3, likeKeyword);
+	            ps.setInt(4, limit);
+	            ps.setInt(5, offset);
+
+	            ResultSet rs = ps.executeQuery();
+	            while (rs.next()) {
+	                users.add(mapRowToUser(rs));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return users;
+	    }
+
+	    public List<User> filterUsersByRole(int roleId, int offset, int limit) {
+	        List<User> users = new ArrayList<>();
+	        String sql = "SELECT * FROM users WHERE role_id = ? LIMIT ? OFFSET ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, roleId);
+	            ps.setInt(2, limit);
+	            ps.setInt(3, offset);
+
+	            ResultSet rs = ps.executeQuery();
+	            while (rs.next()) {
+	                users.add(mapRowToUser(rs));
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return users;
+	    }
+
+	    public int countSearchUsers(String keyword) {
+	        String sql = "SELECT COUNT(*) FROM users WHERE username LIKE ? OR full_name LIKE ? OR email LIKE ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            String likeKeyword = "%" + keyword + "%";
+	            ps.setString(1, likeKeyword);
+	            ps.setString(2, likeKeyword);
+	            ps.setString(3, likeKeyword);
+
+	            ResultSet rs = ps.executeQuery();
+	            if (rs.next()) return rs.getInt(1);
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return 0;
+	    }
+
+	    public int countUsersByRole(int roleId) {
+	        String sql = "SELECT COUNT(*) FROM users WHERE role_id = ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, roleId);
+	            ResultSet rs = ps.executeQuery();
+	            if (rs.next()) return rs.getInt(1);
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return 0;
+	    }
+
+	    private User mapRowToUser(ResultSet rs) throws SQLException {
+	        User u = new User();
+	        u.setId(rs.getInt("id"));
+	        u.setUsername(rs.getString("username"));
+	        u.setEmail(rs.getString("email"));
+	        u.setFullName(rs.getString("full_name"));
+	        u.setPhone(rs.getString("phone"));
+	        u.setRoleId(rs.getInt("role_id"));
+	        u.setStatus(rs.getString("status"));
+	        u.setAvailable(rs.getBoolean("is_available"));
+	        return u;
+	    }
+	
     
     public List<User> getUsersByRole(int roleId) {
         List<User> list = new ArrayList<>();
@@ -23,6 +113,7 @@ public class UserDAO extends DBContext{
                 u.setFullName(rs.getString("full_name"));
                 u.setEmail(rs.getString("email"));
                 u.setRoleId(rs.getInt("role_id")); 
+                u.setAvailable(rs.getBoolean("is_available"));
                 list.add(u);
             }
         } catch (Exception e) {
@@ -113,6 +204,7 @@ public class UserDAO extends DBContext{
                 u.setRoleId(rs.getInt("role_id"));
                 u.setCreatedAt(rs.getTimestamp("created_at"));
                 u.setLastLoginAt(rs.getTimestamp("last_login_at"));
+                u.setAvailable(rs.getBoolean("is_available"));
                 return u;
             }
         } catch (SQLException e) {
@@ -166,7 +258,7 @@ public class UserDAO extends DBContext{
     
     public List<User> getAllTechnicalStaff() {
         List<User> list = new ArrayList<>();
-        String sql = "SELECT id, username, full_name, email FROM users WHERE role_id = 3";
+        String sql = "SELECT id, username, full_name, email, is_available FROM users WHERE role_id = 3";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement pre = conn.prepareStatement(sql);
@@ -178,6 +270,7 @@ public class UserDAO extends DBContext{
                 u.setUsername(rs.getString("username"));
                 u.setFullName(rs.getString("full_name"));
                 u.setEmail(rs.getString("email"));
+                u.setAvailable(rs.getBoolean("is_available"));
                 list.add(u);
             }
 
@@ -188,7 +281,40 @@ public class UserDAO extends DBContext{
         return list;
     }
     
-    public boolean updatePassword(String email, String newPassword) {
+    public boolean updateStaffAvailability(int userId, boolean available) {
+        String sql = "UPDATE users SET is_available = ? WHERE id = ? AND role_id = 3";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, available);
+            ps.setInt(2, userId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
+    public boolean isTechnicalStaffAvailable(int userId) {
+        String sql = "SELECT is_available FROM users WHERE id = ? AND role_id = 3";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    boolean available = rs.getBoolean("is_available");
+                    if (rs.wasNull()) {
+                        return true;
+                    }
+                    return available;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+    
+    public void updatePassword(String email, String newPassword) {
         String sql = "UPDATE users SET password = ? WHERE email = ?";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -473,6 +599,7 @@ public User getUserByEmail(String email) {
             user.setFullName(rs.getString("full_name"));
             user.setEmail(rs.getString("email"));
             user.setPassword(rs.getString("password"));
+            user.setAvailable(rs.getBoolean("is_available"));
         }
     } catch (Exception e) {
         e.printStackTrace();

@@ -27,31 +27,11 @@
 	align-items: center;
 	margin: 16px auto;
 	justify-content: space-between;
-	margin-top: 30px;
 	background: white;
-	padding: 16px;
 	border-radius: 12px;
-	border: 0.5px solid #2B90C6;
 }
 
-.filters button, .filters a {
-	padding: 8px 8px;
-	background: #3b82f6;
-	color: white;
-	border-radius: 6px;
-	font-size: 14px;
-}
 
-.filters form {
-	width: 100%;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-}
-
-.device-btn {
-	color: black !important;
-}
 
 .device-management .pagination-pills {
 	display: flex;
@@ -98,23 +78,6 @@ body .panel h2 {
 	margin-bottom: 0 !important;
 }
 
-button {
-	padding: 6px 12px;
-	background-color: #28a745;
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 14px;
-}
-
-button:hover {
-	background-color: #218838;
-}
-
-button {
-	padding: 10px 12px !important;
-}
 
 .pagination-wrapper {
   display: flex;
@@ -148,11 +111,6 @@ button {
 th, td {
 	padding: 14px 5px !important;
 	font-size: 1.3rem !important;
-}
-
-button {
-	width: 80px;
-	font-size: 1rem !important;
 }
 
 .status {
@@ -194,13 +152,10 @@ button {
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
-
-		<section class="panel" id="table-panel">
-			<h2>Danh sách thanh toán</h2>
+		<section class="panel">
 			<div class="filters">
-				<form action="payment-list" method="get">
-					<select id="status" name="status"
-						style="border-radius: 6px; padding: 8px 10px"
+				<form style="width: 100%; display: flex; gap: 30px; justify-content: center;" action="payment-list" method="get">
+					<select class="btn device-btn" id="status" name="status"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.status ? 'selected' : ''}>All
 							status</option>
@@ -210,8 +165,8 @@ button {
 							${param.status == 'success' ? 'selected' : ''}>Success</option>
 						<option value="failed"
 							${param.status == 'failed' ? 'selected' : ''}>Failed</option>
-					</select> <select id="sortCreatedAt" name="sortCreatedAt"
-						style="border-radius: 6px; padding: 8px 10px"
+					</select> 
+					<select class="btn device-btn" id="sortCreatedAt" name="sortCreatedAt"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.sortCreatedAt ? 'selected' : ''}>Sắp
 							xếp theo ngày tạo</option>
@@ -221,8 +176,8 @@ button {
 						<option value="desc"
 							${param.sortCreatedAt == 'desc' ? 'selected' : ''}>Giảm
 							dần</option>
-					</select> <select id="sortPaidAt" name="sortPaidAt"
-						style="border-radius: 6px; padding: 8px 10px"
+					</select> 
+					<select class="btn device-btn" id="sortPaidAt" name="sortPaidAt"
 						onchange="this.form.submit()">
 						<option value="" ${empty param.sortPaidAt ? 'selected' : ''}>Sắp
 							xếp theo ngày thanh toán</option>
@@ -233,13 +188,15 @@ button {
 					</select>
 					<div>
 
-						<input type="search" name="search"
-							placeholder="Enter keywords to search..." value="${param.search}"
-							style="border-radius: 7px; padding: 8px 16px; border: 1px solid #000" />
-						<button type="submit" class="search-button">Search</button>
+						<input class="btn device-btn" type="search" name="search"
+							placeholder="Enter keywords to search..." value="${param.search}"/>
+						<button class="btn device-btn" type="submit">Search</button>
 					</div>
 				</form>
 			</div>
+		</section>
+		<section class="panel" id="table-panel">
+			<h2>Danh sách thanh toán</h2>
 			<div class="table-wrapper">
 				<table class="device-table">
 					<thead>
@@ -291,11 +248,11 @@ button {
    									</a>
 
 									<c:if test="${p.status == 'pending'}">
-										<button style="background-color: #1976D2" name="action"
+										<button class="btn device-btn" style="color: #fff; background-color: #1976D2; padding: 7px 12px;" name="action"
 											type="submit" value="success"
 											onclick="return confirm('Xác nhận thanh toán thành công cho đơn hàng này?')">
 											Confirm</button>
-										<button style="background-color: #E70043" name="action"
+										<button class="btn device-btn" style="color: #fff; background-color: #E70043; padding: 7px 12px;" name="action"
 											type="submit" value="failed"
 											onclick="return confirm('Bạn có chắc muốn từ chối thanh toán này không?')">
 											Deny</button>

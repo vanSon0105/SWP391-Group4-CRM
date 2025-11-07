@@ -245,7 +245,6 @@ public class AccountController extends HttpServlet {
             throws ServletException, IOException {
 
         String keyword = request.getParameter("keyword");
-
         if (keyword != null) {
             keyword = keyword.replace("+", " ").trim();
         }
@@ -261,30 +260,34 @@ public class AccountController extends HttpServlet {
             listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
             return;
         }
+
         if (!keyword.matches("[a-zA-Z0-9@._\\p{L}\\s]+")) {
             request.setAttribute("error", "Từ khóa chứa ký tự không hợp lệ!");
             listAllUsers(request, response, (User) request.getSession().getAttribute("account"));
             return;
         }
 
-        List<User> allUsers = userDAO.getAllUsers();
-        List<User> filtered = new ArrayList<>();
-
-        for (User u : allUsers) {
-            if ((u.getUsername() != null && u.getUsername().toLowerCase().contains(keyword.toLowerCase()))
-                    || (u.getFullName() != null && u.getFullName().toLowerCase().contains(keyword.toLowerCase()))
-                    || (u.getEmail() != null && u.getEmail().toLowerCase().contains(keyword.toLowerCase()))) {
-                filtered.add(u);
-            }
+        int page = 1;
+        int pageSize = 10;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null && pageParam.matches("\\d+")) {
+            page = Integer.parseInt(pageParam);
         }
+
+        int totalUsers = userDAO.countSearchUsers(keyword);
+        int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
+        int offset = (page - 1) * pageSize;
+
+        List<User> filtered = userDAO.searchUsers(keyword, offset, pageSize);
 
         request.setAttribute("users", filtered);
         request.setAttribute("keyword", keyword);
-        request.setAttribute("total", filtered.size());
+        request.setAttribute("total", totalUsers);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
         request.getRequestDispatcher("/view/admin/account/ViewAccount.jsp").forward(request, response);
     }
 
-    
     private void filterByRole(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -296,19 +299,27 @@ public class AccountController extends HttpServlet {
 
         try {
             int roleId = Integer.parseInt(roleParam);
-            List<User> allUsers = userDAO.getAllUsers();
-            List<User> filtered = new ArrayList<>();
 
-            for (User u : allUsers) {
-                if (u.getRoleId() == roleId) {
-                    filtered.add(u);
-                }
+            int page = 1;
+            int pageSize = 10;
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && pageParam.matches("\\d+")) {
+                page = Integer.parseInt(pageParam);
             }
+
+            int totalUsers = userDAO.countUsersByRole(roleId);
+            int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
+            int offset = (page - 1) * pageSize;
+
+            List<User> filtered = userDAO.filterUsersByRole(roleId, offset, pageSize);
 
             request.setAttribute("users", filtered);
             request.setAttribute("filterRole", roleId);
-            request.setAttribute("total", filtered.size());
+            request.setAttribute("total", totalUsers);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
             request.getRequestDispatcher("/view/admin/account/ViewAccount.jsp").forward(request, response);
+
         } catch (NumberFormatException e) {
             response.sendRedirect("account");
         }

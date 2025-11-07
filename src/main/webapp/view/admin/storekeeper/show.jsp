@@ -21,6 +21,7 @@
 	    display: flex;
 	    justify-content: center;
 	    gap: 10px;
+	    padding: 0 0 20px 0;
 	}
 	
 	.device-management .pagination-pills a {
@@ -82,8 +83,8 @@
     .modal-close {
         color: #aaa;
         position: absolute;
-        top: -5px;
-        right: 5px;
+        top: -15px;
+        right: -4px;
         font-size: 28px;
         font-weight: bold;
         cursor: pointer;
@@ -97,22 +98,29 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
+    
+    .disabled{
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	    cursor: not-allowed;
+	    pointer-events: none;
+	    opacity: 0.5;
+	}
 </style>
 </head>
-<body class="management-page device-management sidebar-collapsed">
+<body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	 <main class="sidebar-main">
             <section class="panel">
                 <div class="device-toolbar">
-                	<c:if test="${empty listDevices}">
-	                	<div class="device-toolbar-actions">
-	                        <a class="btn btn-add" href="des-add?id=${deviceId}&action=1">
-	                            <i class="fa-solid fa-plus"></i>
-	                            <span>Thêm device serials</span>
-	                        </a>
-	                    </div>
+                
+                	<c:if test="${not empty mess}">
+	                	<span class="device-status" style="color: red;font-size: 1.5rem;">${mess}</span>	
 	                </c:if>
+                	
                     <form class="device-search" action="de-show" method="get">
 		                <input id="device-search" name="key" type="search" placeholder="Tìm theo mã, tên thiết bị . . ." value="${param.key}">
 		                <label for="device-search" class="sr-only"></label>
@@ -157,13 +165,8 @@
             	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
 	                <h2>Danh sách thiết bị</h2>
 	                <c:if test="${not empty mess}">
-	                	<span style="color: red;font-size: 1.5rem;">${mess}</span>	
-	                </c:if>	
-
-	                <c:if test="${not empty listDeviceSerials || empty listDevices}">
-	                	<a class="btn device-btn" href="de-show#table-panel">Quay lại</a>       
-	                </c:if>	     
-  
+	                	<span class="device-status" style="color: red;font-size: 1.5rem;">${mess}</span>	
+	                </c:if>	  
             	</div>
                 <div class="table-wrapper">
                     <c:if test="${not empty listDevices}"> 
@@ -195,6 +198,7 @@
 		                                <td class="device-show-actions">
 		                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
 		                                    <a class="btn device-btn" href="des-show?id=${s.id}#device-serial">Xem Serials</a>
+		                                    <a class="btn device-btn" href="de-show?action=1&id=${s.id}">Cập Nhật Giá</a>
 		                                </td>
 		                            </tr>
 		                          </c:forEach>
@@ -203,7 +207,7 @@
                    <p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thiết bị: <strong>${totalDevices}</strong></p>
                    </c:if>
                    
-                   <c:if test="${empty listDevices && empty listDeviceSerials}">
+                   <c:if test="${empty listDevices}">
 	                   <table class="device-table"> 
 	                   		<tbody>
 		                   		<tr>
@@ -213,31 +217,6 @@
 							    </tr>
 						    </tbody>
 						</table>
-                   </c:if>
-                   
-                   <c:if test="${not empty listDeviceSerials}">
-                    <table class="device-table" id="device-serial">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Serial No</th>
-                                <th>Trạng thái tồn kho</th>
-                                <th>Trạng thái</th>
-                                <th>Ngày nhập</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        	<c:forEach items="${listDeviceSerials}" var="s">
-	                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
-	                            	<td>${s.id}</td>
-	                                <td>${s.serial_no}</td>
-	                                <td>${s.stock_status}</td>
-	                                <td>${s.status}</td>
-	                                <td>${s.import_date}</td>
-	                            </tr>
-	                          </c:forEach>
-                        </tbody>
-                    </table>
                    </c:if>
                 </div>
              </section>
@@ -300,27 +279,32 @@
             </div>
         </main>
         
-        <c:if test="${addDeviceSerials}">
+        <c:if test="${updatePrice}">
 		    <div id="taskDetailModal" class="modal-overlay">
 		        <div class="modal-content">
-		            <a class="modal-close" href="des-show?id=${deviceId}">&times;</a>
-		            <h2>Thêm thiết bị</h2>
+		            <a class="modal-close" href="de-show">&times;</a>
+		            <h2>Nhập giá thiết bị</h2>
 			        <div class="task-detail-grid">
-			        	<form class="device-form" action="des-add" method="post">
+			        	<form class="device-form" action="de-price" method="post">
 			        		<input name="id" value="${device.id}" hidden>
 		                    <div class="form-field">
-		                        <label for="name">Tên device serials</label>
+		                        <label for="name">Tên thiết bị</label>
 		                        <input id="name" name="name" readonly value="${device.name}">
 		                    </div>
 		                    
 		                    <div class="form-field">
-		                        <label for="quantity">Số lượng device serials</label>
-		                        <input type="number" id="quantity" name="quantity" min="1">
+		                        <label for="priceCurrent">Giá hiện tại</label>
+		                        <input id="priceCurrent" name="priceCurrent" placeholder="9490000" min="1" readonly value="${device.price}">
+		                    </div>
+		                    
+		                    <div class="form-field">
+		                        <label for="price">Giá mới</label>
+		                        <input id="price" type="number" name="price" placeholder="9490000" min="1">
 		                    </div>
 		
 			                <div class="form-actions">
-			                    <a class="btn ghost" href="des-show?id=${device.id}">Hủy</a>
-			                    <button class="btn primary" type="submit">Thêm</button>
+			                    <a class="btn ghost" href="de-show">Hủy</a>
+			                    <button class="btn primary" onclick="return confirm('Bạn có chắc chắn muốn cập nhật giá?')" type="submit">Cập nhật</button>
 			                </div>
 			            </form>      
 			        </div>
