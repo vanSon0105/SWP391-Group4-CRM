@@ -314,7 +314,7 @@ public class CustomerIssueController extends HttpServlet {
 		req.getRequestDispatcher("view/customer/issuePage.jsp").forward(req, resp);
 	}
 	
-	private void handlePaymentConfirm(HttpServletRequest req, HttpServletResponse resp, User customer) throws IOException {
+	private void handlePaymentConfirm(HttpServletRequest req, HttpServletResponse resp, User customer) throws ServletException, IOException {
 		String issueIdParam = req.getParameter("issueId");
 		if (issueIdParam == null) {
 			resp.sendRedirect("issue");
@@ -440,12 +440,8 @@ public class CustomerIssueController extends HttpServlet {
 		req.setAttribute("bankingRecipientPhone", payment.getShippingPhone());
 		req.setAttribute("bankingRecipientAddress", payment.getShippingAddress());
 		req.setAttribute("bankingShippingNote", payment.getShippingNote());
-		
-		try {
-			req.getRequestDispatcher("view/homepage/banking.jsp").forward(req, resp);
-		} catch (ServletException e) {
-			throw new IOException(e);
-		}
+		ciDao.updateSupportStatus(issueId, "resolved");
+		req.getRequestDispatcher("view/homepage/banking.jsp").forward(req, resp);
 	}
 	
 	private void forwardIssueCheckout(HttpServletRequest req, HttpServletResponse resp, User customer)
@@ -625,6 +621,23 @@ public class CustomerIssueController extends HttpServlet {
 		}
 
 		resp.sendRedirect("issue?feedback_saved=1");
+	}
+	
+	private boolean isLockedForCustomer(String status) {
+		if (status == null) {
+			return false;
+		}
+		switch (status.toLowerCase()) {
+		case "manager_approved":
+		case "task_created":
+		case "tech_in_progress":
+		case "resolved":
+		case "completed":
+		case "waiting_payment":
+			return true;
+		default:
+			return false;
+		}
 	}
 	
 }

@@ -323,7 +323,15 @@
 					                    <fmt:formatNumber value="${issuePayment.amount}" type="number" maxFractionDigits="0"/>
 					                </strong>
 					            </p>
-					            <p>Trạng thái bill: <strong>${issuePayment.status}</strong></p>
+					            <p>Trạng thái bill: <strong>
+					            	<c:choose>
+					            		<c:when test="${issuePayment.status == 'awaiting_support'}">Nhân viên hỗ trợ xử lí</c:when>
+					            		<c:when test="${issuePayment.status == 'awaiting_customer'}">Chờ khách hàng thanh toán</c:when>
+					            		<c:when test="${issuePayment.status == 'paid'}">Đã thanh toán</c:when>
+					            		<c:otherwise>Đã đóng đơn</c:otherwise>
+					            	</c:choose>
+					            </strong>
+					            </p>
 					            <c:if test="${not empty issuePayment.note}">
 					                <p>Ghi chú: <strong>${issuePayment.note}</strong></p>
 					            </c:if>
@@ -364,10 +372,18 @@
 		                    </div>
 		                </c:if>
 		                <div class="actions">
+		                <%-- 
 		                    <c:if test="${taskDetail.status == 'completed' and issue.supportStatus == 'tech_in_progress'}">
 		                    	<a class="btn btn-success" href="support-issues?action=updateStatus&id=${taskDetail.customerIssueId}">Cập nhật trạng thái</a>
-		                    </c:if>
+		                    </c:if> --%>
 		                    <a class="btn btn-secondary" href="support-issues">Quay lại</a>
+		                    <c:if test="${paymentAwaitingSupport}">
+							    <form method="post" action="support-issues">
+							        <input type="hidden" name="action" value="payment_open">
+							        <input type="hidden" name="issueId" value="${issue.id}">
+							        <button style="font-size: 1.8rem;" type="submit" class="btn btn-primary">Mở cho khách thanh toán</button>
+							    </form>
+							</c:if>
 		                </div>
 		            </c:if>
 		
@@ -410,13 +426,7 @@
 					</c:if>
 					
 					<div class="actions">
-			            <c:if test="${paymentAwaitingSupport}">
-						    <form method="post" action="support-issues" style="margin-top:12px;">
-						        <input type="hidden" name="action" value="payment_open">
-						        <input type="hidden" name="issueId" value="${issue.id}">
-						        <button style="padding: 12.8px 18px;" type="submit" class="btn btn-primary">Mở cho khách thanh toán</button>
-						    </form>
-						</c:if>
+			            
 					</div>
               </div>
          </div>
