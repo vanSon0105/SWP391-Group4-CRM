@@ -290,6 +290,16 @@
 		                        <label for="quantity">Số lượng device serials</label>
 		                        <input type="number" id="quantity" name="quantity" min="1" max="100">
 		                    </div>
+		                    
+		                    <div class="form-field">
+		                        <label for="supplierId">Nhà cung cấp</label>
+		                        <select id="supplierId" name="supplierId" required>
+		                            <option value="">-- Chọn nhà cung cấp --</option>
+		                            <c:forEach items="${suppliers}" var="sup">
+			                            <option value="${sup.id}">${sup.name}</option>
+		                            </c:forEach>
+		                        </select>
+		                    </div>
 		
 			                <div class="form-actions">
 			                    <a class="btn ghost" href="des-show?id=${device.id}">Hủy</a>
