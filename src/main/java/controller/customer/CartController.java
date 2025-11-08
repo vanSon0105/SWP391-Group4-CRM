@@ -18,6 +18,7 @@ import java.util.List;
 
 import dao.CartDAO;
 import dao.CartDetailDAO;
+import dao.DeviceSerialDAO;
 
 /**
  * Servlet implementation class CartController
@@ -28,6 +29,8 @@ public class CartController extends HttpServlet {
 
 	public CartDAO cdao = new CartDAO();
 	public CartDetailDAO cdDao = new CartDetailDAO();
+	public DeviceSerialDAO dsDao = new DeviceSerialDAO();
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
         switch (path) {
@@ -42,7 +45,7 @@ public class CartController extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpSession session = req.getSession(false);
+		HttpSession session = req.getSession();
 		User user = (User) session.getAttribute("account");
 		if (user == null) {
 			resp.sendRedirect("login");
@@ -59,13 +62,23 @@ public class CartController extends HttpServlet {
             return;
         }
         int quantity = cd.getQuantity();
+        String deviceName = cd.getDevice() != null ? cd.getDevice().getName() : "";
+        int deviceId = cd.getDevice() != null ? cd.getDevice().getId() : -1;
+        if (deviceId == -1) {
+        	resp.sendRedirect("cart");
+        	return;
+        }
+        int available = dsDao.countAvailableSerials(deviceId);
         
-//        if(action == null) {
-        	//quantity = Integer.parseInt(quantityInput);
         if("remove".equals(action)) {
         	removeFromCart(req, resp);
         	return;
         }else if ("increase".equals(action)) {
+        	if (quantity + 1 > available) {
+        		session.setAttribute("cartErrorMessage", buildStockMessage(deviceName, available));
+        		resp.sendRedirect("cart");
+        		return;
+        	}
             quantity++;
         } else if ("decrease".equals(action) && quantity > 1) {
             quantity--;
@@ -96,6 +109,11 @@ public class CartController extends HttpServlet {
 		if (u == null) {
 			response.sendRedirect("login");
 			return;
+		}
+		String cartError = (String) session.getAttribute("cartErrorMessage");
+		if (cartError != null) {
+			request.setAttribute("cartErrorMessage", cartError);
+			session.removeAttribute("cartErrorMessage");
 		}
 		int userId = u.getId();
 		Cart cart = cdao.getOrCreateCart(userId);
@@ -152,8 +170,29 @@ public class CartController extends HttpServlet {
 			return;
 		}
 		int userId = u.getId();
+		Cart cart = cdao.getOrCreateCart(userId);
+		if (cart == null) {
+			resp.sendRedirect("cart");
+			return;
+		}
+		CartDetail current = cdDao.getCartDetailByDevice(cart.getId(), deviceId);
+		int currentQuantity = current != null ? current.getQuantity() : 0;
+		int available = dsDao.countAvailableSerials(deviceId);
+		if (currentQuantity + 1 > available) {
+			session.setAttribute("cartErrorMessage",buildStockMessage(current != null && current.getDevice() != null ? current.getDevice().getName() : "", available));
+			resp.sendRedirect("cart");
+			return;
+		}
 		cdao.addDeviceToCart(userId, deviceId);
 		resp.sendRedirect("home");
+	}
+	
+	private String buildStockMessage(String deviceName, int available) {
+		String name = (deviceName == null || deviceName.isEmpty()) ? "Thiết bị" : deviceName;
+		if (available <= 0) {
+			return name + " hiện đã hết hàng. Vui lòng chọn sản phẩm khác.";
+		}
+		return name + " chỉ còn " + available + " chiếc. Vui lòng giảm số lượng trong giỏ hàng.";
 	}
 	
 

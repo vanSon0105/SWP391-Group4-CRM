@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpSession;
 import model.Category;
 import model.Device;
 import model.DeviceSerial;
+import model.Transaction;
+import model.TransactionDetail;
 import model.User;
 import utils.AuthorizationUtils;
 
@@ -20,6 +22,9 @@ import com.mysql.cj.Session;
 import dao.CategoryDAO;
 import dao.DeviceDAO;
 import dao.DeviceSerialDAO;
+import dao.SupplierDAO;
+import dao.TransactionDAO;
+import dao.TransactionDetailDAO;
 
 /**
  * Servlet implementation class StorekeeperController
@@ -31,6 +36,9 @@ public class StorekeeperController extends HttpServlet {
 	public CategoryDAO cdao = new CategoryDAO();
 	public DeviceSerialDAO dsdao = new DeviceSerialDAO();
 	private final int recordsEachPage = 10;
+	private final TransactionDAO transactionDAO = new TransactionDAO();
+	private final TransactionDetailDAO transactionDetailDAO = new TransactionDetailDAO();
+	private final SupplierDAO supplierDao = new SupplierDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
@@ -156,6 +164,7 @@ public class StorekeeperController extends HttpServlet {
 		
 		if("1".equalsIgnoreCase(action)) {
 			request.setAttribute("addDeviceSerials", true);
+			request.setAttribute("suppliers", supplierDao.getAllSuppliers());
 		}
 		
 		Device d = dao.getDeviceById(id);
@@ -184,13 +193,49 @@ public class StorekeeperController extends HttpServlet {
 		}
 		Device d = dao.getDeviceById(id);
 		int quantity = Integer.parseInt(request.getParameter("quantity"));
+		String supplierParam = request.getParameter("supplierId");
+		int supplierId;
+		try {
+			supplierId = Integer.parseInt(supplierParam);
+		} catch (Exception ex) {
+			s.setAttribute("mess", "Vui lòng chọn nhà cung cấp hợp lệ");
+			response.sendRedirect("des-show?id="+id);
+			return;
+		}
+		if (supplierDao.getSupplierById(supplierId) == null) {
+			s.setAttribute("mess", "Nhà cung cấp không tồn tại hoặc không hoạt động");
+			response.sendRedirect("des-show?id="+id);
+			return;
+		}
 		boolean check = dsdao.insertDeviceSerials(d, quantity);
 		if(!check) {
 			s.setAttribute("mess", "Thêm device serials thất bại");
 		} else {
 			s.setAttribute("mess", "Thêm device serials thành công");
+			recordManualImport(currentUser.getId(), supplierId, id, quantity);
 		}
 		response.sendRedirect("des-show?id="+id);
+	}
+	
+	private void recordManualImport(int storekeeperId,int supplierId, int deviceId, int quantity) {
+		if (quantity <= 0) {
+			return;
+		}
+		Transaction transaction = new Transaction();
+		transaction.setStorekeeperId(storekeeperId);
+		transaction.setSupplierId(supplierId);
+		transaction.setType("import");
+		transaction.setStatus("confirmed");
+		transaction.setNote("Nhận thiết bị" + deviceId);
+		int transactionId = transactionDAO.createTransaction(transaction);
+		if (transactionId <= 0) {
+			return;
+		}
+		TransactionDetail detail = new TransactionDetail();
+		detail.setTransactionId(transactionId);
+		detail.setDeviceId(deviceId);
+		detail.setQuantity(quantity);
+		transactionDetailDAO.addTransactionDetail(detail, "import");
 	}
 	
 	public void updateDevicePrice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

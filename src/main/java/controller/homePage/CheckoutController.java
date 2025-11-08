@@ -16,6 +16,7 @@ import model.Supplier;
 import model.User;
 import dao.PaymentDAO;
 import dao.CartDAO;
+import dao.DeviceSerialDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import model.Cart;
@@ -29,6 +30,7 @@ public class CheckoutController extends HttpServlet {
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
 	OrderDetailDAO odDao = new OrderDetailDAO();
+	DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -40,6 +42,11 @@ public class CheckoutController extends HttpServlet {
 		if (user == null) {
 		    response.sendRedirect("view/authentication/login.jsp");
 		    return;
+		}
+		
+		if (!validateCartStock(user, session)) {
+			response.sendRedirect("cart");
+			return;
 		}
 		request.setAttribute("user", user);
 		
@@ -90,8 +97,22 @@ public class CheckoutController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("account");
+		if (user == null) {
+			response.sendRedirect("login");
+			return;
+		}
+		if (!validateCartStock(user, session)) {
+			response.sendRedirect("cart");
+			return;
+		}
 		
 		Cart cart = cartDao.getCartByUserId(user.getId());
+		if (cart == null) {
+			session.setAttribute("cartErrorMessage", "Giỏ hàng rỗng.");
+			response.sendRedirect("cart");
+		 return;
+		}
+		
 		int cartId = cart.getId();
 		double finalPrice = (double)session.getAttribute("finalPrice");
 		double discount = (double)session.getAttribute("discount");
@@ -182,5 +203,35 @@ public class CheckoutController extends HttpServlet {
 		
 		session.setAttribute("finalPrice", finalPrice);
 		request.getRequestDispatcher("view/homepage/banking.jsp").forward(request, response);
+	}
+	
+	private boolean validateCartStock(User user, HttpSession session) {
+		Cart cart = cartDao.getCartByUserId(user.getId());
+		if (cart == null) {
+			return true;
+		}
+		List<CartDetail> items = cartDao.getCartDetail(cart.getId());
+		if (items == null) {
+			return true;
+		}
+		for (CartDetail item : items) {
+			if (item.getDevice() == null) {
+				continue;
+			}
+			int available = dsDao.countAvailableSerials(item.getDevice().getId());
+			if (item.getQuantity() > available) {
+				session.setAttribute("cartErrorMessage", buildStockMessage(item.getDevice().getName(), available));
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private String buildStockMessage(String deviceName, int available) {
+		String name = (deviceName == null || deviceName.isEmpty()) ? "Thiết bị" : deviceName;
+		if (available <= 0) {
+			return name + " hiện đã hết hàng. Vui lòng điều chỉnh giỏ hàng.";
+		}
+		return name + " chỉ còn " + available + " chiếc. Vui lòng giảm số lượng trước khi thanh toán.";
 	}
 }
