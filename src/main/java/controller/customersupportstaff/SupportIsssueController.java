@@ -50,10 +50,10 @@ public class SupportIsssueController extends HttpServlet {
 			return;
 		}
 		
-		if ("updateStatus".equalsIgnoreCase(action)) {
-			updateStatusIssue(req, resp, staff);
-			return;
-		}
+//		if ("updateStatus".equalsIgnoreCase(action)) {
+//			updateStatusIssue(req, resp, staff);
+//			return;
+//		}
 		
 		List<CustomerIssue> newIssues = iDao.getUnassignedIssues();
 		List<CustomerIssue> myIssues = iDao.getIssuesAssignedToStaff(staff.getId());
@@ -255,7 +255,7 @@ public class SupportIsssueController extends HttpServlet {
 
 		dDao.saveIssueDetail(d);
 		String nextStatus = forward ? "manager_review" : "in_progress";
-		boolean check = iDao.updateSupportStatus(issueId, staff.getId(), nextStatus);
+		iDao.updateSupportStatus(issueId, staff.getId(), nextStatus);
 		resp.sendRedirect("support-issues?saved=1");
 	}
 	
@@ -313,8 +313,9 @@ public class SupportIsssueController extends HttpServlet {
 		if (!ok) {
 			resp.sendRedirect("support-issues?paymentInvalid=1");
 			return;
-		}
+		}		
 
+		iDao.updateSupportStatus(issueId, "waiting_payment");
 		resp.sendRedirect("support-issues?action=review&id=" + issueId + "&paymentReady=1");
 	}
 	
@@ -375,6 +376,9 @@ public class SupportIsssueController extends HttpServlet {
 		case "tech_in_progress":
 		case "resolved":
 		case "customer_cancelled":
+		case "completed":
+		case "waiting_payment":
+		case "create_payment":
 			return true;
 		default:
 			return false;

@@ -22,6 +22,7 @@ public class TaskDetail {
     private Timestamp updatedAt;
     private String technicalStaffName; 
     private String assignedByName;   
+    private String support_status;
 
     public TaskDetail() {}
 
@@ -92,12 +93,17 @@ public class TaskDetail {
 	}
 
 
-
 	public int getId() {
 		return id;
 	}
 
+	public String getSupport_status() {
+		return support_status;
+	}
 
+	public void setSupport_status(String support_status) {
+		this.support_status = support_status;
+	}
 
 	public void setId(int id) {
 		this.id = id;

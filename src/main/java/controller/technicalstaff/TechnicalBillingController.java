@@ -4,11 +4,13 @@ import java.io.IOException;
 
 import dao.CustomerIssueDAO;
 import dao.IssuePaymentDAO;
+import dao.TaskDetailDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.IssuePayment;
 import model.User;
@@ -19,6 +21,7 @@ public class TechnicalBillingController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private IssuePaymentDAO paymentDao = new IssuePaymentDAO();
 	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
+	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -35,6 +38,12 @@ public class TechnicalBillingController extends HttpServlet {
 		CustomerIssue issue = issueDao.getIssueById(issueId);
 		if (issue == null) {
 			resp.sendRedirect("technical-issues?notfound=1");
+			return;
+		}
+		
+		if (!taskDetailDao.areAllAssignmentsCompletedForIssue(issueId)) {
+			redirectWithAlert(req, resp,
+					"Chỉ tạo bill khi tất cả kỹ thuật viên trong yêu cầu đã hoàn tất công việc.", "error");
 			return;
 		}
 
@@ -72,6 +81,12 @@ public class TechnicalBillingController extends HttpServlet {
 		CustomerIssue issue = issueDao.getIssueById(issueId);
 		if (issue == null ) {
 			resp.sendRedirect("technical-issues?invalid=1");
+			return;
+		}
+		
+		if (!taskDetailDao.areAllAssignmentsCompletedForIssue(issueId)) {
+			redirectWithAlert(req, resp,
+					"Chỉ tạo bill khi tất cả kỹ thuật viên trong yêu cầu đã hoàn tất công việc.", "error");
 			return;
 		}
 		
@@ -128,8 +143,9 @@ public class TechnicalBillingController extends HttpServlet {
 			req.getRequestDispatcher("view/admin/technicalstaff/issueBilling.jsp").forward(req, resp);
 			return;
 		}
-
-		resp.sendRedirect("technical-issues?billCreated=1");
+		
+		issueDao.updateSupportStatus(issueId, "create_payment");
+		redirectWithAlert(req, resp, "Đã tạo bill cho yêu cầu " + issue.getIssueCode() + ".", "success");
 	}
 
 	private Integer parseIssueId(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -148,5 +164,12 @@ public class TechnicalBillingController extends HttpServlet {
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		return AuthorizationUtils.requirePermission(req, resp, "PROCESS_TASK");
+	}
+	
+	private void redirectWithAlert(HttpServletRequest req, HttpServletResponse resp, String message, String type) throws IOException {
+		HttpSession session = req.getSession();
+		session.setAttribute("techAlertMessage", message);
+		session.setAttribute("techAlertType", type);
+		resp.sendRedirect("technical-issues");
 	}
 }

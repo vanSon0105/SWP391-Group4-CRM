@@ -117,12 +117,22 @@
       color: #1d4ed8;
     }
     
+    .status-create_payment {
+        background: #fef3c7;
+        color: #92400e;
+    }
+    
     .status-warranty {
       background: #dbeafe;
       color: #1d4ed8;
     }
     
     .status-repair {
+      background: #fef3c7;
+      color: #b45309;
+    }
+    
+    .status-waiting_payment {
       background: #fef3c7;
       color: #b45309;
     }
@@ -163,6 +173,11 @@
     }
 
     .status-resolved {
+      background: #dcfce7;
+      color: #15803d;
+    }
+    
+    .status-completed {
       background: #dcfce7;
       color: #15803d;
     }
@@ -359,6 +374,9 @@
                                     <c:when test="${status == 'manager_approved'}">Đã duyệt tạo task</c:when>
                                     <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
                                     <c:when test="${status == 'tech_in_progress'}">Đang thực hiện</c:when>
+                                    <c:when test="${status == 'create_payment'}">Nhân viên đang xử lí</c:when>
+                                    <c:when test="${status == 'waiting_payment'}">Vui lòng thanh toán</c:when>
+                                    <c:when test="${status == 'completed'}">Xử lí xong vấn đề</c:when>
                                     <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
@@ -370,7 +388,7 @@
                                    href="issue-fill?id=${s.id}">Bổ sung form</a>
                             </c:if>
                             
-                            <c:if test="${status != 'resolved' && status != 'customer_cancelled'}">
+                            <c:if test="${status != 'resolved' && status != 'customer_cancelled' && status != 'tech_in_progress' && status != 'completed' && status != 'create_payment' && status != 'waiting_payment'}">
 	                             <form method="post" action="issue-fill" style="display:inline;">
 	                                 <input type="hidden" name="issueId" value="${s.id}">
 	                                 <input type="hidden" name="cancel" value="1">
@@ -385,7 +403,7 @@
                              
                             <a class="action-view" href="issue-detail?id=${s.id}&action=1">Xem Issue</a>
                             
-                            <c:if test="${status == 'resolved' && payment != null && payment.status == 'awaiting_customer'}">
+                            <c:if test="${status == 'waiting_payment' && payment != null && payment.status == 'awaiting_customer'}">
 								<a class="link-button" href="issue-pay?issueId=${s.id}">Thanh toán</a>
 							</c:if>
 
@@ -484,6 +502,8 @@
                                     <c:when test="${issueDetail.supportStatus == 'manager_approved'}">Đã duyệt tạo task</c:when>
                                     <c:when test="${issueDetail.supportStatus == 'task_created'}">Đã tạo task</c:when>
                                     <c:when test="${issueDetail.supportStatus == 'tech_in_progress'}">Đang thực hiện</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'create_payment'}">Nhân viên đang xử lí</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'completed'}">Xử lí xong vấn đề</c:when>
                                     <c:when test="${issueDetail.supportStatus == 'resolved'}">Đã hoàn tất</c:when>
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>

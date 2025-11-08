@@ -272,6 +272,16 @@
             <div class="alert alert-warning">Yêu cầu không hợp lệ</div>
         </c:if>
         
+        <c:if test="${param.billLocked == '1'}">
+            <div class="alert alert-warning">Khách hàng đã thanh toán. Không thể tạo/sửa bill</div>
+        </c:if>
+        
+        <c:if test="${not empty techAlertMessage}">
+            <div class="alert ${techAlertType eq 'error' ? 'alert-error' : 'alert-success'}">
+                ${techAlertMessage}
+            </div>
+        </c:if>
+        
         <c:if test="${not empty availabilityMessage}">
             <div class="alert ${availabilityMessageType eq 'error' ? 'alert-error' : 'alert-success'}">
                 ${availabilityMessage}
@@ -342,20 +352,24 @@
                                 <td>
                                     <form method="post" action="technical-issues" style="display:flex; gap:8px; align-items:center;" class="assignment-form" data-existing-summary="${assignment.note != null ? fn:escapeXml(assignment.note) : ''}">
                                         <input type="hidden" name="assignmentId" value="${assignment.id}">
-                                        <input type="hidden" name="summary" value="">
-                                        <select name="status">
-                                            <option value="pending" ${assignment.status == 'pending' ? 'selected' : ''}>Chưa bắt đầu</option>
-                                            <option value="in_progress" ${assignment.status == 'in_progress' ? 'selected' : ''}>Đang thực hiện</option>
-                                            <option value="completed" ${assignment.status == 'completed' ? 'selected' : ''}>Đã hoàn tất</option>
-                                            <option value="cancelled" ${assignment.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
-                                        </select>
-                                        <button type="submit">Lưu</button>
+                                        
+                                        <c:if test="${assignment.support_status != 'create_payment' and assignment.support_status != 'waiting_payment' and assignment.support_status != 'resolved'}">
+	                                        <input type="hidden" name="summary" value="">
+	                                        <select name="status">
+	                                            <option value="pending" ${assignment.status == 'pending' ? 'selected' : ''}>Chưa bắt đầu</option>
+	                                            <option value="in_progress" ${assignment.status == 'in_progress' ? 'selected' : ''}>Đang thực hiện</option>
+	                                            <option value="completed" ${assignment.status == 'completed' ? 'selected' : ''}>Đã hoàn tất</option>
+	                                            <option value="cancelled" ${assignment.status == 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+	                                        </select>
+	                                        <button type="submit">Lưu</button>
+                                        </c:if>
+                                        
                                         <a class="btn-link" href="technical-issues?id=${assignment.id}">Xem</a>                                    
 	                                    <c:if test="${assignment.status == 'cancelled'}">
 		                                    <button type="button" class="btn-show-reason" data-reason="${fn:escapeXml(assignment.note)}">Hiển thị lý do</button>
 		                                </c:if>
 		                                
-	                                    <c:if test="${assignment.customerIssueId != null and assignment.status == 'completed'}">
+	                                    <c:if test="${assignment.customerIssueId != null and (assignment.support_status == 'completed' or assignment.support_status == 'create_payment')}">
                                             <a class="btn-link" style="background:#0f766e;" href="technical-billing?issueId=${assignment.customerIssueId}">Tạo bill</a>
 	                                    </c:if>
                                     </form>
