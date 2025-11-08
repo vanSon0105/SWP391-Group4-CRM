@@ -46,7 +46,6 @@ public class TransactionListController extends HttpServlet {
 
         for (Transaction t : transactions) {
             List<TransactionDetail> details = detailDAO.getTransactionDetailsByTransactionId(t.getId());
-            System.out.println("Transaction " + t.getId() + " has " + details.size() + " devices");
             t.setDetails(details);
         }
 

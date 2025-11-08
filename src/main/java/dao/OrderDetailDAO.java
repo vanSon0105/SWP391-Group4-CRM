@@ -117,6 +117,20 @@ public class OrderDetailDAO extends DBContext{
 	        }
 	        return false;
 	    }
+	    
+	    public boolean isSerialAlreadyAssigned(int deviceSerialId) {
+	        String sql = "SELECT 1 FROM order_detail_serials WHERE device_serial_id = ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+	            ps.setInt(1, deviceSerialId);
+	            try (ResultSet rs = ps.executeQuery()) {
+	                return rs.next();
+	            }
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return false;
+	    }
 
 
 }

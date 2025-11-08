@@ -44,11 +44,11 @@ public class TransactionDetailDAO extends DBContext {
                     ps.setInt(2, detail.getDeviceId());
                     ps.executeUpdate();
                 }
-            } else {
+            } else if ("export".equalsIgnoreCase(type)) {
                 int current = getCurrentStock(detail.getDeviceId());
                 if (current < detail.getQuantity()) {
                     conn.rollback();
-                    System.out.println(" Not enough stock for device ID " + detail.getDeviceId());
+                    System.out.println("Not enough stock for device ID " + detail.getDeviceId());
                     return false;
                 }
                 try (PreparedStatement ps = conn.prepareStatement(updateStockSqlExport)) {
@@ -69,9 +69,10 @@ public class TransactionDetailDAO extends DBContext {
     }
 
     private int getCurrentStock(int deviceId) {
-        String sql = "SELECT quantity FROM devices WHERE id = ?";
+    	String sql = "SELECT COUNT(*) AS quantity FROM device_serials "
+                + "WHERE device_id = ? AND stock_status = 'in_stock'";
         try (Connection conn = getConnection();
-PreparedStatement ps = conn.prepareStatement(sql)) {
+        	PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, deviceId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("quantity");

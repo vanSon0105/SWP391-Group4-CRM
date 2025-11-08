@@ -16,10 +16,14 @@ import model.CartDetail;
 import model.DeviceSerial;
 import model.OrderDetail;
 import model.Payment;
+import model.Transaction;
+import model.TransactionDetail;
 import model.WarrantyCard;
 import model.Device;
 import dao.DeviceDAO;
 import dao.PaymentDAO;
+import dao.TransactionDAO;
+import dao.TransactionDetailDAO;
 import dao.DeviceSerialDAO;
 import dao.OrderDAO;
 import dao.OrderDetailDAO;
@@ -47,6 +51,8 @@ public class PaymentController extends HttpServlet {
 	DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	CartDetailDAO cdDao = new CartDetailDAO();
 	DeviceDAO deviceDao = new DeviceDAO();
+	TransactionDAO transactionDao = new TransactionDAO();
+	TransactionDetailDAO transactionDetailDao = new TransactionDetailDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -83,11 +89,28 @@ public class PaymentController extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		User staff = getManager(req, resp);
+		if (staff == null) {
+			return;
+		}
+		
 		String id = req.getParameter("paymentId");
 		String action = req.getParameter("action");
 
 		if ("success".equals(action)) {
 			int paymentId = Integer.parseInt(id);
+			
+			Payment payment = paymentDao.getPaymentById(paymentId);
+			if (payment == null) {
+				resp.sendRedirect("payment-list?error=payment_not_found");
+				return;
+			}
+			
+			if ("success".equalsIgnoreCase(payment.getStatus())) {
+				resp.sendRedirect("payment-list?info=already_confirmed");
+				return;
+			}
+			
 			paymentDao.updateStatus(paymentId, "success");
 
 			int orderId = orderDao.getOrderByPaymentId(paymentId);
@@ -99,7 +122,7 @@ public class PaymentController extends HttpServlet {
 
 			for (OrderDetail od : orderItems) {
 				for (int i = 0; i < od.getQuantity(); i++) {
-					DeviceSerial ds = dsDao.getInStockSerialId(od.getDeviceId());
+					DeviceSerial ds = fetchAvailableSerial(od.getDeviceId());
 					if (ds == null) {
 						continue;
 					}
@@ -130,11 +153,13 @@ public class PaymentController extends HttpServlet {
 						wcId = wc.getId();
 					}
 
-					odDao.addOrderDetailSerial(od.getId(), ds.getId());
-					
-					dsDao.updateStatus(ds.getId(), "sold");
+					if (odDao.addOrderDetailSerial(od.getId(), ds.getId())) {
+						dsDao.updateStatus(ds.getId(), "sold");
+					}
 				}
 			}
+			
+			recordExportTransaction(staff, userId, payment, orderItems);
 
 		} else if ("failed".equals(action)) {
 			paymentDao.updateStatus(Integer.parseInt(id), action);
@@ -147,8 +172,45 @@ public class PaymentController extends HttpServlet {
 		resp.sendRedirect("payment-list");
 	}
 	
+	private DeviceSerial fetchAvailableSerial(int deviceId) {
+		DeviceSerial ds = dsDao.getInStockSerialId(deviceId);
+		int guard = 0;
+		while (ds != null && odDao.isSerialAlreadyAssigned(ds.getId()) && guard < 20) {
+			dsDao.updateStatus(ds.getId(), "sold");
+			ds = dsDao.getInStockSerialId(deviceId);
+			guard++;
+		}
+		if (guard >= 20) {
+			return null;
+		}
+		return ds;
+	}
+	
 	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	}
+	
+	private void recordExportTransaction(User staff, int userId, Payment payment, List<OrderDetail> items) {
+		if (items == null || items.isEmpty()) {
+			return;
+		}
+		Transaction transaction = new Transaction();
+		transaction.setStorekeeperId(staff != null ? staff.getId() : 0);
+		transaction.setUserId(userId);
+		transaction.setType("export");
+		transaction.setStatus("confirmed");
+		transaction.setNote("Order #" + payment.getOrderId());
+		int transactionId = transactionDao.createTransaction(transaction);
+		if (transactionId <= 0) {
+			return;
+		}
+		for (OrderDetail od : items) {
+			TransactionDetail detail = new TransactionDetail();
+			detail.setTransactionId(transactionId);
+			detail.setDeviceId(od.getDeviceId());
+			detail.setQuantity(od.getQuantity());
+			transactionDetailDao.addTransactionDetail(detail, null);
+		}
 	}
 
 

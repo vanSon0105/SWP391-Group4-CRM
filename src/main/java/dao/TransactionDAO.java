@@ -37,7 +37,7 @@ public class TransactionDAO extends DBContext {
             if (rs.next()) id = rs.getInt(1);
 
         } catch (SQLException e) {
-            System.out.println("❌ Error in createTransaction: " + e.getMessage());
+            System.out.println("Error in createTransaction: " + e.getMessage());
             e.printStackTrace();
         }
         return id;
