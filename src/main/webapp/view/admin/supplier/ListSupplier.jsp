@@ -73,59 +73,6 @@
 	margin-top: 10px;
 }
 
-.pagination {
-	display: flex;
-	justify-content: center;
-	padding-left: 0;
-	list-style: none;
-	margin-top: 20px;
-	font-family: Arial, sans-serif;
-}
-
-.page-item {
-	margin: 0 5px;
-}
-
-.page-link {
-	display: block;
-	padding: 8px 14px;
-	border: 1px solid #ddd;
-	color: #007bff;
-	text-decoration: none;
-	cursor: pointer;
-	border-radius: 4px;
-	transition: all 0.3s ease;
-}
-
-.page-link:hover:not(.disabled):not(.active) {
-	background: #e9f5ff;
-	color: #0056b3;
-}
-
-.page-item.active .page-link {
-	background: #007bff;
-	color: #fff;
-	border-color: #007bff;
-	cursor: default;
-}
-
-.page-item.disabled .page-link {
-	color: #aaa;
-	border-color: #ddd;
-	cursor: default;
-	pointer-events: none;
-}
-
-.detail-box {
-	background: var(--card);
-	border: 1px solid var(--border);
-	border-radius: var(--radius);
-	box-shadow: var(--shadow);
-	padding: 24px 28px;
-	margin-top: 12px;
-	margin-bottom: 24px;
-}
-
 .device-filter {
 	display: flex;
 	gap: 12px;
@@ -258,7 +205,6 @@
 
 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 <jsp:include page="../common/header.jsp"></jsp:include>
-
 <main class="sidebar-main">
     <section class="panel">
         <div class="device-toolbar">
@@ -312,53 +258,57 @@
                 </div>
             </form>
         </c:if>
-        <div class="table-wrapper">
-            <c:if test="${action=='list' || action=='trash' || action=='filter'}">
-                <table class="device-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th><th>Tên nhà cung cấp</th><th>SĐT</th><th>Email</th><th>Địa chỉ</th><th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:choose>
-                            <c:when test="${not empty suppliers}">
-                                <c:forEach items="${suppliers}" var="s" varStatus="status">
-                                    <tr>
-                                        <td>${s.id}</td>
-                                        <td>${s.name}</td>
-                                        <td>${s.phone}</td>
-                                        <td>${s.email}</td>
-                                        <td>${s.address}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${action=='trash'}">
-                                                    <a href="supplier?action=restore&id=${s.id}" class="btn device-btn">Khôi phục</a>
-                                                </c:when>
-                                                <c:otherwise>
-                                                    <a href="supplier?action=viewHistory&id=${s.id}" class="btn device-btn">Xem</a>
-                                                    <a href="supplier?action=edit&id=${s.id}" class="btn device-btn">Sửa</a>
-                                                    <a href="supplier?action=delete&id=${s.id}" class="btn device-remove" onclick="return confirm('Bạn có chắc muốn dừng nhà cung cấp này?');">Xóa</a>
-                                                </c:otherwise>
-                                            </c:choose>
-                                        </td>
-                                    </tr>
-                                </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr><td colspan="6" style="color:gray;">Không có dữ liệu</td></tr>
-                            </c:otherwise>
-                        </c:choose>
-                    </tbody>
-                </table>
-            </c:if>
-        </div>
-
-        <p style="margin-top:12px; color:#6b7280; text-align:center;">
-            Tổng số nhà cung cấp: <strong><c:out value="${fn:length(suppliers)}"/></strong>
-        </p>
-    </section>
-
+        </section>
+        <section class="panel">
+        	<div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Danh sách nhà cung cấp</h2>   
+           	</div>
+	        <div class="table-wrapper">
+	            <c:if test="${action=='list' || action=='trash' || action=='filter'}">
+	                <table class="device-table">
+	                    <thead>
+	                        <tr>
+	                            <th>ID</th><th>Tên nhà cung cấp</th><th>SĐT</th><th>Email</th><th>Địa chỉ</th><th>Thao tác</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <c:choose>
+	                            <c:when test="${not empty suppliers}">
+	                                <c:forEach items="${suppliers}" var="s" varStatus="status">
+	                                    <tr>
+	                                        <td>${s.id}</td>
+	                                        <td>${s.name}</td>
+	                                        <td>${s.phone}</td>
+	                                        <td>${s.email}</td>
+	                                        <td>${s.address}</td>
+	                                        <td>
+	                                            <c:choose>
+	                                                <c:when test="${action=='trash'}">
+	                                                    <a href="supplier?action=restore&id=${s.id}" class="btn device-btn">Khôi phục</a>
+	                                                </c:when>
+	                                                <c:otherwise>
+	                                                    <a href="supplier?action=viewHistory&id=${s.id}" class="btn device-btn">Xem</a>
+	                                                    <a href="supplier?action=edit&id=${s.id}" class="btn device-btn">Sửa</a>
+	                                                    <a href="supplier?action=delete&id=${s.id}" class="btn device-remove" onclick="return confirm('Bạn có chắc muốn dừng nhà cung cấp này?');">Xóa</a>
+	                                                </c:otherwise>
+	                                            </c:choose>
+	                                        </td>
+	                                    </tr>
+	                                </c:forEach>
+	                            </c:when>
+	                            <c:otherwise>
+	                                <tr><td colspan="6" style="color:gray;">Không có dữ liệu</td></tr>
+	                            </c:otherwise>
+	                        </c:choose>
+	                    </tbody>
+	                </table>
+	            </c:if>
+	        </div>
+	
+	        <p style="margin-top:12px; color:#6b7280; text-align:center;">
+	            Tổng số nhà cung cấp: <strong><c:out value="${fn:length(suppliers)}"/></strong>
+	        </p>
+	    </section>
          <div class="pagination-pills" style="padding-bottom: 20px;">
              <c:choose>
                  <c:when test="${currentPage > 1}">

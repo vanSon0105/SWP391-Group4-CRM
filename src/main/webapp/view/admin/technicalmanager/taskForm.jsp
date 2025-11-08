@@ -185,18 +185,18 @@ form button {
 						<input type="hidden" name="fromReview" value="1" />
 					</c:if>
 					<input type="hidden" name="id" value="${task.id}" /> 
-					<label>Title:</label>
+					<label>Tiêu đề</label>
 					<input type="text" name="title" value="${task.title}" maxlength="100" required /> 
 					<small style="color:red">${errorTitle}</small> 
-					<label>Description:</label>
+					<label>Mô tả</label>
 					<input type="text" name="description" value="${task.description}" maxlength="500" />
 					<small style="color: red" >${errorDescription}</small>
-					<label>Customer Issue ID:</label> <select name="customerIssueId">
+					<label>Vấn đề của khách hàng</label> <select name="customerIssueId">
 						<c:forEach var="issue" items="${customerIssues}">
 							<option value="${issue.id}"
 								${selectedIssueId != null && selectedIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
 						</c:forEach>
-					</select> <label>Technical Staff:</label>
+					</select> <label>Nhân viên kỹ thuật:</label>
 					<small style="color:red">${errorStaffLimit}</small>
 					<div class="checkbox-group">
 						<c:forEach var="staff" items="${technicalStaffList}">
@@ -226,15 +226,15 @@ form button {
 					</div>
 					<small style="color:red">${errorStaffAvailability}</small>
 
-					<label>Deadline</label> 
+					<label>Hạn</label> 
 					<input type="date" name="deadline"
 						min="<%= java.time.LocalDate.now() %>"
 						value="<fmt:formatDate value='${taskDetail[0].deadline}' pattern='yyyy-MM-dd' />"
 						${task.id == null ? 'required' : ''} />
 					<small style="color:red">${errorDeadline}</small>
 					<div>
-						<a href="task-list">Back</a>
-						<button type="submit" style="margin-left: 10px">Submit</button>
+						<a href="task-list">Quay lại</a>
+						<button type="submit" style="margin-left: 10px">Gửi</button>
 
 					</div>
 				</div>
