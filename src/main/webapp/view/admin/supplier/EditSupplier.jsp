@@ -12,28 +12,12 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-:root {
-	--primary: #2563eb;
-	--primary-hover: #1d4ed8;
-	--neutral: #6b7280;
-	--bg: #f5f7fb;
-	--card: #fff;
-	--text: #111827;
-	--danger: #ef4444;
-	--warning: #f59e0b;
-	--info: #0ea5e9;
-	--success: #10b981;
-	--radius: 10px;
-	--shadow: 0 6px 18px rgba(0, 0, 0, .08);
-	--border: #e5e7eb;
-}
 
 .supplier-form {
 	display: flex;
 	flex-direction: column;
 	gap: 16px;
-	max-width: 600px;
-	background: var(--card);
+	width: 50%;
 	padding: 24px 28px;
 	border-radius: 16px;
 	box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
@@ -60,45 +44,7 @@
 
 .supplier-form input:focus {
 	outline: none;
-	border-color: var(--primary);
 	box-shadow: 0 0 0 3px rgba(59, 130, 246, .2);
-}
-
-.form-actions {
-	display: flex;
-	justify-content: flex-end;
-	gap: 10px;
-	margin-top: 10px;
-}
-
-.btn-primary {
-	background: linear-gradient(135deg, #3b82f6, #2563eb);
-	color: #fff;
-	padding: 8px 18px;
-	border: none;
-	border-radius: 8px;
-	cursor: pointer;
-	font-weight: 600;
-	transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 8px 18px rgba(59, 130, 246, .3);
-}
-
-.btn-secondary {
-	background: #e2e8f0;
-	color: #1e293b;
-	padding: 8px 18px;
-	border-radius: 8px;
-	text-decoration: none;
-	font-weight: 600;
-	transition: background 0.2s ease;
-}
-
-.btn-secondary:hover {
-	background: #cbd5e1;
 }
 
 .error {
@@ -120,7 +66,7 @@
 
 <main class="sidebar-main">
     <section class="panel">
-        <h3>Cập nhật nhà cung cấp</h3>
+    	<a class="btn device-btn" href="supplier"><i class="fa-solid fa-arrow-left"></i><span>Về danh sách</span></a>
 
         <c:if test="${not empty requestScope.error}">
             <div class="error">${requestScope.error}</div>
@@ -135,27 +81,31 @@
         <c:if test="${not empty requestScope.message}">
             <div class="message">${requestScope.message}</div>
         </c:if>
-
-        <form action="supplier" method="post" class="supplier-form">
-            <input type="hidden" name="action" value="update">
-            <input type="hidden" name="id" value="${supplier.id}">
-            <label>Tên:
-                <input type="text" name="name" value="${supplier.name}">
-            </label>
-            <label>SĐT:
-                <input type="text" name="phone" value="${supplier.phone}">
-            </label>
-            <label>Email:
-                <input type="email" name="email" value="${supplier.email}">
-            </label>
-            <label>Địa chỉ:
-                <input type="text" name="address" value="${supplier.address}">
-            </label>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Lưu</button>
-                <a href="supplier?action=list" class="btn btn-secondary">Hủy</a>
-            </div>
-        </form>
+    </section>
+	<section class="panel">
+        <h2>Cập nhật nhà cung cấp</h2>
+        <div style="display: flex; justify-content: center; align-items: center;">
+	        <form action="supplier" method="post" class="supplier-form">
+	            <input type="hidden" name="action" value="update">
+	            <input type="hidden" name="id" value="${supplier.id}">
+	            <label>Tên:
+	                <input type="text" name="name" value="${supplier.name}">
+	            </label>
+	            <label>SĐT:
+	                <input type="text" name="phone" value="${supplier.phone}">
+	            </label>
+	            <label>Email:
+	                <input type="email" name="email" value="${supplier.email}">
+	            </label>
+	            <label>Địa chỉ:
+	                <input type="text" name="address" value="${supplier.address}">
+	            </label>
+	            <div class="form-actions" style="text-align: end;">
+	                <button type="submit" class="btn btn-primary">Lưu</button>
+	                <a href="supplier?action=list" class="btn btn-secondary">Hủy</a>
+	            </div>
+	        </form>
+	     </div>
     </section>
 </main>
 </body>

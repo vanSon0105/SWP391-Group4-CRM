@@ -467,6 +467,25 @@ public class IssuePaymentDAO extends DBContext {
 	    return 0;
 	}
 
+	public boolean updateCustomerShippingInfo(int paymentId, String fullName, String phone, String address, String shippingNote) {
+		String sql = "UPDATE issue_payments SET shipping_full_name = ?, shipping_phone = ?, shipping_address = ?, shipping_note = ?, "
+				+ "updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'awaiting_customer'";
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, fullName.trim());
+			ps.setString(2, phone.trim());
+			ps.setString(3, address.trim());
+			if (shippingNote == null || shippingNote.trim().isEmpty()) {
+				ps.setNull(4, Types.VARCHAR);
+			} else {
+				ps.setString(4, shippingNote.trim());
+			}
+			ps.setInt(5, paymentId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 
 }
