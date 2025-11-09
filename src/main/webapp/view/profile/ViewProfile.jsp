@@ -369,7 +369,7 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
 							required>
 					</div>
 					<div class="profile-actions">
-						<button type="submit" class="btn btn-edit">Cập nhật mật
+						<button style="font-size: 1.8rem;" type="submit" class="btn btn-edit">Cập nhật mật
 							khẩu</button>
 					</div>
 				</form>

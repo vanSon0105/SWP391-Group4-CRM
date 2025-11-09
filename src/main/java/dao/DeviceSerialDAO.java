@@ -322,4 +322,19 @@ public class DeviceSerialDAO extends dal.DBContext {
 	    return list;
 	}
     
+    public int countAvailableSerials(int deviceId) {
+        String sql = "SELECT COUNT(*) FROM device_serials WHERE device_id = ? AND stock_status = 'in_stock'";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, deviceId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
 }

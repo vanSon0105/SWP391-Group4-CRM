@@ -55,7 +55,6 @@ public class SupplierController extends HttpServlet {
             case "trash":
                 listDeletedSuppliers(request, response);
                 break;
-            case "view":
             case "viewHistory":
                 viewSupplierWithOptionalHistory(request, response, action);
                 break;

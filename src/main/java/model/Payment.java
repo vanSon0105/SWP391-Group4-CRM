@@ -5,8 +5,6 @@ import java.sql.Timestamp;
 public class Payment {
 	private int id;
 	private int orderId;
-	private String paymentUrl;
-	private String paymentMethod;
 	private double amount;
 	private String fullName;
 	private String phone;
@@ -25,7 +23,6 @@ public class Payment {
 		super();
 		this.id = id;
 		this.orderId = orderId;	
-		this.paymentUrl = paymentUrl;
 		this.amount = amount;
 		this.fullName = fullName;
 		this.phone = phone;
@@ -64,12 +61,6 @@ public class Payment {
 	}
 	public void setOrderId(int orderId) {
 		this.orderId = orderId;
-	}
-	public String getPaymentUrl() {
-		return paymentUrl;
-	}
-	public void setPaymentUrl(String paymentUrl) {
-		this.paymentUrl = paymentUrl;
 	}
 
 	public double getAmount() {
@@ -126,22 +117,5 @@ public class Payment {
 	public void setPaidAt(Timestamp paidAt) {
 		this.paidAt = paidAt;
 	}
-	
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return "Payment [id=" + id + ", orderId=" + orderId + ", paymentUrl=" + paymentUrl + ", paymentMethod="
-				 + ", amount=" + amount + ", fullName=" + fullName + ", phone=" + phone + ", address="
-				+ address + ", deliveryTime=" + deliveryTime + ", technicalNote=" + technicalNote + ", status=" + status
-				+ ", createdAt=" + createdAt + ", paidAt=" + paidAt + "]";
-	}
-	
 	
 }

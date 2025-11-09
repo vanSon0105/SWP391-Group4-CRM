@@ -129,10 +129,31 @@
             background: #fef3c7;
             color: #92400e;
         }
+        
+        .badge-waiting_payment {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
 
         .badge-resolved {
             background: #dcfce7;
             color: #15803d;
+        }
+        
+        .badge-create_payment {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-manager_review{
+	      background: #ecffa3;
+	      color: #3f3939;
+	    }
+
+        .badge-completed {
+            background: #dcfce7;
+      		color: #15803d;
         }
 
         .alert {
@@ -324,18 +345,19 @@
                                     <td>
                                         <span class="badge badge-${status}">
                                             <c:choose>
-                                                <c:when test="${status == 'submitted'}">Đã gửi quản lý
-                                                </c:when>
-                                                <c:when test="${status == 'awaiting_customer'}">Chờ khách
-                                                    phản hồi</c:when>
-                                                <c:when test="${status == 'in_progress'}">Đang thu thập
-                                                </c:when>
+                                                <c:when test="${status == 'submitted'}">Đã gửi quản lý</c:when>
+                                                <c:when test="${status == 'awaiting_customer'}">Chờ khách phản hồi</c:when>
+                                                <c:when test="${status == 'in_progress'}">Đang thu thập</c:when>
                                                 <c:when test="${status == 'customer_cancelled'}">Khách hủy yêu cầu</c:when>
                                                 <c:when test="${status == 'manager_rejected'}">Quản lý từ chối</c:when>
 	                                            <c:when test="${status == 'manager_approved'}">Quản lý đã duyệt</c:when>
 	                                            <c:when test="${status == 'task_created'}">Đã tạo task</c:when>
 	                                            <c:when test="${status == 'tech_in_progress'}">Đang xử lí kỹ thuật</c:when>
+	                                            <c:when test="${status == 'manager_review'}">Đang đợi quản lí duyệt</c:when>
+	                                            <c:when test="${status == 'completed'}">Hoàn thành task</c:when>
+	                                            <c:when test="${status == 'waiting_payment'}">Đợi khách hàng thanh toán</c:when>
 	                                            <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
+	                                            <c:when test="${status == 'create_payment'}">Đã tạo bill - Chờ xác nhận</c:when>
                                                 <c:otherwise>Chưa tiếp nhận</c:otherwise>
                                             </c:choose>
                                         </span>

@@ -71,59 +71,6 @@
 	margin-top: 10px;
 }
 
-.pagination {
-	display: flex;
-	justify-content: center;
-	padding-left: 0;
-	list-style: none;
-	margin-top: 20px;
-	font-family: Arial, sans-serif;
-}
-
-.page-item {
-	margin: 0 5px;
-}
-
-.page-link {
-	display: block;
-	padding: 8px 14px;
-	border: 1px solid #ddd;
-	color: #007bff;
-	text-decoration: none;
-	cursor: pointer;
-	border-radius: 4px;
-	transition: all 0.3s ease;
-}
-
-.page-link:hover:not(.disabled):not(.active) {
-	background: #e9f5ff;
-	color: #0056b3;
-}
-
-.page-item.active .page-link {
-	background: #007bff;
-	color: #fff;
-	border-color: #007bff;
-	cursor: default;
-}
-
-.page-item.disabled .page-link {
-	color: #aaa;
-	border-color: #ddd;
-	cursor: default;
-	pointer-events: none;
-}
-
-.detail-box {
-	background: var(--card);
-	border: 1px solid var(--border);
-	border-radius: var(--radius);
-	box-shadow: var(--shadow);
-	padding: 24px 28px;
-	margin-top: 12px;
-	margin-bottom: 24px;
-}
-
 .device-filter {
 	display: flex;
 	gap: 12px;
@@ -255,7 +202,6 @@
 <body class="management-page device-management">
 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 <jsp:include page="../common/header.jsp"></jsp:include>
-
 <main class="sidebar-main">
 <section class="panel">
 

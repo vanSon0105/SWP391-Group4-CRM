@@ -45,6 +45,18 @@ public class TechnicalStaffController extends HttpServlet {
 			req.setAttribute("availabilityMessageType", availabilityType);
 			session.removeAttribute("availabilityMessageType");
 		}
+		
+		Object techAlertMessage = session.getAttribute("techAlertMessage");
+		if (techAlertMessage != null) {
+			req.setAttribute("techAlertMessage", techAlertMessage);
+			Object techAlertType = session.getAttribute("techAlertType");
+			if (techAlertType != null) {
+				req.setAttribute("techAlertType", techAlertType);
+			}
+			session.removeAttribute("techAlertMessage");
+			session.removeAttribute("techAlertType");
+		}
+		
 		req.setAttribute("staffAvailable", staff.isAvailable());
 		
 		String detailParam = req.getParameter("id");
@@ -170,7 +182,7 @@ public class TechnicalStaffController extends HttpServlet {
 		}
 
 		if (allCompleted) {
-			issueDao.updateSupportStatus(issueId, "tech_in_progress");
+			issueDao.updateSupportStatus(issueId, "completed");
 			return "tech_in_progress";
 		} else if (anyInProgress) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");

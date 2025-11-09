@@ -13,6 +13,11 @@
     <jsp:include page="../common/header.jsp"></jsp:include>
     <main>
         <section class="cart-wrapper">
+        	<c:if test="${not empty cartErrorMessage}">
+        		<div style="margin-bottom:16px; padding:12px 16px; border-radius:12px; background:#fee2e2; color:#b91c1c; font-weight:500;">
+        			${cartErrorMessage}
+        		</div>
+        	</c:if>
             <table>
                 <thead>
                     <tr>

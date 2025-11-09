@@ -130,7 +130,7 @@ CREATE TABLE customer_issues (
   warranty_card_id INT,
   support_staff_id INT,
   feedback TEXT,
-  support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress', 'customer_cancelled', 'resolved') DEFAULT 'new',
+  support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress', 'customer_cancelled', 'completed', 'create_payment', 'waiting_payment', 'resolved') DEFAULT 'new',
   created_at TIMESTAMP default current_timestamp,
   foreign key (customer_id) references users(id),
   foreign key (warranty_card_id) references warranty_cards(id),

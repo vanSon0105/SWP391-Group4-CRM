@@ -26,6 +26,24 @@ public class CustomerIssueDAO extends DBContext {
 		}
 		return list;
 	}
+	
+	public String getSupportStatus(int taskDetailId) {
+		String sql = "SELECT ci.support_status FROM customer_issues ci\r\n"
+				+ "JOIN tasks t ON t.customer_issue_id = ci.id\r\n"
+				+ "JOIN task_details td ON td.task_id = t.id\r\n"
+				+ "WHERE td.task_id = ?;";
+		try {
+			Connection conn = getConnection();
+			PreparedStatement pre = conn.prepareStatement(sql);
+			ResultSet rs = pre.executeQuery();
+			if (rs.next()) {
+	            return rs.getString("support_status");
+	        }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public List<CustomerDevice> getCustomerDevices(int customerId) {
 		List<CustomerDevice> list = new ArrayList<>();

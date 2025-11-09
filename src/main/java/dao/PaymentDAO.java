@@ -170,6 +170,8 @@ public class PaymentDAO extends DBContext {
 	        if (rs.next()) {
 	            Payment p = new Payment();
 	            p.setId(rs.getInt("id"));
+	            p.setOrderId(rs.getInt("order_id"));
+	            p.setAmount(rs.getDouble("amount"));
 	            p.setFullName(rs.getString("full_name"));
 	            p.setPhone(rs.getString("phone"));
 	            p.setAddress(rs.getString("address"));

@@ -17,6 +17,24 @@ public class TaskDetailDAO extends DBContext{
         }
     }
 	
+	public boolean areAllAssignmentsCompletedForIssue(int issueId) {
+        String sql = "SELECT COUNT(*) FROM task_details td "
+                + "JOIN tasks t ON td.task_id = t.id "
+                + "WHERE t.customer_issue_id = ? "
+                + "AND td.status NOT IN ('completed', 'cancelled')";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, issueId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) == 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+	
 	public int getTechnicalStaffIdByTaskId(int taskId) {
 	    String sql = "SELECT technical_staff_id FROM task_details WHERE task_id = ?;";
 	    try (Connection c = getConnection(); 
@@ -72,14 +90,12 @@ public class TaskDetailDAO extends DBContext{
     
     public List<TaskDetail> getAssignmentsForStaff(int staffId) {
         List<TaskDetail> list = new ArrayList<>();
-        String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.assigned_at, td.deadline, td.status, td.note, "
-                + "t.title AS task_title, t.description AS task_description, t.customer_issue_id, "
-                + "ci.issue_code, ci.title AS issue_title "
-                + "FROM task_details td "
-                + "JOIN tasks t ON td.task_id = t.id "
-                + "LEFT JOIN customer_issues ci ON t.customer_issue_id = ci.id "
-                + "WHERE td.technical_staff_id = ? ORDER BY td.assigned_at DESC";
-
+        String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.assigned_at, td.deadline, td.status, td.note,\r\n"
+        		+ "t.title AS task_title, t.description AS task_description, t.customer_issue_id, ci.support_status, ci.issue_code, ci.title AS issue_title\r\n"
+        		+ "FROM task_details td\r\n"
+        		+ "JOIN tasks t ON td.task_id = t.id\r\n"
+        		+ "LEFT JOIN customer_issues ci ON t.customer_issue_id = ci.id\r\n"
+        		+ "WHERE td.technical_staff_id = ? ORDER BY td.assigned_at DESC;";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, staffId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -97,6 +113,7 @@ public class TaskDetailDAO extends DBContext{
                     td.setCustomerIssueId((Integer) rs.getObject("customer_issue_id"));
                     td.setIssueCode(rs.getString("issue_code"));
                     td.setIssueTitle(rs.getString("issue_title"));
+                    td.setSupport_status(rs.getString("support_status"));
                     list.add(td);
                 }
             }
