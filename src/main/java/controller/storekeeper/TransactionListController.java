@@ -46,7 +46,25 @@ public class TransactionListController extends HttpServlet {
 
         for (Transaction t : transactions) {
             List<TransactionDetail> details = detailDAO.getTransactionDetailsByTransactionId(t.getId());
-            t.setDetails(details);
+            List<TransactionDetail> mergedDetails = new ArrayList<>();
+            for (TransactionDetail d : details) {
+                boolean found = false;
+                for (TransactionDetail md : mergedDetails) {
+                    if (md.getDeviceName() != null && md.getDeviceName().equals(d.getDeviceName())) {
+                        md.setQuantity(md.getQuantity() + d.getQuantity());
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    TransactionDetail td = new TransactionDetail();
+                    td.setDeviceName(d.getDeviceName());
+                    td.setQuantity(d.getQuantity());
+                    mergedDetails.add(td);
+                }
+            }
+
+            t.setDetails(mergedDetails);
         }
 
         int totalRecords = transactionDAO.countTransactions(typeFilter, statusFilter, keyword);

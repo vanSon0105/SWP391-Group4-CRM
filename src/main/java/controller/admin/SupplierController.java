@@ -142,7 +142,7 @@ public class SupplierController extends HttpServlet {
         List<Supplier> suppliers = supplierDAO.getDeletedSuppliers();
         if (suppliers == null) suppliers = new ArrayList<>();
         request.setAttribute("suppliers", suppliers);
-        request.setAttribute("action", "trash");
+        request.setAttribute("action", "trash"); 
         request.getRequestDispatcher("/view/admin/supplier/ListSupplier.jsp").forward(request, response);
     }
 
@@ -155,6 +155,7 @@ public class SupplierController extends HttpServlet {
                 request.setAttribute("error", "Không tìm thấy nhà cung cấp!");
             } else {
                 request.setAttribute("supplier", supplier);
+
                 if ("viewHistory".equals(action)) {
                     List<SupplierDetail> history = detailDAO.getDetailsBySupplierId(id);
                     request.setAttribute("history", history);
@@ -163,7 +164,8 @@ public class SupplierController extends HttpServlet {
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Dữ liệu không hợp lệ!");
         }
-        request.setAttribute("action", action);
+
+        request.setAttribute("action", action); // "view" hoặc "viewHistory"
         request.getRequestDispatcher("/view/admin/supplier/ListSupplier.jsp").forward(request, response);
     }
 

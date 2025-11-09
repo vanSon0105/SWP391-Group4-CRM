@@ -6,6 +6,47 @@ import dal.DBContext;
 import model.Transaction;
 
 public class TransactionDAO extends DBContext {
+	public Transaction getTransactionById(int transactionId) {
+	    String sql = """
+	        SELECT t.*, 
+	               u.full_name AS storekeeper_name,
+	               s.name AS supplier_name, 
+	               cu.full_name AS customer_name
+	        FROM transactions t
+	        LEFT JOIN users u ON t.storekeeper_id = u.id
+	        LEFT JOIN suppliers s ON t.supplier_id = s.id
+	        LEFT JOIN users cu ON t.user_id = cu.id
+	        WHERE t.id = ?
+	    """;
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, transactionId);
+	        ResultSet rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            Transaction t = new Transaction();
+	            t.setId(rs.getInt("id"));
+	            t.setStorekeeperId(rs.getInt("storekeeper_id"));
+	            t.setUserId((Integer) rs.getObject("user_id"));
+	            t.setSupplierId((Integer) rs.getObject("supplier_id"));
+	            t.setType(rs.getString("type"));
+	            t.setStatus(rs.getString("status"));
+	            t.setDate(rs.getTimestamp("date"));
+	            t.setNote(rs.getString("note"));
+	            t.setStorekeeperName(rs.getString("storekeeper_name"));
+	            t.setSupplierName(rs.getString("supplier_name"));
+	            t.setUserName(rs.getString("customer_name"));
+	            return t;
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return null;
+	}
 
     public int createTransaction(Transaction t) {
         int id = -1;
