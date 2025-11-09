@@ -607,6 +607,87 @@ public User getUserByEmail(String email) {
     return user;
 }
 
+public List<User> getTechnicalStaff(String search, String status, int offset, int limit) {
+    List<User> list = new ArrayList<>();
+    StringBuilder sql = new StringBuilder("SELECT id, username, full_name, email, is_available FROM users WHERE role_id = 3");
+
+    if (search != null && !search.trim().isEmpty()) {
+        sql.append(" AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)");
+    }
+
+    if ("available".equals(status)) {
+        sql.append(" AND is_available = 1");
+    } else if ("busy".equals(status)) {
+        sql.append(" AND is_available = 0");
+    }
+
+    sql.append(" ORDER BY id ASC LIMIT ? OFFSET ?");
+
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement pre = conn.prepareStatement(sql.toString())) {
+
+        int index = 1;
+        if (search != null && !search.trim().isEmpty()) {
+            String s = "%" + search.trim() + "%";
+            pre.setString(index++, s);
+            pre.setString(index++, s);
+            pre.setString(index++, s);
+        }
+        pre.setInt(index++, limit);
+        pre.setInt(index, offset);
+
+        ResultSet rs = pre.executeQuery();
+        while (rs.next()) {
+            User u = new User();
+            u.setId(rs.getInt("id"));
+            u.setUsername(rs.getString("username"));
+            u.setFullName(rs.getString("full_name"));
+            u.setEmail(rs.getString("email"));
+            u.setAvailable(rs.getBoolean("is_available"));
+            list.add(u);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
+}
+
+public int countTechnicalStaff(String search, String status) {
+    int count = 0;
+    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users WHERE role_id = 3");
+
+    if (search != null && !search.trim().isEmpty()) {
+        sql.append(" AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)");
+    }
+
+    if ("available".equals(status)) {
+        sql.append(" AND is_available = 1");
+    } else if ("busy".equals(status)) {
+        sql.append(" AND is_available = 0");
+    }
+
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement pre = conn.prepareStatement(sql.toString())) {
+
+        int index = 1;
+        if (search != null && !search.trim().isEmpty()) {
+            String s = "%" + search.trim() + "%";
+            pre.setString(index++, s);
+            pre.setString(index++, s);
+            pre.setString(index++, s);
+        }
+
+        ResultSet rs = pre.executeQuery();
+        if (rs.next()) {
+            count = rs.getInt(1);
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return count;
+}
 
 
 
