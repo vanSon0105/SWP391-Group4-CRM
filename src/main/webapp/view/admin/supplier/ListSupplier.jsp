@@ -28,6 +28,8 @@
 	--border: #e5e7eb;
 }
 
+
+
 .supplier-form {
 	display: flex;
 	flex-direction: column;
@@ -325,7 +327,6 @@
         <p style="margin-top:12px; color:#6b7280; text-align:center;">
             Tổng số nhà cung cấp: <strong><c:out value="${not empty suppliers ? fn:length(suppliers) : 0}" /></strong>
         </p>
-
         <nav style="margin-top:20px;">
             <ul class="pagination">
                 <c:choose>
@@ -358,7 +359,6 @@
             </ul>
         </nav>
     </c:if>
-
 </section>
 </main>
 </body>
