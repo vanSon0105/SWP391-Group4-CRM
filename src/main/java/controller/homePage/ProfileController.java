@@ -79,25 +79,20 @@ public class ProfileController extends HttpServlet {
 
             StringBuilder passwordErrors = new StringBuilder();
 
-            // Lấy lại user thật từ DB (đảm bảo có mật khẩu mã hóa mới nhất)
             User dbUser = userDAO.getUserById(currentUser.getId());
 
-            // Kiểm tra mật khẩu hiện tại có đúng không
             if (dbUser == null || !PasswordUtils.verifyPassword(currentPassword, dbUser.getPassword())) {
                 passwordErrors.append("Mật khẩu hiện tại không đúng. ");
             }
 
-            // Kiểm tra xác nhận mật khẩu
             if (!newPassword.equals(confirmPassword)) {
                 passwordErrors.append("Mật khẩu mới và xác nhận mật khẩu không khớp. ");
             }
 
-            // Kiểm tra định dạng mật khẩu mới
             if (!newPassword.matches("^(?=.*[a-zA-Z])(?=.*\\d).{6,}$")) {
                 passwordErrors.append("Mật khẩu mới phải ít nhất 6 ký tự và bao gồm chữ và số. ");
             }
 
-            // Nếu có lỗi, quay lại trang đổi mật khẩu
             if (passwordErrors.length() > 0) {
                 request.setAttribute("user", currentUser);
                 request.setAttribute("errorMessage", passwordErrors.toString());
@@ -106,7 +101,6 @@ public class ProfileController extends HttpServlet {
                 return;
             }
 
-            // Hash mật khẩu mới và cập nhật DB
             String hashedPassword = PasswordUtils.hashPassword(newPassword);
             currentUser.setPassword(hashedPassword);
 
@@ -114,7 +108,6 @@ public class ProfileController extends HttpServlet {
 
             if (updated) {
                 request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
-                // Cập nhật lại session user mới nhất
                 User freshUser = userDAO.getUserById(currentUser.getId());
                 if (freshUser != null) {
                     session.setAttribute("account", freshUser);
@@ -129,10 +122,6 @@ public class ProfileController extends HttpServlet {
             return;
         }
 
-
-
-
-        //update profile
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
         String email = currentUser.getEmail();

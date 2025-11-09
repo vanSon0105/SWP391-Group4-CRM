@@ -39,6 +39,7 @@ public class CreateImportExportOrderController extends HttpServlet {
         request.setAttribute("deviceList", deviceList);
         request.setAttribute("supplierList", supplierList);
         request.setAttribute("userList", userList);
+        request.setAttribute("now", new java.util.Date());
         request.getRequestDispatcher("/view/transaction/createTransaction.jsp").forward(request, response);
     }
 
@@ -148,6 +149,7 @@ public class CreateImportExportOrderController extends HttpServlet {
             transaction.setType(type);
             transaction.setStatus("confirmed");
             transaction.setNote(note);
+         
 
             int transactionId = transactionDAO.createTransaction(transaction);
             if (transactionId <= 0) {
