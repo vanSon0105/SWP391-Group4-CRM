@@ -223,7 +223,7 @@ public class TaskFormController extends HttpServlet {
 //				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
 //			}
 
-			res.sendRedirect("task-list");
+			res.sendRedirect("assign-task");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -63,6 +63,7 @@
                 <summary>Nhiệm vụ</summary>
                 <c:if test="${permissions.contains('VIEW_TASK_LIST')}">
                     <a href="task-list">Danh sách task</a>
+                    <a href="staff-list">Danh sách nhân viên kỹ thuật</a>
                 </c:if>
                 <c:if test="${permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
                     <a href="manager-issues">Task cần giao</a>
@@ -74,6 +75,7 @@
             <details class="sidebar-group">
                 <summary>Thanh toán</summary>
                 <a href="payment-list">Danh sách thanh toán</a>
+                <a href="issue-payments">Danh sách thanh toán khiếu nại</a>
             </details>
         </c:if>
 

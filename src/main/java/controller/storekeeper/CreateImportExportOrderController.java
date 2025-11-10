@@ -40,6 +40,7 @@ public class CreateImportExportOrderController extends HttpServlet {
         request.setAttribute("supplierList", supplierList);
         request.setAttribute("userList", userList);
         request.setAttribute("now", new java.util.Date());
+
         request.getRequestDispatcher("/view/transaction/createTransaction.jsp").forward(request, response);
     }
 
@@ -68,7 +69,7 @@ public class CreateImportExportOrderController extends HttpServlet {
             }
 
             if (note != null && note.length() > 500) {
-                request.setAttribute("error", "Ghi chú không được vượt quá 500 ký tự!");
+            	request.setAttribute("error", "Ghi chú không được vượt quá 500 ký tự!");
                 doGet(request, response);
                 return;
             }
@@ -83,32 +84,20 @@ public class CreateImportExportOrderController extends HttpServlet {
                     doGet(request, response);
                     return;
                 }
-                try {
-                    supplierId = Integer.parseInt(sParam);
-                } catch (NumberFormatException e) {
-                    request.setAttribute("error", "ID nhà cung cấp không hợp lệ!");
-                    doGet(request, response);
-                    return;
-                }
+                supplierId = Integer.parseInt(sParam);
                 if (supplierDAO.getSupplierById(supplierId) == null) {
                     request.setAttribute("error", "Nhà cung cấp không tồn tại!");
                     doGet(request, response);
                     return;
                 }
-            } else if ("export".equalsIgnoreCase(type)) {
+            } else {
                 String uParam = request.getParameter("userId");
                 if (uParam == null || uParam.isEmpty()) {
                     request.setAttribute("error", "Chưa chọn người dùng!");
                     doGet(request, response);
                     return;
                 }
-                try {
-                    userId = Integer.parseInt(uParam);
-                } catch (NumberFormatException e) {
-                    request.setAttribute("error", "ID người dùng không hợp lệ!");
-                    doGet(request, response);
-                    return;
-                }
+                userId = Integer.parseInt(uParam);
                 if (userDAO.getUserById(userId) == null) {
                     request.setAttribute("error", "Người dùng không tồn tại!");
                     doGet(request, response);
@@ -130,9 +119,9 @@ public class CreateImportExportOrderController extends HttpServlet {
                 return;
             }
 
-            Map<Integer, Integer> deviceQuantityMap = new HashMap<>();
-            Set<Integer> seenDevices = new HashSet<>();
-            Set<String> deviceNamesForExport = new HashSet<>(); // validate trùng tên khi export
+            List<Integer> deviceIdList = new ArrayList<>();
+            List<Integer> quantityList = new ArrayList<>();
+            List<String> deviceNameList = new ArrayList<>();
 
             for (int i = 0; i < deviceIds.length; i++) {
                 int deviceId;
@@ -140,23 +129,15 @@ public class CreateImportExportOrderController extends HttpServlet {
 
                 try {
                     deviceId = Integer.parseInt(deviceIds[i]);
-                } catch (NumberFormatException e) {
-                    request.setAttribute("error", "ID thiết bị tại vị trí " + (i + 1) + " không hợp lệ!");
-                    doGet(request, response);
-                    return;
-                }
-
-                if (seenDevices.contains(deviceId)) {
-                    request.setAttribute("error", "Thiết bị ID " + deviceId + " đã được chọn trùng!");
-                    doGet(request, response);
-                    return;
-                }
-                seenDevices.add(deviceId);
-
-                try {
                     quantity = Integer.parseInt(quantities[i]);
                 } catch (NumberFormatException e) {
-                    request.setAttribute("error", "Số lượng tại vị trí " + (i + 1) + " không hợp lệ!");
+                    request.setAttribute("error", "ID hoặc số lượng tại vị trí " + (i + 1) + " không hợp lệ!");
+                    doGet(request, response);
+                    return;
+                }
+
+                if (deviceIdList.contains(deviceId)) {
+                	request.setAttribute("error", "Thiết bị ID " + deviceId + " bị chọn trùng!");
                     doGet(request, response);
                     return;
                 }
@@ -174,18 +155,15 @@ public class CreateImportExportOrderController extends HttpServlet {
                     return;
                 }
 
-                if ("export".equalsIgnoreCase(type) && userId != null) {
-                    String deviceName = device.getName();
-                    if (deviceNamesForExport.contains(deviceName)) {
-                        request.setAttribute("duplicateNameError",
-                            "Người nhận đã chọn 2 sản phẩm cùng tên: " + deviceName);
-                        doGet(request, response);
-                        return;
-                    }
-                    deviceNamesForExport.add(deviceName);
+                if ("export".equalsIgnoreCase(type) && deviceNameList.contains(device.getName())) {
+                    request.setAttribute("error", "Người nhận đã chọn 2 sản phẩm cùng tên: " + device.getName());
+                    doGet(request, response);
+                    return;
                 }
 
-                deviceQuantityMap.put(deviceId, quantity);
+                deviceIdList.add(deviceId);
+                quantityList.add(quantity);
+                deviceNameList.add(device.getName());
             }
 
             Transaction transaction = new Transaction();
@@ -203,9 +181,9 @@ public class CreateImportExportOrderController extends HttpServlet {
                 return;
             }
 
-            for (Map.Entry<Integer, Integer> entry : deviceQuantityMap.entrySet()) {
-                int deviceId = entry.getKey();
-                int quantity = entry.getValue();
+            for (int i = 0; i < deviceIdList.size(); i++) {
+                int deviceId = deviceIdList.get(i);
+                int quantity = quantityList.get(i);
 
                 TransactionDetail detail = new TransactionDetail();
                 detail.setTransactionId(transactionId);
@@ -226,9 +204,8 @@ public class CreateImportExportOrderController extends HttpServlet {
                         inventoryDAO.adjustQuantity(deviceId, storekeeperId, quantity);
                     }
                 } else {
-                    if (inv == null || inv.getQuantity() < quantity) {
-                        request.setAttribute("error", "Tồn kho không đủ để xuất thiết bị ID: " + deviceId
-                                + ". Hiện tại: " + (inv != null ? inv.getQuantity() : 0));
+                	if (inv == null || inv.getQuantity() < quantity) {
+                        request.setAttribute("error", "Tồn kho không đủ để xuất thiết bị ID: " + deviceId);
                         doGet(request, response);
                         return;
                     }

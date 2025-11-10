@@ -48,6 +48,28 @@ public class SupplierDAO extends dal.DBContext {
 	    }
 	    return list;
 	}
+	
+	public List<Supplier> getActiveSuppliers() {
+	    List<Supplier> list = new ArrayList<>();
+	    String sql = "SELECT id, name, phone, email, address, status FROM suppliers WHERE status = 1 ORDER BY name ASC";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            list.add(new Supplier(
+	                    rs.getInt("id"),
+	                    rs.getString("name"),
+	                    rs.getString("phone"),
+	                    rs.getString("email"),
+	                    rs.getString("address"),
+	                    rs.getInt("status")
+	            ));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
 
 	public int countSuppliersByFilter(String statusFilter, String addressFilter) {
 	    String sql = "SELECT COUNT(*) FROM suppliers WHERE 1=1";

@@ -300,7 +300,7 @@
                                     <td>${issue.title}</td>
                                     <td>
                                         <fmt:formatDate value="${issue.createdAt}"
-                                            pattern="dd/MM/yyyy" />
+                                            pattern="yyyy-MM-dd HH:mm" />
                                     </td>
                                     <td>
                                         <a class="btn btn-primary"

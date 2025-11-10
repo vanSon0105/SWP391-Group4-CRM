@@ -292,7 +292,7 @@ th, td {
 								<td>${p.paidAt}</td>
 								<td class="action-btn">
 								<input type="hidden" name="paymentId" value="${p.id}" />
-								 	<a style="display: flex;height: 52px;" href="payment-detail?id=${p.id}" class="btn device-btn">
+								 	<a style="display: flex;height: 52px;" href="payment-detail?id=${p.id}&orderId=${p.orderId}" class="btn device-btn">
        									Xem
    									</a>
 

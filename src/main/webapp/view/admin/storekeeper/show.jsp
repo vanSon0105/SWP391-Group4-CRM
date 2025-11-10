@@ -299,7 +299,27 @@
 		                    
 		                    <div class="form-field">
 		                        <label for="price">Giá mới</label>
-		                        <input id="price" type="number" name="price" placeholder="9490000" min="1">
+		                        <input id="price" type="number" name="price" placeholder="9490000" min="1" required>
+		                    </div>
+
+		                    <div class="form-field">
+		                        <label for="supplierId">Nhà cung cấp</label>
+		                        <select id="supplierId" name="supplierId" class="select" <c:if test="${empty suppliers}">disabled</c:if> required>
+		                            <option value="">-- Chọn nhà cung cấp --</option>
+		                            <c:forEach var="supplier" items="${suppliers}">
+		                                <option value="${supplier.id}" <c:if test="${deviceSupplierDetail != null && deviceSupplierDetail.supplierId == supplier.id}">selected</c:if>>
+		                                    ${supplier.name}
+		                                </option>
+		                            </c:forEach>
+		                        </select>
+		                        <c:if test="${empty suppliers}">
+		                            <p class="form-note" style="color:#ef4444;margin-top:6px;">Chưa có nhà cung cấp hoạt động, vui lòng tạo trước.</p>
+		                        </c:if>
+		                    </div>
+
+		                    <div class="form-field">
+		                        <label for="supplierPrice">Giá nhập từ NCC</label>
+		                        <input id="supplierPrice" type="number" name="supplierPrice" min="1" placeholder="5000000" value="${deviceSupplierDetail.price}" required>
 		                    </div>
 		
 			                <div class="form-actions">

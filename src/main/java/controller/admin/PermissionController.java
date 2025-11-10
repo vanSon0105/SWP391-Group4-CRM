@@ -79,13 +79,13 @@ public class PermissionController extends HttpServlet {
             }
         }
 
-        List<Permission> permissions = permissionDAO.getAllPermissions();
+        List<Permission> allPermissions = permissionDAO.getAllPermissions();
         List<Integer> assignedPermissionIds = selectedRole != null
                 ? new ArrayList<>(permissionDAO.getPermissionIdsByRole(selectedRoleId))
                 : Collections.emptyList();
 
         request.setAttribute("roles", roles);
-        request.setAttribute("permissions", permissions);
+        request.setAttribute("allPermissions", allPermissions);
         request.setAttribute("selectedRole", selectedRole);
         request.setAttribute("selectedRoleId", selectedRoleId);
         request.setAttribute("assignedPermissionIds", assignedPermissionIds);
@@ -113,7 +113,7 @@ public class PermissionController extends HttpServlet {
             requestedUserId = selectedUser.getId();
         }
 
-        List<Permission> permissions = permissionDAO.getAllPermissions();
+        List<Permission> allPermissions = permissionDAO.getAllPermissions();
         List<Integer> userPermissionIds = selectedUser != null
                 ? new ArrayList<>(permissionDAO.getPermissionIdsByUser(selectedUser.getId()))
                 : Collections.emptyList();
@@ -124,7 +124,7 @@ public class PermissionController extends HttpServlet {
         request.setAttribute("roles", roles);
         request.setAttribute("users", userOptions);
         request.setAttribute("selectedUser", selectedUser);
-        request.setAttribute("permissions", permissions);
+        request.setAttribute("allPermissions", allPermissions);
         request.setAttribute("userPermissionIds", userPermissionIds);
         request.setAttribute("inheritedPermissionIds", inheritedPermissionIds);
         request.setAttribute("keyword", keyword);
