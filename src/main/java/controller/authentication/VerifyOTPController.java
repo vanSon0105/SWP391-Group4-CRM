@@ -97,8 +97,8 @@ public class VerifyOTPController extends HttpServlet {
             }
 
         } else {
-            request.setAttribute("error", "Mã OTP không đúng hoặc đã hết hạn!");
-            request.getRequestDispatcher("/view/authentication/verifyotp.jsp").forward(request, response);
+        	session.setAttribute("error", "Mã OTP không đúng hoặc đã hết hạn! Vui lòng gửi lại mã mới.");
+            response.sendRedirect("forgot-password");
         }
     }
 

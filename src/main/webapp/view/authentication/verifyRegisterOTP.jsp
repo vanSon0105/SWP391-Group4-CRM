@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xác minh OTP - Đăng ký NovaCare</title>
+    <title>Xác minh OTP - Đăng ký TechShop</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
     <style>
         body { font-family: Arial, sans-serif; }

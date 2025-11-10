@@ -18,7 +18,7 @@ public class RegisterController extends HttpServlet {
 
         if (session.getAttribute("tempUser") == null) {
             session.setAttribute("error", "Bạn phải xác thực email trước khi đăng ký!");
-            resp.sendRedirect(req.getContextPath() + "/view/authentication/register.jsp"); // gửi OTP
+            resp.sendRedirect(req.getContextPath() + "/view/authentication/register.jsp"); 
             return;
         }
 
