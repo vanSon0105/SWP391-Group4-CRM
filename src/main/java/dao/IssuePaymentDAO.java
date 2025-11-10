@@ -134,7 +134,7 @@ public class IssuePaymentDAO extends DBContext {
 		return null;
 	}
 
-	private IssuePayment getById(int id) {
+	public IssuePayment getById(int id) {
 		String sql = "SELECT * FROM issue_payments WHERE id = ?";
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, id);
@@ -469,7 +469,7 @@ public class IssuePaymentDAO extends DBContext {
 
 	public boolean updateCustomerShippingInfo(int paymentId, String fullName, String phone, String address, String shippingNote) {
 		String sql = "UPDATE issue_payments SET shipping_full_name = ?, shipping_phone = ?, shipping_address = ?, shipping_note = ?, "
-				+ "updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'awaiting_customer'";
+				+ "updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status IN ('awaiting_customer','awaiting_admin')";
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, fullName.trim());
 			ps.setString(2, phone.trim());
@@ -487,5 +487,29 @@ public class IssuePaymentDAO extends DBContext {
 		return false;
 	}
 
+	public boolean markAwaitingAdminConfirmation(int paymentId) {
+		String sql = "UPDATE issue_payments SET status = 'awaiting_admin', updated_at = CURRENT_TIMESTAMP "
+				+ "WHERE id = ? AND status IN ('awaiting_customer','awaiting_admin')";
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, paymentId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean confirmPaymentByAdmin(int paymentId, int adminId) {
+		String sql = "UPDATE issue_payments SET status = 'paid', confirmed_by = ?, paid_at = CURRENT_TIMESTAMP, "
+				+ "updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = 'awaiting_admin'";
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, adminId);
+			ps.setInt(2, paymentId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 }

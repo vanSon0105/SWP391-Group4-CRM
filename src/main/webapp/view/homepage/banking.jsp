@@ -50,6 +50,15 @@
         .note {
             width: 100%;
         }
+        
+        .alert-info {
+	        margin-top: 16px;
+	        padding: 12px 16px;
+	        border-radius: 12px;
+	        background: rgba(253,230,138,.35);
+	        color: #92400e;
+	        font-weight: 600;
+	    }
     </style>
 </head>
 <body class="shop-page">
@@ -84,6 +93,12 @@
                     </c:otherwise>
                 </c:choose>
             </div>
+            
+            <c:if test="${awaitingAdminConfirm}">
+                <div class="alert-info">
+                    Chúng tôi đã ghi nhận thông tin thanh toán. Vui lòng chờ quản trị viên xác nhận giao dịch
+                </div>
+            </c:if>
 
             <c:choose>
                 <c:when test="${bankingContext == 'issue'}">

@@ -130,7 +130,7 @@ CREATE TABLE customer_issues (
   warranty_card_id INT,
   support_staff_id INT,
   feedback TEXT,
-  support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress', 'customer_cancelled', 'completed', 'create_payment', 'waiting_payment', 'resolved') DEFAULT 'new',
+  support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created','tech_in_progress', 'customer_cancelled', 'completed', 'create_payment', 'waiting_payment', 'waiting_confirm', 'resolved') DEFAULT 'new',
   created_at TIMESTAMP default current_timestamp,
   foreign key (customer_id) references users(id),
   foreign key (warranty_card_id) references warranty_cards(id),
@@ -218,7 +218,7 @@ CREATE TABLE issue_payments (
   shipping_phone VARCHAR(20),
   shipping_address VARCHAR(255),
   shipping_note VARCHAR(500),
-  status ENUM('awaiting_support','awaiting_customer','paid','closed') DEFAULT 'awaiting_support',
+  status ENUM('awaiting_support','awaiting_customer','awaiting_admin','paid','closed') DEFAULT 'awaiting_support',
   created_by INT NOT NULL,
   approved_by INT,
   confirmed_by INT,
@@ -557,16 +557,15 @@ INSERT INTO permissions (id, permission_name) VALUES
 (30, 'PAYMENT_REQUEST_CREATION'), (31, 'ADMIN_PAGE'), (32, 'CUSTOMER_ORDER_REPORT'),
 (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
 (37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), 
-(42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT'), (45, 'PRICE_UPDATE');
+(42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT'), (45, 'PRICE_UPDATE'), (46, 'ORDER_HISTORY_MANAGEMENT');
 
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
 
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 12), (2, 13), (2, 14), (2, 15), (2, 19),
-(2, 20), (2, 21), (2, 22), (2, 25), (2, 26), (2, 32), (2, 33), (2, 34), (2, 36);
+(2, 20), (2, 21), (2, 22), (2, 25), (2, 26), (2, 32), (2, 33), (2, 34), (2, 36), (2, 23);
 
 INSERT INTO role_permission (role_id, permission_id) VALUES (3, 3), (3, 42);
-INSERT INTO role_permission (role_id, permission_id) VALUES (6, 3), (6, 42);
 INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38), (4, 3);
 INSERT INTO role_permission (role_id, permission_id) VALUES
 (5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3), (5, 44), (5, 27), (5, 45);

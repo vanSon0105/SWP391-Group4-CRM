@@ -249,6 +249,12 @@
 	                        <p>Cập nhật lúc: <strong><fmt:formatDate value="${taskDetail.updatedAt}" pattern="dd/MM/yyyy HH:mm" /></strong></p>
 	                    </div>
 	                </c:if>
+	                <c:if test="${not empty issue.feedback}">
+		                <div class="readonly-block">
+	                        <h3>Feedback từ khách hàng</h3>
+	                        <p>${issue.feedback}</p>
+	                    </div>
+                    </c:if>
 	                
 	                <c:if test="${empty taskDetail}">
 	                	<div style="margin-top: 20px;" class="alert">Yêu cầu chưa được tạo task!</div>
@@ -327,6 +333,7 @@
 					            	<c:choose>
 					            		<c:when test="${issuePayment.status == 'awaiting_support'}">Nhân viên hỗ trợ xử lí</c:when>
 					            		<c:when test="${issuePayment.status == 'awaiting_customer'}">Chờ khách hàng thanh toán</c:when>
+					            		<c:when test="${issuePayment.status == 'awaiting_admin'}">Chờ admin xác nhận</c:when>
 					            		<c:when test="${issuePayment.status == 'paid'}">Đã thanh toán</c:when>
 					            		<c:otherwise>Đã đóng đơn</c:otherwise>
 					            	</c:choose>

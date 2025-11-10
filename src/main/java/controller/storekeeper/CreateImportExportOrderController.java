@@ -12,13 +12,13 @@ import utils.AuthorizationUtils;
 @WebServlet("/create-transaction")
 public class CreateImportExportOrderController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
     private final DeviceDAO deviceDAO = new DeviceDAO();
     private final SupplierDAO supplierDAO = new SupplierDAO();
     private final UserDAO userDAO = new UserDAO();
     private final InventoryDAO inventoryDAO = new InventoryDAO();
     private final TransactionDAO transactionDAO = new TransactionDAO();
     private final TransactionDetailDAO detailDAO = new TransactionDetailDAO();
+    private final DeviceSerialDAO deviceSerialDAO = new DeviceSerialDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -122,6 +122,7 @@ public class CreateImportExportOrderController extends HttpServlet {
             List<Integer> deviceIdList = new ArrayList<>();
             List<Integer> quantityList = new ArrayList<>();
             List<String> deviceNameList = new ArrayList<>();
+            List<Device> selectedDevices = new ArrayList<>();
 
             for (int i = 0; i < deviceIds.length; i++) {
                 int deviceId;
@@ -164,6 +165,7 @@ public class CreateImportExportOrderController extends HttpServlet {
                 deviceIdList.add(deviceId);
                 quantityList.add(quantity);
                 deviceNameList.add(device.getName());
+                selectedDevices.add(device);
             }
 
             Transaction transaction = new Transaction();
@@ -184,6 +186,24 @@ public class CreateImportExportOrderController extends HttpServlet {
             for (int i = 0; i < deviceIdList.size(); i++) {
                 int deviceId = deviceIdList.get(i);
                 int quantity = quantityList.get(i);
+                Device device = selectedDevices.get(i);
+                if (device == null) {
+                    device = deviceDAO.getDeviceById(deviceId);
+                }
+                if (device == null) {
+                    request.setAttribute("error", "Không tìm thấy thiết bị ID: " + deviceId + " để ghi nhận giao dịch.");
+                    doGet(request, response);
+                    return;
+                }
+
+                if ("import".equalsIgnoreCase(type)) {
+                    boolean serialInserted = deviceSerialDAO.insertDeviceSerials(device, quantity);
+                    if (!serialInserted) {
+                        request.setAttribute("error", "Không thể tạo serial cho thiết bị " + device.getName() + ". Giao dịch đã bị hủy.");
+                        doGet(request, response);
+                        return;
+                    }
+                }
 
                 TransactionDetail detail = new TransactionDetail();
                 detail.setTransactionId(transactionId);

@@ -135,6 +135,11 @@
             color: #92400e;
         }
         
+        .badge-waiting_confirm {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
 
         .badge-resolved {
             background: #dcfce7;
@@ -354,6 +359,7 @@
 	                                            <c:when test="${status == 'completed'}">Hoàn thành task</c:when>
 	                                            <c:when test="${status == 'waiting_payment'}">Đợi khách hàng thanh toán</c:when>
 	                                            <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
+	                                            <c:when test="${status == 'waiting_confirm'}">Chờ quản lí xác nhận</c:when>
 	                                            <c:when test="${status == 'create_payment'}">Đã tạo bill - Chờ xác nhận</c:when>
                                                 <c:otherwise>Chưa tiếp nhận</c:otherwise>
                                             </c:choose>
