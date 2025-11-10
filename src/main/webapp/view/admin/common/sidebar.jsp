@@ -50,6 +50,9 @@
         <c:if test="${permissions != null && permissions.contains('TRANSACTION_MANAGEMENT')}">
             <a href="transactions">Danh sách giao dịch</a>
         </c:if>
+        <c:if test="${permissions != null && permissions.contains('ORDER_HISTORY_MANAGEMENT')}">
+            <a href="order-history">Lịch sử giao dịch</a>
+        </c:if>
     </nav>
 </aside>
     
