@@ -58,34 +58,36 @@
                         </a>
                     </c:if>
                     
-					<c:if test="${sessionScope.account.roleId == 1}">
+					<c:if test="${permissions != null && permissions.contains('ADMIN_PAGE')}">
 					    <a href="admin" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-crown"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${sessionScope.account.roleId == 2}">
+                    <c:if test="${account.roleId != 1}">
+					<c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
 					    <a href="manager-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-clipboard-check"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${sessionScope.account.roleId == 3}">
+					<c:if test="${permissions != null && permissions.contains('PROCESS_TASK')}">
 					    <a href="technical-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-screwdriver-wrench"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${sessionScope.account.roleId == 4}">
+					<c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_RESPONDING')}">
 					    <a href="support-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-headset"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${sessionScope.account.roleId == 5}">
+					<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
 					    <a href="de-show" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-warehouse"></i>
 					    </a>
+					</c:if>
 					</c:if>
 
                     <a href="cart" class="btn order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>

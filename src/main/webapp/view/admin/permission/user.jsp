@@ -220,7 +220,7 @@
                             <div class="inherited">
                                 <h4>Quyền từ vai trò</h4>
                                 <div class="tag-cloud">
-                                    <c:forEach var="permission" items="${permissions}">
+                                    <c:forEach var="permission" items="${allPermissions}">
                                         <c:if test="${inheritedPermissionIds != null && inheritedPermissionIds.contains(permission.id)}">
                                             <span>${permission.name}</span>
                                         </c:if>
@@ -232,7 +232,7 @@
                                 <input type="hidden" name="action" value="updateUser">
                                 <input type="hidden" name="userId" value="${selectedUser.id}">
                                 <div class="permission-grid">
-                                    <c:forEach var="permission" items="${permissions}">
+                                    <c:forEach var="permission" items="${allPermissions}">
                                         <c:set var="inherited" value="${inheritedPermissionIds != null && inheritedPermissionIds.contains(permission.id)}" />
                                         <c:set var="direct" value="${userPermissionIds != null && userPermissionIds.contains(permission.id)}" />
                                         <div class="permission-card ${inherited ? 'inherited' : ''}">

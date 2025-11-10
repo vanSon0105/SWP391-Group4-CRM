@@ -169,7 +169,7 @@
                                     <input type="hidden" name="action" value="updateRole">
                                     <input type="hidden" name="roleId" value="${selectedRole.id}">
                                     <div class="permission-grid">
-                                        <c:forEach var="permission" items="${permissions}">
+                                        <c:forEach var="permission" items="${allPermissions}">
                                             <label class="permission-chip">
                                                 <input type="checkbox" name="permissionIds" value="${permission.id}"
                                                        <c:if test="${assignedPermissionIds != null && assignedPermissionIds.contains(permission.id)}">checked</c:if>>

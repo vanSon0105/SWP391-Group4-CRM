@@ -144,7 +144,7 @@ small {
 					<div class="form-actions">
 						<a href="task-list" class="btn device-btn">  Quay lại
 						</a>
-						<button type="submit" class="btn device-btn"> Gửi
+						<button type="submit" class="btn device-btn"> Tạo
 						</button>
 					</div>
 				</div>

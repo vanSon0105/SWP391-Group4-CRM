@@ -92,6 +92,12 @@
 
     <section class="panel">
         <div class="device-toolbar">
+        	<div class="device-toolbar-actions">
+                <a class="btn btn-add" href="create-transaction">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Tạo đơn xuất/nhập</span>
+                </a>
+            </div>
 	        <form method="get" action="transactions" class="device-search">
 	            <input type="search" name="keyword" placeholder="Tìm theo nhân viên kho, ghi chú..." value="${fn:escapeXml(keyword)}"/>
 	            <select class="btn device-btn" name="type">

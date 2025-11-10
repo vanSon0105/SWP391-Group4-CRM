@@ -16,80 +16,40 @@
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.filters {
-	max-width: 1150px;
-	width: 100%;
-	display: flex;
+
+.device-management .pagination-pills {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding-bottom: 20px;
+}
+
+.device-management .pagination-pills a {
+	display: inline-flex;
+	justify-content: center;
 	align-items: center;
-	margin: 16px auto;
-	justify-content: space-between;
-	margin-top: 30px;
-	background: white;
-	padding: 16px;
-	border-radius: 12px;
-	border: 0.5px solid #2B90C6;
+	text-decoration: none;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2937;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.filters form {
-	width: 100%;
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
-	gap: 12px;
+.device-management .pagination-pills a.active {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+    color: #f8fafc;
+    border-color: transparent;
+    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
 }
 
-.filters select, .filters input[type="search"] {
-	border-radius: 6px;
-	padding: 8px 10px;
-	border: 1px solid #d1d5db;
-	font-size: 14px;
-}
-
-.filters button {
-	padding: 8px 16px;
-	background: #3b82f6;
-	color: white;
-	border: none;
-	border-radius: 6px;
-	font-size: 14px;
-	cursor: pointer;
-}
-
-.filters button:hover {
-	background: #2563eb;
-}
-.pagination-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-  gap: 8px;
-}
-
-.page-link {
-  display: inline-block;
-  padding: 8px 14px;
-  text-decoration: none;
-  border-radius: 8px;
-  background: #fff;
-  color: #1d4ed8;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-/* .page-link:hover {
-  background: #2563eb;
-} */
-
-.page-link.active {
-  background: #1d4ed8;
-  color:white;
-  box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
-}
-
-th, td {
-	padding: 14px 5px !important;
-	font-size: 1.3rem!四大;
-	text-align: center;
+.device-management .pagination-pills a:hover {
+    transform: translateY(-2px);
 }
 
 .status {
@@ -152,6 +112,16 @@ th, td {
 	margin: 0 0 8px 0;
 	color: #1e293b;
 }
+
+.disabled{
+		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
+	    color: #f8fafc;
+	    border-color: transparent;
+	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
+	    cursor: not-allowed;
+	    pointer-events: none;
+	    opacity: 0.5;
+	}
 </style>
 </head>
 <body class="management-page device-management">
@@ -161,10 +131,8 @@ th, td {
 
 	<main class="sidebar-main">
 		<section class="panel" id="table-panel">
-			<h2>Danh sách thanh toán khiếu nại</h2>
-
-			<div class="filters">
-				<form method="get">
+			<div class="device-toolbar">
+				<form class="device-search" method="get">
 					<select name="status" class="btn device-btn" onchange="this.form.submit()">
 						<option value="">Tất cả trạng thái</option>
 						<option value="awaiting_support"
@@ -183,18 +151,17 @@ th, td {
 						<option value="amount" ${sortField == 'amount' ? 'selected' : ''}>Số
 							tiền</option>
 					</select>
-					<div>
 						<input type="search" name="search" class="btn device-btn"
 							placeholder="Tìm tên, SĐT hoặc địa chỉ" value="${search}" />
 
 						<button type="submit" class="btn device-btn">Tìm</button>
 
-					</div>
 					<input type="hidden" name="page" value="1">
 				</form>
 			</div>
-
-
+		</section>
+		<section class="panel">
+			<h2>Danh sách thanh toán khiếu nại</h2>
 			<div class="table-wrapper">
 				<c:choose>
 					<c:when test="${not empty payments}">
@@ -252,14 +219,33 @@ th, td {
 					</c:otherwise>
 				</c:choose>
 			</div>
-			<div class="pagination-wrapper">
-								<c:forEach begin="1" end="${totalPages}" var="i">
-									<a
-										class="page-link ${param.page == null && i == 1 || param.page == i ? 'active' : ''}"
-										href="issue-payments?page=${i}&status=${status}&sortField=${sortField}">${i}</a>
-								</c:forEach>
-							</div>
-		</section>
+			</section>
+			
+			<div class="pagination-pills">
+				<c:choose>
+			        <c:when test="${currentPage > 1}">
+			            <a href="issue-payments?page=${currentPage - 1}&status=${status}&sortField=${sortField}#table-panel">&#10094;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+				
+				<c:forEach begin="1" end="${totalPages}" var="i">
+					<a
+						class="${param.page == null && i == 1 || param.page == i ? 'active' : ''}"
+						href="issue-payments?page=${i}&status=${status}&sortField=${sortField}">${i}</a>
+				</c:forEach>
+				
+				<c:choose>
+	                <c:when test="${currentPage < totalPages}">
+	                	<a href="issue-payments?page=${currentPage + 1}&status=${status}&sortField=${sortField}#table-panel">&#10094;</a>            	
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
+			</div>
 	</main>
 </body>
 </html>
