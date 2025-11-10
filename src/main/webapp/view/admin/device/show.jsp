@@ -211,9 +211,13 @@
 	                          </c:forEach>
                         </tbody>
                     </table>
+                    <p style="margin-top:12px; color:#6b7280; text-align: center;">
+                        Tổng số serial: <strong>${serialTotal}</strong>
+                    </p>
                    </c:if>
                 </div>
              </section>
+             <c:if test="${not empty listDevices}">
                <div class="pagination-pills">
 	           	<c:choose>
 			        <c:when test="${currentPage > 1}">
@@ -270,6 +274,66 @@
 			        </c:otherwise>
 	            </c:choose>
             </div>
+            </c:if>
+            
+            <c:if test="${serialTotalPages != null && serialTotalPages > 1}">
+             	<div class="pagination-pills" style="margin-top: 16px;">
+             		<c:choose>
+				        <c:when test="${serialCurrentPage > 1}">
+				            <a href="device-serials?id=${deviceId}&page=${serialCurrentPage - 1}#device-serial">&#10094;</a>
+				        </c:when>
+				        <c:otherwise>
+				            <a class="disabled">&#10094;</a>
+				        </c:otherwise>
+				    </c:choose>
+
+				    <c:if test="${serialTotalPages >= 10}">
+					  <c:set var="serialStart" value="${serialCurrentPage - 1}" />
+					  <c:set var="serialEnd" value="${serialCurrentPage + 1}" />
+					
+					  <c:if test="${serialStart < 1}">
+					    <c:set var="serialStart" value="1" />
+					  </c:if>
+					  
+					  <c:if test="${serialEnd > serialTotalPages}">
+					    <c:set var="serialEnd" value="${serialTotalPages}" />
+					  </c:if>
+					
+					  <c:if test="${serialStart > 1}">
+					    <a href="device-serials?id=${deviceId}&page=1#device-serial">1</a>
+					    <span>&hellip;</span>
+					  </c:if>
+					
+					  <c:forEach var="i" begin="${serialStart}" end="${serialEnd}">
+					    <a href="device-serials?id=${deviceId}&page=${i}#device-serial"
+					       class="${i == serialCurrentPage ? 'active' : ''}">${i}</a>
+					  </c:forEach>
+					
+					  <c:if test="${serialEnd < serialTotalPages}">
+					    <span>&hellip;</span>
+					    <a href="device-serials?id=${deviceId}&page=${serialTotalPages}#device-serial">
+					      ${serialTotalPages}
+					    </a>
+					  </c:if>
+					</c:if>
+	            	
+	            	<c:if test="${serialTotalPages < 10}">
+		            	<c:forEach var="i" begin="1" end="${serialTotalPages}">
+		            		<a href="device-serials?id=${deviceId}&page=${i}#device-serial"
+		               		class="${i == serialCurrentPage ? 'active' : ''}">${i}</a>
+		        		</c:forEach>           	
+	            	</c:if>
+	            	
+	            	<c:choose>
+		                <c:when test="${serialCurrentPage < serialTotalPages}">
+		                	<a href="device-serials?id=${deviceId}&page=${serialCurrentPage + 1}#device-serial">&#10095;</a>            	
+		            	</c:when>
+		            	<c:otherwise>
+				            <a class="disabled">&#10095;</a>
+				        </c:otherwise>
+		            </c:choose>
+             	</div>
+             </c:if>
         </main>
 </body>
 </html>

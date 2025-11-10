@@ -137,6 +137,10 @@ public class IssuePayment {
 	public boolean isAwaitingCustomer() {
 		return "awaiting_customer".equalsIgnoreCase(status);
 	}
+	
+	public boolean isAwaitingAdmin() {
+		return "awaiting_admin".equalsIgnoreCase(status);
+	}
 
 	public boolean isPaid() {
 		return "paid".equalsIgnoreCase(status);

@@ -156,9 +156,9 @@ public class TaskFormController extends HttpServlet {
 			request.setAttribute("selectedIssueId", customerIssueId);
 //			request.setAttribute("assignedStaffIds", selectedStaffs);
 
-			Timestamp deadline = null;
-			String deadlineStr = request.getParameter("deadline");
-			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
+//			Timestamp deadline = null;
+//			String deadlineStr = request.getParameter("deadline");
+//			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
 			
 			int managerId = manager.getId();
 			Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -181,11 +181,11 @@ public class TaskFormController extends HttpServlet {
 			    return;
 			}
 
-			if (deadline.before(now) || deadline.equals(now)) {
-				request.setAttribute("errorDeadline", "Deadline phải hơn ngày hôm nay");
-				forwardToForm(request, res);
-				return;
-			}
+//			if (deadline.before(now) || deadline.equals(now)) {
+//				request.setAttribute("errorDeadline", "Deadline phải hơn ngày hôm nay");
+//				forwardToForm(request, res);
+//				return;
+//			}
 			
 //			for (Integer staffId : selectedStaffs) {
 //				if (!userDao.isTechnicalStaffAvailable(staffId)) {

@@ -336,7 +336,7 @@ public class CustomerIssueController extends HttpServlet {
 		}
 
 		IssuePayment payment = paymentDao.getByIssueId(issueId);
-		if (payment == null || !payment.isAwaitingCustomer()) {
+		if (payment == null || (!payment.isAwaitingCustomer() && !payment.isAwaitingAdmin())) {
 			resp.sendRedirect("issue?payment_invalid=1");
 			return;
 		}
@@ -416,12 +416,19 @@ public class CustomerIssueController extends HttpServlet {
 				resp.sendRedirect("issue?payment_invalid=1");
 				return;
 			}
+			ciDao.updateSupportStatus(issueId, "resolved");
 			resp.sendRedirect("issue?payment=1");
 			return;
 		}
 		
 		boolean updatedShipping = paymentDao.updateCustomerShippingInfo(payment.getId(), fullName, phone, address, shippingNote);
 		if (!updatedShipping) {
+			resp.sendRedirect("issue?payment_invalid=1");
+			return;
+		}
+		
+		boolean awaitingAdmin = paymentDao.markAwaitingAdminConfirmation(payment.getId());
+		if (!awaitingAdmin) {
 			resp.sendRedirect("issue?payment_invalid=1");
 			return;
 		}
@@ -440,7 +447,7 @@ public class CustomerIssueController extends HttpServlet {
 		req.setAttribute("bankingRecipientPhone", payment.getShippingPhone());
 		req.setAttribute("bankingRecipientAddress", payment.getShippingAddress());
 		req.setAttribute("bankingShippingNote", payment.getShippingNote());
-		ciDao.updateSupportStatus(issueId, "resolved");
+		ciDao.updateSupportStatus(issueId, "waiting_confirm");
 		req.getRequestDispatcher("view/homepage/banking.jsp").forward(req, resp);
 	}
 	
@@ -467,7 +474,7 @@ public class CustomerIssueController extends HttpServlet {
 		}
 
 		IssuePayment payment = paymentDao.getByIssueId(issueId);
-		if (payment == null || !payment.isAwaitingCustomer()) {
+		if (payment == null || (!payment.isAwaitingCustomer() && !payment.isAwaitingAdmin())) {
 			resp.sendRedirect("issue?payment_invalid=1");
 			return;
 		}
@@ -475,6 +482,7 @@ public class CustomerIssueController extends HttpServlet {
 		req.setAttribute("issue", issue);
 		req.setAttribute("payment", payment);
 		req.setAttribute("finalPrice", payment.getAmount());
+		req.setAttribute("awaitingAdminConfirm", payment.isAwaitingAdmin());
 
 		if (req.getAttribute("formFullName") == null) {
 			String fullName = payment.getShippingFullName();

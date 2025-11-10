@@ -350,7 +350,7 @@
                                     </span>
                                 </td>
                                 <td>
-                                    <form method="post" action="technical-issues" style="display:flex; gap:8px; align-items:center;" class="assignment-form" data-existing-summary="${assignment.note != null ? fn:escapeXml(assignment.note) : ''}">
+                                    <form method="post" action="technical-issues" style="display:flex; gap:8px; align-items:center; justify-content: center;" class="assignment-form" data-existing-summary="${assignment.note != null ? fn:escapeXml(assignment.note) : ''}">
                                         <input type="hidden" name="assignmentId" value="${assignment.id}">
                                         
                                         <c:if test="${assignment.support_status != 'create_payment' and assignment.support_status != 'waiting_payment' and assignment.support_status != 'resolved'}">

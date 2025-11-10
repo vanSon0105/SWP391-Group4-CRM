@@ -74,6 +74,12 @@
 	border: 1px solid #f59e0b;
 }
 
+.status.awaiting_admin {
+	background-color: #fef3c7;
+	color: #92400e;
+	border: 1px solid #fbbf24;
+}
+
 .status.paid {
 	background-color: #dcfce7;
 	color: #166534;
@@ -141,6 +147,8 @@
 						<option value="awaiting_customer"
 							${status == 'awaiting_customer' ? 'selected' : ''}>Chờ
 							khách</option>
+						<option value="awaiting_admin"
+							${status == 'awaiting_admin' ? 'selected' : ''}>Chờ admin xác nhận</option>
 						<option value="paid" ${status == 'paid' ? 'selected' : ''}>Đã
 							thanh toán</option>
 						<option value="closed" ${status == 'closed' ? 'selected' : ''}>Đã
@@ -192,6 +200,7 @@
 										<td><span class="status ${p.status}"> <c:choose>
 													<c:when test="${p.status == 'awaiting_support'}">Chờ hỗ trợ</c:when>
 													<c:when test="${p.status == 'awaiting_customer'}">Chờ khách</c:when>
+													<c:when test="${p.status == 'awaiting_admin'}">Chờ admin xác nhận</c:when>
 													<c:when test="${p.status == 'paid'}">Đã thanh toán</c:when>
 													<c:when test="${p.status == 'closed'}">Đã đóng</c:when>
 												</c:choose>
@@ -199,7 +208,20 @@
 										<td><fmt:formatDate value="${p.createdAt}"
 												pattern="dd/MM/yyyy HH:mm" /></td>
 										<td><a href="issue-payment-detail?id=${p.id}"
-											class="btn device-btn">Xem</a></td>
+											class="btn device-btn">Xem</a>
+											
+											<c:if test="${p.status == 'waiting_confirm'}">
+										<button class="btn device-btn" name="action"
+											type="submit" value="success"
+											onclick="return confirm('Xác nhận thanh toán thành công cho vấn đề này?')">
+											Xác nhận</button>
+											
+										<button class="btn device-btn" name="action"
+											type="submit" value="failed"
+											onclick="return confirm('Bạn có chắc muốn từ chối thanh toán này không?')">
+											Từ chối</button>
+									</c:if>
+											</td>
 									</tr>
 								</c:forEach>
 							</tbody>

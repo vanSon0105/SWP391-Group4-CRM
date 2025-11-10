@@ -136,10 +136,14 @@ small {
 								${selectedIssueId != null && selectedIssueId == issue.id ? "selected" : ""}>
 								${issue.title}</option>
 						</c:forEach>
-					</select> <label>Hạn hoàn thành</label> <input type="date" name="deadline"
+					</select> 
+					
+					<%-- 
+					<label>Hạn hoàn thành</label> <input type="date" name="deadline"
 						min="<%= java.time.LocalDate.now() %>"
 						value="<fmt:formatDate value='${taskDetail[0].deadline}' pattern='yyyy-MM-dd' />"
 						${task.id == null ? 'required' : ''} /> <small>${errorDeadline}</small>
+						--%>
 
 					<div class="form-actions">
 						<a href="task-list" class="btn device-btn">  Quay lại
