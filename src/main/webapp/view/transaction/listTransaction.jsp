@@ -13,26 +13,6 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
       crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-.table-wrapper {
-	overflow-x: auto;
-	margin-top: 20px;
-}
-
-.transaction-table {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-.transaction-table th, .transaction-table td {
-	border: 1px solid #ddd;
-	padding: 10px;
-	text-align: center;
-}
-
-.transaction-table th {
-	background-color: #f7f7f7;
-}
-
 .status-confirmed {
 	color: green;
 	font-weight: bold;
@@ -48,44 +28,12 @@
 	font-weight: bold;
 }
 
-.filter-form {
-	margin-bottom: 15px;
-	display: flex;
-	gap: 10px;
-	align-items: center;
-	flex-wrap: wrap;
-}
-
-.filter-form input[type="text"], .filter-form select {
-	padding: 6px 10px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-}
-
-.filter-form button {
-	padding: 6px 15px;
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
-.create-btn {
-	margin-bottom: 15px;
-	padding: 8px 20px;
-	background-color: #28a745;
-	color: #fff;
-	border-radius: 5px;
-	text-decoration: none;
-	display: inline-block;
-}
-
 .device-management .pagination-pills {
 	display: flex;
 	justify-content: center;
 	gap: 10px;
 	margin-top: 20px;
+	padding-bottom: 20px;
 }
 
 .device-management .pagination-pills a {
@@ -128,55 +76,50 @@
 	pointer-events: none;
 	opacity: 0.5;
 }
-
-.action-btn {
-	padding: 4px 10px;
-	background-color: #007bff;
-	color: #fff;
-	border-radius: 5px;
-	text-decoration: none;
-	font-size: 13px;
-}
 </style>
 </head>
-<body class="management-page device-management sidebar-collapsed">
+<body class="management-page device-management">
 <jsp:include page="../admin/common/sidebar.jsp"></jsp:include>
 <jsp:include page="../admin/common/header.jsp"></jsp:include>
 
 <main class="sidebar-main">
+    <c:if test="${not empty message}">
+        <div class="message" style="color:green; font-weight:bold; margin-bottom:10px;">${message}</div>
+    </c:if>
+    <c:if test="${not empty error}">
+        <div class="error" style="color:red; font-weight:bold; margin-bottom:10px;">${error}</div>
+    </c:if>
+
     <section class="panel">
-        <h2>Danh sách giao dịch nhập/xuất kho</h2>
+        <div class="device-toolbar">
+        	<div class="device-toolbar-actions">
+        		 <a href="/create-transaction" class="btn btn-add">
+		            <i class="fa fa-plus"></i> Tạo đơn nhập/xuất
+		        </a>
+        	</div>
 
-        <c:if test="${not empty message}">
-            <div class="message" style="color:green; font-weight:bold; margin-bottom:10px;">${message}</div>
-        </c:if>
-        <c:if test="${not empty error}">
-            <div class="error" style="color:red; font-weight:bold; margin-bottom:10px;">${error}</div>
-        </c:if>
-
-        <a href="${pageContext.request.contextPath}/create-transaction" class="create-btn">
-            <i class="fa fa-plus"></i> Tạo đơn nhập/xuất
-        </a>
-
-        <form method="get" action="${pageContext.request.contextPath}/transactions" class="filter-form">
-            <input type="text" name="keyword" placeholder="Tìm theo nhân viên kho, người nhận, nhà cung cấp, ghi chú..." value="${fn:escapeXml(keyword)}"/>
-            <select name="type">
-                <option value="">Tất cả loại</option>
-                <option value="import" ${typeFilter=='import'?'selected':''}>Nhập kho</option>
-                <option value="export" ${typeFilter=='export'?'selected':''}>Xuất kho</option>
-            </select>
-            <select name="status">
-                <option value="">Tất cả trạng thái</option>
-                <option value="pending" ${statusFilter=='pending'?'selected':''}>Chờ duyệt</option>
-                <option value="confirmed" ${statusFilter=='confirmed'?'selected':''}>Đã xác nhận</option>
-                <option value="cancelled" ${statusFilter=='cancelled'?'selected':''}>Đã hủy</option>
-            </select>
-            <button type="submit"><i class="fa fa-filter"></i> Lọc</button>
-            <a href="${pageContext.request.contextPath}/transactions" style="padding:6px 15px; background-color:#6c757d; color:#fff; border-radius:5px; text-decoration:none;">
-		        <i class="fa fa-undo"></i> Reset
-		    </a>
-        </form>
-
+	        <form method="get" action="transactions" class="device-search">
+	            <input type="search" name="keyword" placeholder="Tìm theo nhân viên kho, ghi chú..." value="${fn:escapeXml(keyword)}"/>
+	            <select class="btn device-btn" name="type">
+	                <option value="">Tất cả loại</option>
+	                <option value="import" ${typeFilter=='import'?'selected':''}>Nhập kho</option>
+	                <option value="export" ${typeFilter=='export'?'selected':''}>Xuất kho</option>
+	            </select>
+	            <select class="btn device-btn" name="status">
+	                <option value="">Tất cả trạng thái</option>
+	                <option value="pending" ${statusFilter=='pending'?'selected':''}>Chờ duyệt</option>
+	                <option value="confirmed" ${statusFilter=='confirmed'?'selected':''}>Đã xác nhận</option>
+	                <option value="cancelled" ${statusFilter=='cancelled'?'selected':''}>Đã hủy</option>
+	            </select>
+	            <button class="btn device-btn" type="submit">Lọc</button>
+	            <a href="/transactions" class="btn device-btn">
+			        <i class="fa-solid fa-magnifying-glass"></i>Reset
+			    </a>
+	        </form>
+        </div>
+    </section>
+    <section class="panel">
+		<h2>Danh sách giao dịch nhập/xuất kho</h2>
         <div class="table-wrapper">
             <table class="transaction-table">
                 <thead>
@@ -230,11 +173,11 @@
 								<td><c:if test="${not empty t.date}">
 										<fmt:formatDate value="${t.date}" pattern="yyyy-MM-dd'T'HH:mm"
 											timeZone="Asia/Ho_Chi_Minh" var="formattedDate" />
-										<input type="datetime-local" value="${formattedDate}" disabled>
+										<input type="datetime-local" class="btn device-btn" value="${formattedDate}" disabled>
 									</c:if></td>
 								<td>
-                                <a href="${pageContext.request.contextPath}/transaction-detail?id=${t.id}" class="action-btn">
-                                    <i class="fa fa-eye"></i> Xem
+                                <a href="${pageContext.request.contextPath}/transaction-detail?id=${t.id}" class="btn device-btn">
+                                   Xem
                                 </a>
                             </td>
                         </tr>
@@ -245,7 +188,7 @@
                 </tbody>
             </table>
         </div>
-
+	</section>
         <div class="pagination-pills">
         	<c:choose>
 		        <c:when test="${currentPage > 1}">

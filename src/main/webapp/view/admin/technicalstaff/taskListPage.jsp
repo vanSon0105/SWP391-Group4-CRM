@@ -199,7 +199,7 @@
         }
         
         .sidebar-toggle{
-        	display: none !important;
+        	color: black;
         }
         
         .availability-card {

@@ -73,69 +73,6 @@
 	margin-top: 10px;
 }
 
-.device-filter {
-	display: flex;
-	gap: 12px;
-	margin-top: 10px;
-	align-items: center;
-}
-
-.device-filter label {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	font-size: 14px;
-	font-weight: 500;
-	color: #1e293b;
-	gap: 6px;
-}
-
-.device-filter input, .device-filter select {
-	padding: 6px 10px;
-	border: 1px solid #cbd5e1;
-	border-radius: 6px;
-	font-size: 14px;
-	color: #0f172a;
-	min-width: 160px;
-	transition: all 0.2s ease;
-}
-
-.device-filter input:focus, .device-filter select:focus {
-	outline: none;
-	border-color: #3b82f6;
-	box-shadow: 0 0 0 2px rgba(59, 130, 246, .2);
-}
-
-.device-filter button, .device-filter a {
-	padding: 8px 14px;
-	border-radius: 8px;
-	font-weight: 600;
-	text-decoration: none;
-	border: none;
-	cursor: pointer;
-	transition: all 0.2s ease;
-}
-
-.device-filter button {
-	background: linear-gradient(135deg, #3b82f6, #2563eb);
-	color: #fff;
-}
-
-.device-filter button:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(59, 130, 246, .25);
-}
-
-.device-filter a {
-	background: #e2e8f0;
-	color: #1e293b;
-	text-align: center;
-}
-
-.device-filter a:hover {
-	background: #cbd5e1;
-}
-
 .error {
 	color: red;
 	font-weight: 600;
@@ -160,6 +97,7 @@
     display: flex;
     justify-content: center;
     gap: 10px;
+    padding-bottom: 20px;
 }
 
 .device-management .pagination-pills a {
@@ -218,20 +156,19 @@
             <button type="submit" class="btn device-btn">Tìm</button>
             <a href="supplier?action=list" class="btn device-btn" style="padding:6px 10px;font-size:14px;">Reset</a>
         </form>
-        <form class="device-filter" action="supplier" method="get">
+        <form class="device-search" action="supplier" method="get">
             <input type="hidden" name="action" value="filter">
-            <label>Trạng thái:
-                <select name="status">
+            <label>
+                <select class="btn device-btn" name="status">
                     <option value="">Tất cả</option>
                     <option value="1" ${param.status=='1'?'selected':''}>Hoạt động</option>
                     <option value="0" ${param.status=='0'?'selected':''}>Ngừng hoạt động</option>
                 </select>
             </label>
-            <label>Địa chỉ:
-                <input type="text" name="address" placeholder="Nhập địa chỉ" value="${param.address != null ? param.address : ''}">
+            <label>
+                <input class="btn device-btn" type="text" name="address" placeholder="Nhập địa chỉ" value="${param.address != null ? param.address : ''}">
             </label>
-            <button type="submit">Lọc</button>
-            <a href="supplier?action=list">Reset</a>
+            <button class="btn device-btn" type="submit">Lọc</button>
         </form>
     </div>
     <c:if test="${not empty param.message}">
@@ -240,8 +177,11 @@
     <c:if test="${not empty param.error}">
         <div class="error">${param.error}</div>
     </c:if>
-    <div class="table-wrapper">
+    </section>
+    <section class="panel">
         <c:if test="${action=='list' || action=='trash' || action=='filter'}">
+    		<h2>Danh sách nhà cung cấp</h2>
+    <div class="table-wrapper">
             <table class="device-table">
                 <thead>
                     <tr>
@@ -280,12 +220,16 @@
                     </c:choose>
                 </tbody>
             </table>
-        </c:if>
+            <p style="margin-top:12px; color:#6b7280; text-align:center;">
+            Tổng số nhà cung cấp: <strong><c:out value="${not empty suppliers ? fn:length(suppliers) : 0}" /></strong>
+        </p>
     </div>
+        </c:if>
     <c:if test="${(action=='view' || action=='viewHistory') && not empty supplier}">
         <div class="detail-wrapper">
+            <a href="supplier?action=list" class="btn btn-secondary">Quay lại</a>
             <div class="detail-box">
-                <h3>Chi tiết nhà cung cấp</h3>
+                <h2>Chi tiết nhà cung cấp</h2>
                 <p><b>ID:</b> ${supplier.id}</p>
                 <p><b>Tên:</b> ${supplier.name}</p>
                 <p><b>SĐT:</b> ${supplier.phone}</p>
@@ -297,12 +241,11 @@
                         <c:otherwise>Ngừng hoạt động</c:otherwise>
                     </c:choose>
                 </p>
-                <a href="supplier?action=list" class="btn btn-secondary">Quay lại</a>
             </div>
 
             <c:if test="${action=='viewHistory' && not empty history}">
                 <div class="detail-box">
-                    <h3>Lịch sử cung cấp thiết bị</h3>
+                    <h2>Lịch sử cung cấp thiết bị</h2>
                     <table>
                         <thead>
                             <tr><th>#</th><th>Device ID</th><th>Tên thiết bị</th><th>Ngày</th><th>Giá</th></tr>
@@ -323,43 +266,39 @@
             </c:if>
         </div>
     </c:if>
+    </section>
     <c:if test="${action != 'viewHistory'}">
-        <p style="margin-top:12px; color:#6b7280; text-align:center;">
-            Tổng số nhà cung cấp: <strong><c:out value="${not empty suppliers ? fn:length(suppliers) : 0}" /></strong>
-        </p>
-        <nav style="margin-top:20px;">
-            <ul class="pagination">
+        <div class="pagination-pills">
                 <c:choose>
-                    <c:when test="${currentPage > 1}">
-                        <li class="page-item">
-                            <a class="page-link" href="supplier?action=${action}&page=${currentPage-1}">&laquo;</a>
-                        </li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                    </c:otherwise>
-                </c:choose>
-
-                <c:forEach var="i" begin="1" end="${not empty totalPages ? totalPages : 1}">
-                    <li class="page-item ${i==currentPage ? 'active' : ''}">
-                        <a class="page-link" href="supplier?action=${action}&page=${i}">${i}</a>
-                    </li>
-                </c:forEach>
-
+			        <c:when test="${currentPage > 1}">
+			            <a class="page-link" href="supplier?action=${action}&page=${currentPage-1}">&laquo;</a>
+			        </c:when>
+			        <c:otherwise>
+			            <a class="disabled">&#10094;</a>
+			        </c:otherwise>
+			    </c:choose>
+                
+                <c:forEach var="i" begin="1" end="${totalPages}">
+	                <c:choose>
+	                    <c:when test="${i == currentPage}">
+	                        <a class="active">${i}</a>
+	                    </c:when>
+	                    <c:otherwise>
+	                        <a class="page-link" href="supplier?action=${action}&page=${i}">${i}</a>
+	                    </c:otherwise>
+	                </c:choose>
+	            </c:forEach>
+                
                 <c:choose>
-                    <c:when test="${currentPage < (totalPages != null ? totalPages : 1)}">
-                        <li class="page-item">
-                            <a class="page-link" href="supplier?action=${action}&page=${currentPage+1}">&raquo;</a>
-                        </li>
-                    </c:when>
-                    <c:otherwise>
-                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
-                    </c:otherwise>
-                </c:choose>
-            </ul>
-        </nav>
+	                <c:when test="${currentPage < totalPages}">
+	                	<a class="page-link" href="supplier?action=${action}&page=${currentPage+1}">&raquo;</a>
+	            	</c:when>
+	            	<c:otherwise>
+			            <a class="disabled">&#10095;</a>
+			        </c:otherwise>
+	            </c:choose>
+        </div>
     </c:if>
-</section>
 </main>
 </body>
 </html>
