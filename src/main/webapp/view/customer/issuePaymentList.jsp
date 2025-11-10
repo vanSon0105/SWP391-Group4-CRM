@@ -86,6 +86,11 @@ tr:hover {
 	color: #15803d;
 }
 
+.status-awaiting_admin {
+	background: #fef9c3;
+	color: #92400e;
+}
+
 .status-closed {
 	background: #fee2e2;
 	color: #b91c1c;
@@ -203,6 +208,8 @@ tr:hover {
 							khách</option>
 						<option value="paid" ${status == 'paid' ? 'selected' : ''}>Đã
 							thanh toán</option>
+						<option value="awaiting_admin"
+							${status == 'awaiting_admin' ? 'selected' : ''}>Chờ admin xác nhận</option>
 						<option value="closed" ${status == 'closed' ? 'selected' : ''}>Đã
 							đóng</option>
 					</select>
@@ -247,6 +254,7 @@ tr:hover {
 								<td><span class="status-pill status-${p.status}"> <c:choose>
 											<c:when test="${p.status == 'awaiting_support'}">Chờ hỗ trợ</c:when>
 											<c:when test="${p.status == 'awaiting_customer'}">Chờ khách</c:when>
+											<c:when test="${p.status == 'awaiting_admin'}">Chờ admin xác nhận</c:when>
 											<c:when test="${p.status == 'paid'}">Đã thanh toán</c:when>
 											<c:when test="${p.status == 'closed'}">Đã đóng</c:when>
 										</c:choose>

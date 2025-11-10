@@ -21,6 +21,21 @@
 .device-detail .device-container {
 	width: 100%;
 }
+
+.flash {
+	margin-bottom: 16px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	font-weight: 600;
+}
+.flash.success {
+	background: rgba(34,197,94,.14);
+	color: #166534;
+}
+.flash.error {
+	background: rgba(248,113,113,.14);
+	color: #b91c1c;
+}
 </style>
 </head>
 <body class="management-page device-management">
@@ -28,7 +43,12 @@
 	<jsp:include page="../common/header.jsp"></jsp:include>
 
 	<main class="sidebar-main">
-
+		<c:if test="${not empty flashMessage}">
+			<div class="flash ${flashType}">
+				${flashMessage}
+			</div>
+		</c:if>
+		
 		<c:if test="${not empty error}">
 			<p style="color: #ef4444">${error}</p>
 		</c:if>
@@ -90,6 +110,11 @@
 											<span style="color: #b45309; font-weight: 700;">Chờ
 												khách</span>
 										</c:when>
+										
+										<c:when test="${payment.status == 'awaiting_admin'}">
+											<span style="color: #92400e; font-weight: 700;">Chờ admin xác nhận</span>
+										</c:when>
+										
 										<c:when test="${payment.status == 'paid'}">
 											<span style="color: #166534; font-weight: 700;">Đã
 												thanh toán</span>
@@ -136,6 +161,16 @@
 							</tr>
 						</tbody>
 					</table>
+					
+					<c:if test="${payment != null && payment.status == 'awaiting_admin'}">
+						<form method="post" action="issue-payment-detail" style="margin-top: 20px;">
+							<input type="hidden" name="paymentId" value="${payment.id}">
+							<button type="submit" name="action" value="confirm" class="btn btn-add"
+								style="background:#16a34a; color:#fff;">
+								<i class="fa-solid fa-badge-check"></i> Xác nhận đã thanh toán
+							</button>
+						</form>
+					</c:if>
 
 				</div>
 			</div>

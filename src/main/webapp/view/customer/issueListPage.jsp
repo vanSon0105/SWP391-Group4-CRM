@@ -117,6 +117,18 @@
       color: #1d4ed8;
     }
     
+    .status-awaiting_admin {
+    background: #fef9c3;
+    color: #92400e;
+    
+	}
+	.action-note {
+	    display: block;
+	    margin-top: 8px;
+	    color: #92400e;
+	    font-size: 0.95rem;
+	}
+    
     .status-create_payment {
         background: #fef3c7;
         color: #92400e;
@@ -163,6 +175,11 @@
     }
 
     .status-tech_in_progress {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .status-waiting_confirm {
       background: #fef3c7;
       color: #92400e;
     }
@@ -377,6 +394,7 @@
                                     <c:when test="${status == 'create_payment'}">Nhân viên đang xử lí</c:when>
                                     <c:when test="${status == 'waiting_payment'}">Vui lòng thanh toán</c:when>
                                     <c:when test="${status == 'completed'}">Xử lí xong vấn đề</c:when>
+                                    <c:when test="${status == 'waiting_confirm'}">Chờ admin xác nhận</c:when>
                                     <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
@@ -405,6 +423,10 @@
                             
                             <c:if test="${status == 'waiting_payment' && payment != null && payment.status == 'awaiting_customer'}">
 								<a class="link-button" href="issue-pay?issueId=${s.id}">Thanh toán</a>
+							</c:if>
+							
+							<c:if test="${status == 'waiting_confirm' && payment != null && payment.status == 'awaiting_admin'}">
+								<span class="action-note">Đang chờ admin xác nhận thanh toán</span>
 							</c:if>
 
 							<c:if test="${status == 'resolved' && payment != null && payment.status == 'paid'}">
