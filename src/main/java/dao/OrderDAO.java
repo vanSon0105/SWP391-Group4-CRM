@@ -3,11 +3,15 @@ import java.util.*;
 import java.math.BigDecimal;
 import java.sql.*;
 import model.Order;
+import model.OrderDetail;
+import model.OrderHistory;
 import dal.DBContext;
 
 public class OrderDAO extends DBContext{
 	
-    public List<Order> getAllOrders() {
+ 
+
+	public List<Order> getAllOrders() {
         List<Order> list = new ArrayList<>();
         String sql = "SELECT * FROM orders ORDER BY date DESC";
         try (Connection conn = getConnection();
@@ -173,7 +177,58 @@ public class OrderDAO extends DBContext{
 	    }
 	    return 0;
 	}
+	
+	 public List<OrderHistory> getAllOrderHistories() throws SQLException {
+	        List<OrderHistory> list = new ArrayList<>();
+	        String sql = "SELECT o.id AS order_id, o.customer_id, u.full_name, o.total_amount, " +
+	                     "o.date, o.status " +
+	                     "FROM orders o " +
+	                     "JOIN users u ON o.customer_id = u.id " +
+	                     "ORDER BY o.date DESC";
 
+	        try (Connection conn = DBContext.getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql);
+	             ResultSet rs = ps.executeQuery()) {
+
+	            while (rs.next()) {
+	                OrderHistory order = new OrderHistory();
+	                order.setOrderId(rs.getInt("order_id"));
+	                order.setCustomerId(rs.getInt("customer_id"));
+	                order.setCustomerName(rs.getString("full_name"));
+	                order.setTotalAmount(rs.getBigDecimal("total_amount"));
+	                order.setDate(rs.getTimestamp("date"));
+	                order.setStatus(rs.getString("status"));
+	                list.add(order);
+	            }
+	        }
+	        return list;
+	    }
+
+	  public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
+	        List<OrderDetail> list = new ArrayList<>();
+	        String sql = "SELECT * FROM order_details WHERE order_id = ?";
+	        try (Connection conn = getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, orderId);
+	            ResultSet rs = ps.executeQuery();
+
+	            while (rs.next()) {
+	                OrderDetail od = new OrderDetail();
+	                od.setId(rs.getInt("id"));
+	                od.setOrderId(rs.getInt("order_id"));
+	                //od.setDeviceName(rs.getString("device_name"));
+	                od.setQuantity(rs.getInt("quantity"));
+	                od.setPrice(rs.getDouble("price"));
+	                list.add(od);
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	        return list;
+	    }
+	 
 }
 //package dao;
 //
