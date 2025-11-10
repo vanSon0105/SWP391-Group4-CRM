@@ -201,8 +201,6 @@
             </a>
         </c:if>
     </c:if>
-
-    <!-- Mở khóa user inactive -->
     <c:if test="${u.status == 'inactive'}">
         <a class="btn device-btn"
            href="account?action=activate&id=${u.id}"

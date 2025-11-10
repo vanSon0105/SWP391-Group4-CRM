@@ -28,6 +28,8 @@
 	--border: #e5e7eb;
 }
 
+
+
 .supplier-form {
 	display: flex;
 	flex-direction: column;
@@ -204,7 +206,6 @@
 <jsp:include page="../common/header.jsp"></jsp:include>
 <main class="sidebar-main">
 <section class="panel">
-
     <div class="device-toolbar">
         <div class="device-toolbar-actions">
             <a class="btn btn-add" href="supplier?action=add"><i class="fa-solid fa-plus"></i> Thêm nhà cung cấp</a>
@@ -217,7 +218,6 @@
             <button type="submit" class="btn device-btn">Tìm</button>
             <a href="supplier?action=list" class="btn device-btn" style="padding:6px 10px;font-size:14px;">Reset</a>
         </form>
-
         <form class="device-filter" action="supplier" method="get">
             <input type="hidden" name="action" value="filter">
             <label>Trạng thái:
@@ -234,14 +234,12 @@
             <a href="supplier?action=list">Reset</a>
         </form>
     </div>
-
     <c:if test="${not empty param.message}">
         <div class="message">${param.message}</div>
     </c:if>
     <c:if test="${not empty param.error}">
         <div class="error">${param.error}</div>
     </c:if>
-
     <div class="table-wrapper">
         <c:if test="${action=='list' || action=='trash' || action=='filter'}">
             <table class="device-table">
@@ -284,7 +282,6 @@
             </table>
         </c:if>
     </div>
-
     <c:if test="${(action=='view' || action=='viewHistory') && not empty supplier}">
         <div class="detail-wrapper">
             <div class="detail-box">
@@ -326,13 +323,10 @@
             </c:if>
         </div>
     </c:if>
-
-    <!-- Pagination -->
     <c:if test="${action != 'viewHistory'}">
         <p style="margin-top:12px; color:#6b7280; text-align:center;">
             Tổng số nhà cung cấp: <strong><c:out value="${not empty suppliers ? fn:length(suppliers) : 0}" /></strong>
         </p>
-
         <nav style="margin-top:20px;">
             <ul class="pagination">
                 <c:choose>
@@ -365,7 +359,6 @@
             </ul>
         </nav>
     </c:if>
-
 </section>
 </main>
 </body>
