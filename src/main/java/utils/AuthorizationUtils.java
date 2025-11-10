@@ -97,6 +97,13 @@ public class AuthorizationUtils {
         }
         session.setAttribute(SESSION_PERMISSIONS, new HashSet<>(permissions));
     }
+    
+    public static void reloadPermissions(HttpSession session, int userId) {
+        if (session == null) {
+            return;
+        }
+        session.setAttribute(SESSION_PERMISSIONS, new HashSet<>(PERMISSION_DAO.getPermissionsForUser(userId)));
+    }
 
     public static void clearPermissions(HttpSession session) {
         if (session != null) {

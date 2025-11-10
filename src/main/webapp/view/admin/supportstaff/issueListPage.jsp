@@ -231,15 +231,12 @@
             font-size: 20px;
             color: #0f172a;
         }
-        
-        .sidebar-toggle{
-        	display: none !important;
-        }
     </style>
 </head>
 
 <body class="management-page dashboard">
     <jsp:include page="../common/header.jsp"></jsp:include>
+    <jsp:include page="../common/sidebar.jsp"></jsp:include>
     <main class="sidebar-main">
         <section class="panel" style="border: none;">
 	        <h2>Tổng kết nhanh</h2>

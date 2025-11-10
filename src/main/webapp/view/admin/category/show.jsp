@@ -20,6 +20,7 @@
 	    display: flex;
 	    justify-content: center;
 	    gap: 10px;
+	    padding-bottom: 20px;
 	}
 	
 	.device-management .pagination-pills a {
