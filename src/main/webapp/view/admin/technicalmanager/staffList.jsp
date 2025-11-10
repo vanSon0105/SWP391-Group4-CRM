@@ -58,10 +58,6 @@
 
 	<main class="sidebar-main">
 		<section class="panel">
-			<div class="device-toolbar">
-				<h2>Danh sách nhân viên kỹ thuật</h2>
-				<a class="device-btn" href="staff-form">Thêm nhân viên</a>
-			</div>
 			<form action="staff-list" method="get" style="margin-top: 10px;">
 				<select class="btn device-btn" name="status"
 					onchange="this.form.submit()">
@@ -77,6 +73,7 @@
 		</section>
 
 		<section class="panel" id="table-panel">
+				<h2>Danh sách nhân viên kỹ thuật</h2>
 			<div class="table-wrapper">
 				<c:if test="${not empty staffList}">
 					<table class="device-table">
@@ -98,13 +95,14 @@
 									<td>${staff.fullName}</td>
 									<td>${staff.email}</td>
 									<td><c:choose>
-											<c:when test="${staff.available}">
-												<span>Rảnh</span>
-											</c:when>
-											<c:otherwise>
-												<span>Bận</span>
-											</c:otherwise>
-										</c:choose></td>
+										<c:when test="${staff.available}">
+											<span style="color: #10b981; font-weight: 700">Rảnh</span>
+										</c:when>
+										<c:otherwise>
+											<span style="color: #ef4444; font-weight: 700">Đang
+												bận</span>
+										</c:otherwise>
+									</c:choose></td>
 
 									<td style="display: flex; gap: 5px; justify-content: center"><a
 										href="staff-detail?id=${staff.id}" class="btn device-btn">Xem</a>

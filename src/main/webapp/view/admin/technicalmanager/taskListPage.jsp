@@ -173,19 +173,15 @@ body .panel h2 {
 				<form class="device-search" action="task-list" method="get">
 					<select class="btn device-btn" id="status" name="status"
 						onchange="this.form.submit()">
-						<option value="" ${empty param.status ? 'selected' : '' }>All
-							status</option>
+						<option value="" ${empty param.status ? 'selected' : '' }>Tất cả trạng thái</option>
 						<option value="pending"
-							${param.status=='pending' ? 'selected' : '' }>Pending</option>
+							${param.status=='pending' ? 'selected' : '' }>Đang chờ xử lí</option>
 						<option value="in_progress"
-							${param.status=='in_progress' ? 'selected' : '' }>In
-							progress</option>
+							${param.status=='in_progress' ? 'selected' : '' }>Đang thực hiện</option>
 						<option value="completed"
-							${param.status=='completed' ? 'selected' : '' }>
-							Completed</option>
+							${param.status=='completed' ? 'selected' : '' }>Đã hoàn thành</option>
 						<option value="cancelled"
-							${param.status=='cancelled' ? 'selected' : '' }>
-							Cancelled</option>
+							${param.status=='cancelled' ? 'selected' : '' }>Đã hủy</option>
 					</select> <label for="task-list-search" class="sr-only"></label> <input
 						id="task-list-search" name="search" type="search"
 						placeholder="Tìm theo tên, email, số điện thoại..."
