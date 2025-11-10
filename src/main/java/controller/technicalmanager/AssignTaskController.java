@@ -13,6 +13,7 @@ import dao.TaskDetailDAO;
 import dao.UserDAO;
 import model.Task;
 import model.User;
+import utils.AuthorizationUtils;
 import model.TaskDetail;
 
 @WebServlet(urlPatterns = {"/assign-task"})
@@ -25,7 +26,10 @@ public class AssignTaskController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+    	User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
         String staffIdStr = request.getParameter("staffId");
 
         if(staffIdStr == null){
@@ -49,7 +53,10 @@ public class AssignTaskController extends HttpServlet {
             throws ServletException, IOException {
 
         request.setCharacterEncoding("UTF-8");
-
+        User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
         int taskId = Integer.parseInt(request.getParameter("task_id"));
         int staffId = Integer.parseInt(request.getParameter("technical_staff_id"));
         String note = request.getParameter("note");
@@ -111,4 +118,8 @@ public class AssignTaskController extends HttpServlet {
         request.getRequestDispatcher("/view/admin/technicalmanager/assignTaskPage.jsp")
                .forward(request, response);
     }
+    
+    private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	}
 }

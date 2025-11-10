@@ -10,6 +10,7 @@ import java.io.IOException;
 import dao.UserDAO;
 import java.util.List;
 import model.User;
+import utils.AuthorizationUtils;
 import model.TaskDetail;
 import dao.TaskDetailDAO;
 
@@ -21,6 +22,10 @@ public class StaffDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
     	String staffIdParam = request.getParameter("id");
     	int staffId = Integer.parseInt(staffIdParam);
     	
@@ -39,6 +44,10 @@ public class StaffDetailController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
+        User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
 
         String action = request.getParameter("action");
         if ("cancel".equals(action)) {
@@ -49,4 +58,8 @@ public class StaffDetailController extends HttpServlet {
             response.sendRedirect("staff-detail?id=" + staffId);
         }
     }
+    
+    private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	}
 }

@@ -10,6 +10,7 @@ import java.io.IOException;
 import dao.UserDAO;
 import java.util.List;
 import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet("/staff-list")
 public class StaffListController extends HttpServlet {
@@ -19,6 +20,10 @@ public class StaffListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
         String search = request.getParameter("search");
         String status = request.getParameter("status");
         int page = 1;
@@ -41,4 +46,8 @@ public class StaffListController extends HttpServlet {
 
         request.getRequestDispatcher("/view/admin/technicalmanager/staffList.jsp").forward(request, response);
     }
+    
+    private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	}
 }
