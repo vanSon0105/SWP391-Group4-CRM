@@ -31,9 +31,10 @@
     <h1>Đặt lại mật khẩu</h1>
     <p>Nhập email để nhận mã OTP đặt lại mật khẩu.</p>
 
-    <c:if test="${not empty error}">
-        <p class="error">${error}</p>
-    </c:if>
+    <c:if test="${not empty sessionScope.error}">
+    	<p class="error">${sessionScope.error}</p>
+    	<c:remove var="error" scope="session" />
+	</c:if>
 
     <c:if test="${not empty mss}">
         <p class="success">${mss}</p>

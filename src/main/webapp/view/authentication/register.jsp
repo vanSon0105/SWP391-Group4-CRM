@@ -26,10 +26,10 @@
 <body class="shop-page register-page">
 
 <section class="card">
-    <h1>Tạo tài khoản NovaCare</h1>
+    <h1>Tạo tài khoản TechShop</h1>
     <p>Nhập thông tin cá nhân và xác minh email bằng mã OTP.</p>
 
-    <!-- Hiển thị thông báo lỗi hoặc thành công -->
+    
     <c:if test="${not empty error}">
         <p class="message error">${error}</p>
     </c:if>
@@ -37,7 +37,7 @@
         <p class="message success">${success}</p>
     </c:if>
 
-    <!-- Form chính -->
+   
     <form action="${pageContext.request.contextPath}/send-otp" method="post">
         <input type="hidden" name="action" value="register">
 
@@ -75,12 +75,12 @@
                    placeholder="Nhập mật khẩu" required>
         </div>
 
-        <!-- Nếu OTP chưa gửi -->
+ 
         <c:if test="${sessionScope.otpSent != true}">
             <button type="submit">Gửi mã OTP</button>
         </c:if>
 
-        <!-- Nếu OTP đã gửi, hiển thị ô nhập OTP -->
+       
         <c:if test="${sessionScope.otpSent == true}">
             <div style="display:grid; gap:8px; text-align:left;">
                 <label for="otp">Mã OTP</label>
