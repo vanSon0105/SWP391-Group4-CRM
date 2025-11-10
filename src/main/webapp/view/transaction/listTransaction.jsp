@@ -227,13 +227,12 @@
                                     <c:when test="${t.status=='cancelled'}">Đã hủy</c:when>
                                 </c:choose>
                             </td>
-                            <td>
-    <c:if test="${not empty t.date}">
-        <fmt:formatDate value="${t.date}" pattern="yyyy-MM-dd'T'HH:mm" timeZone="Asia/Ho_Chi_Minh" var="formattedDate"/>
-        <input type="datetime-local" value="${formattedDate}" disabled>
-    </c:if>
-</td>
-                            <td>
+								<td><c:if test="${not empty t.date}">
+										<fmt:formatDate value="${t.date}" pattern="yyyy-MM-dd'T'HH:mm"
+											timeZone="Asia/Ho_Chi_Minh" var="formattedDate" />
+										<input type="datetime-local" value="${formattedDate}" disabled>
+									</c:if></td>
+								<td>
                                 <a href="${pageContext.request.contextPath}/transaction-detail?id=${t.id}" class="action-btn">
                                     <i class="fa fa-eye"></i> Xem
                                 </a>

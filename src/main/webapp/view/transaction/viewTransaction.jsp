@@ -34,13 +34,32 @@
     margin-bottom: 25px; 
 }
 
-.detail-panel .info div { 
-    flex: 1 1 300px; 
+.detail-panel .info div.small-box { 
+    flex: 1 1 180px;  /* nhỏ gọn */
     background: #f9f9f9; 
-    padding: 12px 15px; 
+    padding: 10px 12px; 
     border-radius: 8px; 
     box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
-    font-size: 15px;
+    font-size: 14px;
+    word-break: break-word;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+.detail-panel .info div.note {
+    flex: 2 1 100%;         
+    max-height: 200px;
+    overflow-y: auto;          
+    background-color: #eef2ff;
+    padding: 15px 15px 15px 15px; 
+    border-radius: 8px;
+    font-style: italic;
+    color: #3730a3;
+    word-break: break-word;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    position: relative;
+    margin-top: 10px;
 }
 
 .device-table { 
@@ -102,25 +121,50 @@
 <main class="sidebar-main">
     <section class="detail-panel">
         <h2>Chi tiết giao dịch #${transaction.id}</h2>
-        <div class="info">
-            <div><strong>Loại:</strong> <c:out value="${transaction.type=='import' ? 'Nhập kho' : 'Xuất kho'}"/></div>
-            <div><strong>Nhân viên kho:</strong> <c:out value="${transaction.storekeeperName}"/></div>
-            <div><strong>Nhà cung cấp / Người nhận:</strong>
-                <c:choose>
-                    <c:when test="${transaction.type=='import'}">
-                        <c:out value="${transaction.supplierName != null ? transaction.supplierName : 'N/A'}"/>
-                    </c:when>
-                    <c:otherwise>
-                        <c:out value="${transaction.userName != null ? transaction.userName : 'N/A'}"/>
-                    </c:otherwise>
-                </c:choose>
-            </div>
-            <div><strong>Trạng thái:</strong> <c:out value="${transaction.status}"/></div>
-            <div><strong>Ngày tạo:</strong> <fmt:formatDate value="${transaction.date}" pattern="yyyy-MM-dd HH:mm"/></div>
-            <div><strong>Ghi chú:</strong> <c:out value="${transaction.note != null ? transaction.note : ''}"/></div>
-        </div>
+			<div class="info">
+				<div class="small-box">
+					<strong>Loại:</strong>
+					<c:out
+						value="${transaction.type=='import' ? 'Nhập kho' : 'Xuất kho'}" />
+				</div>
+				<div class="small-box">
+					<strong>Nhân viên kho:</strong>
+					<c:out value="${transaction.storekeeperName}" />
+				</div>
 
-        <h3>Danh sách thiết bị</h3>
+				<c:choose>
+					<c:when test="${transaction.type=='import'}">
+						<div class="small-box">
+							<strong>Nhà cung cấp:</strong>
+							<c:out
+								value="${transaction.supplierName != null ? transaction.supplierName : 'N/A'}" />
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="small-box">
+							<strong>Người nhận:</strong>
+							<c:out
+								value="${transaction.userName != null ? transaction.userName : 'N/A'}" />
+						</div>
+					</c:otherwise>
+				</c:choose>
+
+				<div class="small-box">
+					<strong>Trạng thái:</strong>
+					<c:out value="${transaction.status}" />
+				</div>
+				<div class="small-box">
+					<strong>Ngày tạo:</strong>
+					<fmt:formatDate value="${transaction.date}"
+						pattern="yyyy-MM-dd HH:mm" />
+				</div>
+				<div class="note">
+					<strong>Ghi chú:</strong>
+					<c:out value="${transaction.note != null ? transaction.note : ''}" />
+				</div>
+			</div>
+
+			<h3>Danh sách thiết bị</h3>
         <table class="device-table">
             <thead>
                 <tr>

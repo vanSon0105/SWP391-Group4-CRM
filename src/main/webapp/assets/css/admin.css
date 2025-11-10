@@ -1570,3 +1570,39 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
     vertical-align: middle; /* căn giữa theo chiều dọc */
     padding: 8px;
 }
+
+.filter-form {
+    display: flex;
+    justify-content: center; /* căn giữa toàn bộ form */
+    flex-wrap: wrap;         /* nếu màn hình nhỏ sẽ xuống hàng */
+    gap: 10px;               /* khoảng cách giữa các ô */
+    margin-bottom: 20px;
+}
+
+.filter-form .filter-group {
+    display: flex;
+    flex-wrap: wrap;     /* khi màn hình nhỏ, các ô xuống dòng */
+    align-items: center; /* căn giữa theo chiều dọc */
+    gap: 10px;           /* khoảng cách đều giữa các ô */
+}
+
+.filter-form select,
+.filter-form input,
+.filter-form button {
+    height: 36px;        /* chiều cao đều cho tất cả ô */
+    padding: 0 10px;     /* padding đều */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.filter-form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.filter-form button:hover {
+    background-color: #45a049;
+}
