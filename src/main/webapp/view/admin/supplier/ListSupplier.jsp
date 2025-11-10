@@ -12,24 +12,6 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" />
 <style>
-:root {
-	--primary: #2563eb;
-	--primary-hover: #1d4ed8;
-	--neutral: #6b7280;
-	--bg: #f5f7fb;
-	--card: #fff;
-	--text: #111827;
-	--danger: #ef4444;
-	--warning: #f59e0b;
-	--info: #0ea5e9;
-	--success: #10b981;
-	--radius: 10px;
-	--shadow: 0 6px 18px rgba(0, 0, 0, .08);
-	--border: #e5e7eb;
-}
-
-
-
 .supplier-form {
 	display: flex;
 	flex-direction: column;

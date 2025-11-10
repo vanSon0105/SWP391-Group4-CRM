@@ -92,12 +92,6 @@
 
     <section class="panel">
         <div class="device-toolbar">
-        	<div class="device-toolbar-actions">
-        		 <a href="/create-transaction" class="btn btn-add">
-		            <i class="fa fa-plus"></i> Tạo đơn nhập/xuất
-		        </a>
-        	</div>
-
 	        <form method="get" action="transactions" class="device-search">
 	            <input type="search" name="keyword" placeholder="Tìm theo nhân viên kho, ghi chú..." value="${fn:escapeXml(keyword)}"/>
 	            <select class="btn device-btn" name="type">
@@ -128,7 +122,6 @@
                         <th>Loại</th>
                         <th>Nhân viên kho</th>
                         <th>Nhà cung cấp / Người nhận</th>
-                        <th>Thiết bị</th>
                         <th>Trạng thái</th>
                         <th>Ngày tạo</th>
                         <th>Hành động</th>
@@ -150,18 +143,6 @@
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td>
-							    <c:choose>
-							        <c:when test="${not empty t.details}">
-							            <c:forEach var="d" items="${t.details}">
-							                ${d.deviceName} (x${d.quantity})<br/>
-							            </c:forEach>
-							        </c:when>
-							        <c:otherwise>
-							            Không có thiết bị
-							        </c:otherwise>
-							    </c:choose>
-							</td>
 							
                             <td class="status-${t.status}">
                                 <c:choose>
