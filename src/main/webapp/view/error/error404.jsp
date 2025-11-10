@@ -14,7 +14,7 @@
         <h1>404</h1>
         <h2>Oops! Trang bạn tìm không tồn tại</h2>
         <p>Liên kết có thể đã bị xóa hoặc bạn nhập sai địa chỉ. Hãy quay lại trang chủ NovaCare Shop để tiếp tục mua sắm.</p>
-        <a href="home">Home</a>
+        <a href="${pageContext.request.contextPath}/home">Home</a>
     </div>
 </section>
 <jsp:include page="../common/footer.jsp"></jsp:include>

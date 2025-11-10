@@ -67,7 +67,9 @@
 <main class="sidebar-main">
     <section class="panel">
     	<a class="btn device-btn" href="supplier"><i class="fa-solid fa-arrow-left"></i><span>Về danh sách</span></a>
-
+    </section>
+	<section class="panel">
+        <h2>Cập nhật nhà cung cấp</h2>
         <c:if test="${not empty requestScope.error}">
             <div class="error">${requestScope.error}</div>
         </c:if>
@@ -81,9 +83,6 @@
         <c:if test="${not empty requestScope.message}">
             <div class="message">${requestScope.message}</div>
         </c:if>
-    </section>
-	<section class="panel">
-        <h2>Cập nhật nhà cung cấp</h2>
         <div style="display: flex; justify-content: center; align-items: center;">
 	        <form action="supplier" method="post" class="supplier-form">
 	            <input type="hidden" name="action" value="update">

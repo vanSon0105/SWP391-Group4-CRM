@@ -84,6 +84,7 @@ public class PaymentController extends HttpServlet {
 		req.setAttribute("totalPages", totalPages);
 		req.setAttribute("currentPage", currentPage);
 		req.setAttribute("paymentList", paymentList);
+		removeMess(req);
 		req.getRequestDispatcher("view/admin/paymentmanagement/PaymentList.jsp").forward(req, resp);
 	}
 
@@ -97,78 +98,86 @@ public class PaymentController extends HttpServlet {
 		String id = req.getParameter("paymentId");
 		String action = req.getParameter("action");
 
-		if ("success".equals(action)) {
-			int paymentId = Integer.parseInt(id);
-			
-			Payment payment = paymentDao.getPaymentById(paymentId);
-			if (payment == null) {
-				resp.sendRedirect("payment-list?error=payment_not_found");
-				return;
-			}
-			
-			if ("success".equalsIgnoreCase(payment.getStatus())) {
-				resp.sendRedirect("payment-list?info=already_confirmed");
-				return;
-			}
-			
-			paymentDao.updateStatus(paymentId, "success");
-
-			int orderId = orderDao.getOrderByPaymentId(paymentId);
-			orderDao.updateOrderStatus(orderId, "confirmed");
-
-			int userId = userDao.getUserIdByOrderId(orderId);
-
-			List<OrderDetail> orderItems = odDao.getOrderDetailsByOrderId(orderId);
-
-			for (OrderDetail od : orderItems) {
-				for (int i = 0; i < od.getQuantity(); i++) {
-					DeviceSerial ds = fetchAvailableSerial(od.getDeviceId());
-					if (ds == null) {
-						continue;
-					}
-					
-					Device device = deviceDao.getDeviceById(od.getDeviceId());
-					int warrantyMonths = (device != null) ? device.getWarrantyMonth() : 12;
-					Timestamp now = new Timestamp(System.currentTimeMillis());
-			        Timestamp end = new Timestamp(
-			            now.getTime() + (long) warrantyMonths * 30 * 24 * 60 * 60 * 1000
-			        );
-					
-					WarrantyCard wc = wcDao.getBySerialId(ds.getId());
-					int wcId;
-
-					if (wc == null) {
-						try {
-							wcId = wcDao.addWarrantyCard(ds.getId(), userId, now, end);
-						} catch (SQLException e) {
-							e.printStackTrace();
+		try {
+			if ("success".equals(action)) {
+				int paymentId = Integer.parseInt(id);
+				
+				Payment payment = paymentDao.getPaymentById(paymentId);
+				if (payment == null) {
+					resp.sendRedirect("payment-list?error=payment_not_found");
+					return;
+				}
+				
+				if ("success".equalsIgnoreCase(payment.getStatus())) {
+					resp.sendRedirect("payment-list?info=already_confirmed");
+					return;
+				}
+				
+				paymentDao.updateStatus(paymentId, "success");
+	
+				int orderId = orderDao.getOrderByPaymentId(paymentId);
+				orderDao.updateOrderStatus(orderId, "confirmed");
+	
+				int userId = userDao.getUserIdByOrderId(orderId);
+	
+				List<OrderDetail> orderItems = odDao.getOrderDetailsByOrderId(orderId);
+	
+				for (OrderDetail od : orderItems) {
+					for (int i = 0; i < od.getQuantity(); i++) {
+						DeviceSerial ds = fetchAvailableSerial(od.getDeviceId());
+						if (ds == null) {
 							continue;
 						}
-
-						if (wcId <= 0) {
-							continue;
+						
+						Device device = deviceDao.getDeviceById(od.getDeviceId());
+						int warrantyMonths = (device != null) ? device.getWarrantyMonth() : 12;
+						Timestamp now = new Timestamp(System.currentTimeMillis());
+				        Timestamp end = new Timestamp(
+				            now.getTime() + (long) warrantyMonths * 30 * 24 * 60 * 60 * 1000
+				        );
+						
+						WarrantyCard wc = wcDao.getBySerialId(ds.getId());
+						int wcId;
+	
+						if (wc == null) {
+							try {
+								wcId = wcDao.addWarrantyCard(ds.getId(), userId, now, end);
+							} catch (SQLException e) {
+								e.printStackTrace();
+								continue;
+							}
+	
+							if (wcId <= 0) {
+								continue;
+							}
+						} else {
+							wcDao.updateWarrantyDates(wc.getId(), now, end);
+							wcId = wc.getId();
 						}
-					} else {
-						wcDao.updateWarrantyDates(wc.getId(), now, end);
-						wcId = wc.getId();
-					}
-
-					if (odDao.addOrderDetailSerial(od.getId(), ds.getId())) {
-						dsDao.updateStatus(ds.getId(), "sold");
+	
+						if (odDao.addOrderDetailSerial(od.getId(), ds.getId())) {
+							dsDao.updateStatus(ds.getId(), "sold");
+						}
 					}
 				}
+				
+				recordExportTransaction(staff, userId, payment, orderItems);
+				sendMess(req, "success", "Đã xác nhận thanh toán #" + paymentId);
+	
+			} else if ("failed".equals(action)) {
+				int paymentId = Integer.parseInt(id);
+				paymentDao.updateStatus(paymentId, "failed");
+				orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(paymentId), "cancelled");
+				sendMess(req, "success", "Đã từ chối thanh toán #" + paymentId);
+			} else {
+				int paymentId = Integer.parseInt(id);
+				paymentDao.updateStatus(paymentId, action);
+				orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(paymentId), "pending");
+				sendMess(req, "success", "Đã đưa thanh toán #" + paymentId + " về trạng thái pending");
 			}
-			
-			recordExportTransaction(staff, userId, payment, orderItems);
-
-		} else if ("failed".equals(action)) {
-			paymentDao.updateStatus(Integer.parseInt(id), action);
-			orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(Integer.parseInt(id)), "cancelled");
-		} else {
-			paymentDao.updateStatus(Integer.parseInt(id), action);
-			orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(Integer.parseInt(id)), "pending");
+		} catch (Exception e) {
+			sendMess(req, "error", "Không thể cập nhật thanh toán. Vui lòng thử lại");
 		}
-
 		resp.sendRedirect("payment-list");
 	}
 	
@@ -210,6 +219,26 @@ public class PaymentController extends HttpServlet {
 			detail.setDeviceId(od.getDeviceId());
 			detail.setQuantity(od.getQuantity());
 			transactionDetailDao.addTransactionDetail(detail, null);
+		}
+	}
+	
+	private void sendMess(HttpServletRequest request, String type, String message) {
+		HttpSession session = request.getSession();
+		session.setAttribute("paymentMessage", message);
+		session.setAttribute("paymentMessageType", type);
+	}
+	
+	private void removeMess(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return;
+		}
+		Object message = session.getAttribute("paymentMessage");
+		if (message != null) {
+			request.setAttribute("paymentMessage", message);
+			request.setAttribute("paymentMessageType", session.getAttribute("paymentMessageType"));
+			session.removeAttribute("paymentMessage");
+			session.removeAttribute("paymentMessageType");
 		}
 	}
 

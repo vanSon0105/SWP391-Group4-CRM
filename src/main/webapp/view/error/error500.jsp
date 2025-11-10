@@ -15,7 +15,7 @@
         <h1>500</h1>
         <h2>Oops! Máy chủ đang gặp sự cố</h2>
         <p>Shop88 đã ghi nhận lỗi hệ thống và đang khắc phục. Hãy thử lại sau vài phút hoặc quay lại trang chủ để tiếp tục mua sắm</p>
-        <a href="home">Home</a>
+        <a href="${pageContext.request.contextPath}/home">Home</a>
     </div>
 </section>
 <jsp:include page="../common/footer.jsp"></jsp:include>
