@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ page isELIgnored="false"%> 
+<%@ page isELIgnored="false"%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -10,11 +10,12 @@
 </head>
 <style>
 .device-detail {
-	display:flex !important;
-	width:100%;
+	display: flex !important;
+	width: 100%;
 }
+
 .device-detail .device-container {
-width:100%
+	width: 100%
 }
 </style>
 <body class="management-page device-management">
@@ -34,11 +35,11 @@ width:100%
 
 		<section class="panel">
 			<div class="device-detail">
-					
-			<div class="device-img" style="display:none"></div>
-			
+
+				<div class="device-img" style="display: none"></div>
+
 				<div class="device-container">
-					<table class="device-table" >
+					<table class="device-table">
 						<tbody>
 							<tr>
 								<th>ID</th>
@@ -92,7 +93,7 @@ width:100%
 							<a href="task-form?id=${task.id}" class="btn device-btn">Chỉnh
 								sửa</a>
 						</c:if>
-					</div> 
+					</div>
 				</div>
 			</div>
 		</section>
@@ -111,10 +112,11 @@ width:100%
 						<tr>
 							<th>ID</th>
 							<th>Staff ID</th>
-							<th>Assigned At</th>
-							<th>Deadline</th>
-							<th>Status</th>
-							<th>Note</th>
+							<th>Giao vào</th>
+							<th>Hạn</th>
+							<th>Trạng thái</th>
+							<th>Ghi chú</th>
+							<th>Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -142,6 +144,20 @@ width:100%
 										</c:when>
 									</c:choose></td>
 								<td>${td.note}</td>
+								<td><c:if
+										test="${td.status != 'completed' and td.status != 'cancelled'}">
+										<form action="task-detail" method="post"
+											style="display: inline;">
+											<input type="hidden" name="action" value="cancel"> <input
+												type="hidden" name="taskId" value="${task.id}"> <input type="hidden" name="staffId" value="${td.technicalStaffId}">
+
+											<button type="submit" class="btn btn-danger"
+												onclick="return confirm('Bạn có chắc muốn hủy giao task cho staff này không?');">
+												Hủy giao</button>
+										</form>
+
+									</c:if></td>
+
 							</tr>
 						</c:forEach>
 					</tbody>

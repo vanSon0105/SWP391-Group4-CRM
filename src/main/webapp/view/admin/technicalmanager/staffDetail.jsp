@@ -8,6 +8,39 @@
 <meta charset="UTF-8">
 <title>Chi tiết nhân viên kỹ thuật | TechShop</title>
 </head>
+<style>
+
+.status-badge {
+	display: inline-block;
+	white-space: nowrap;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-weight: 600;
+	font-size: 14px;
+	text-align: center;
+}
+
+.status-pending {
+	background: #fef3c7;
+	color: #92400e;
+}
+
+.status-inprogress {
+	background: #dbeafe;
+	color: #1d4ed8;
+}
+
+.status-completed {
+	background: #dcfce7;
+	color: #166534;
+}
+
+.status-cancelled {
+	background: #fee2e2;
+	color: #991b1b;
+}
+
+</style>
 <body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<jsp:include page="../common/header.jsp"></jsp:include>
@@ -113,15 +146,25 @@
 								<td>${task.taskTitle}</td>
 								<td>${task.note}</td>
 								<td><c:choose>
-										<c:when test="${task.status == 'completed'}">
-											<span style="color: #10b981; font-weight: 600">Hoàn
-												thành</span>
-										</c:when>
-										<c:otherwise>
-											<span style="color: #ef4444; font-weight: 600">Đang xử
-												lý</span>
-										</c:otherwise>
-									</c:choose></td>
+											<c:when test="${task.status == 'pending'}">
+												<span class="status-badge status-pending">Đang chờ xử
+													lý</span>
+											</c:when>
+											<c:when test="${task.status == 'in_progress'}">
+												<span class="status-badge status-inprogress">Đang
+													thực hiện</span>
+											</c:when>
+											<c:when test="${task.status == 'completed'}">
+												<span class="status-badge status-completed">Hoàn
+													thành</span>
+											</c:when>
+											<c:when test="${task.status == 'cancelled'}">
+												<span class="status-badge status-cancelled">Đã hủy</span>
+											</c:when>
+											<c:otherwise>
+												<span class="status-badge">Không xác định</span>
+											</c:otherwise>
+										</c:choose></td>
 								<td>${task.deadline}</td>
 								<td><a href="task-detail?id=${task.taskId}"
 									class="btn device-btn">Xem</a>
@@ -134,7 +177,7 @@
 											onclick="return confirm('Bạn có chắc muốn hủy task này không?');">
 											Hủy</button>
 									</form></td>
-							</tr>
+							</tr> 
 						</c:forEach>
 					</tbody>
 				</table>

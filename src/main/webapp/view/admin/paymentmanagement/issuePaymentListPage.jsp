@@ -165,7 +165,7 @@ th, td {
 
 			<div class="filters">
 				<form method="get">
-					<select name="status" onchange="this.form.submit()">
+					<select name="status" class="btn device-btn" onchange="this.form.submit()">
 						<option value="">Tất cả trạng thái</option>
 						<option value="awaiting_support"
 							${status == 'awaiting_support' ? 'selected' : ''}>Chờ hỗ
@@ -177,17 +177,17 @@ th, td {
 							thanh toán</option>
 						<option value="closed" ${status == 'closed' ? 'selected' : ''}>Đã
 							đóng</option>
-					</select> <select name="sortField" onchange="this.form.submit()">
+					</select> <select class="btn device-btn" name="sortField" onchange="this.form.submit()">
 						<option value="created_at"
 							${sortField == 'created_at' ? 'selected' : ''}>Ngày tạo</option>
 						<option value="amount" ${sortField == 'amount' ? 'selected' : ''}>Số
 							tiền</option>
 					</select>
 					<div>
-						<input type="search" name="search"
+						<input type="search" name="search" class="btn device-btn"
 							placeholder="Tìm tên, SĐT hoặc địa chỉ" value="${search}" />
 
-						<button type="submit">Tìm</button>
+						<button type="submit" class="btn device-btn">Tìm</button>
 
 					</div>
 					<input type="hidden" name="page" value="1">
@@ -232,7 +232,7 @@ th, td {
 										<td><fmt:formatDate value="${p.createdAt}"
 												pattern="dd/MM/yyyy HH:mm" /></td>
 										<td><a href="issue-payment-detail?id=${p.id}"
-											class="btn-view">Xem</a></td>
+											class="btn device-btn">Xem</a></td>
 									</tr>
 								</c:forEach>
 							</tbody>

@@ -233,7 +233,6 @@ tr:hover {
 							<th>Trạng thái</th>
 							<th>Ngày tạo</th>
 							<th>Ghi chú</th>
-							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -255,8 +254,6 @@ tr:hover {
 								<td class="date"><fmt:formatDate value="${p.createdAt}"
 										pattern="dd/MM/yyyy HH:mm" /></td>
 								<td>${p.note}</td>
-								<td><a href="issue-payment-detail?id=${p.id}"
-									class="btn-view">Xem chi tiết</a></td>
 							</tr>
 						</c:forEach>
 					</tbody>

@@ -36,14 +36,25 @@ public class TaskDetailController extends HttpServlet {
 
 	}
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	@Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
         String taskIdParam = request.getParameter("taskId");
-        if(taskIdParam != null) {
-            int taskId = Integer.parseInt(taskIdParam);
-            taskDetailDao.completeTaskDetails(taskId);
+        String staffIdParam = request.getParameter("staffId");
+
+        if ("cancel".equals(action) && taskIdParam != null && staffIdParam != null) {
+            try {
+                int taskId = Integer.parseInt(taskIdParam);
+                int staffId = Integer.parseInt(staffIdParam);
+                taskDetailDao.deleteByTaskIdAndStaffId(taskId, staffId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        response.sendRedirect("task-list");
+
+        response.sendRedirect("task-detail?id=" + taskIdParam);
     }
+
 
 }
