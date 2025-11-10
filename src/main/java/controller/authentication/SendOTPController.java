@@ -72,7 +72,7 @@ public class SendOTPController extends HttpServlet {
             tempUser.setUsername(username);
             tempUser.setEmail(email);
             tempUser.setPhone(phone);
-            tempUser.setPassword(password); // lưu tạm
+            tempUser.setPassword(password);
             session.setAttribute("tempUser", tempUser);
         }
 
@@ -108,7 +108,7 @@ public class SendOTPController extends HttpServlet {
                 
                 session.setAttribute("otpPurpose", "register");
 
-                message.setSubject("NovaCare - Mã xác thực đăng ký tài khoản");
+                message.setSubject("TechShop - Mã xác thực đăng ký tài khoản");
                 message.setText("Xin chào,\n\nMã OTP để đăng ký tài khoản của bạn là: " + otp
                         + "\nMã này có hiệu lực trong 5 phút.\n\nTrân trọng,\nTechShop");
 

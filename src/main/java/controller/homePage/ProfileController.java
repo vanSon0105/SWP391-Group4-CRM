@@ -79,18 +79,21 @@ public class ProfileController extends HttpServlet {
 
             StringBuilder passwordErrors = new StringBuilder();
 
+     
             User dbUser = userDAO.getUserById(currentUser.getId());
 
-            if (dbUser == null || !PasswordUtils.verifyPassword(currentPassword, dbUser.getPassword())) {
+            if (dbUser == null) {
+                passwordErrors.append("User không tồn tại. ");
+            } else if (!PasswordUtils.verifyPassword(currentPassword, dbUser.getPassword())) {
                 passwordErrors.append("Mật khẩu hiện tại không đúng. ");
             }
 
-            if (!newPassword.equals(confirmPassword)) {
+            if (newPassword == null || !newPassword.equals(confirmPassword)) {
                 passwordErrors.append("Mật khẩu mới và xác nhận mật khẩu không khớp. ");
             }
 
-            if (!newPassword.matches("^(?=.*[a-zA-Z])(?=.*\\d).{6,}$")) {
-                passwordErrors.append("Mật khẩu mới phải ít nhất 6 ký tự và bao gồm chữ và số. ");
+            if (newPassword == null || newPassword.length() < 6) {
+                passwordErrors.append("Mật khẩu mới phải có ít nhất 6 ký tự. ");
             }
 
             if (passwordErrors.length() > 0) {
@@ -98,29 +101,32 @@ public class ProfileController extends HttpServlet {
                 request.setAttribute("errorMessage", passwordErrors.toString());
                 request.setAttribute("showChangePassword", true);
                 request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
-                return;
+                return; 
             }
-
+    
             String hashedPassword = PasswordUtils.hashPassword(newPassword);
             currentUser.setPassword(hashedPassword);
-
             boolean updated = userDAO.updateUserPassword(currentUser);
 
             if (updated) {
-                request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
                 User freshUser = userDAO.getUserById(currentUser.getId());
                 if (freshUser != null) {
                     session.setAttribute("account", freshUser);
                 }
+                request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
             } else {
                 request.setAttribute("errorMessage", "Đã xảy ra lỗi, vui lòng thử lại.");
             }
 
             request.setAttribute("user", currentUser);
             request.setAttribute("showChangePassword", true);
+            request.setAttribute("showProfile", false); 
             request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
             return;
         }
+
+        
+        
 
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");

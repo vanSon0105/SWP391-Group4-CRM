@@ -349,9 +349,24 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
 					</a>
 				</div>
 			</div>
+			
+			
 
 			<div id="change-password" class="profile-section"
 				style="display: none; margin-top: 30px;">
+				
+				<c:if test="${not empty errorMessage}">
+    			<div class="alert alert-danger">
+       			 ${errorMessage}
+   				 </div>
+				</c:if>
+
+			<c:if test="${not empty successMessage}">
+   			 <div class="alert alert-success">
+       		 ${successMessage}
+   			 </div>
+			</c:if>
+				
 				<h2>Đổi mật khẩu</h2>
 				<form action="profile?action=changePassword" method="post">
 					<div class="form-group">
@@ -398,9 +413,9 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
         });
         
         function showChangePassword() {
-            // Ẩn div hồ sơ cá nhân
+           
             document.getElementById('profile').style.display = 'none';
-            // Hiện div đổi mật khẩu
+            
             document.getElementById('change-password').style.display = 'block';
 
             // Cập nhật active menu
@@ -433,7 +448,7 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
         }
 
         document.querySelector('form[action*="changePassword"]').addEventListener('submit', function(e) {
-            e.preventDefault(); // Ngăn gửi form trước
+            e.preventDefault(); 
 
             const currentPassword = document.getElementById('currentPassword');
             const newPassword = document.getElementById('newPassword');
@@ -466,8 +481,8 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
                 showError(confirmPassword, 'Vui lòng xác nhận mật khẩu mới.');
             }
 
-            if (newPassword.value && !/^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(newPassword.value)) {
-                showError(newPassword, 'Mật khẩu mới phải ít nhất 6 ký tự và bao gồm cả chữ và số.');
+            if (newPassword.value && newPassword.value.length < 6) {
+                showError(newPassword, 'Mật khẩu mới phải có ít nhất 6 ký tự.');
             }
 
            

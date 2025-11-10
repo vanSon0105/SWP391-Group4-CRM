@@ -34,6 +34,7 @@ public class DBContext {
             user = "root";
            password = "13042005"; //password in local mysql
 
+
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException | SQLException ex) {
