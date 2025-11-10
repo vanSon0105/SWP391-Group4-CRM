@@ -25,6 +25,7 @@
                             <a href="${pageContext.request.contextPath}/device-page">Thiết bị</a>
                             <a href="${pageContext.request.contextPath}/create-issue">Gửi bảo hành/sửa chữa</a>
                             <a href="${pageContext.request.contextPath}/order-tracking">Đơn hàng</a>
+                            <a href="${pageContext.request.contextPath}/customer/issue-payments">Danh sách thanh toán khiếu nại</a>
                             <a href="${pageContext.request.contextPath}/issue">Lịch sử yêu cầu</a>
                             <c:if test="${sessionScope.account != null}">
                                 <form action="${pageContext.request.contextPath}/logout" method="post" style="display:inline;">
