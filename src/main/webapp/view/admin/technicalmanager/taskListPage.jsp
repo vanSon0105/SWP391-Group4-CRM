@@ -210,12 +210,12 @@ body .panel h2 {
 						<thead>
 							<tr>
 								<th>ID</th>
-								<th>Title</th>
-								<th>Description</th>
-								<th>Manager ID</th>
-								<th>Customer Issue ID</th>
-								<th>Status</th>
-								<th>Actions</th>
+								<th>Tiêu đề</th>
+								<th>Mô tả</th>
+								<th>ManagerID</th>
+								<th>CustomerIssueID</th>
+								<th>Trạng thái</th>
+								<th>Hành động</th>
 							</tr>
 						</thead>
 						<tbody>

@@ -124,6 +124,29 @@ public class TaskDAO extends DBContext {
 //
 //        return list;
 //    }
+    
+    public List<Task> getAvailableTasksForStaff(int staffId) {
+        List<Task> list = new ArrayList<>();
+        String sql = "SELECT * FROM task_with_status t " +
+                     "WHERE t.status NOT IN ('completed', 'cancelled') " +
+                     "AND t.id NOT IN (" +
+                     "    SELECT task_id FROM task_details WHERE technical_staff_id=?" +
+                     ")";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, staffId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+				list.add(new Task(rs.getInt("id"), rs.getString("title"), rs.getString("description"),
+						rs.getInt("manager_id"), rs.getInt("customer_issue_id"), rs.getString("status")));
+
+			}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 
     public void addTask(Task task) {
         String sql = "INSERT INTO tasks (title, description, manager_id, customer_issue_id) VALUES (?, ?, ?, ?)";

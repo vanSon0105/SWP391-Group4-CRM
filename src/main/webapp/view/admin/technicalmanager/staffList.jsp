@@ -73,7 +73,7 @@
 		</section>
 
 		<section class="panel" id="table-panel">
-				<h2>Danh sách nhân viên kỹ thuật</h2>
+			<h2>Danh sách nhân viên kỹ thuật</h2>
 			<div class="table-wrapper">
 				<c:if test="${not empty staffList}">
 					<table class="device-table">
@@ -95,20 +95,29 @@
 									<td>${staff.fullName}</td>
 									<td>${staff.email}</td>
 									<td><c:choose>
-										<c:when test="${staff.available}">
-											<span style="color: #10b981; font-weight: 700">Rảnh</span>
-										</c:when>
-										<c:otherwise>
-											<span style="color: #ef4444; font-weight: 700">Đang
-												bận</span>
-										</c:otherwise>
-									</c:choose></td>
+											<c:when test="${staff.available}">
+												<span style="color: #10b981; font-weight: 700">Rảnh</span>
+											</c:when>
+											<c:otherwise>
+												<span style="color: #ef4444; font-weight: 700">Đang
+													bận</span>
+											</c:otherwise>
+										</c:choose></td>
 
-									<td style="display: flex; gap: 5px; justify-content: center"><a
-										href="staff-detail?id=${staff.id}" class="btn device-btn">Xem</a>
+									<td style="display: flex; gap: 5px; justify-content: center">
+										<c:choose>
+											<c:when test="${staff.available}">
+												<a href="staff-detail?id=${staff.id}" class="btn device-btn">Xem</a>
 
-										<a href="assign-task?staffId=${staff.id}"
-										class="btn device-btn">Giao Task</a></td>
+												<a
+													href="${pageContext.request.contextPath}/assign-task?staffId=${staff.id}"
+													class="btn device-btn">Giao Task</a>
+											</c:when>
+											<c:otherwise>
+												<a href="staff-detail?id=${staff.id}" class="btn device-btn">Xem</a>
+											</c:otherwise>
+										 </c:choose>
+									</td>
 
 								</tr>
 							</c:forEach>

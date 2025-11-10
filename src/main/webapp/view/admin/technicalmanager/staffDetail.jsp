@@ -78,8 +78,7 @@
 					</table>
 
 					<div class="device-action">
-						<a href="staff-list" class="btn device-btn">Quay lại</a> <a
-							href="assign-task?staffId=${staff.id}" class="btn device-btn"
+						<a href="assign-task?staffId=${staff.id}" class="btn device-btn"
 							<c:if test="${!staff.available}">style="pointer-events:none;opacity:0.5;"</c:if>>
 							Giao Task </a>
 					</div>
@@ -101,16 +100,18 @@
 						<tr>
 							<th>ID</th>
 							<th>Tiêu đề</th>
+							<th>Ghi chú</th>
 							<th>Trạng thái</th>
 							<th>Hạn xử lý</th>
 							<th>Hành động</th>
 						</tr>
 					</thead>
-					<tbody> 
+					<tbody>
 						<c:forEach var="task" items="${taskDetails}">
-							<tr>  
+							<tr>
 								<td>${task.id}</td>
 								<td>${task.taskTitle}</td>
+								<td>${task.note}</td>
 								<td><c:choose>
 										<c:when test="${task.status == 'completed'}">
 											<span style="color: #10b981; font-weight: 600">Hoàn
@@ -122,8 +123,17 @@
 										</c:otherwise>
 									</c:choose></td>
 								<td>${task.deadline}</td>
-								<td><a href="task-detail?id=${task.id}"
-									class="btn device-btn">Xem</a></td>
+								<td><a href="task-detail?id=${task.taskId}"
+									class="btn device-btn">Xem</a>
+									<form action="staff-detail" method="post"
+										style="display: inline;">
+										<input type="hidden" name="action" value="cancel" /> <input
+											type="hidden" name="taskId" value="${task.taskId}" /> <input
+											type="hidden" name="staffId" value="${staff.id}" />
+										<button type="submit" class="btn device-btn"
+											onclick="return confirm('Bạn có chắc muốn hủy task này không?');">
+											Hủy</button>
+									</form></td>
 							</tr>
 						</c:forEach>
 					</tbody>

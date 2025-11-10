@@ -152,9 +152,9 @@ public class TaskFormController extends HttpServlet {
 				return;
 			}
 			
-			Set<Integer> selectedStaffs = extractStaffIds(request.getParameterValues("technicalStaffIds"));
+//			Set<Integer> selectedStaffs = extractStaffIds(request.getParameterValues("technicalStaffIds"));
 			request.setAttribute("selectedIssueId", customerIssueId);
-			request.setAttribute("assignedStaffIds", selectedStaffs);
+//			request.setAttribute("assignedStaffIds", selectedStaffs);
 
 			Timestamp deadline = null;
 			String deadlineStr = request.getParameter("deadline");
@@ -187,22 +187,22 @@ public class TaskFormController extends HttpServlet {
 				return;
 			}
 			
-			for (Integer staffId : selectedStaffs) {
-				if (!userDao.isTechnicalStaffAvailable(staffId)) {
-					request.setAttribute("errorStaffAvailability",
-							"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
-					forwardToForm(request, res);
-					return;
-				}
-				int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
-				if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
-					request.setAttribute("errorStaffLimit",
-							"Technical staff " + resolveStaffLabel(staffId) + " đã nhận đủ "
-									+ MAX_ACTIVE_TASKS_PER_STAFF + " tasks");
-					forwardToForm(request, res);
-					return;
-				}
-			}
+//			for (Integer staffId : selectedStaffs) {
+//				if (!userDao.isTechnicalStaffAvailable(staffId)) {
+//					request.setAttribute("errorStaffAvailability",
+//							"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
+//					forwardToForm(request, res);
+//					return;
+//				}
+//				int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
+//				if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
+//					request.setAttribute("errorStaffLimit",
+//							"Technical staff " + resolveStaffLabel(staffId) + " đã nhận đủ "
+//									+ MAX_ACTIVE_TASKS_PER_STAFF + " tasks");
+//					forwardToForm(request, res);
+//					return;
+//				}
+//			}
 
 			Task task = new Task();
 			task.setTitle(title);
@@ -219,9 +219,9 @@ public class TaskFormController extends HttpServlet {
 			
 			issueDao.updateSupportStatus(customerIssueId, "task_created");
 			
-			for (Integer staffId : selectedStaffs) {
-				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
-			}
+//			for (Integer staffId : selectedStaffs) {
+//				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
+//			}
 
 			res.sendRedirect("task-list");
 		} catch (Exception e) {

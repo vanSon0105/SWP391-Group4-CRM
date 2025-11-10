@@ -7,12 +7,14 @@ import dal.DBContext;
 
 public class TaskDetailDAO extends DBContext {
 
-	public void deleteByTaskIdAndStaffId(int taskId, int staffId) throws SQLException {
+	public void deleteByTaskIdAndStaffId(int taskId, int staffId){
 		String sql = "DELETE FROM task_details WHERE task_id = ? AND technical_staff_id = ?";
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setInt(1, taskId);
 			ps.setInt(2, staffId);
 			ps.executeUpdate();
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 	}
 
@@ -390,5 +392,28 @@ public class TaskDetailDAO extends DBContext {
 
 		return list;
 	}
+	
+	public void insert(TaskDetail taskDetail) {
+        String sql = "INSERT INTO task_details (task_id, technical_staff_id, assigned_at, deadline, note, status) "
+                   + "VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, taskDetail.getTaskId());
+            ps.setInt(2, taskDetail.getTechnicalStaffId());
+            if(taskDetail.getDeadline() != null){
+                ps.setTimestamp(3, taskDetail.getDeadline());
+            } else {
+                ps.setTimestamp(3, null);
+            }
+            ps.setString(4, taskDetail.getNote());
+            ps.setString(5, taskDetail.getStatus());
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

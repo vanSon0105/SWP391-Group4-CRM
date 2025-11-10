@@ -34,4 +34,19 @@ public class StaffDetailController extends HttpServlet {
 
         request.getRequestDispatcher("/view/admin/technicalmanager/staffDetail.jsp").forward(request, response);
     }
+    
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+
+        String action = request.getParameter("action");
+        if ("cancel".equals(action)) {
+            int taskId = Integer.parseInt(request.getParameter("taskId"));
+            int staffId = Integer.parseInt(request.getParameter("staffId"));
+            tdDao.deleteByTaskIdAndStaffId(taskId, staffId);;
+
+            response.sendRedirect("staff-detail?id=" + staffId);
+        }
+    }
 }

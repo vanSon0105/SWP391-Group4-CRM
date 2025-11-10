@@ -215,8 +215,8 @@ th, td {
 							<tbody>
 								<c:forEach var="p" items="${payments}">
 									<tr>
-										<td>#${p.id}</td>
-										<td>#${p.issueId}</td>
+										<td>${p.id}</td>
+										<td>${p.issueId}</td>
 										<td>${p.shippingFullName}</td>
 										<td>${p.shippingPhone}</td>
 										<td>${p.shippingAddress}</td>

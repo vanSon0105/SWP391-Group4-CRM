@@ -166,7 +166,7 @@ form button {
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
 		<form action="task-form" method="post">
-			<div class="panel">
+			<div class="panel" id="table-panel">
 				<c:if test="${fromReviewNotice}">
 					<div class="notice">
 						Yêu cầu này vừa được phê duyệt để tạo task. Vui lòng kiểm tra lại thông tin trước khi giao kỹ thuật.
@@ -196,7 +196,8 @@ form button {
 							<option value="${issue.id}"
 								${selectedIssueId != null && selectedIssueId == issue.id ? "selected" : ""}>${issue.title}</option>
 						</c:forEach>
-					</select> <label>Nhân viên kỹ thuật:</label>
+					</select> 
+					<%-- <label>Nhân viên kỹ thuật:</label>
 					<small style="color:red">${errorStaffLimit}</small>
 					<div class="checkbox-group">
 						<c:forEach var="staff" items="${technicalStaffList}">
@@ -225,7 +226,7 @@ form button {
 						</c:forEach>
 					</div>
 					<small style="color:red">${errorStaffAvailability}</small>
-
+ --%>
 					<label>Hạn</label> 
 					<input type="date" name="deadline"
 						min="<%= java.time.LocalDate.now() %>"

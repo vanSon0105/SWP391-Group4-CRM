@@ -43,6 +43,7 @@
         </c:if>
         <c:if test="${permissions != null && permissions.contains('PAYMENT_REPORTS')}">
             <a href="payment-list">Danh sách thanh toán</a>
+            <a href="issue-payments">Danh sách thanh toán khiếu nại</a>
         </c:if>
         <c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
             <a href="manager-issues">Task cần giao</a>
