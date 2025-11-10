@@ -689,6 +689,31 @@ public int countTechnicalStaff(String search, String status) {
     return count;
 }
 
+public User getTechnicalStaffById(int staffId) {
+    User user = null;
+    String sql = "SELECT id, username, full_name, email, is_available " +
+                 "FROM users WHERE role_id = 3 AND id = ?";
+
+    try (Connection conn = DBContext.getConnection();
+         PreparedStatement pre = conn.prepareStatement(sql)) {
+
+        pre.setInt(1, staffId);
+        ResultSet rs = pre.executeQuery();
+
+        if (rs.next()) {
+            user = new User();
+            user.setId(rs.getInt("id"));
+            user.setUsername(rs.getString("username"));
+            user.setFullName(rs.getString("full_name"));
+            user.setEmail(rs.getString("email"));
+            user.setAvailable(rs.getBoolean("is_available"));
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return user;
+}
 
 
     
