@@ -22,11 +22,18 @@ public class PaymentDetailController extends HttpServlet {
             resp.sendRedirect("payment-list");
             return;
         }
+        
+        String orderIdParam = req.getParameter("orderId");
+        if (orderIdParam == null) {
+            resp.sendRedirect("payment-list");
+            return;
+        }
 
         int id = Integer.parseInt(idParam);
+        int orderId = Integer.parseInt(orderIdParam);
         PaymentDAO dao = new PaymentDAO();
         Payment payment = dao.getPaymentById(id);
-        List<OrderDetail> details = dao.getOrderDetailsByOrderId(id);
+        List<OrderDetail> details = dao.getOrderDetailsByOrderId(orderId);
 
         req.setAttribute("payment", payment);
         req.setAttribute("details", details);

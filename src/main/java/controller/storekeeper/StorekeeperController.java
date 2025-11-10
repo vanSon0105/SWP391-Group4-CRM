@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import model.Category;
 import model.Device;
 import model.DeviceSerial;
+import model.SupplierDetail;
 import model.Transaction;
 import model.TransactionDetail;
 import model.User;
@@ -23,6 +24,7 @@ import dao.CategoryDAO;
 import dao.DeviceDAO;
 import dao.DeviceSerialDAO;
 import dao.SupplierDAO;
+import dao.SupplierDetailDAO;
 import dao.TransactionDAO;
 import dao.TransactionDetailDAO;
 
@@ -39,6 +41,7 @@ public class StorekeeperController extends HttpServlet {
 	private final TransactionDAO transactionDAO = new TransactionDAO();
 	private final TransactionDetailDAO transactionDetailDAO = new TransactionDetailDAO();
 	private final SupplierDAO supplierDao = new SupplierDAO();
+	private final SupplierDetailDAO supplierDetailDao = new SupplierDetailDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
@@ -85,6 +88,8 @@ public class StorekeeperController extends HttpServlet {
 			Device d = dao.getDeviceById(id);
 			request.setAttribute("device", d);
 			request.setAttribute("updatePrice", true);
+			SupplierDetail detail = supplierDetailDao.getLatestDetailByDeviceId(id);
+			request.setAttribute("deviceSupplierDetail", detail);
 		}
         
         
@@ -118,6 +123,7 @@ public class StorekeeperController extends HttpServlet {
 		request.setAttribute("selectedCategory", categoryId);
 		request.setAttribute("sortBy", sortBy);
 	    request.setAttribute("order", order);
+	    request.setAttribute("suppliers", supplierDao.getActiveSuppliers());
 		request.getRequestDispatcher("view/admin/storekeeper/show.jsp").forward(request, response);
 	}
 	
@@ -246,11 +252,13 @@ public class StorekeeperController extends HttpServlet {
         HttpSession s = request.getSession();
         String priceParam = request.getParameter("price");
         String idParam = request.getParameter("id");
+        String supplierIdParam = request.getParameter("supplierId");
+        String supplierPriceParam = request.getParameter("supplierPrice");
         int id = 0;
         double price = 0.0;
         try {
-			price = Double.parseDouble(priceParam);
 			id = Integer.parseInt(idParam);
+			price = Double.parseDouble(priceParam);
 		} catch (Exception e) {
 			e.printStackTrace();
 			s.setAttribute("mess", "Cập nhật giá thất bại");
@@ -263,12 +271,52 @@ public class StorekeeperController extends HttpServlet {
 			response.sendRedirect("de-show");
 			return;
         }
+
+        int supplierId;
+        try {
+        	supplierId = Integer.parseInt(supplierIdParam);
+        } catch (Exception ex) {
+        	s.setAttribute("mess", "Vui lòng chọn nhà cung cấp hợp lệ.");
+        	response.sendRedirect("de-show?action=1&id=" + id);
+        	return;
+        }
+        if (supplierDao.getSupplierById(supplierId) == null) {
+        	s.setAttribute("mess", "Nhà cung cấp không tồn tại hoặc không hoạt động.");
+        	response.sendRedirect("de-show?action=1&id=" + id);
+        	return;
+        }
+
+        if (supplierPriceParam == null || supplierPriceParam.trim().isEmpty()) {
+        	s.setAttribute("mess", "Vui lòng nhập giá nhập của nhà cung cấp.");
+        	response.sendRedirect("de-show?action=1&id=" + id);
+        	return;
+        }
+        double supplierPrice;
+        try {
+        	supplierPrice = Double.parseDouble(supplierPriceParam.trim());
+        } catch (NumberFormatException ex) {
+        	s.setAttribute("mess", "Giá nhập không hợp lệ.");
+        	response.sendRedirect("de-show?action=1&id=" + id);
+        	return;
+        }
+        if (supplierPrice <= 0) {
+        	s.setAttribute("mess", "Giá nhập phải lớn hơn 0.");
+        	response.sendRedirect("de-show?action=1&id=" + id);
+        	return;
+        }
         
         boolean check = dao.updateDevicePrice(id, price);
         if(!check) {
         	s.setAttribute("mess", "Cập nhật giá thất bại!");
+        	response.sendRedirect("de-show?action=1&id=" + id);
+        	return;
+        }
+
+        boolean supplierLinked = supplierDetailDao.insertSupplierDevice(supplierId, id, supplierPrice);
+        if(!supplierLinked) {
+        	s.setAttribute("mess", "Đã cập nhật giá nhưng không thể lưu nhà cung cấp.");
         }else {
-        	s.setAttribute("mess", "Cập nhật giá thành công!");
+        	s.setAttribute("mess", "Cập nhật giá & nhà cung cấp thành công!");
         }
         response.sendRedirect("de-show");  
 	}

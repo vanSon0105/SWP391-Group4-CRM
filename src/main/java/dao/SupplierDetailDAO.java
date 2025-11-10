@@ -24,7 +24,7 @@ public class SupplierDetailDAO extends DBContext {
                     sd.setSupplierId(rs.getInt("supplier_id"));
                     sd.setDeviceId(rs.getInt("device_id"));
                     sd.setDeviceName(rs.getString("device_name"));
-                    sd.setPrice(rs.getBigDecimal("price"));
+                    sd.setPrice(rs.getDouble("price"));
                     sd.setDate(rs.getTimestamp("date"));
                     list.add(sd);
                 }
@@ -33,5 +33,42 @@ public class SupplierDetailDAO extends DBContext {
             e.printStackTrace();
         }
         return list;
+    }
+    
+    public boolean insertSupplierDevice(int supplierId, int deviceId, double price) {
+        String sql = "INSERT INTO supplier_details (supplier_id, device_id, price) VALUES (?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, supplierId);
+            ps.setInt(2, deviceId);
+            ps.setDouble(3, price);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public SupplierDetail getLatestDetailByDeviceId(int deviceId) {
+        String sql = "SELECT id, supplier_id, device_id, price, date FROM supplier_details " +
+                     "WHERE device_id = ? ORDER BY date DESC LIMIT 1";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, deviceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    SupplierDetail detail = new SupplierDetail();
+                    detail.setId(rs.getInt("id"));
+                    detail.setSupplierId(rs.getInt("supplier_id"));
+                    detail.setDeviceId(rs.getInt("device_id"));
+                    detail.setPrice(rs.getDouble("price"));
+                    detail.setDate(rs.getTimestamp("date"));
+                    return detail;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
