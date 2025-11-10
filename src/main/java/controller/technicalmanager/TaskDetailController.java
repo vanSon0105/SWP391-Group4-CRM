@@ -11,6 +11,8 @@ import dao.TaskDetailDAO;
 import dao.TaskDAO;
 import model.Task;
 import model.TaskDetail;
+import model.User;
+import utils.AuthorizationUtils;
 
 @WebServlet("/task-detail")
 public class TaskDetailController extends HttpServlet {
@@ -20,6 +22,10 @@ public class TaskDetailController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
 		int id = 0;
 		try {
 			id = Integer.parseInt(request.getParameter("id"));
@@ -36,14 +42,31 @@ public class TaskDetailController extends HttpServlet {
 
 	}
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	@Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+		User manager = getManager(request, response);
+		if (manager == null) {
+			return;
+		}
+        String action = request.getParameter("action");
         String taskIdParam = request.getParameter("taskId");
-        if(taskIdParam != null) {
-            int taskId = Integer.parseInt(taskIdParam);
-            taskDetailDao.completeTaskDetails(taskId);
+        String staffIdParam = request.getParameter("staffId");
+
+        if ("cancel".equals(action) && taskIdParam != null && staffIdParam != null) {
+            try {
+                int taskId = Integer.parseInt(taskIdParam);
+                int staffId = Integer.parseInt(staffIdParam);
+                taskDetailDao.deleteByTaskIdAndStaffId(taskId, staffId);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        response.sendRedirect("task-list");
+
+        response.sendRedirect("task-detail?id=" + taskIdParam);
     }
+	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	}
 
 }
