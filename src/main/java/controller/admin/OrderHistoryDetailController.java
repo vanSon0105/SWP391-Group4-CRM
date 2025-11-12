@@ -31,6 +31,7 @@ public class OrderHistoryDetailController extends HttpServlet {
         try {
             int orderId = Integer.parseInt(request.getParameter("id"));
 
+            
             Order order = orderDAO.getOrderById(orderId);
             List<OrderDetail> orderDetails = orderDetailDAO.getOrderDetailsByOrderId(orderId);
 
