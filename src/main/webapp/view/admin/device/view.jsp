@@ -17,7 +17,7 @@
 <jsp:include page="../common/sidebar.jsp"></jsp:include>
 <jsp:include page="../common/header.jsp"></jsp:include>
 <main class="sidebar-main">
-	<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
+	<c:if test="${permissions != null && permissions.contains('Quản Lí Thiết Bị')}">
 		<section class="panel">
 	        <a class="btn device-btn" href="device-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
 	                sách</span></a>
@@ -25,7 +25,7 @@
 	</c:if>
 	
 	<c:if test="${account.roleId != 1}">
-		<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
+		<c:if test="${permissions != null && permissions.contains('Quản Lí Seri')}">
 			<section class="panel">
 		        <a class="btn device-btn" href="de-show#table-panel"><i class="fa-solid fa-arrow-left"></i><span>Về danh
 		                sách</span></a>
@@ -77,12 +77,12 @@
 	                    </tr>
 	                </tbody>
 	            </table>
-	            <c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT')}">
+	            <c:if test="${permissions != null && permissions.contains('Quản Lí Thiết Bị')}">
 		            <div class="device-action">
 		                <a id="edit-link" class="btn device-btn" href="device-update?id=${deviceDetail.id}">
 		                    <i class="fa-solid fa-pen"></i><span>Sửa thông tin</span>
 		                </a>
-		                <a id="delete-link" class="btn" href="device-remove?id=${deviceDetail.id}">
+		                <a id="delete-link" class="btn" href="device-delete?id=${deviceDetail.id}">
 		                    <i class="fa-solid fa-trash"></i><span>Xóa thiết bị</span>
 		                </a>
 		            </div>

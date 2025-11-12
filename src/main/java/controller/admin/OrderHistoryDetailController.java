@@ -4,7 +4,8 @@ import dao.OrderDAO;
 import dao.OrderDetailDAO;
 import model.Order;
 import model.OrderDetail;
-
+import model.User;
+import utils.AuthorizationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -23,11 +24,13 @@ public class OrderHistoryDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
+    	User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Đặt Hàng");
+        if (currentUser == null) {
+            return; 
+        }
         try {
             int orderId = Integer.parseInt(request.getParameter("id"));
 
-            // Lấy thông tin order
             Order order = orderDAO.getOrderById(orderId);
             List<OrderDetail> orderDetails = orderDetailDAO.getOrderDetailsByOrderId(orderId);
 
@@ -37,14 +40,13 @@ public class OrderHistoryDetailController extends HttpServlet {
                 return;
             }
 
-            // Truyền dữ liệu xuống JSP
             request.setAttribute("order", order);
             request.setAttribute("orderDetails", orderDetails);
 
             request.getRequestDispatcher("/view/admin/orderhistory/order-history-detail.jsp").forward(request, response);
 
         } catch (NumberFormatException e) {
-            response.sendRedirect("order-tracking"); // ID không hợp lệ
+            response.sendRedirect("order-tracking");
         }
     }
 }

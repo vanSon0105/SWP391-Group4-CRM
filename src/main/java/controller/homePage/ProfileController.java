@@ -14,6 +14,7 @@ import jakarta.servlet.http.*;
 import dao.DeviceDAO;
 import dao.UserDAO;
 import model.User;
+import utils.AuthorizationUtils;
 import utils.PasswordUtils;
 
 
@@ -26,14 +27,11 @@ public class ProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        User currentUser = (User) session.getAttribute("account");
+    	HttpSession session = request.getSession();
+    	User currentUser = getUser(request, response);
+		if (currentUser == null) {
+			return;
+		}
         User freshUser = userDAO.getUserById(currentUser.getId());
 
         if (freshUser != null) {
@@ -63,13 +61,11 @@ public class ProfileController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login");
-            return;
-        }
-        
-        User currentUser = (User) session.getAttribute("account");
+    	HttpSession session = request.getSession();
+    	User currentUser = getUser(request, response);
+		if (currentUser == null) {
+			return;
+		}
         String action = request.getParameter("action");
 
         if ("changePassword".equalsIgnoreCase(action)) {
@@ -79,18 +75,21 @@ public class ProfileController extends HttpServlet {
 
             StringBuilder passwordErrors = new StringBuilder();
 
+     
             User dbUser = userDAO.getUserById(currentUser.getId());
 
-            if (dbUser == null || !PasswordUtils.verifyPassword(currentPassword, dbUser.getPassword())) {
+            if (dbUser == null) {
+                passwordErrors.append("User không tồn tại. ");
+            } else if (!PasswordUtils.verifyPassword(currentPassword, dbUser.getPassword())) {
                 passwordErrors.append("Mật khẩu hiện tại không đúng. ");
             }
 
-            if (!newPassword.equals(confirmPassword)) {
+            if (newPassword == null || !newPassword.equals(confirmPassword)) {
                 passwordErrors.append("Mật khẩu mới và xác nhận mật khẩu không khớp. ");
             }
 
-            if (!newPassword.matches("^(?=.*[a-zA-Z])(?=.*\\d).{6,}$")) {
-                passwordErrors.append("Mật khẩu mới phải ít nhất 6 ký tự và bao gồm chữ và số. ");
+            if (newPassword == null || newPassword.length() < 6) {
+                passwordErrors.append("Mật khẩu mới phải có ít nhất 6 ký tự. ");
             }
 
             if (passwordErrors.length() > 0) {
@@ -98,29 +97,32 @@ public class ProfileController extends HttpServlet {
                 request.setAttribute("errorMessage", passwordErrors.toString());
                 request.setAttribute("showChangePassword", true);
                 request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
-                return;
+                return; 
             }
-
+    
             String hashedPassword = PasswordUtils.hashPassword(newPassword);
             currentUser.setPassword(hashedPassword);
-
             boolean updated = userDAO.updateUserPassword(currentUser);
 
             if (updated) {
-                request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
                 User freshUser = userDAO.getUserById(currentUser.getId());
                 if (freshUser != null) {
                     session.setAttribute("account", freshUser);
                 }
+                request.setAttribute("successMessage", "Đổi mật khẩu thành công!");
             } else {
                 request.setAttribute("errorMessage", "Đã xảy ra lỗi, vui lòng thử lại.");
             }
 
             request.setAttribute("user", currentUser);
             request.setAttribute("showChangePassword", true);
+            request.setAttribute("showProfile", false);
             request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
             return;
         }
+
+        
+        
 
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
@@ -135,7 +137,7 @@ public class ProfileController extends HttpServlet {
         } else if (fullName.trim().length() < 2 || fullName.trim().length() > 50) {
             errors.append("Họ tên phải từ 2–50 ký tự. ");
         } else if (!Pattern.matches("^[\\p{L} ]+$", fullName.trim())) {
-            errors.append("Họ tên chỉ được chứa chữ cái và dấu cách. ");
+        	errors.append("Họ tên chỉ được chứa chữ cái và dấu cách. ");
         }
 
         if (phone == null || phone.trim().isEmpty()) {
@@ -193,7 +195,7 @@ public class ProfileController extends HttpServlet {
                             java.io.File oldFile = new java.io.File(getServletContext().getRealPath("/") + imageUrl);
                             if (oldFile.exists()) {
                                 oldFile.delete();
-                            }
+}
                         }
                         imageUrl = savedName;
                     }
@@ -232,4 +234,8 @@ public class ProfileController extends HttpServlet {
 
         response.sendRedirect("profile");
     }
+    
+    private User getUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "Quản Lí Hồ Sơ");
+	}
 }

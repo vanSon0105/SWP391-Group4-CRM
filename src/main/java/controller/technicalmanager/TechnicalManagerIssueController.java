@@ -93,7 +93,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 	}
 	
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES_MANAGEMENT");
+		return AuthorizationUtils.requirePermission(req, resp, "Trang Quản Lí Kỹ Thuật");
 	}
 	
 	private void showWarranty(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

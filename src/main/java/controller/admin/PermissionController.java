@@ -30,7 +30,7 @@ public class PermissionController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "VIEW_ACCOUNT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Quyền");
         if (currentUser == null) {
             return;
         }
@@ -47,7 +47,7 @@ public class PermissionController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "UPDATE_ACCOUNT", "CREATE_ACCOUNT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Quyền");
         if (currentUser == null) {
             return;
         }

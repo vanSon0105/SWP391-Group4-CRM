@@ -184,9 +184,13 @@
 		<c:set var="selectedIssueType"
 		               value="${not empty param.issueType ? param.issueType : (empty selectedWarrantyId ? 'repair' : 'warranty')}" />
         <form method="post" action="create-issue" style="margin-top: 10px; width: 100%;">
-        	<label for="name">Họ tên</label>
+        	<label for="name">Tên tài khoản</label>
         	<c:if test="${not empty account.username}">
             	<input type="text" id="name" name="name" value="${account.username}" readonly>        	
+        	</c:if>
+        	<label for="name">Họ tên</label>
+        	<c:if test="${not empty account.username}">
+            	<input type="text" id="name" name="name" value="${account.fullName}" readonly>        	
         	</c:if>
         	<c:if test="${empty account.username}">
             	<input type="text" id="name" name="name" value="" required>        	

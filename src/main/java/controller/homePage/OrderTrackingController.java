@@ -36,10 +36,14 @@ public class OrderTrackingController extends HttpServlet {
         List<Order> orders = orderDAO.getOrdersByCustomerWithFilter(customerId, status, sortField, PAGE_SIZE, offset);
         int totalOrders = orderDAO.countOrdersByCustomerWithFilter(customerId, status);
         int totalPages = (int) Math.ceil((double) totalOrders / PAGE_SIZE);
+        int overallOrderCount = orderDAO.countOrdersByCustomerWithFilter(customerId, null);
+        int totalPurchasedDevices = orderDAO.getTotalDevicesPurchasedByCustomer(customerId);
 
         request.setAttribute("orders", orders);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("overallOrderCount", overallOrderCount);
+        request.setAttribute("totalPurchasedDevices", totalPurchasedDevices);
         request.setAttribute("status", status);
         request.setAttribute("sortField", sortField);
         request.setAttribute("sortOrder", sortOrder);

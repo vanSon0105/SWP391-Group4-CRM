@@ -60,6 +60,6 @@ public class StaffDetailController extends HttpServlet {
     }
     
     private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	    return AuthorizationUtils.requirePermission(request, response, "Trang Quản Lí Kỹ Thuật");
 	}
 }

@@ -352,6 +352,18 @@ input[type="text"], input[type="email"]:not(.footer-input), input[type="tel"],
 
 			<div id="change-password" class="profile-section"
 				style="display: none; margin-top: 30px;">
+				
+				<c:if test="${not empty errorMessage}">
+	    			<div class="alert alert-danger">
+	       			 ${errorMessage}
+	   				 </div>
+				</c:if>
+
+				<c:if test="${not empty successMessage}">
+		   			 <div class="alert alert-success">
+		       		 ${successMessage}
+		   			 </div>
+				</c:if>
 				<h2>Đổi mật khẩu</h2>
 				<form action="profile?action=changePassword" method="post">
 					<div class="form-group">
