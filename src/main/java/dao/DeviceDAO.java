@@ -18,6 +18,7 @@ import dal.DBContext;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.Part;
 import model.Category;
+import model.CustomerDeviceView;
 import model.Device;
 import model.DeviceSerial;
 
@@ -819,5 +820,68 @@ public class DeviceDAO extends DBContext {
 	    }
 	    return false;
 	}
+	
+	public List<CustomerDeviceView> getDevicesByCustomerId(int customerId) {
+	    List<CustomerDeviceView> list = new ArrayList<>();
+	    String sql = """
+	    	    SELECT 
+	            u.id AS customer_id,
+	            u.full_name AS customer_name,
+	            u.email AS customer_email,
+	            ds.id AS device_serial_id,
+	            d.id AS device_id,
+	            d.name AS device_name,
+	            c.category_name AS category_name,
+	            ds.serial_no AS serial_number,
+	            d.price,
+	            ds.stock_status AS status,
+	            d.warrantyMonth,
+	            wc.id AS warranty_card_id,
+	            ci.id AS issue_id,
+	            CASE WHEN wc.id IS NOT NULL THEN TRUE ELSE FALSE END AS hasWarranty,
+	            CASE WHEN ci.id IS NOT NULL THEN TRUE ELSE FALSE END AS hasIssue
+	        FROM users u
+	        JOIN orders o ON o.customer_id = u.id
+	        JOIN order_details od ON od.order_id = o.id
+	        JOIN devices d ON od.device_id = d.id
+	        JOIN categories c ON d.category_id = c.id
+	        JOIN order_detail_serials ods ON ods.order_detail_id = od.id
+	        JOIN device_serials ds ON ds.id = ods.device_serial_id
+	        LEFT JOIN warranty_cards wc ON wc.device_serial_id = ds.id AND wc.customer_id = u.id
+	        LEFT JOIN customer_issues ci ON ci.warranty_card_id = wc.id
+	        WHERE u.id = ?
+	    """;
+
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, customerId);
+	        ResultSet rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            CustomerDeviceView device = new CustomerDeviceView();
+	            device.setCustomerId(rs.getInt("customer_id"));
+	            device.setCustomerName(rs.getString("customer_name"));
+	            device.setCustomerEmail(rs.getString("customer_email"));
+	            device.setDeviceId(rs.getInt("device_id"));
+	            device.setDeviceName(rs.getString("device_name"));
+	            device.setCategoryName(rs.getString("category_name"));
+	            device.setSerialNumber(rs.getString("serial_number"));
+	            device.setPrice(rs.getDouble("price"));
+	            device.setStatus(rs.getString("status"));
+	            device.setWarrantyMonth(rs.getInt("warrantyMonth"));
+	            device.setHasWarranty(rs.getBoolean("hasWarranty"));
+	            device.setHasIssue(rs.getBoolean("hasIssue"));
+	            device.setWarrantyCardId(rs.getInt("warranty_card_id"));
+	            device.setIssueId(rs.getInt("issue_id"));
+	            list.add(device);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+
+
 
 }

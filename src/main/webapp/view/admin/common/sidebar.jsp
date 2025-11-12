@@ -47,6 +47,9 @@
                 <c:if test="${permissions.contains('CRUD_SUPPLIER')}">
                     <a href="supplier">Nhà cung cấp</a>
                 </c:if>
+                <c:if test="${permissions.contains('CUSTOMER_DEVICE')}">
+                    <a href="customer-devices">Thiết bị khách hàng</a>
+                </c:if>
             </details>
         </c:if>
 

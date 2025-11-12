@@ -1,5 +1,6 @@
 package dao;
 
+import model.Customer;
 import model.User;
 import utils.PasswordUtils;
 
@@ -714,6 +715,27 @@ public User getTechnicalStaffById(int staffId) {
         e.printStackTrace();
     }
     return user;
+}
+
+public List<User> getAllCustomers() {
+    List<User> list = new ArrayList<>();
+    String sql = "SELECT id, full_name, email, phone FROM users " +
+                 "WHERE role_id = (SELECT id FROM roles WHERE role_name = 'Customer')";
+    try (Connection con = DBContext.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            User u = new User();
+            u.setId(rs.getInt("id"));
+            u.setFullName(rs.getString("full_name"));
+            u.setEmail(rs.getString("email"));
+            u.setPhone(rs.getString("phone"));
+            list.add(u);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return list;
 }
 
 

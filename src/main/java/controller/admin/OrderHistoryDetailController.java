@@ -27,7 +27,7 @@ public class OrderHistoryDetailController extends HttpServlet {
         try {
             int orderId = Integer.parseInt(request.getParameter("id"));
 
-            // Lấy thông tin order
+            
             Order order = orderDAO.getOrderById(orderId);
             List<OrderDetail> orderDetails = orderDetailDAO.getOrderDetailsByOrderId(orderId);
 
@@ -37,7 +37,7 @@ public class OrderHistoryDetailController extends HttpServlet {
                 return;
             }
 
-            // Truyền dữ liệu xuống JSP
+          
             request.setAttribute("order", order);
             request.setAttribute("orderDetails", orderDetails);
 

@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dal.DBContext;
+import model.Customer;
+import model.DeviceSerial;
 import model.WarrantyCard;
 
 public class WarrantyCardDAO extends DBContext{
@@ -88,6 +90,60 @@ public class WarrantyCardDAO extends DBContext{
 	    }
 	    return null;
 	}
+	
+	 public WarrantyCard getWarrantyCardById(int id) {
+	        String sql = """
+	            SELECT 
+	                wc.id,
+	                wc.device_serial_id,
+	                wc.customer_id,
+	                wc.start_at,
+	                wc.end_at,
+	                ds.serial_no,
+	                ds.device_id,
+	                u.full_name AS customer_name,
+	                u.email AS customer_email
+	            FROM warranty_cards wc
+	            JOIN device_serials ds ON ds.id = wc.device_serial_id
+	            JOIN users u ON u.id = wc.customer_id
+	            WHERE wc.id = ?
+	        """;
+
+	        try (Connection conn = DBContext.getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	            ps.setInt(1, id);
+	            ResultSet rs = ps.executeQuery();
+
+	            if (rs.next()) {
+	                WarrantyCard wc = new WarrantyCard();
+	                wc.setId(rs.getInt("id"));
+	                wc.setStart_at(rs.getTimestamp("start_at"));
+	                wc.setEnd_at(rs.getTimestamp("end_at"));
+
+	                // DeviceSerial
+	                DeviceSerial ds = new DeviceSerial();
+	                ds.setId(rs.getInt("device_serial_id"));
+	                ds.setSerial_no(rs.getString("serial_no"));
+	                ds.setDevice_id(rs.getInt("device_id"));
+	                wc.setDevice_serial(ds);
+
+	                // Customer
+	                Customer customer = new Customer();
+	                customer.setId(rs.getInt("customer_id"));
+	                customer.setFull_name(rs.getString("customer_name"));
+	                customer.setEmail(rs.getString("customer_email"));
+	                wc.setCustomer(customer);
+
+	                return wc;
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	        return null;
+	    }
 
 
 }
