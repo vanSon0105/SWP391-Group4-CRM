@@ -160,8 +160,8 @@ a.disabled {
 				<section class="product-grid">
 					<c:forEach var="device" items="${listDevice}">
 						<article class="product-card" style="min-width: 350px">
-							<img alt="" style="width: 100%; height: 100%; object-fit: cover;"
-								src="<%=request.getContextPath()%>/assets/img/laptop.jpg" />
+							<img alt="" style="width: 100%; height: 160px; object-fit: cover;"
+								src="<%=request.getContextPath()%>/assets/img/device/${device.imageUrl}" />
 							<h3>${device.name}</h3>
 							<p>${device.desc}</p>
 							<strong>Giá: <fmt:formatNumber value="${device.price + 0}"

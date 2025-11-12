@@ -9,16 +9,10 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import dao.UserDAO;
 
-@WebServlet("/checkDuplicate") // đổi URL mapping
+@WebServlet("/checkDuplicate")
 public class checkDuplicateController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private UserDAO userDAO;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        userDAO = new UserDAO();
-    }
+    private UserDAO userDAO = new UserDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)

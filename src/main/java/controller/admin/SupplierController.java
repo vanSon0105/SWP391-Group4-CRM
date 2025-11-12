@@ -18,19 +18,13 @@ import java.util.List;
 @WebServlet("/supplier")
 public class SupplierController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private SupplierDAO supplierDAO;
-    private SupplierDetailDAO detailDAO;
-
-    @Override
-    public void init() throws ServletException {
-        supplierDAO = new SupplierDAO();
-        detailDAO = new SupplierDetailDAO();
-    }
+    private SupplierDAO supplierDAO = new SupplierDAO();
+    private SupplierDetailDAO detailDAO = new SupplierDetailDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "SUPPLIER_INFORMATION_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Nhà Cung Cấp");
         if (currentUser == null) return;
 
         String action = request.getParameter("action");
@@ -38,15 +32,12 @@ public class SupplierController extends HttpServlet {
 
         switch (action) {
             case "add":
-                checkPermission(request, response, "CRUD_SUPPLIER");
                 showAddForm(request, response);
                 break;
             case "edit":
-                checkPermission(request, response, "CRUD_SUPPLIER");
                 showEditForm(request, response);
                 break;
             case "delete":
-                checkPermission(request, response, "CRUD_SUPPLIER");
                 deleteSupplier(request, response);
                 break;
             case "restore":
@@ -69,11 +60,6 @@ public class SupplierController extends HttpServlet {
         }
     }
 
-    private void checkPermission(HttpServletRequest request, HttpServletResponse response, String permission) throws IOException {
-        if (!AuthorizationUtils.hasPermission(request.getSession(false), permission)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-        }
-    }
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("action", "add");

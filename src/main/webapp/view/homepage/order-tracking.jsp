@@ -10,11 +10,18 @@
 <title>Order Tracking - TechShop</title>
 <style>
 body.home-page {
-    background: #f5f6fa;
+    display: flex;
+    flex-direction: column;
 }
 
 .home-page main {
-    padding: 36px 40px !important;
+	min-width: 1100px;
+    flex: 1;
+	margin: 40px auto;
+	background: #fff;
+	padding: 32px !important;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
 }
 
 .order-header {
@@ -26,15 +33,6 @@ body.home-page {
 .order-header h1 {
     margin: 0;
     color: #1f2d3d;
-}
-
-.btn-primary {
-    background: #2563eb;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
 }
 
 .alert {
@@ -90,6 +88,39 @@ tr:hover {
     letter-spacing: .04em;
 }
 
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.stats-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.stats-card .label {
+    font-size: 15px;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.stats-card .value {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.stats-card .hint {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-top: 4px;
+}
+
 .status-pending {
     background: #e2e8f0;
     color: #1e293b;
@@ -120,23 +151,6 @@ tr:hover {
     font-weight: 600;
 }
 
-.btn-view {
-    background: #2563eb;
-    color: #fff;
-    padding: 6px 12px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.btn-view:hover {
-    background: #1d4ed8;
-    color: #fff;
-}
 
 .amount {
     font-weight: 600;
@@ -193,15 +207,8 @@ tr:hover {
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-@media (max-width: 768px) {
-    .filter-row {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .filter-select {
-        min-width: auto;
-    }
+main .btn {
+	border-radius: 5px !important;
 }
 </style>
 </head>
@@ -210,6 +217,7 @@ tr:hover {
 <main>
     <div class="order-header">
         <h1>Đơn hàng của tôi</h1>
+        <a class="btn order-btn" href="my-devices">Thiết bị đã mua</a>
     </div>
 
     <form method="get" class="filter-form">
@@ -266,7 +274,7 @@ tr:hover {
                                 </span>
                             </td>
                             <td>
-                                <a href="order-detail?id=${o.id}" class="btn-view">
+                                <a href="order-detail?id=${o.id}" class="btn order-btn">
                                     Xem chi tiết
                                 </a>
                             </td>

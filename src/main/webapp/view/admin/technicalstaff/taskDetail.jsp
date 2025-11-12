@@ -14,7 +14,6 @@
         body {
             margin: 0;
             background: #f8fafc;
-            font-family: 'Segoe UI', sans-serif;
         }
 
         .page-container {

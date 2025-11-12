@@ -21,7 +21,7 @@ public class DashBoardController extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_OVERVIEW", "PAYMENT_REPORTS");
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "Trang Admin");
         if (currentUser == null) {
             return;
         }
@@ -55,10 +55,5 @@ public class DashBoardController extends HttpServlet {
         request.setAttribute("issueStatus", issueStatus);
 
         request.getRequestDispatcher("view/admin/dashboard/index.jsp").forward(request, response);
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		doGet(request, response);
 	}
 }

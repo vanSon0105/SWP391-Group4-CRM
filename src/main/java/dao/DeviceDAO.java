@@ -433,7 +433,7 @@ public class DeviceDAO extends DBContext {
                 d.setId(rs.getInt("id"));
                 d.setName(rs.getString("name"));
                 d.setPrice(rs.getDouble("price"));
-                d.setDesc(rs.getString("image_url"));
+                d.setImageUrl(rs.getString("image_url"));
                 d.setDesc(rs.getString("description"));
                 list.add(d);
             }
@@ -746,6 +746,7 @@ public class DeviceDAO extends DBContext {
 				Device d = new Device();
 				d.setId(rs.getInt("id"));
 				d.setCategory(c);
+				d.setImageUrl(rs.getString("image_url"));
 				d.setName(rs.getString("name"));
 				d.setDesc(rs.getString("description"));
 				d.setPrice(rs.getDouble("price"));

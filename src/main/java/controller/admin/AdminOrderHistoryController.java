@@ -23,17 +23,14 @@ public class AdminOrderHistoryController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "ORDER_HISTORY_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Đặt Hàng");
         if (currentUser == null) {
             return; 
         }
-
         try {
             OrderDAO orderDAO = new OrderDAO();
-            List<OrderHistory> allOrders = orderDAO.getAllOrderHistories(); // tất cả đơn
+            List<OrderHistory> allOrders = orderDAO.getAllOrderHistories();
 
-            // --- Filter trạng thái ---
             String statusFilter = request.getParameter("status");
             List<OrderHistory> filteredOrders = allOrders;
             if (statusFilter != null && !statusFilter.isEmpty()) {
@@ -42,7 +39,6 @@ public class AdminOrderHistoryController extends HttpServlet {
                         .collect(Collectors.toList());
             }
 
-            // --- Filter theo tên khách hàng ---
             String customerName = request.getParameter("customerName");
             if (customerName != null && !customerName.isEmpty()) {
                 filteredOrders = filteredOrders.stream()
@@ -50,7 +46,6 @@ public class AdminOrderHistoryController extends HttpServlet {
                         .collect(Collectors.toList());
             }
 
-            
             String fromDateStr = request.getParameter("fromDate");
             String toDateStr = request.getParameter("toDate");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -83,7 +78,6 @@ public class AdminOrderHistoryController extends HttpServlet {
                         .collect(Collectors.toList());
             }
 
-            // --- Phân trang ---
             int page = 1;
             int pageSize = 10;
             if (request.getParameter("page") != null) {
@@ -101,7 +95,6 @@ public class AdminOrderHistoryController extends HttpServlet {
             int end = Math.min(start + pageSize, totalOrders);
             List<OrderHistory> ordersPage = filteredOrders.subList(start, end);
 
-            // --- Gửi dữ liệu ra JSP ---
             request.setAttribute("orderList", ordersPage);
             request.setAttribute("currentPage", page);
             request.setAttribute("totalPages", totalPages);

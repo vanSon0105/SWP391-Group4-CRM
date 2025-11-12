@@ -13,56 +13,8 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-	.device-btn{
-	    color: black !important;
-	}
-	.device-management .pagination-pills {
-	    display: flex;
-	    justify-content: center;
-	    gap: 10px;
-	    padding-bottom: 20px;
-	}
-	
-	.device-management .pagination-pills a {
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		text-decoration: none;
-	    width: 44px;
-	    height: 44px;
-	    padding: 0;
-	    border-radius: 16px;
-	    border: 1px solid rgba(15, 23, 42, 0.15);
-	    background: rgba(255, 255, 255, 0.9);
-	    color: #1f2937;
-	    font-weight: 600;
-	    cursor: pointer;
-	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-	}
-	
-	.device-management .pagination-pills a.active {
-	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-	    color: #f8fafc;
-	    border-color: transparent;
-	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-	}
-	
-	.device-management .pagination-pills a:hover {
-	    transform: translateY(-2px);
-	}
-	
 	body .panel h2{
 		margin-bottom: 0 !important;
-	}
-	
-	.disabled{
-		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-	    color: #f8fafc;
-	    border-color: transparent;
-	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-	    cursor: not-allowed;
-	    pointer-events: none;
-	    opacity: 0.5;
 	}
 </style>
 </head>

@@ -311,6 +311,26 @@ CREATE TABLE user_permission (
     UNIQUE (user_id, permission_id)
 );
 
+INSERT INTO permissions (id, permission_name) VALUES
+(1, 'Quản Lí Tài Khoản'), (2, 'Quản Lí Thiết Bị'), (3, 'Quản Lí Nhà Cung Cấp'), (4, 'Quản Lí Danh Mục'), (5, 'Quản Lí Thanh Toán'), (6, 'Quản Lí Đặt Hàng'),
+(7, 'Quản Lí Vấn Đề'), (8, 'Quản Lí Nhiệm Vụ'), (9, 'Quản Lí Giỏ Hàng'), (10, 'Quản Lí Hồ Sơ'), (11, 'Quản Lí Nhập/Xuất'), (12, 'Quản Lí Giao Dịch'), (13, 'Trang Nhân Viên Hỗ Trợ'),
+(14, 'Trang Nhân Viên Kỹ Thuật'), (15, 'Trang Quản Lí Kỹ Thuật'), (16, 'Quản Lí Seri'), (17, 'Gửi Vấn Đề'), (18, 'Quản Lí Quyền'), (19, 'Trang Admin'), (20, 'Quản Lí Giá'), (21, 'Xem Seri'),
+(22, 'Quản Lí Giá Thiết Bị'), (23, 'Xem Thiết Bị');
+
+INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1), (1, 2), (1, 3), (1, 4),
+(1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21), (1, 23);
+
+-- Manager 
+INSERT INTO role_permission (role_id, permission_id) VALUES (2, 7), (2, 8), (2, 15), (2, 10);
+-- Tech Staff
+INSERT INTO role_permission (role_id, permission_id) VALUES (3, 14), (3, 10);
+-- Support Staff
+INSERT INTO role_permission (role_id, permission_id) VALUES (4, 13), (4, 10);
+-- Storekeeper
+INSERT INTO role_permission (role_id, permission_id) VALUES (5, 11), (5, 12), (5, 3), (5, 16), (5, 10), (5, 20), (5, 21), (5, 22), (5, 23);
+-- Customer
+INSERT INTO role_permission (role_id, permission_id) VALUES (6, 9), (6, 17), (6, 10);
+
 
 INSERT INTO roles (role_name, description) VALUES
 ('Admin', 'System administrator'),
@@ -546,31 +566,20 @@ INSERT INTO supplier_details (supplier_id, device_id, price) VALUES
 (2, 12, 13900000),
 (2, 14, 150000);
 
-INSERT INTO permissions (id, permission_name) VALUES
-(1, 'CREATE_TASK'), (2, 'VIEW_TASK_LIST'), (3, 'UPDATE_TASK'), (4, 'DELETE_TASK'), (5, 'ASSIGN_TASK'),
-(6, 'UNASSIGN_TASK'), (7, 'CREATE_ACCOUNT'), (8, 'VIEW_ACCOUNT'), (9, 'UPDATE_ACCOUNT'), (10, 'ACTIVE_ACCOUNT'),
-(11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'DEVICE_MANAGEMENT'), (14, 'DEVICE_OVERVIEW'),
-(15, 'PRICING_MANAGEMENT'), (16, 'CREATE_IMPORT_EXPORT_ORDER'), (17, 'QUANTITY_CHECK'), (18, 'IMPORT_EXPORT_REPORTS'),
-(19, 'CRUD_SUPPLIER'), (20, 'DEVICE_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
-(22, 'SUPPLIER_INFO_INTEGRATION'), (23, 'STAFF_LIST'), (25, 'ORDER_TRACKING'), (28, 'PAYMENT_REPORTS'),
-(26, 'ORDER_REPORTS'), (27, 'CREATE_TRANSACTION'), (29, 'PAYMENT_CONFIRMATION'),
-(30, 'PAYMENT_REQUEST_CREATION'), (31, 'ADMIN_PAGE'), (32, 'CUSTOMER_ORDER_REPORT'),
-(33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
-(37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), 
-(42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT'), (45, 'PRICE_UPDATE'), (46, 'ORDER_HISTORY_MANAGEMENT');
+-- INSERT INTO permissions (id, permission_name) VALUES
+-- (1, 'CREATE_TASK'), (2, 'VIEW_TASK_LIST'), (3, 'UPDATE_TASK'), (4, 'DELETE_TASK'), (5, 'ASSIGN_TASK'),
+-- (6, 'UNASSIGN_TASK'), (7, 'CREATE_ACCOUNT'), (8, 'VIEW_ACCOUNT'), (9, 'UPDATE_ACCOUNT'), (10, 'ACTIVE_ACCOUNT'),
+-- (11, 'DEACTIVE_ACCOUNT'), (12, 'CATEGORY_MANAGEMENT'), (13, 'DEVICE_MANAGEMENT'), (14, 'DEVICE_OVERVIEW'),
+-- (15, 'PRICING_MANAGEMENT'), (16, 'CREATE_IMPORT_EXPORT_ORDER'), (17, 'QUANTITY_CHECK'), (18, 'IMPORT_EXPORT_REPORTS'),
+-- (19, 'CRUD_SUPPLIER'), (20, 'DEVICE_SUPPLY_MANAGEMENT'), (21, 'SUPPLIER_INFORMATION_MANAGEMENT'),
+-- (22, 'SUPPLIER_INFO_INTEGRATION'), (23, 'STAFF_LIST'), (25, 'ORDER_TRACKING'), (28, 'PAYMENT_REPORTS'),
+-- (26, 'ORDER_REPORTS'), (27, 'CREATE_TRANSACTION'), (29, 'PAYMENT_CONFIRMATION'),
+-- (30, 'PAYMENT_REQUEST_CREATION'), (31, 'ADMIN_PAGE'), (32, 'CUSTOMER_ORDER_REPORT'),
+-- (33, 'SALE_REPORTS'), (34, 'INVENTORY_REPORTS'), (35, 'CUSTOMER_ISSUES_RESPONDING'), (36, 'CUSTOMER_ISSUES_MANAGEMENT'),
+-- (37, 'CUSTOMER_ISSUES'), (38, 'SUPPORT_DASH'), (39, 'TECH_STAFF_DASH'), (40, 'TECH_MANAGER_DASH'), (41, 'STOREKEEPER_DASH'), 
+-- (42, 'PROCESS_TASK'), (43, 'DEVICE_MANAGEMENT_NODELETE'), (44, 'TRANSACTION_MANAGEMENT'), (45, 'PRICE_UPDATE'), (46, 'ORDER_HISTORY_MANAGEMENT');
 
-INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
 
-INSERT INTO role_permission (role_id, permission_id) VALUES
-(2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 12), (2, 13), (2, 14), (2, 15), (2, 19),
-(2, 20), (2, 21), (2, 22), (2, 25), (2, 26), (2, 32), (2, 33), (2, 34), (2, 36), (2, 23);
-
-INSERT INTO role_permission (role_id, permission_id) VALUES (3, 3), (3, 42);
-INSERT INTO role_permission (role_id, permission_id) VALUES (4, 35), (4, 38), (4, 3);
-INSERT INTO role_permission (role_id, permission_id) VALUES
-(5, 12), (5, 43), (5, 15), (5, 16), (5, 17), (5, 18), (5, 25), (5, 26), (5, 32), (5, 33), (5, 34), (5, 3), (5, 44), (5, 27), (5, 45);
-
-INSERT INTO role_permission (role_id, permission_id) VALUES (6, 14), (6, 25), (6, 26), (6, 30), (6, 37);
 
 
 

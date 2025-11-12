@@ -9,6 +9,9 @@ import java.io.IOException;
 import dao.SalesDAO;
 import dao.OrderDAO;
 import model.Sale;
+import model.User;
+import utils.AuthorizationUtils;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +22,10 @@ public class SalesReportController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-
+    	User currentUser = AuthorizationUtils.requirePermission(req, resp, "Trang Admin");
+        if (currentUser == null) {
+            return;
+        }
         Map<String, Object> summary = dao.getSummary();
         req.setAttribute("totalRevenue", summary.get("totalRevenue"));
         req.setAttribute("totalOrders", summary.get("totalOrders"));
@@ -42,7 +48,6 @@ public class SalesReportController extends HttpServlet {
         }
 
         req.setAttribute("monthlyData", fullYearData);
-
         req.getRequestDispatcher("view/admin/dashboard/saleReport.jsp").forward(req, resp);
     }
 

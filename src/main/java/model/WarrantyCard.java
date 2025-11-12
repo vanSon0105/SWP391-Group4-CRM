@@ -109,7 +109,10 @@ public class WarrantyCard {
 		this.end_at = end_at;
 	}
 	
-	
-	
-	
+	public String getWarrantyStatus() {
+	    if (end_at == null) {
+	        return "Hết hạn"; 
+	    }
+	    return end_at.after(new java.util.Date()) ? "Còn hạn" : "Hết hạn";
+	}
 }

@@ -22,7 +22,7 @@ public class TaskDetailController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		User manager = getManager(request, response);
+		User manager = getUser(request, response);
 		if (manager == null) {
 			return;
 		}
@@ -45,7 +45,7 @@ public class TaskDetailController extends HttpServlet {
 	@Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-		User manager = getManager(request, response);
+		User manager = getUser(request, response);
 		if (manager == null) {
 			return;
 		}
@@ -66,7 +66,7 @@ public class TaskDetailController extends HttpServlet {
         response.sendRedirect("task-detail?id=" + taskIdParam);
     }
 	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	    return AuthorizationUtils.requirePermission(request, response, "Trang Quản Lí Kỹ Thuật");
 	}
 
 }

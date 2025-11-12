@@ -7,6 +7,8 @@ import java.time.ZonedDateTime;
 
 import model.CustomerDevice;
 import model.CustomerIssue;
+import model.CustomerOwnedDevice;
+import model.CustomerOwnedDeviceUnit;
 import dal.DBContext;
 
 public class CustomerIssueDAO extends DBContext {
@@ -321,7 +323,220 @@ public class CustomerIssueDAO extends DBContext {
 	    }
 	    return list;
 	}
+	
+	public List<CustomerOwnedDevice> getOwnedDevicesByCustomer(int customerId, int offset, int limit) {
+		if (limit <= 0) {
+			return fetchOwnedDevices(customerId, null);
+		}
+		List<Integer> deviceIds = fetchPagedDeviceIds(customerId, offset, limit);
+		if (deviceIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return fetchOwnedDevices(customerId, deviceIds);
+	}
+	
+	public int countOwnedDeviceModels(int customerId) {
+		String sql = "SELECT COUNT(DISTINCT d.id) FROM warranty_cards wc "
+				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+				+ "JOIN devices d ON d.id = ds.device_id "
+				+ "WHERE wc.customer_id = ?";
+		try (Connection conn = getConnection();
+			 PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, customerId);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int countOwnedUnits(int customerId) {
+		String sql = "SELECT COUNT(*) FROM warranty_cards WHERE customer_id = ?";
+		try (Connection conn = getConnection();
+			 PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, customerId);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int countOwnedUnitsWithIssue(int customerId) {
+		String sql = "SELECT COUNT(*) FROM warranty_cards wc "
+				+ "WHERE wc.customer_id = ? "
+				+ "AND EXISTS (SELECT 1 FROM customer_issues ci WHERE ci.warranty_card_id = wc.id)";
+		try (Connection conn = getConnection();
+			 PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, customerId);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	private List<Integer> fetchPagedDeviceIds(int customerId, int offset, int limit) {
+		List<Integer> ids = new ArrayList<>();
+		String sql = "SELECT d.id "
+				+ "FROM warranty_cards wc "
+				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+				+ "JOIN devices d ON d.id = ds.device_id "
+				+ "WHERE wc.customer_id = ? "
+				+ "GROUP BY d.id "
+				+ "ORDER BY MAX(wc.start_at) DESC, d.name ASC "
+				+ "LIMIT ? OFFSET ?";
+		try (Connection conn = getConnection();
+			 PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, customerId);
+			ps.setInt(2, limit);
+			ps.setInt(3, offset);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				ids.add(rs.getInt(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return ids;
+	}
+	
+	private List<CustomerOwnedDevice> fetchOwnedDevices(int customerId, List<Integer> deviceFilter) {
+		Map<Integer, CustomerOwnedDevice> map = new LinkedHashMap<>();
+		StringBuilder sql = new StringBuilder("SELECT d.id AS device_id, d.name AS device_name, d.image_url, "
+				+ "wc.id AS warranty_id, wc.start_at, wc.end_at, ds.serial_no, "
+				+ "TIMESTAMPDIFF(DAY, wc.start_at, NOW()) AS days_since_purchase, "
+				+ "latest_issue.id AS issue_id, latest_issue.issue_code, latest_issue.support_status "
+				+ "FROM warranty_cards wc "
+				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+				+ "JOIN devices d ON d.id = ds.device_id "
+				+ "LEFT JOIN ( "
+				+ "    SELECT ci1.* FROM customer_issues ci1 "
+				+ "    JOIN ( "
+				+ "        SELECT warranty_card_id, MAX(created_at) AS latest_created "
+				+ "        FROM customer_issues "
+				+ "        GROUP BY warranty_card_id "
+				+ "    ) latest ON latest.warranty_card_id = ci1.warranty_card_id "
+				+ "        AND latest.latest_created = ci1.created_at "
+				+ ") latest_issue ON latest_issue.warranty_card_id = wc.id "
+				+ "WHERE wc.customer_id = ? ");
+		boolean hasFilter = deviceFilter != null && !deviceFilter.isEmpty();
+		if (hasFilter) {
+			String placeholders = String.join(",", Collections.nCopies(deviceFilter.size(), "?"));
+			sql.append("AND d.id IN (").append(placeholders).append(") ")
+			   .append("ORDER BY FIELD(d.id");
+			for (int i = 0; i < deviceFilter.size(); i++) {
+				sql.append(",?");
+			}
+			sql.append("), wc.start_at DESC");
+		} else {
+			sql.append("ORDER BY d.name ASC, wc.start_at DESC");
+		}
+		
+		try (Connection conn = getConnection();
+			 PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+			int idx = 1;
+			ps.setInt(idx++, customerId);
+			if (hasFilter) {
+				for (Integer id : deviceFilter) {
+					ps.setInt(idx++, id);
+				}
+				for (Integer id : deviceFilter) {
+					ps.setInt(idx++, id);
+				}
+			}
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				int deviceId = rs.getInt("device_id");
+				CustomerOwnedDevice summary = map.get(deviceId);
+				if (summary == null) {
+					summary = new CustomerOwnedDevice();
+					summary.setDeviceId(deviceId);
+					summary.setDeviceName(rs.getString("device_name"));
+					summary.setImageUrl(rs.getString("image_url"));
+					map.put(deviceId, summary);
+				}
+				
+				CustomerOwnedDeviceUnit unit = new CustomerOwnedDeviceUnit();
+				unit.setWarrantyCardId(rs.getInt("warranty_id"));
+				unit.setSerialNo(rs.getString("serial_no"));
+				unit.setPurchaseDate(rs.getTimestamp("start_at"));
+				unit.setWarrantyEnd(rs.getTimestamp("end_at"));
+				unit.setDaysSincePurchase(rs.getLong("days_since_purchase"));
+				
+				Integer issueId = (Integer) rs.getObject("issue_id");
+				boolean hasIssue = issueId != null;
+				unit.setHasIssue(hasIssue);
+				if (hasIssue) {
+					unit.setLatestIssueId(issueId);
+					unit.setLatestIssueCode(rs.getString("issue_code"));
+					unit.setLatestIssueStatus(rs.getString("support_status"));
+					summary.incrementUnitsWithIssue();
+				}
+				
+				summary.getUnits().add(unit);
+				summary.setTotalUnits(summary.getUnits().size());
+				
+				Timestamp purchaseDate = unit.getPurchaseDate();
+				if (purchaseDate != null) {
+					Timestamp latestPurchase = summary.getLatestPurchaseAt();
+					if (latestPurchase == null || latestPurchase.before(purchaseDate)) {
+						summary.setLatestPurchaseAt(purchaseDate);
+						summary.setDaysSinceLatestPurchase(unit.getDaysSincePurchase());
+					}
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<>(map.values());
+	}
 
+	public List<CustomerIssue> getIssuesByWarrantyCardIds(List<Integer> warrantyCardIds) {
+		if (warrantyCardIds == null || warrantyCardIds.isEmpty()) {
+			return Collections.emptyList();
+		}
+		String placeholders = String.join(",", Collections.nCopies(warrantyCardIds.size(), "?"));
+		String sql = "SELECT ci.id, ci.customer_id, ci.issue_code, ci.title, ci.description, "
+				+ "ci.warranty_card_id, ci.created_at, ci.support_staff_id, ci.support_status, "
+				+ "ci.issue_type, ci.feedback, u.full_name AS support_staff_name "
+				+ "FROM customer_issues ci "
+				+ "LEFT JOIN users u ON ci.support_staff_id = u.id "
+				+ "WHERE ci.warranty_card_id IN (" + placeholders + ") "
+				+ "ORDER BY ci.warranty_card_id ASC, ci.created_at DESC";
+		List<CustomerIssue> list = new ArrayList<>();
+		try (Connection conn = getConnection();
+			 PreparedStatement ps = conn.prepareStatement(sql)) {
+			for (int i = 0; i < warrantyCardIds.size(); i++) {
+				ps.setInt(i + 1, warrantyCardIds.get(i));
+			}
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				CustomerIssue issue = new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"),
+						rs.getString("issue_code"), rs.getString("title"), rs.getString("description"),
+						rs.getInt("warranty_card_id"), rs.getTimestamp("created_at"), rs.getInt("support_staff_id"),
+						rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback"));
+				issue.setSupportStaffName(rs.getString("support_staff_name"));
+				list.add(issue);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 
 
 }
