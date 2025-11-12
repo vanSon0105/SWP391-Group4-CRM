@@ -362,10 +362,15 @@ public class TaskDetailDAO extends DBContext {
 	public List<TaskDetail> getBasicTaskDetailsByStaffId(int staffId) {
 		List<TaskDetail> list = new ArrayList<>();
 
-		String sql = "SELECT td.id, td.task_id, td.technical_staff_id, td.assigned_at, "
-				+ "td.deadline, td.status, td.note, t.title AS taskTitle " + "FROM task_details td "
-				+ "JOIN tasks t ON td.task_id = t.id " + "WHERE td.technical_staff_id = ? "
-				+ "ORDER BY td.assigned_at DESC";
+		String sql = 
+			    "SELECT td.id, td.task_id, td.technical_staff_id, td.assigned_at, "
+			  + "td.deadline, td.status, td.note, t.title AS taskTitle "
+			  + "FROM task_details td "
+			  + "JOIN tasks t ON td.task_id = t.id "
+			  + "WHERE td.technical_staff_id = ? "
+			  + "AND td.status IN ('pending', 'in_progress') "
+			  + "ORDER BY td.assigned_at DESC";
+
 
 		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
