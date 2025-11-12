@@ -340,7 +340,7 @@ public class TaskFormController extends HttpServlet {
 	}
 	
 	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		return AuthorizationUtils.requirePermission(request, response, "CUSTOMER_ISSUES_MANAGEMENT");
+		return AuthorizationUtils.requirePermission(request, response, "Trang Quản Lí Kỹ Thuật");
 	}
 	
 	private void applyReviewNotice(HttpServletRequest request) {

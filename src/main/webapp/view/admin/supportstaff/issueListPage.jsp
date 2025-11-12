@@ -14,7 +14,6 @@
     <style>
         body {
             background: #f4f6fb;
-            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 24px;
             height: 100% !important;

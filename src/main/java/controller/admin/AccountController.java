@@ -5,7 +5,7 @@ import java.util.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-
+import dao.OrderDAO;
 import dao.UserDAO;
 import model.User;
 import utils.AuthorizationUtils;
@@ -13,22 +13,16 @@ import utils.AuthorizationUtils;
 @WebServlet("/account")
 public class AccountController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    private UserDAO userDAO;
-
-    @Override
-    public void init() throws ServletException {
-        userDAO = new UserDAO();
-    }
+    private UserDAO userDAO = new UserDAO();
+    private OrderDAO orderDAO = new OrderDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-    	 User currentUser = AuthorizationUtils.requirePermission(request, response, "VIEW_ACCOUNT");
+    	 User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Tài Khoản");
          if (currentUser == null) {
             return;
         }
-
         String action = request.getParameter("action");
         if (action == null) {
         	action = "list";
@@ -62,12 +56,10 @@ public class AccountController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-    	User currentUser = AuthorizationUtils.requirePermission(request, response, "VIEW_ACCOUNT");
+    	User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Tài Khoản");
         if (currentUser == null) {
-            return;
-        }
-
+           return;
+       }
         String action = request.getParameter("action");
         if ("add".equals(action)) {
             addUser(request, response);
@@ -123,6 +115,8 @@ public class AccountController extends HttpServlet {
                 request.setAttribute("error", "Không tìm thấy người dùng!");
             } else {
                 request.setAttribute("userDetail", userDetail);
+                int totalDevices = orderDAO.getTotalDevicesPurchasedByCustomer(userDetail.getId());
+                request.setAttribute("totalPurchasedDevices", totalDevices);
             }
 
             request.getRequestDispatcher("/view/admin/account/ViewAccountDetail.jsp").forward(request, response);
@@ -135,11 +129,6 @@ public class AccountController extends HttpServlet {
    
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	if (!AuthorizationUtils.hasPermission(request.getSession(false), "UPDATE_ACCOUNT")) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-    	
         String idParam = request.getParameter("id");
 
         if (idParam == null) {
@@ -166,12 +155,6 @@ public class AccountController extends HttpServlet {
     
     private void updateUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        if (!AuthorizationUtils.hasPermission(request.getSession(false), "UPDATE_ACCOUNT")) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             String email = request.getParameter("email").trim();
@@ -243,7 +226,6 @@ public class AccountController extends HttpServlet {
 
     private void searchUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String keyword = request.getParameter("keyword");
         if (keyword != null) {
             keyword = keyword.replace("+", " ").trim();
@@ -290,7 +272,6 @@ public class AccountController extends HttpServlet {
 
     private void filterByRole(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
         String roleParam = request.getParameter("roleId");
         if (roleParam == null) {
             response.sendRedirect("account");
@@ -328,11 +309,6 @@ public class AccountController extends HttpServlet {
 
     private void addUser(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!AuthorizationUtils.hasPermission(request.getSession(false), "CREATE_ACCOUNT")) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
-
         try {
             String username = request.getParameter("username").trim();
             String email = request.getParameter("email").trim();

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page isELIgnored="false" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
             <!DOCTYPE link PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
             <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
@@ -27,6 +28,7 @@
                             <a href="${pageContext.request.contextPath}/order-tracking">Đơn hàng</a>
                             <a href="${pageContext.request.contextPath}/customer/issue-payments">Danh sách thanh toán khiếu nại</a>
                             <a href="${pageContext.request.contextPath}/issue">Lịch sử yêu cầu</a>
+                            <a href="${pageContext.request.contextPath}/my-devices">Thiết bị đã mua</a>
                             <c:if test="${sessionScope.account != null}">
                                 <form action="${pageContext.request.contextPath}/logout" method="post" style="display:inline;">
                                     <button type="submit" class="order-btn logout-btn">
@@ -52,38 +54,38 @@
                         </form>
                     </c:if>
 
-                    <c:if test="${sessionScope.account != null}">
+                    <c:if test="${permissions != null && permissions.contains('Quản Lí Hồ Sơ')}">
                         <a href="profile" class="btn order-btn account-btn">
                             <i class="fa-solid fa-user"></i>
                         </a>
                     </c:if>
                     
-					<c:if test="${permissions != null && permissions.contains('ADMIN_PAGE')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Admin')}">
 					    <a href="admin" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-crown"></i>
 					    </a>
 					</c:if>
 					
                     <c:if test="${account.roleId != 1}">
-					<c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Quản Lí Kỹ Thuật')}">
 					    <a href="manager-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-clipboard-check"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${permissions != null && permissions.contains('PROCESS_TASK')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Nhân Viên Kỹ Thuật')}">
 					    <a href="technical-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-screwdriver-wrench"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_RESPONDING')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Nhân Viên Hỗ Trợ')}">
 					    <a href="support-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-headset"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
+					<c:if test="${permissions != null && permissions.contains('Quản Lí Seri')}">
 					    <a href="de-show" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-warehouse"></i>
 					    </a>
@@ -92,6 +94,13 @@
 
                     <a href="cart" class="btn order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
                 </div>
+                <c:if test="${not empty warrantyWarnings}">
+                    <div class="warranty-warning" style="background:#fff3cd; color:#664d03; padding:10px 16px; border-radius:8px; margin-top:8px; text-align:center;">
+                        <i class="fa-solid fa-bell" style="margin-right:8px;"></i>
+                        Bạn có <strong>${fn:length(warrantyWarnings)}</strong> thiết bị sắp hết hạn bảo hành trong ${warrantyWarningDays} ngày. 
+                        <a href="${pageContext.request.contextPath}/issue" style="margin-left:8px; text-decoration:underline;">Xem chi tiết</a>
+                    </div>
+                </c:if>
             </header>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

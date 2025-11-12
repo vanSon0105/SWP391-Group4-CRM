@@ -95,7 +95,7 @@ a{
 										    </c:if>
 										    
 										    <c:if test="${s.status == 'discontinued'}">
-											    <a class="btn device-remove" href="device-serials?id=${device.id}&sid=${s.id}">Active</a>
+											    <a class="btn device-remove" href="device-serials-active?id=${device.id}&sid=${s.id}">Active</a>
 										    </c:if>
 										</form>
 		                            </td>

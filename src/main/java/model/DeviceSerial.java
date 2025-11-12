@@ -22,6 +22,27 @@ public class DeviceSerial {
 		this.import_date = import_date;
 		this.status = status;
 	}
+	
+
+	public DeviceSerial(int id, int device_id, String serial_no, String stock_status, Timestamp import_date,
+			String status, String deviceName) {
+		super();
+		this.id = id;
+		this.device_id = device_id;
+		this.serial_no = serial_no;
+		this.stock_status = stock_status;
+		this.import_date = import_date;
+		this.status = status;
+		this.deviceName = deviceName;
+	}
+
+	public String getDeviceName() {
+		return deviceName;
+	}
+
+	public void setDeviceName(String deviceName) {
+		this.deviceName = deviceName;
+	}
 
 	public String getStock_status() {
 		return stock_status;

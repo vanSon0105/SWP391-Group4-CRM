@@ -120,6 +120,6 @@ public class AssignTaskController extends HttpServlet {
     }
     
     private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    return AuthorizationUtils.requirePermission(request, response, "ASSIGN_TASK");
+	    return AuthorizationUtils.requirePermission(request, response, "Trang Quản Lí Kỹ Thuật");
 	}
 }

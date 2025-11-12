@@ -14,44 +14,6 @@
         integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
-	.device-btn{
-	    color: black !important;
-	}
-	.device-management .pagination-pills {
-	    display: flex;
-	    justify-content: center;
-	    gap: 10px;
-	    padding: 0 0 20px 0;
-	}
-	
-	.device-management .pagination-pills a {
-		display: inline-flex;
-		justify-content: center;
-		align-items: center;
-		text-decoration: none;
-	    width: 44px;
-	    height: 44px;
-	    padding: 0;
-	    border-radius: 16px;
-	    border: 1px solid rgba(15, 23, 42, 0.15);
-	    background: rgba(255, 255, 255, 0.9);
-	    color: #1f2937;
-	    font-weight: 600;
-	    cursor: pointer;
-	    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-	}
-	
-	.device-management .pagination-pills a.active {
-	    background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-	    color: #f8fafc;
-	    border-color: transparent;
-	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-	}
-	
-	.device-management .pagination-pills a:hover {
-	    transform: translateY(-2px);
-	}
-
 	body .panel h2{
 		margin-bottom: 0 !important;
 	}
@@ -98,16 +60,18 @@
         padding-bottom: 10px;
         margin-bottom: 20px;
     }
-    
-    .disabled{
-		background: linear-gradient(135deg, rgba(14, 165, 233, 0.95), rgba(59, 130, 246, 0.95));
-	    color: #f8fafc;
-	    border-color: transparent;
-	    box-shadow: 0 16px 32px rgba(59, 130, 246, 0.28);
-	    cursor: not-allowed;
-	    pointer-events: none;
-	    opacity: 0.5;
+	
+	.device-show-actions{
+		display: flex;
+	    height: 110px;
+	    justify-content: center;
+	    align-items: center;
 	}
+	
+	.device-show-actions a{
+		white-space: nowrap;
+	}
+	
 </style>
 </head>
 <body class="management-page device-management">
@@ -185,7 +149,7 @@
 	                        </thead>
 	                        <tbody>
 	                        	<c:forEach items="${listDevices}" var="s">
-		                            <tr style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>">
+		                            <tr style="height: 120px">
 		                            	<td>${s.id}</td>
 			                            <td><img class="device-thumb" src="${pageContext.request.contextPath}/assets/img/device/${s.imageUrl}" alt="Anh thiet bi"></td>
 		                                <td>${s.name}</td>
@@ -194,10 +158,10 @@
 		                                	<fmt:formatNumber value="${s.price}" type="number"/> VNĐ
 		                                </td>
 		                                <td>${s.device_inventory}</td>
-		                                <td><span class="device-status"></i>${s.status}</span></td>
+		                                <td><span style="<c:if test="${s.status == 'discontinued'}"> background: #f9919194; </c:if>" class="device-status"></i>${s.status}</span></td>
 		                                <td class="device-show-actions">
 		                                    <a class="btn device-btn" href="device-view?id=${s.id}">Xem</a>
-		                                    <a class="btn device-btn" href="des-show?id=${s.id}#device-serial">Xem Serials</a>
+		                                    <a class="btn device-btn" href="des-show?id=${s.id}#device-serial">Xem Seri</a>
 		                                    <a class="btn device-btn" href="de-show?action=1&id=${s.id}">Cập Nhật Giá</a>
 		                                </td>
 		                            </tr>
@@ -298,7 +262,7 @@
 		                    </div>
 		                    
 		                    <div class="form-field">
-		                        <label for="price">Giá mới</label>
+		                        <label for="price">Giá thiết bị</label>
 		                        <input id="price" type="number" name="price" placeholder="9490000" min="1" required>
 		                    </div>
 

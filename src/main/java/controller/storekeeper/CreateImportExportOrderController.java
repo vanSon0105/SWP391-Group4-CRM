@@ -24,7 +24,7 @@ public class CreateImportExportOrderController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "TRANSACTION_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Nhập/Xuất");
         if (currentUser == null) return;
 
         List<Device> deviceList = deviceDAO.getAllDevices();
@@ -49,7 +49,7 @@ public class CreateImportExportOrderController extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "CREATE_TRANSACTION");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Nhập/Xuất");
         if (currentUser == null) return;
 
         try {

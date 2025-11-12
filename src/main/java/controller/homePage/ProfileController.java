@@ -14,6 +14,7 @@ import jakarta.servlet.http.*;
 import dao.DeviceDAO;
 import dao.UserDAO;
 import model.User;
+import utils.AuthorizationUtils;
 import utils.PasswordUtils;
 
 
@@ -26,14 +27,11 @@ public class ProfileController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login");
-            return;
-        }
-
-        User currentUser = (User) session.getAttribute("account");
+    	HttpSession session = request.getSession();
+    	User currentUser = getUser(request, response);
+		if (currentUser == null) {
+			return;
+		}
         User freshUser = userDAO.getUserById(currentUser.getId());
 
         if (freshUser != null) {
@@ -63,13 +61,11 @@ public class ProfileController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login");
-            return;
-        }
-        
-        User currentUser = (User) session.getAttribute("account");
+    	HttpSession session = request.getSession();
+    	User currentUser = getUser(request, response);
+		if (currentUser == null) {
+			return;
+		}
         String action = request.getParameter("action");
 
         if ("changePassword".equalsIgnoreCase(action)) {
@@ -120,7 +116,7 @@ public class ProfileController extends HttpServlet {
 
             request.setAttribute("user", currentUser);
             request.setAttribute("showChangePassword", true);
-            request.setAttribute("showProfile", false); 
+            request.setAttribute("showProfile", false);
             request.getRequestDispatcher("/view/profile/ViewProfile.jsp").forward(request, response);
             return;
         }
@@ -141,7 +137,7 @@ public class ProfileController extends HttpServlet {
         } else if (fullName.trim().length() < 2 || fullName.trim().length() > 50) {
             errors.append("Họ tên phải từ 2–50 ký tự. ");
         } else if (!Pattern.matches("^[\\p{L} ]+$", fullName.trim())) {
-            errors.append("Họ tên chỉ được chứa chữ cái và dấu cách. ");
+        	errors.append("Họ tên chỉ được chứa chữ cái và dấu cách. ");
         }
 
         if (phone == null || phone.trim().isEmpty()) {
@@ -199,7 +195,7 @@ public class ProfileController extends HttpServlet {
                             java.io.File oldFile = new java.io.File(getServletContext().getRealPath("/") + imageUrl);
                             if (oldFile.exists()) {
                                 oldFile.delete();
-                            }
+}
                         }
                         imageUrl = savedName;
                     }
@@ -238,4 +234,8 @@ public class ProfileController extends HttpServlet {
 
         response.sendRedirect("profile");
     }
+    
+    private User getUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "Quản Lí Hồ Sơ");
+	}
 }

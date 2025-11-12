@@ -32,13 +32,19 @@ public class CartController extends HttpServlet {
 	public DeviceSerialDAO dsDao = new DeviceSerialDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("account");
+		if (user == null) {
+			response.sendRedirect("login");
+			return;
+		}
 		String path = request.getServletPath();
         switch (path) {
             case "/cart":
-                showCart(request, response);
+                showCart(request, response, user, session);
                 break;
             case "/cart-add":
-            	addDeviceToCart(request, response);
+            	addDeviceToCart(request, response, user, session);
             	break;
         }
 	}
@@ -102,14 +108,8 @@ public class CartController extends HttpServlet {
         resp.sendRedirect("cart");
 	}
 	
-	public void showCart(HttpServletRequest request, HttpServletResponse response)
+	public void showCart(HttpServletRequest request, HttpServletResponse response, User u, HttpSession session)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User u = (User) session.getAttribute("account");
-		if (u == null) {
-			response.sendRedirect("login");
-			return;
-		}
 		String cartError = (String) session.getAttribute("cartErrorMessage");
 		if (cartError != null) {
 			request.setAttribute("cartErrorMessage", cartError);
@@ -160,15 +160,9 @@ public class CartController extends HttpServlet {
         response.sendRedirect("cart");
     }
 	
-	public void addDeviceToCart(HttpServletRequest req, HttpServletResponse resp)
+	public void addDeviceToCart(HttpServletRequest req, HttpServletResponse resp, User u, HttpSession session)
 			throws ServletException, IOException {
 		int deviceId = Integer.parseInt(req.getParameter("id"));
-		HttpSession session = req.getSession();
-		User u = (User) session.getAttribute("account");
-		if (u == null) {
-			resp.sendRedirect("login");
-			return;
-		}
 		int userId = u.getId();
 		Cart cart = cdao.getOrCreateCart(userId);
 		if (cart == null) {

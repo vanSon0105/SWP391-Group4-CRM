@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
             background: #f4f6fb;
             margin: 0;
             padding: 40px;

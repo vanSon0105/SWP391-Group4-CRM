@@ -79,8 +79,8 @@
 </style>
 </head>
 <body class="management-page device-management">
-<jsp:include page="../admin/common/sidebar.jsp"></jsp:include>
-<jsp:include page="../admin/common/header.jsp"></jsp:include>
+<jsp:include page="../common/sidebar.jsp"></jsp:include>
+<jsp:include page="../common/header.jsp"></jsp:include>
 
 <main class="sidebar-main">
     <c:if test="${not empty message}">
@@ -206,8 +206,6 @@
 		        </c:otherwise>
             </c:choose>
         </div>
-
-    </section>
 </main>
 </body>
 </html>

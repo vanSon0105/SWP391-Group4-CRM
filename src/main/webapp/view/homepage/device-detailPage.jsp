@@ -213,7 +213,8 @@
 
 .related-products .hero-card img {
     height: 160px;
-    object-fit: contain;
+    width: 100%;
+    object-fit: cover;
     margin-bottom: 12px;
 }
 
@@ -403,7 +404,7 @@
       <div class="hero-card" style="padding:16px; border:1px solid #ddd; border-radius:12px; text-align:center;">
         <c:choose>
           <c:when test="${not empty rel.imageUrl}">
-            <img src="${rel.imageUrl}" alt="${rel.name}" />
+            <img src="${pageContext.request.contextPath}/assets/img/device/${rel.imageUrl}" alt="${rel.name}" />
           </c:when>
           <c:otherwise>
             <img src="<%=request.getContextPath()%>/assets/images/no-image.png" alt="No image" />

@@ -84,12 +84,12 @@ public class TransactionDetailDAO extends DBContext {
 
     public List<TransactionDetail> getTransactionDetailsByTransactionId(int transactionId) {
         List<TransactionDetail> list = new ArrayList<>();
-        String sql = """
-            SELECT td.*, d.name AS device_name
-            FROM transaction_details td
-            JOIN devices d ON td.device_id = d.id
-            WHERE td.transaction_id = ?
-        """;
+        String sql = 
+        	    "SELECT td.*, d.name AS device_name " +
+        	    "FROM transaction_details td " +
+        	    "JOIN devices d ON td.device_id = d.id " +
+        	    "WHERE td.transaction_id = ?";
+
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, transactionId);
