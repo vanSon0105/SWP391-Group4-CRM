@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@ page isELIgnored="false" %>
         <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
             <!DOCTYPE link PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
             <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
@@ -92,6 +93,13 @@
 
                     <a href="cart" class="btn order-btn"><i class="fa-solid fa-cart-shopping"></i>Sản phẩm</a>
                 </div>
+                <c:if test="${not empty warrantyWarnings}">
+                    <div class="warranty-warning" style="background:#fff3cd; color:#664d03; padding:10px 16px; border-radius:8px; margin-top:8px; text-align:center;">
+                        <i class="fa-solid fa-bell" style="margin-right:8px;"></i>
+                        Bạn có <strong>${fn:length(warrantyWarnings)}</strong> thiết bị sắp hết hạn bảo hành trong ${warrantyWarningDays} ngày. 
+                        <a href="${pageContext.request.contextPath}/issue" style="margin-left:8px; text-decoration:underline;">Xem chi tiết</a>
+                    </div>
+                </c:if>
             </header>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

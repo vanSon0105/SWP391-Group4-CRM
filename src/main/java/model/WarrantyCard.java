@@ -6,14 +6,38 @@ public class WarrantyCard {
 	private int id;
 	private int deviceSerialId;
 	private DeviceSerial device_serial;
+	private Device device;
 	private int customerId;
 	private Customer customer;
 	private Timestamp start_at;
 	private Timestamp end_at;
+	private int daysRemaining;
 	
+	public int getDeviceSerialId() {
+		return deviceSerialId;
+	}
+
+	public void setDeviceSerialId(int deviceSerialId) {
+		this.deviceSerialId = deviceSerialId;
+	}
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+	public int getDaysRemaining() {
+		return daysRemaining;
+	}
+
+	public void setDaysRemaining(int daysRemaining) {
+		this.daysRemaining = daysRemaining;
+	}
+
 	public WarrantyCard() {}
-	
-	
 	
 	public WarrantyCard(int id, int deviceSerialId, int customerId, Timestamp start_at, Timestamp end_at) {
 		super();
@@ -51,6 +75,14 @@ public class WarrantyCard {
 
 	public void setDevice_serial(DeviceSerial device_serial) {
 		this.device_serial = device_serial;
+	}
+
+	public Device getDevice() {
+		return device;
+	}
+
+	public void setDevice(Device device) {
+		this.device = device;
 	}
 
 	public Customer getCustomer() {
