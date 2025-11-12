@@ -12,6 +12,8 @@ public class WarrantyCard {
 	private Timestamp start_at;
 	private Timestamp end_at;
 	private int daysRemaining;
+	private String assignedByName;
+	private String handledByName;
 	
 	public int getDeviceSerialId() {
 		return deviceSerialId;
@@ -27,6 +29,23 @@ public class WarrantyCard {
 
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
+	}
+	
+
+	public String getAssignedByName() {
+		return assignedByName;
+	}
+
+	public void setAssignedByName(String assignedByName) {
+		this.assignedByName = assignedByName;
+	}
+
+	public String getHandledByName() {
+		return handledByName;
+	}
+
+	public void setHandledByName(String handledByName) {
+		this.handledByName = handledByName;
 	}
 
 	public int getDaysRemaining() {
