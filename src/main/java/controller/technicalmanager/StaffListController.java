@@ -47,6 +47,7 @@ public class StaffListController extends HttpServlet {
         request.getRequestDispatcher("/view/admin/technicalmanager/staffList.jsp").forward(request, response);
     }
     
+
     private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
 	    return AuthorizationUtils.requirePermission(request, response, "Trang Quản Lí Kỹ Thuật");
 	}

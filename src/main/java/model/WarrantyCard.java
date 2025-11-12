@@ -10,7 +10,46 @@ public class WarrantyCard {
 	private Customer customer;
 	private Timestamp start_at;
 	private Timestamp end_at;
+	private String assignedByName;
+	private String handledByName;
 	
+
+	public String getAssignedByName() {
+		return assignedByName;
+	}
+
+	public void setAssignedByName(String assignedByName) {
+		this.assignedByName = assignedByName;
+	}
+
+	public String getHandledByName() {
+		return handledByName;
+	}
+
+	public void setHandledByName(String handledByName) {
+		this.handledByName = handledByName;
+	}
+
+	public int getDeviceSerialId() {
+		return deviceSerialId;
+	}
+
+	public void setDeviceSerialId(int deviceSerialId) {
+		this.deviceSerialId = deviceSerialId;
+	}
+
+	public int getCustomerId() {
+		return customerId;
+	}
+
+
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+
+
 	public WarrantyCard() {}
 	
 	
@@ -77,7 +116,10 @@ public class WarrantyCard {
 		this.end_at = end_at;
 	}
 	
-	
-	
-	
+	public String getWarrantyStatus() {
+	    if (end_at == null) {
+	        return "Hết hạn"; 
+	    }
+	    return end_at.after(new java.util.Date()) ? "Còn hạn" : "Hết hạn";
+	}
 }

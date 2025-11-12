@@ -22,7 +22,7 @@ public class StaffDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	User manager = getManager(request, response);
+    	User manager = getUser(request, response);
 		if (manager == null) {
 			return;
 		}
@@ -44,7 +44,7 @@ public class StaffDetailController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        User manager = getManager(request, response);
+        User manager = getUser(request, response);
 		if (manager == null) {
 			return;
 		}

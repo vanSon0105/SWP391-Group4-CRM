@@ -7,17 +7,16 @@ import model.Transaction;
 
 public class TransactionDAO extends DBContext {
 	public Transaction getTransactionById(int transactionId) {
-	    String sql = """
-	        SELECT t.*, 
-	               u.full_name AS storekeeper_name,
-	               s.name AS supplier_name, 
-	               cu.full_name AS customer_name
-	        FROM transactions t
-	        LEFT JOIN users u ON t.storekeeper_id = u.id
-	        LEFT JOIN suppliers s ON t.supplier_id = s.id
-	        LEFT JOIN users cu ON t.user_id = cu.id
-	        WHERE t.id = ?
-	    """;
+		String sql = "SELECT t.*, "
+		           + "u.full_name AS storekeeper_name, "
+		           + "s.name AS supplier_name, "
+		           + "cu.full_name AS customer_name "
+		           + "FROM transactions t "
+		           + "LEFT JOIN users u ON t.storekeeper_id = u.id "
+		           + "LEFT JOIN suppliers s ON t.supplier_id = s.id "
+		           + "LEFT JOIN users cu ON t.user_id = cu.id "
+		           + "WHERE t.id = ?";
+
 
 	    try (Connection conn = getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -50,11 +49,10 @@ public class TransactionDAO extends DBContext {
 
     public int createTransaction(Transaction t) {
         int id = -1;
-        String sql = """
-            INSERT INTO transactions 
-            (storekeeper_id, supplier_id, user_id, type, status, note)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """;
+        String sql = "INSERT INTO transactions "
+                + "(storekeeper_id, supplier_id, user_id, type, status, note) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -86,25 +84,24 @@ public class TransactionDAO extends DBContext {
 
     public List<Transaction> getAllTransactions() {
         List<Transaction> list = new ArrayList<>();
-        String sql = """
-            SELECT 
-                t.*, 
-                u.full_name AS storekeeper_name,
-                s.name AS supplier_name, 
-                cu.full_name AS customer_name,
-                COALESCE(
-                    GROUP_CONCAT(CONCAT(d.name, ' (x', td.quantity, ')') SEPARATOR ', '),
-                    'No devices'
-                ) AS device_list
-            FROM transactions t
-            LEFT JOIN users u ON t.storekeeper_id = u.id
-            LEFT JOIN suppliers s ON t.supplier_id = s.id
-            LEFT JOIN users cu ON t.user_id = cu.id
-            LEFT JOIN transaction_details td ON t.id = td.transaction_id
-            LEFT JOIN devices d ON td.device_id = d.id
-            GROUP BY t.id
-            ORDER BY t.id DESC
-        """;
+        String sql = "SELECT "
+                + "t.*, "
+                + "u.full_name AS storekeeper_name, "
+                + "s.name AS supplier_name, "
+                + "cu.full_name AS customer_name, "
+                + "COALESCE( "
+                + "GROUP_CONCAT(CONCAT(d.name, ' (x', td.quantity, ')') SEPARATOR ', '), "
+                + "'No devices' "
+                + ") AS device_list "
+                + "FROM transactions t "
+                + "LEFT JOIN users u ON t.storekeeper_id = u.id "
+                + "LEFT JOIN suppliers s ON t.supplier_id = s.id "
+                + "LEFT JOIN users cu ON t.user_id = cu.id "
+                + "LEFT JOIN transaction_details td ON t.id = td.transaction_id "
+                + "LEFT JOIN devices d ON td.device_id = d.id "
+                + "GROUP BY t.id "
+                + "ORDER BY t.id DESC";
+
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -173,20 +170,21 @@ t.setSupplierName(rs.getString("supplier_name"));
     public List<Transaction> getTransactions(String typeFilter, String statusFilter, String keyword, int offset, int pageSize) {
         List<Transaction> list = new ArrayList<>();
 
-        StringBuilder sql = new StringBuilder("""
-            SELECT t.*, 
-                   u.full_name AS storekeeper_name,
-                   s.name AS supplier_name, 
-                   cu.full_name AS customer_name,
-                   GROUP_CONCAT(CONCAT(d.name, ' (x', td.quantity, ')') SEPARATOR ', ') AS device_list
-            FROM transactions t
-            LEFT JOIN users u ON t.storekeeper_id = u.id
-            LEFT JOIN suppliers s ON t.supplier_id = s.id
-            LEFT JOIN users cu ON t.user_id = cu.id
-            LEFT JOIN transaction_details td ON t.id = td.transaction_id
-            LEFT JOIN devices d ON td.device_id = d.id
-            WHERE 1=1
-        """);
+        StringBuilder sql = new StringBuilder(
+        	    "SELECT t.*, "
+        	  + "u.full_name AS storekeeper_name, "
+        	  + "s.name AS supplier_name, "
+        	  + "cu.full_name AS customer_name, "
+        	  + "GROUP_CONCAT(CONCAT(d.name, ' (x', td.quantity, ')') SEPARATOR ', ') AS device_list "
+        	  + "FROM transactions t "
+        	  + "LEFT JOIN users u ON t.storekeeper_id = u.id "
+        	  + "LEFT JOIN suppliers s ON t.supplier_id = s.id "
+        	  + "LEFT JOIN users cu ON t.user_id = cu.id "
+        	  + "LEFT JOIN transaction_details td ON t.id = td.transaction_id "
+        	  + "LEFT JOIN devices d ON td.device_id = d.id "
+        	  + "WHERE 1=1"
+        	);
+
 
         List<Object> params = new ArrayList<>();
 
@@ -210,11 +208,12 @@ sql.append(" AND (u.full_name LIKE ? OR cu.full_name LIKE ? OR s.name LIKE ? OR 
             params.add(likeKeyword);
         }
 
-        sql.append("""
-            GROUP BY t.id
-            ORDER BY t.date DESC
-            LIMIT ? OFFSET ?
-        """);
+        sql.append(
+        	    " GROUP BY t.id "
+        	  + " ORDER BY t.date DESC "
+        	  + " LIMIT ? OFFSET ?"
+        	);
+
 
         params.add(pageSize);
         params.add(offset);
