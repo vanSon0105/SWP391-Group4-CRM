@@ -315,10 +315,10 @@ INSERT INTO permissions (id, permission_name) VALUES
 (1, 'Quản Lí Tài Khoản'), (2, 'Quản Lí Thiết Bị'), (3, 'Quản Lí Nhà Cung Cấp'), (4, 'Quản Lí Danh Mục'), (5, 'Quản Lí Thanh Toán'), (6, 'Quản Lí Đặt Hàng'),
 (7, 'Quản Lí Vấn Đề'), (8, 'Quản Lí Nhiệm Vụ'), (9, 'Quản Lí Giỏ Hàng'), (10, 'Quản Lí Hồ Sơ'), (11, 'Quản Lí Nhập/Xuất'), (12, 'Quản Lí Giao Dịch'), (13, 'Trang Nhân Viên Hỗ Trợ'),
 (14, 'Trang Nhân Viên Kỹ Thuật'), (15, 'Trang Quản Lí Kỹ Thuật'), (16, 'Quản Lí Seri'), (17, 'Gửi Vấn Đề'), (18, 'Quản Lí Quyền'), (19, 'Trang Admin'), (20, 'Quản Lí Giá'), (21, 'Xem Seri'),
-(22, 'Quản Lí Giá Thiết Bị'), (23, 'Xem Thiết Bị');
+(22, 'Quản Lí Giá Thiết Bị'), (23, 'Xem Thiết Bị'), (24, 'Quản Lí Bảo Hành');
 
 INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1), (1, 2), (1, 3), (1, 4),
-(1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21), (1, 23);
+(1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21), (1, 23), (1, 24);
 
 -- Manager 
 INSERT INTO role_permission (role_id, permission_id) VALUES (2, 7), (2, 8), (2, 15), (2, 10);
