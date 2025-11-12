@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Category;
 import model.Device;
+import model.User;
+import utils.AuthorizationUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +30,10 @@ public class CategoryController extends HttpServlet {
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(req, resp, "Quản Lí Danh Mục");
+        if (currentUser == null) {
+            return; 
+        }
 		String path = req.getServletPath();
         switch (path) {
             case "/category-add":
@@ -49,6 +55,10 @@ public class CategoryController extends HttpServlet {
 	
 	
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(req, resp, "Quản Lí Danh Mục");
+        if (currentUser == null) {
+            return; 
+        }
 		String path = req.getServletPath();
         switch (path) {
             case "/category-add":

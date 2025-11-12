@@ -13,6 +13,7 @@ public class CustomerIssue {
 	private int supportStaffId;
 	private String supportStatus;
 	private String feedback;
+	private String supportStaffName;
 	
 	public CustomerIssue() {}
 	
@@ -72,6 +73,15 @@ public class CustomerIssue {
 
 	public String getIssueType() {
 		return issueType;
+	}
+
+	
+	public String getSupportStaffName() {
+		return supportStaffName;
+	}
+
+	public void setSupportStaffName(String supportStaffName) {
+		this.supportStaffName = supportStaffName;
 	}
 
 	public void setIssueType(String issueType) {

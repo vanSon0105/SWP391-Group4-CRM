@@ -45,11 +45,11 @@
             
             <div style="display: flex; gap: 5px;">
                 <input class="btn device-btn" type="date" name="fromDate" value="${param.fromDate}" />
-                <span>→</span>
                 <input class="btn device-btn" type="date" name="toDate" value="${param.toDate}" />
             </div>
 
             <button class="btn device-btn" type="submit">Tìm kiếm</button>
+            <a href="order-history" class="btn device-btn">Reset</a>
         </form>
     </div>
 </section>
@@ -76,7 +76,7 @@
                             <tr>
                                 <td>${o.orderId}</td>
                                 <td>${o.customerName}</td>
-                                <td><fmt:formatNumber value="${o.totalAmount}" type="currency"/></td>
+                                <td><fmt:formatNumber value="${o.totalAmount}" type="number" /> VND</td>
                                 <td><fmt:formatDate value="${o.date}" pattern="dd/MM/yyyy HH:mm"/></td>
                                 <td>
                                     <c:choose>

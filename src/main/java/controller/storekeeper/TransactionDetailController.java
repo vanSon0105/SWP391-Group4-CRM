@@ -24,7 +24,7 @@ public class TransactionDetailController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "TRANSACTION_MANAGEMENT");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Giao Dịch");
         if (currentUser == null) return;
 
         String idParam = request.getParameter("id");

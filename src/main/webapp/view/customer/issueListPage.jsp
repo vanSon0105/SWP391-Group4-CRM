@@ -36,15 +36,6 @@
       color: #1f2d3d;
     }
 
-    .btn-primary {
-      background: #2563eb;
-      color: #fff;
-      padding: 10px 20px;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-    }
-
     .alert {
       padding: 12px 16px;
       border-radius: 8px;
@@ -230,16 +221,17 @@
     }
 
     .action-view{
-	    display: inline-block;
-	    border-radius: 5px;
-	    background: #cdddfc;
-	    border: 1px solid #f7d3d3;
-	    color: #0f172a;
-	    cursor: pointer;
-	    font-weight: 600;
-	    padding: 4px;
-	    margin-left: 12px;
-	    transition: all 0.5s ease;
+	    background: transparent;
+		border: 1px solid #94a3b8;
+		color: #1f2937;
+		padding: 4px 10px;
+		border-radius: 10px;
+		font-weight: 600;
+		cursor: pointer;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+		transition: all 0.5s ease;
     }
 
     .link-button:hover,
@@ -309,6 +301,10 @@
     .task-detail-full {
       grid-column: 1 / -1;
     }
+    
+    .action .btn {
+		border-radius: 5px !important;
+	}	
 </style>
 </head>
 <body class="home-page">
@@ -316,7 +312,10 @@
 	<main>
 		<div class="issue-header">
 			<h1>Yêu cầu hỗ trợ của tôi</h1>
-			<a class="btn-primary" href="create-issue">Gửi yêu cầu mới</a>
+			<div class="action">
+			<a class="btn order-btn" href="create-issue">Gửi yêu cầu mới</a>
+			<a class="btn order-btn" href="my-devices">Thiết bị đã mua</a>
+			</div>
 		</div>
 
 		<c:if test="${param.created == '1'}">
@@ -416,10 +415,10 @@
  							
  							<c:if test="${status == 'submitted' || status == 'manager_approved' || status == 'task_created' || status == 'tech_in_progress' || status == 'resolved'}">
 	                             <a class="action-view"
-                                   href="issue-detail?id=${s.id}">Xem Task</a>
+                                   href="issue-detail?id=${s.id}">Xem nhiệm vụ</a>
  							</c:if>
                              
-                            <a class="action-view" href="issue-detail?id=${s.id}&action=1">Xem Issue</a>
+                            <a class="action-view" href="issue-detail?id=${s.id}&action=1">Xem vấn đề</a>
                             
                             <c:if test="${status == 'waiting_payment' && payment != null && payment.status == 'awaiting_customer'}">
 								<a class="link-button" href="issue-pay?issueId=${s.id}">Thanh toán</a>

@@ -95,7 +95,7 @@ public class CustomerIssueController extends HttpServlet {
 	
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "CUSTOMER_ISSUES");
+		return AuthorizationUtils.requirePermission(req, resp, "Gửi Vấn Đề");
 	}
 
 	private void handleCreate(HttpServletRequest req, HttpServletResponse resp, User u)
@@ -354,40 +354,40 @@ public class CustomerIssueController extends HttpServlet {
 		boolean hasError = false;
 
 		if (fullName == null || fullName.isEmpty()) {
-			req.setAttribute("errorFullName", "Vui long nhap ho ten nguoi nhan.");
+			req.setAttribute("errorFullName", "Vui lòng nhập họ tên người nhận");
 			hasError = true;
 		} else {
 			String namePattern = "^[\\p{L}\\s]+$";
 			if (!fullName.matches(namePattern)) {
-				req.setAttribute("errorFullName", "Ho ten khong duoc chua ky tu dac biet hoac so.");
+				req.setAttribute("errorFullName", "Họ tên không được chứa ký tự đặc biệt hoặc số");
 				hasError = true;
 			} else if (fullName.length() > 100) {
-				req.setAttribute("errorFullName", "Ho ten khong duoc vuot qua 100 ky tu.");
+				req.setAttribute("errorFullName", "Họ tên không được vượt quá 180 ký tự");
 				hasError = true;
 			}
 		}
 
 		if (phone == null || phone.isEmpty()) {
-			req.setAttribute("errorPhone", "Vui long nhap so dien thoai lien he.");
+			req.setAttribute("errorPhone", "Vui lòng nhập số điện thoại liên hệ");
 			hasError = true;
 		} else {
 			String phonePattern = "^[0-9]{10}$";
 			if (!phone.matches(phonePattern)) {
-				req.setAttribute("errorPhone", "So dien thoai khong hop le.");
+				req.setAttribute("errorPhone", "Số điện thoại không hợp lệ");
 				hasError = true;
 			}
 		}
 
 		if (address == null || address.isEmpty()) {
-			req.setAttribute("errorAddress", "Vui long nhap dia chi giao nhan.");
+			req.setAttribute("errorAddress", "Vui lòng nhập địa chỉ giao nhận");
 			hasError = true;
 		} else if (address.length() > ADDRESS_MAX_LENGTH) {
-			req.setAttribute("errorAddress", "Dia chi khong duoc vuot qua " + ADDRESS_MAX_LENGTH + " ky tu.");
+			req.setAttribute("errorAddress", "Địa chỉ không được vượt quá " + ADDRESS_MAX_LENGTH + " ký tự");
 			hasError = true;
 		}
 
 		if (shippingNote != null && shippingNote.length() > NOTE_MAX_LENGTH) {
-			req.setAttribute("errorNote", "Ghi chu khong duoc vuot qua " + NOTE_MAX_LENGTH + " ky tu.");
+			req.setAttribute("errorNote", "Ghi chú không được vượt quá " + NOTE_MAX_LENGTH + " ký tự");
 			hasError = true;
 		}
 
@@ -599,7 +599,7 @@ public class CustomerIssueController extends HttpServlet {
 			req.setAttribute("issue", issue);
 			req.setAttribute("issuePayment", payment);
 			req.setAttribute("feedbackDraft", feedbackRaw);
-			req.setAttribute("feedbackError", "Vui long nhap noi dung phan hoi.");
+			req.setAttribute("feedbackError", "Vui lòng nhập nội dung phản hồi");
 			req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
 			return;
 		}
@@ -609,7 +609,7 @@ public class CustomerIssueController extends HttpServlet {
 			req.setAttribute("issuePayment", payment);
 			req.setAttribute("feedbackDraft", feedbackRaw);
 			req.setAttribute("feedbackError",
-					"Phan hoi khong duoc vuot qua " + FEEDBACK_MAX_LENGTH + " ky tu.");
+					"Phản hồi không được vượt quá " + FEEDBACK_MAX_LENGTH + " ký tự");
 			req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
 			return;
 		}
@@ -619,7 +619,7 @@ public class CustomerIssueController extends HttpServlet {
 			req.setAttribute("issue", issue);
 			req.setAttribute("issuePayment", payment);
 			req.setAttribute("feedbackDraft", feedbackRaw);
-			req.setAttribute("feedbackError", "Khong the luu phan hoi. Vui long thu lai sau.");
+			req.setAttribute("feedbackError", "Không thể gửi phản hồi. Vui lòng thử lại");
 			req.getRequestDispatcher("view/customer/issueFeedbackPage.jsp").forward(req, resp);
 			return;
 		}

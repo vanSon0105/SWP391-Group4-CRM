@@ -65,8 +65,8 @@ public class TaskDetailController extends HttpServlet {
 
         response.sendRedirect("task-detail?id=" + taskIdParam);
     }
-	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "VIEW_TASK_LIST");
+	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	    return AuthorizationUtils.requirePermission(request, response, "Trang Quản Lí Kỹ Thuật");
 	}
 
 }

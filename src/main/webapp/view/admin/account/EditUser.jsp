@@ -8,7 +8,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Chỉnh sửa người dùng | NovaCare</title>
+  <title>Chỉnh sửa người dùng | TechShop</title>
 </head>
 <body class="management-page device-management">
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
@@ -81,7 +81,6 @@
 	  const fullNameError = document.getElementById('fullNameError');
 	  const phoneError = document.getElementById('phoneError');
 	
-	  // Xóa lỗi khi nhập lại
 	  [emailInput, fullNameInput, phoneInput].forEach(input => {
 	    input.addEventListener('input', () => {
 	      document.getElementById(input.id + 'Error').textContent = '';

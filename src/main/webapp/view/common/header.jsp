@@ -27,6 +27,7 @@
                             <a href="${pageContext.request.contextPath}/order-tracking">Đơn hàng</a>
                             <a href="${pageContext.request.contextPath}/customer/issue-payments">Danh sách thanh toán khiếu nại</a>
                             <a href="${pageContext.request.contextPath}/issue">Lịch sử yêu cầu</a>
+                            <a href="${pageContext.request.contextPath}/my-devices">Thiết bị đã mua</a>
                             <c:if test="${sessionScope.account != null}">
                                 <form action="${pageContext.request.contextPath}/logout" method="post" style="display:inline;">
                                     <button type="submit" class="order-btn logout-btn">
@@ -52,38 +53,38 @@
                         </form>
                     </c:if>
 
-                    <c:if test="${sessionScope.account != null}">
+                    <c:if test="${permissions != null && permissions.contains('Quản Lí Hồ Sơ')}">
                         <a href="profile" class="btn order-btn account-btn">
                             <i class="fa-solid fa-user"></i>
                         </a>
                     </c:if>
                     
-					<c:if test="${permissions != null && permissions.contains('ADMIN_PAGE')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Admin')}">
 					    <a href="admin" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-crown"></i>
 					    </a>
 					</c:if>
 					
                     <c:if test="${account.roleId != 1}">
-					<c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_MANAGEMENT')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Quản Lí Kỹ Thuật')}">
 					    <a href="manager-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-clipboard-check"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${permissions != null && permissions.contains('PROCESS_TASK')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Nhân Viên Kỹ Thuật')}">
 					    <a href="technical-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-screwdriver-wrench"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${permissions != null && permissions.contains('CUSTOMER_ISSUES_RESPONDING')}">
+					<c:if test="${permissions != null && permissions.contains('Trang Nhân Viên Hỗ Trợ')}">
 					    <a href="support-issues" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-headset"></i>
 					    </a>
 					</c:if>
 					
-					<c:if test="${permissions != null && permissions.contains('DEVICE_MANAGEMENT_NODELETE')}">
+					<c:if test="${permissions != null && permissions.contains('Quản Lí Seri')}">
 					    <a href="de-show" class="btn order-btn account-btn">
 					        <i class="fa-solid fa-warehouse"></i>
 					    </a>

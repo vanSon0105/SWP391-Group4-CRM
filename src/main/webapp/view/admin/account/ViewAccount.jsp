@@ -186,12 +186,9 @@
                                         </span>
                                     </td>
                                     <td style="display: flex; gap: 5px;">
-    <!-- Xem chi tiết -->
     <a href="account?action=detail&id=${u.id}" class="btn device-btn">Xem</a>
 
-    <!-- Sửa / Xóa: Chỉ hiện nếu user đang active -->
     <c:if test="${u.status == 'active'}">
-        <!-- Không khóa chính tài khoản đang đăng nhập và không khóa admin khác nếu mình là admin -->
         <c:if test="${u.username != currentUsername && !(currentRole == 1 && (u.roleId+0) eq 1)}">
             <a class="btn device-btn" href="account?action=edit&id=${u.id}">Sửa</a>
             <a class="btn device-remove"

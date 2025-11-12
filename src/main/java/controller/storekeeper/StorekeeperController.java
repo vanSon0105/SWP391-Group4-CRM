@@ -75,15 +75,16 @@ public class StorekeeperController extends HttpServlet {
 	}
 	
 	public void showDeviceList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
-		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT_NODELETE");
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "Xem Thiết Bị");
         if (currentUser == null) {
             return;
         }
-        HttpSession s = request.getSession();
-
+        HttpSession session = request.getSession();
         String action = request.getParameter("action");
 		if("1".equalsIgnoreCase(action)) {
+			if(AuthorizationUtils.requirePermission(request, response, "Quản Lí Giá") == null) {
+				return;
+			};
 			int id = Integer.parseInt(request.getParameter("id"));
 			Device d = dao.getDeviceById(id);
 			request.setAttribute("device", d);
@@ -128,6 +129,10 @@ public class StorekeeperController extends HttpServlet {
 	}
 	
 	public void showDeviceSerialsList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "Xem Seri");
+        if (currentUser == null) {
+            return;
+        }
 		int id = Integer.parseInt(request.getParameter("id"));	
 		
 		String page = request.getParameter("page");
@@ -153,6 +158,10 @@ public class StorekeeperController extends HttpServlet {
 	}
 	
 	public void addDeviceSerials(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Nhập/Xuất");
+        if (currentUser == null) {
+            return;
+        }
 		String idParam = request.getParameter("id");
 		String action = request.getParameter("action");
 		int id = 0;
@@ -182,12 +191,11 @@ public class StorekeeperController extends HttpServlet {
 	}
 	
 	public void addDeviceSerialsDoPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User currentUser = AuthorizationUtils.requirePermission(request, response, "DEVICE_MANAGEMENT_NODELETE");
-        if (currentUser == null) {
+        HttpSession s = request.getSession();
+        User u = AuthorizationUtils.requirePermission(request, response, "Quản Lí Seri");
+        if (u == null) {
             return;
         }
-        
-        HttpSession s = request.getSession();
 		String idParam = request.getParameter("id");
 		int id = 0;
 		try {
@@ -215,10 +223,10 @@ public class StorekeeperController extends HttpServlet {
 		}
 		boolean check = dsdao.insertDeviceSerials(d, quantity);
 		if(!check) {
-			s.setAttribute("mess", "Thêm device serials thất bại");
+			s.setAttribute("mess", "Thêm seri thất bại");
 		} else {
-			s.setAttribute("mess", "Thêm device serials thành công");
-			recordManualImport(currentUser.getId(), supplierId, id, quantity);
+			s.setAttribute("mess", "Thêm seri thành công");
+			recordManualImport(u.getId(), supplierId, id, quantity);
 		}
 		response.sendRedirect("des-show?id="+id);
 	}
@@ -245,11 +253,11 @@ public class StorekeeperController extends HttpServlet {
 	}
 	
 	public void updateDevicePrice(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		User currentUser = AuthorizationUtils.requirePermission(request, response, "PRICE_UPDATE");
-        if (currentUser == null) {
+		User u = AuthorizationUtils.requirePermission(request, response, "Quản Lí Giá");
+        if (u == null) {
             return;
         }
-        HttpSession s = request.getSession();
+		HttpSession s = request.getSession();
         String priceParam = request.getParameter("price");
         String idParam = request.getParameter("id");
         String supplierIdParam = request.getParameter("supplierId");

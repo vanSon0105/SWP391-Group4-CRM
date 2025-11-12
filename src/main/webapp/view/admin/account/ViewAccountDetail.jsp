@@ -60,6 +60,10 @@
 	                        <td>${userDetail.role}</td>
 	                    </tr>
 	                    <tr>
+	                        <th>Tổng thiết bị đã mua</th>
+	                        <td>${totalPurchasedDevices != null ? totalPurchasedDevices : 0}</td>
+	                    </tr>
+	                    <tr>
 	                        <th>Trạng thái</th>
 	                        <td>
 	                        	<c:choose>
