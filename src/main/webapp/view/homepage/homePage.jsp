@@ -88,7 +88,7 @@
 		
 		.promo-card img{
 	      object-fit: cover;
-		  height: 100%;
+		  height: 180px;
 		  width: 180px;
 		  border-radius: 5px;
 		}
@@ -303,12 +303,12 @@
         </section>
 
 		<div class="img-gallery-6">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t1.webp" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t2.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t3.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t4.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t5.webp" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t6.jpeg" alt="">
         </div>
 
         <section class="device-list new-devices" id="new-devices">
@@ -394,10 +394,10 @@
         </section>
         
         <div class="img-gallery-4">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
-            <img src="${pageContext.request.contextPath}/assets/img/laptop.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t7.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t8.webp" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t9.jpg" alt="">
+            <img src="${pageContext.request.contextPath}/assets/img/img_lay/t10.jpg" alt="">
         </div>
 
         <section class="device-list best-sellers" id="best-sellers">

@@ -16,7 +16,6 @@
              margin: 0;
              padding: 32px;
              background: #f4f6fb;
-             font-family: 'Segoe UI', sans-serif;
          }
 
          .alert {

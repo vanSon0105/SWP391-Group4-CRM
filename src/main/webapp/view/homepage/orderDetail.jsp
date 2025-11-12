@@ -11,16 +11,19 @@
 <title>Chi tiết đơn hàng #${order.id} - TechShop</title>
 <style>
 body.home-page {
-	background: #f5f6fa;
-	margin: 0;
-	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-		sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 .home-page main {
-	padding: 36px 40px !important;
+	min-width: 1200px;
+    flex: 1;
+	margin: 40px auto;
+	background: #fff;
+	padding: 32px !important;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
 }
-
 .page-header {
 	display: flex;
 	justify-content: space-between;
@@ -35,36 +38,20 @@ body.home-page {
 	font-weight: 600;
 }
 
-.btn-back {
-	background: #2563eb;
-	color: #fff;
-	padding: 10px 20px;
-	border-radius: 8px;
-	text-decoration: none;
-	font-weight: 600;
-	font-size: 14px;
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	transition: background 0.2s ease;
-}
-
-.btn-back:hover {
-	background: #1d4ed8;
-}
 
 .info-box {
-	background: #fff;
-	border-radius: 12px;
-	padding: 20px;
-	box-shadow: 0 8px 24px rgba(31, 45, 61, 0.08);
-	margin-bottom: 24px;
+	display: flex;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(31, 45, 61, 0.08);
+    margin-bottom: 24px;
+    justify-content: center;
 }
 
 .info-row {
 	display: flex;
 	gap: 32px;
-	margin-bottom: 16px;
 	font-size: 15px;
 }
 
@@ -155,22 +142,8 @@ tr:hover {
 	color: #1e293b;
 }
 
-@media ( max-width : 768px) {
-	.info-row {
-		flex-direction: column;
-		gap: 8px;
-	}
-	.info-label {
-		min-width: auto;
-	}
-	.page-header {
-		flex-direction: column;
-		align-items: flex-start;
-		gap: 16px;
-	}
-	.home-page main {
-		padding: 24px 16px !important;
-	}
+main .btn {
+	border-radius: 5px !important;
 }
 </style>
 </head>
@@ -181,7 +154,7 @@ tr:hover {
 	<main>
 		<div class="page-header">
 			<h1>Chi tiết đơn hàng #${order.id}</h1>
-			<a href="order-tracking" class="btn-back">Quay lại</a>
+			<a href="order-tracking" class="btn order-btn">Quay lại</a>
 		</div>
 
 		<div class="info-box">

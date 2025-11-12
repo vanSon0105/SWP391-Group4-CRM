@@ -6,7 +6,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Thêm người dùng | NovaCare</title>
+  <title>Thêm người dùng | TechShop</title>
   <style>
     body{font-family:system-ui;margin:0;background:#f5f7fb;}
     .container{
@@ -71,10 +71,8 @@
 </div>
 
 <script>
-// Lấy context path từ JSP
 const contextPath = '${pageContext.request.contextPath}';
 
-// Thêm thẻ span để hiển thị lỗi cho từng input
 document.querySelectorAll('input, select').forEach(input => {
     const errorSpan = document.createElement('span');
     errorSpan.style.color = 'red';
@@ -85,7 +83,6 @@ document.querySelectorAll('input, select').forEach(input => {
     input.errorSpan = errorSpan;
 });
 
-// Hàm validate format cơ bản
 function validateField(input) {
     const name = input.name;
     const value = input.value.trim();
@@ -126,7 +123,6 @@ function validateField(input) {
     return message === '';
 }
 
-// Hàm validate real-time + check duplicate với servlet
 async function checkDuplicate(input) {
     const name = input.name;
     const value = input.value.trim();
@@ -137,7 +133,6 @@ async function checkDuplicate(input) {
         params.append(name, value);
 
         try {
-            // Gọi servlet bằng context path chính xác
             const res = await fetch(`${contextPath}/checkDuplicate?${params.toString()}`);
             const text = await res.text();
 
@@ -148,7 +143,6 @@ async function checkDuplicate(input) {
                 input.errorSpan.textContent = 'Email đã tồn tại!';
                 input.style.borderColor = 'red';
             } else {
-                // Nếu không trùng và format hợp lệ thì reset lỗi
                 if (validateField(input)) {
                     input.errorSpan.textContent = '';
                     input.style.borderColor = '#4ade80';
@@ -160,7 +154,6 @@ async function checkDuplicate(input) {
     }
 }
 
-// Real-time validate + check duplicate
 document.querySelectorAll('input, select').forEach(input => {
     input.addEventListener('input', () => {
         validateField(input);
@@ -168,7 +161,6 @@ document.querySelectorAll('input, select').forEach(input => {
     });
 });
 
-// Validate toàn bộ form khi submit
 const form = document.querySelector('form');
 form.addEventListener('submit', function(e) {
     let valid = true;
@@ -180,10 +172,5 @@ form.addEventListener('submit', function(e) {
     if (!valid) e.preventDefault();
 });
 </script>
-
-
-
-
-
 </body>
 </html>

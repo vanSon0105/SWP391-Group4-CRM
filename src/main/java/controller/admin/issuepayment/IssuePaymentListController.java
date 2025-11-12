@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.issuepayment;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,7 +20,7 @@ public class IssuePaymentListController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        User admin = AuthorizationUtils.requirePermission(req, resp, "PAYMENT_REPORTS");
+        User admin = AuthorizationUtils.requirePermission(req, resp, "Quản Lí Thanh Toán");
         if (admin == null) {
             return;
         }

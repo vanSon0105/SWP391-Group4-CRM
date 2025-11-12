@@ -130,7 +130,7 @@ public class TechnicalStaffController extends HttpServlet {
 	}
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "PROCESS_TASK");
+		return AuthorizationUtils.requirePermission(req, resp, "Trang Nhân Viên Kỹ Thuật");
 	}
 
 	private boolean isValidStatus(String status) {

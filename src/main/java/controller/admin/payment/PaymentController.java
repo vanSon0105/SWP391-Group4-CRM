@@ -1,4 +1,4 @@
-               package controller.admin;
+               package controller.admin.payment;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -42,17 +42,17 @@ import java.util.logging.*;
 @WebServlet("/payment-list")
 public class PaymentController extends HttpServlet {
 	private static int PAYMENT_PER_PAGE = 6;
-	PaymentDAO paymentDao = new PaymentDAO();
-	OrderDAO orderDao = new OrderDAO();
-	UserDAO userDao = new UserDAO();
-	CartDAO cartDao = new CartDAO();
-	WarrantyCardDAO wcDao = new WarrantyCardDAO();
-	OrderDetailDAO odDao = new OrderDetailDAO();
-	DeviceSerialDAO dsDao = new DeviceSerialDAO();
-	CartDetailDAO cdDao = new CartDetailDAO();
-	DeviceDAO deviceDao = new DeviceDAO();
-	TransactionDAO transactionDao = new TransactionDAO();
-	TransactionDetailDAO transactionDetailDao = new TransactionDetailDAO();
+	private final PaymentDAO paymentDao = new PaymentDAO();
+	private final OrderDAO orderDao = new OrderDAO();
+	private final UserDAO userDao = new UserDAO();
+	private final CartDAO cartDao = new CartDAO();
+	private final WarrantyCardDAO wcDao = new WarrantyCardDAO();
+	private final OrderDetailDAO odDao = new OrderDetailDAO();
+	private final DeviceSerialDAO dsDao = new DeviceSerialDAO();
+	private final CartDetailDAO cdDao = new CartDetailDAO();
+	private final DeviceDAO deviceDao = new DeviceDAO();
+	private final TransactionDAO transactionDao = new TransactionDAO();
+	private final TransactionDetailDAO transactionDetailDao = new TransactionDetailDAO();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -196,7 +196,7 @@ public class PaymentController extends HttpServlet {
 	}
 	
 	private User getManager(HttpServletRequest request, HttpServletResponse response) throws IOException {
-	    return AuthorizationUtils.requirePermission(request, response, "PAYMENT_REPORTS");
+	    return AuthorizationUtils.requirePermission(request, response, "Quản Lí Thanh Toán");
 	}
 	
 	private void recordExportTransaction(User staff, int userId, Payment payment, List<OrderDetail> items) {

@@ -163,10 +163,9 @@
 					</table>
 					
 					<c:if test="${payment != null && payment.status == 'awaiting_admin'}">
-						<form method="post" action="issue-payment-detail" style="margin-top: 20px;">
+						<form method="post" action="issue-payment-detail" style="margin-top: 20px; text-align: right;">
 							<input type="hidden" name="paymentId" value="${payment.id}">
-							<button type="submit" name="action" value="confirm" class="btn btn-add"
-								style="background:#16a34a; color:#fff;">
+							<button type="submit" name="action" value="confirm" class="btn btn-add">
 								<i class="fa-solid fa-badge-check"></i> Xác nhận đã thanh toán
 							</button>
 						</form>

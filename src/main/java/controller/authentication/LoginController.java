@@ -70,7 +70,7 @@ public class LoginController extends HttpServlet {
         	AuthorizationUtils.clearPermissions(session);
             session.invalidate(); 
         }
-        response.sendRedirect(request.getContextPath() + "/home"); 	
+        response.sendRedirect("home"); 	
     }
     
     private void loginPage(HttpServletRequest request, HttpServletResponse response)

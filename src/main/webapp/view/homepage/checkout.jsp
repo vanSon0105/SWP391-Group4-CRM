@@ -111,7 +111,7 @@ input{
 						<tbody>
 							<c:forEach var="cart" items="${listCart}">
 								<tr>
-									<td>${cart.device.name}x${cart.quantity}</td>
+									<td>${cart.device.name}<strong> x ${cart.quantity}</strong></td>
 									<td><fmt:formatNumber value="${cart.totalPrice}"
 											type="number" /></td>
 								</tr>

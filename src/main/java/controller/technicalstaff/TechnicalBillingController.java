@@ -163,7 +163,7 @@ public class TechnicalBillingController extends HttpServlet {
 	}
 
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "PROCESS_TASK");
+		return AuthorizationUtils.requirePermission(req, resp, "Trang Nhân Viên Kỹ Thuật");
 	}
 	
 	private void redirectWithAlert(HttpServletRequest req, HttpServletResponse resp, String message, String type) throws IOException {

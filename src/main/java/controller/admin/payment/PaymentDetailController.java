@@ -1,9 +1,10 @@
-package controller.admin;
+package controller.admin.payment;
 
 import dao.PaymentDAO;
 import model.OrderDetail;
 import model.Payment;
-
+import model.User;
+import utils.AuthorizationUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,6 +18,10 @@ public class PaymentDetailController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+    	User currentUser = AuthorizationUtils.requirePermission(req, resp, "Quản Lí Thanh Toán");
+        if (currentUser == null) {
+            return;
+        }
         String idParam = req.getParameter("id");
         if (idParam == null) {
             resp.sendRedirect("payment-list");
