@@ -24,23 +24,19 @@ public class DeviceWarrantyListController extends HttpServlet {
         WarrantyCardDAO warrantyDAO = new WarrantyCardDAO();
 
         String search = request.getParameter("search");
-        String status = request.getParameter("status");
+        String status = request.getParameter("status"); 
         String pageParam = request.getParameter("page");
 
         int page = 1;
-        if (pageParam != null) {
-            try {
-                page = Integer.parseInt(pageParam);
-                if (page < 1) page = 1;
-            } catch (NumberFormatException e) {
-                page = 1;
-            }
+        try {
+            if (pageParam != null) page = Math.max(1, Integer.parseInt(pageParam));
+        } catch (NumberFormatException e) {
+            page = 1;
         }
 
         int offset = (page - 1) * PAGE_SIZE;
 
         List<WarrantyCard> warrantyList = warrantyDAO.getWarrantyList(search, status, offset, PAGE_SIZE);
-
         int totalRecords = warrantyDAO.countWarranty(search, status);
         int totalPages = (int) Math.ceil((double) totalRecords / PAGE_SIZE);
 

@@ -92,116 +92,127 @@ public class WarrantyCardDAO extends DBContext{
 	}
 	
 	public List<WarrantyCard> getWarrantyList(String search, String status, int offset, int limit) {
-        List<WarrantyCard> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT wc.id AS warrantyId, wc.start_at, wc.end_at, "+
-                   									 " ds.id AS deviceSerialId, ds.serial_no, ds.device_id, " +
-                   									 " d.name AS deviceName, " +
-                   									 " u.id AS customerId, u.full_name AS customerName " +
-                   							  " FROM warranty_cards wc " +
-                   							  " JOIN device_serials ds ON wc.device_serial_id = ds.id " +
-                   							  " JOIN devices d ON ds.device_id = d.id " +
-                   							  " JOIN users u ON wc.customer_id = u.id " +
-                   							  " WHERE 1=1");
+	    List<WarrantyCard> list = new ArrayList<>();
+	    StringBuilder sql = new StringBuilder(
+	        "SELECT wc.id AS warrantyId, wc.start_at, wc.end_at, " +
+	        "ds.id AS deviceSerialId, ds.serial_no, ds.device_id, " +
+	        "d.name AS deviceName, " +
+	        "u.id AS customerId, u.full_name AS customerName " +
+	        "FROM warranty_cards wc " +
+	        "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
+	        "JOIN devices d ON ds.device_id = d.id " +
+	        "JOIN users u ON wc.customer_id = u.id " +
+	        "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
+	        "WHERE ci.support_status IN (" +
+	        "'new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
+	        "'manager_review','manager_approved','create_payment','waiting_payment'," +
+	        "'waiting_confirm','task_created')" 
+	    );
 
-        if (search != null && !search.isEmpty()) {
-            sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
-        }
+	    if (search != null && !search.isEmpty()) {
+	        sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
+	    }
 
-        if (status != null && !status.isEmpty()) {
-            if (status.equals("valid")) {
-                sql.append(" AND wc.end_at >= NOW()");
-            } else if (status.equals("expired")) {
-                sql.append(" AND wc.end_at < NOW()");
-            }
-        }
+	    if (status != null && !status.isEmpty()) {
+	        if (status.equals("valid")) {
+	            sql.append(" AND wc.end_at >= NOW()");
+	        } else if (status.equals("expired")) {
+	            sql.append(" AND wc.end_at < NOW()");
+	        }
+	    }
 
-        sql.append(" ORDER BY wc.end_at ASC LIMIT ? OFFSET ?");
+	    sql.append(" ORDER BY wc.end_at ASC LIMIT ? OFFSET ?");
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            int index = 1;
-            if (search != null && !search.isEmpty()) {
-                String like = "%" + search + "%";
-                ps.setString(index++, like);
-                ps.setString(index++, like);
-                ps.setString(index++, like);
-            }
+	        int index = 1;
+	        if (search != null && !search.isEmpty()) {
+	            String like = "%" + search + "%";
+	            ps.setString(index++, like);
+	            ps.setString(index++, like);
+	            ps.setString(index++, like);
+	        }
 
-            ps.setInt(index++, limit);
-            ps.setInt(index++, offset);
+	        ps.setInt(index++, limit);
+	        ps.setInt(index++, offset);
 
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                DeviceSerial ds = new DeviceSerial();
-                ds.setId(rs.getInt("deviceSerialId"));
-                ds.setSerial_no(rs.getString("serial_no"));
-                ds.setDevice_id(rs.getInt("device_id"));
-                ds.setDeviceName(rs.getString("deviceName"));
-                
-                Customer c = new Customer();
-                c.setId(rs.getInt("customerId"));
-                c.setFull_name(rs.getString("customerName"));
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            DeviceSerial ds = new DeviceSerial();
+	            ds.setId(rs.getInt("deviceSerialId"));
+	            ds.setSerial_no(rs.getString("serial_no"));
+	            ds.setDevice_id(rs.getInt("device_id"));
+	            ds.setDeviceName(rs.getString("deviceName"));
 
-                WarrantyCard wc = new WarrantyCard();
-                wc.setId(rs.getInt("warrantyId"));
-                wc.setDevice_serial(ds);
-                wc.setCustomer(c);
-                wc.setStart_at(rs.getTimestamp("start_at"));
-                wc.setEnd_at(rs.getTimestamp("end_at"));
+	            Customer c = new Customer();
+	            c.setId(rs.getInt("customerId"));
+	            c.setFull_name(rs.getString("customerName"));
 
-                list.add(wc);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	            WarrantyCard wc = new WarrantyCard();
+	            wc.setId(rs.getInt("warrantyId"));
+	            wc.setDevice_serial(ds);
+	            wc.setCustomer(c);
+	            wc.setStart_at(rs.getTimestamp("start_at"));
+	            wc.setEnd_at(rs.getTimestamp("end_at"));
 
-        return list;
-    }
+	            list.add(wc);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
 
-    public int countWarranty(String search, String status) {
-        int total = 0;
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total " +
-            " FROM warranty_cards wc " + 
-            " JOIN device_serials ds ON wc.device_serial_id = ds.id " +
-            " JOIN devices d ON ds.device_id = d.id " +
-            " JOIN users u ON wc.customer_id = u.id " +
-            " WHERE 1=1");
+	    return list;
+	}
 
-        if (search != null && !search.isEmpty()) {
-            sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
-        }
+	public int countWarranty(String search, String status) {
+	    int total = 0;
+	    StringBuilder sql = new StringBuilder(
+	        "SELECT COUNT(DISTINCT wc.id) AS total " +
+	        "FROM warranty_cards wc " +
+	        "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
+	        "JOIN devices d ON ds.device_id = d.id " +
+	        "JOIN users u ON wc.customer_id = u.id " +
+	        "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
+	        "WHERE ci.support_status IN (" +
+	        "'new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
+	        "'manager_review','manager_approved','create_payment','waiting_payment'," +
+	        "'waiting_confirm','task_created')"
+	    );
 
-        if (status != null && !status.isEmpty()) {
-            if (status.equals("valid")) {
-                sql.append(" AND wc.end_at >= NOW()");
-            } else if (status.equals("expired")) {
-                sql.append(" AND wc.end_at < NOW()");
-            }
-        }
+	    if (search != null && !search.isEmpty()) {
+	        sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
+	    }
 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+	    if (status != null && !status.isEmpty()) {
+	        if (status.equals("valid")) {
+	            sql.append(" AND wc.end_at >= NOW()");
+	        } else if (status.equals("expired")) {
+	            sql.append(" AND wc.end_at < NOW()");
+	        }
+	    }
 
-            int index = 1;
-            if (search != null && !search.isEmpty()) {
-                String like = "%" + search + "%";
-                ps.setString(index++, like);
-                ps.setString(index++, like);
-                ps.setString(index++, like);
-            }
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql.toString())) {
 
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                total = rs.getInt("total");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+	        int index = 1;
+	        if (search != null && !search.isEmpty()) {
+	            String like = "%" + search + "%";
+	            ps.setString(index++, like);
+	            ps.setString(index++, like);
+	            ps.setString(index++, like);
+	        }
 
-        return total;
-    }
-    
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            total = rs.getInt("total");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return total;
+	}
     public WarrantyCard getByIdWithDetails(int id) {
         String sql = "SELECT wc.id AS warrantyId, wc.start_at, wc.end_at, " +
                      "ds.id AS deviceSerialId, ds.serial_no, ds.device_id, d.name AS deviceName, " +
