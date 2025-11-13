@@ -71,7 +71,7 @@
 									<td><fmt:formatDate value="${item.end_at}"
 											pattern="dd/MM/yyyy" /></td>
 									<td style="text-align: center;"><a
-										href="/warranty-detail?id=${item.id}"
+										href="${pageContext.request.contextPath}/warranty-detail?id=${item.id}"
 										class="btn device-btn">Xem chi tiết</a></td>
 								</tr>
 							</c:forEach>

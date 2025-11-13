@@ -45,6 +45,6 @@ public class WarrantyDetailController extends HttpServlet {
             request.setAttribute("error", "ID bảo hành không hợp lệ");
         }
 
-        request.getRequestDispatcher("view/admin/warranty/warrantyDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/warranty/warrantyDetail.jsp").forward(request, response);
     }
 }

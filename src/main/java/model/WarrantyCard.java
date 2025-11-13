@@ -14,7 +14,16 @@ public class WarrantyCard {
 	private int daysRemaining;
 	private String assignedByName;
 	private String handledByName;
+	private boolean isCancelled;
 	
+	public boolean getIsCancelled() {
+		return isCancelled;
+	}
+
+	public void setCancelled(boolean isCancelled) {
+		this.isCancelled = isCancelled;
+	}
+
 	public int getDeviceSerialId() {
 		return deviceSerialId;
 	}
@@ -80,6 +89,17 @@ public class WarrantyCard {
 	
 	
 
+	public WarrantyCard(int id, int deviceSerialId, int customerId, Timestamp start_at, Timestamp end_at,
+			boolean isCancelled) {
+		super();
+		this.id = id;
+		this.deviceSerialId = deviceSerialId;
+		this.customerId = customerId;
+		this.start_at = start_at;
+		this.end_at = end_at;
+		this.isCancelled = isCancelled;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -134,4 +154,14 @@ public class WarrantyCard {
 	    }
 	    return end_at.after(new java.util.Date()) ? "Còn hạn" : "Hết hạn";
 	}
+
+	@Override
+	public String toString() {
+		return "WarrantyCard [id=" + id + ", deviceSerialId=" + deviceSerialId + ", device_serial=" + device_serial
+				+ ", device=" + device + ", customerId=" + customerId + ", customer=" + customer + ", start_at="
+				+ start_at + ", end_at=" + end_at + ", daysRemaining=" + daysRemaining + ", assignedByName="
+				+ assignedByName + ", handledByName=" + handledByName + ", isCancelled=" + isCancelled + "]";
+	}
+	
+	
 }
