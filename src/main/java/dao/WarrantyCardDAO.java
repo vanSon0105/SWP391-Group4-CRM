@@ -85,7 +85,8 @@ public class WarrantyCardDAO extends DBContext{
 	            		rs.getInt("device_serial_id"),
 	            		rs.getInt("customer_id"),
 	            		rs.getTimestamp("start_at"),
-	            		rs.getTimestamp("end_at")
+	            		rs.getTimestamp("end_at"),
+	            		rs.getBoolean("is_cancelled")
 	            		);
 	        }
 	    } catch (SQLException e) {
@@ -95,22 +96,21 @@ public class WarrantyCardDAO extends DBContext{
 	}
 	
 	 public WarrantyCard getWarrantyCardById(int id) {
-	        String sql = """
-	            SELECT 
-	                wc.id,
-	                wc.device_serial_id,
-	                wc.customer_id,
-	                wc.start_at,
-	                wc.end_at,
-	                ds.serial_no,
-	                ds.device_id,
-	                u.full_name AS customer_name,
-	                u.email AS customer_email
-	            FROM warranty_cards wc
-	            JOIN device_serials ds ON ds.id = wc.device_serial_id
-	            JOIN users u ON u.id = wc.customer_id
-	            WHERE wc.id = ?
-	        """;
+		 String sql = "SELECT " +
+	             "wc.id, " +
+	             "wc.device_serial_id, " +
+	             "wc.customer_id, " +
+	             "wc.start_at, " +
+	             "wc.end_at, " +
+	             "ds.serial_no, " +
+	             "ds.device_id, " +
+	             "u.full_name AS customer_name, " +
+	             "u.email AS customer_email " +
+	             "FROM warranty_cards wc " +
+	             "JOIN device_serials ds ON ds.id = wc.device_serial_id " +
+	             "JOIN users u ON u.id = wc.customer_id " +
+	             "WHERE wc.id = ?";
+
 
 	        try (Connection conn = DBContext.getConnection();
 	             PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -554,5 +554,18 @@ public class WarrantyCardDAO extends DBContext{
         }
         return list;
     }
+	
+	public boolean cancelWarranty(int warrantyCardId) {
+	    String sql = "UPDATE warranty_cards SET is_cancelled = 1 WHERE id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, warrantyCardId);
+	        return ps.executeUpdate() > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+
 
 }

@@ -25,7 +25,10 @@
 	<main class="sidebar-main">
 
 		<c:if test="${not empty error}">
-			<p style="color: #ef4444">${error}</p>
+			<p style="color: #ef4444;  font-weight: 600; text-align: center;">${error}</p>
+		</c:if>
+		<c:if test="${not empty message}">
+			<p style="color: green; font-weight: 600; text-align: center;">${message}</p>
 		</c:if>
 
 		<section class="panel">
@@ -149,14 +152,25 @@
 										<form action="task-detail" method="post"
 											style="display: inline;">
 											<input type="hidden" name="action" value="cancel"> <input
-												type="hidden" name="taskId" value="${task.id}"> <input type="hidden" name="staffId" value="${td.technicalStaffId}">
-
+												type="hidden" name="taskId" value="${task.id}"> <input
+												type="hidden" name="staffId" value="${td.technicalStaffId}">
 											<button type="submit" class="btn btn-danger"
-												onclick="return confirm('Bạn có chắc muốn hủy giao task cho staff này không?');">
+												onclick="return confirm('Bạn có chắc muốn hủy giao nhiệm vụ cho nhân viên này không?');">
 												Hủy giao</button>
 										</form>
-
+									</c:if> <c:if
+										test="${td.status == 'cancelled' && td.cancelledByWarranty && td.warrantyCard != null && !td.warrantyCard.isCancelled}">
+										<form action="task-detail" method="post">
+											<input type="hidden" name="action" value="cancelWarranty" />
+											<input type="hidden" name="warrantyCardId"
+												value="${td.warrantyCard.id}" /> <input type="hidden"
+												name="taskId" value="${task.id}" />
+											<button type="submit" class="btn btn-warning"
+												onclick="return confirm('Bạn có chắc muốn hủy bảo hành cho sản phẩm thuộc nhiệm vụ này không?');">
+												Hủy bảo hành</button>
+										</form>
 									</c:if></td>
+
 
 							</tr>
 						</c:forEach>

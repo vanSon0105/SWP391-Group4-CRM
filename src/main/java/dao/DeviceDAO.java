@@ -824,34 +824,33 @@ public class DeviceDAO extends DBContext {
 	
 	public List<CustomerDeviceView> getDevicesByCustomerId(int customerId) {
 	    List<CustomerDeviceView> list = new ArrayList<>();
-	    String sql = """
-	    	    SELECT 
-	            u.id AS customer_id,
-	            u.full_name AS customer_name,
-	            u.email AS customer_email,
-	            ds.id AS device_serial_id,
-	            d.id AS device_id,
-	            d.name AS device_name,
-	            c.category_name AS category_name,
-	            ds.serial_no AS serial_number,
-	            d.price,
-	            ds.stock_status AS status,
-	            d.warrantyMonth,
-	            wc.id AS warranty_card_id,
-	            ci.id AS issue_id,
-	            CASE WHEN wc.id IS NOT NULL THEN TRUE ELSE FALSE END AS hasWarranty,
-	            CASE WHEN ci.id IS NOT NULL THEN TRUE ELSE FALSE END AS hasIssue
-	        FROM users u
-	        JOIN orders o ON o.customer_id = u.id
-	        JOIN order_details od ON od.order_id = o.id
-	        JOIN devices d ON od.device_id = d.id
-	        JOIN categories c ON d.category_id = c.id
-	        JOIN order_detail_serials ods ON ods.order_detail_id = od.id
-	        JOIN device_serials ds ON ds.id = ods.device_serial_id
-	        LEFT JOIN warranty_cards wc ON wc.device_serial_id = ds.id AND wc.customer_id = u.id
-	        LEFT JOIN customer_issues ci ON ci.warranty_card_id = wc.id
-	        WHERE u.id = ?
-	    """;
+	    String sql = "SELECT " +
+	             "u.id AS customer_id, " +
+	             "u.full_name AS customer_name, " +
+	             "u.email AS customer_email, " +
+	             "ds.id AS device_serial_id, " +
+	             "d.id AS device_id, " +
+	             "d.name AS device_name, " +
+	             "c.category_name AS category_name, " +
+	             "ds.serial_no AS serial_number, " +
+	             "d.price, " +
+	             "ds.stock_status AS status, " +
+	             "d.warrantyMonth, " +
+	             "wc.id AS warranty_card_id, " +
+	             "ci.id AS issue_id, " +
+	             "CASE WHEN wc.id IS NOT NULL THEN TRUE ELSE FALSE END AS hasWarranty, " +
+	             "CASE WHEN ci.id IS NOT NULL THEN TRUE ELSE FALSE END AS hasIssue " +
+	             "FROM users u " +
+	             "JOIN orders o ON o.customer_id = u.id " +
+	             "JOIN order_details od ON od.order_id = o.id " +
+	             "JOIN devices d ON od.device_id = d.id " +
+	             "JOIN categories c ON d.category_id = c.id " +
+	             "JOIN order_detail_serials ods ON ods.order_detail_id = od.id " +
+	             "JOIN device_serials ds ON ds.id = ods.device_serial_id " +
+	             "LEFT JOIN warranty_cards wc ON wc.device_serial_id = ds.id AND wc.customer_id = u.id " +
+	             "LEFT JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
+	             "WHERE u.id = ?";
+
 
 	    try (Connection conn = DBContext.getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
