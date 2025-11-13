@@ -69,7 +69,7 @@ public class TaskListPageController extends HttpServlet {
     }
 	
 	private User getUser(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-		return AuthorizationUtils.requirePermission(req, resp, "Trang Quản Lí Kỹ Thuật");
+		return AuthorizationUtils.requirePermission(req, resp, "Trang Quản Lí Kỹ Thuật", "Quản Lí Nhiệm Vụ");
 	}
 	
 

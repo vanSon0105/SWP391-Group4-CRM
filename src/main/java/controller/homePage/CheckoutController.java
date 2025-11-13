@@ -26,6 +26,7 @@ import model.Order;
 @WebServlet("/checkout")
 public class CheckoutController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final String EMPTY_CART_MESSAGE = "Giỏ hàng đang trống. Vui lòng thêm sản phẩm trước khi thanh toán.";
 	CartDAO cartDao = new CartDAO();
 	PaymentDAO paymentDao = new PaymentDAO();
 	OrderDAO orderDao = new OrderDAO();
@@ -48,9 +49,15 @@ public class CheckoutController extends HttpServlet {
 			response.sendRedirect("cart");
 			return;
 		}
+
+		Cart cart = cartDao.getCartByUserId(user.getId());
+		List<CartDetail> cartItems = ensureCartHasItems(cart, session, response);
+		if (cartItems == null) {
+			return;
+		}
+
 		request.setAttribute("user", user);
-		
-		loadCheckoutData(request, response);
+		populateCheckoutTotals(request, cartItems);
 		request.getRequestDispatcher("view/homepage/checkout.jsp").forward(request, response);
 	}
 	
@@ -62,35 +69,15 @@ public class CheckoutController extends HttpServlet {
 		    return;
 		}
 		
-		Cart c = cartDao.getCartByUserId(user.getId());
-		List<CartDetail> list = cartDao.getCartDetail(c.getId());
-		double totalPrice = 0;
-		double discount = 0;
-		double finalPrice = 0;
-		
-		if(list != null && !list.isEmpty()) {
-			for(CartDetail cart : list) {
-				totalPrice += cart.getTotalPrice();
-			}
-			
-			if (totalPrice >= 3000000) {
-				double potentialDiscount = totalPrice * 0.10;
-				discount = Math.min(potentialDiscount, 150000);
-			}else if(totalPrice >= 1000000 && totalPrice < 3000000) {
-				double potentialDiscount = totalPrice * 0.05;
-				discount = Math.min(potentialDiscount, 100000);
-			}else {
-				discount = 0;
+		Cart cart = cartDao.getCartByUserId(user.getId());
+		List<CartDetail> items = Collections.emptyList();
+		if (cart != null) {
+			List<CartDetail> cartDetails = cartDao.getCartDetail(cart.getId());
+			if (cartDetails != null) {
+				items = cartDetails;
 			}
 		}
-		finalPrice = totalPrice - discount;
-		
-		session.setAttribute("discount", discount);
-		session.setAttribute("finalPrice", finalPrice); 
-		request.setAttribute("finalPrice", finalPrice);
-		request.setAttribute("discount", discount);
-		request.setAttribute("totalPrice", totalPrice);
-		request.setAttribute("listCart", list);
+		populateCheckoutTotals(request, items);
 	}
 	
 	@Override
@@ -107,15 +94,14 @@ public class CheckoutController extends HttpServlet {
 		}
 		
 		Cart cart = cartDao.getCartByUserId(user.getId());
-		if (cart == null) {
-			session.setAttribute("cartErrorMessage", "Giỏ hàng rỗng.");
-			response.sendRedirect("cart");
-		 return;
+		List<CartDetail> cartItems = ensureCartHasItems(cart, session, response);
+		if (cartItems == null) {
+			return;
 		}
-		
 		int cartId = cart.getId();
-		double finalPrice = (double)session.getAttribute("finalPrice");
-		double discount = (double)session.getAttribute("discount");
+		double totalPrice = calculateTotalPrice(cartItems);
+		double discount = calculateDiscount(totalPrice);
+		double finalPrice = totalPrice - discount;
 		
 		String fullName = request.getParameter("fullname");
 		String phone = request.getParameter("phone");
@@ -176,8 +162,6 @@ public class CheckoutController extends HttpServlet {
 		}
 		
 		int orderId = orderDao.addNewOrder(user.getId(), finalPrice, discount);
-		
-		List<CartDetail> cartItems = cartDao.getCartDetail(cartId);
 		for (CartDetail item : cartItems) {
 	        odDao.addOrderDetail(
 	                orderId,
@@ -202,7 +186,60 @@ public class CheckoutController extends HttpServlet {
 		cartDao.deleteCart(cartId); 
 		
 		session.setAttribute("finalPrice", finalPrice);
+		session.setAttribute("discount", discount);
 		request.getRequestDispatcher("view/homepage/banking.jsp").forward(request, response);
+	}
+	
+	private void populateCheckoutTotals(HttpServletRequest request, List<CartDetail> cartItems) {
+		HttpSession session = request.getSession();
+		List<CartDetail> safeItems = cartItems == null ? Collections.emptyList() : cartItems;
+		double totalPrice = calculateTotalPrice(safeItems);
+		double discount = calculateDiscount(totalPrice);
+		double finalPrice = totalPrice - discount;
+		
+		session.setAttribute("discount", discount);
+		session.setAttribute("finalPrice", finalPrice); 
+		request.setAttribute("finalPrice", finalPrice);
+		request.setAttribute("discount", discount);
+		request.setAttribute("totalPrice", totalPrice);
+		request.setAttribute("listCart", safeItems);
+	}
+	
+	private double calculateTotalPrice(List<CartDetail> cartItems) {
+		double totalPrice = 0;
+		if (cartItems != null) {
+			for (CartDetail item : cartItems) {
+				totalPrice += item.getTotalPrice();
+			}
+		}
+		return totalPrice;
+	}
+	
+	private double calculateDiscount(double totalPrice) {
+		if (totalPrice >= 3_000_000) {
+			double potentialDiscount = totalPrice * 0.10;
+			return Math.min(potentialDiscount, 150_000);
+		}
+		if (totalPrice >= 1_000_000) {
+			double potentialDiscount = totalPrice * 0.05;
+			return Math.min(potentialDiscount, 100_000);
+		}
+		return 0;
+	}
+	
+	private List<CartDetail> ensureCartHasItems(Cart cart, HttpSession session, HttpServletResponse response) throws IOException {
+		if (cart == null) {
+			session.setAttribute("cartErrorMessage", EMPTY_CART_MESSAGE);
+			response.sendRedirect("cart");
+			return null;
+		}
+		List<CartDetail> items = cartDao.getCartDetail(cart.getId());
+		if (items == null || items.isEmpty()) {
+			session.setAttribute("cartErrorMessage", EMPTY_CART_MESSAGE);
+			response.sendRedirect("cart");
+			return null;
+		}
+		return items;
 	}
 	
 	private boolean validateCartStock(User user, HttpSession session) {

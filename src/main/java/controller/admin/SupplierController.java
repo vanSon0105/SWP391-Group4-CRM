@@ -25,7 +25,9 @@ public class SupplierController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Nhà Cung Cấp");
-        if (currentUser == null) return;
+        if (currentUser == null) {
+        	return;
+        }
 
         String action = request.getParameter("action");
         if (action == null || action.isEmpty()) action = "list";

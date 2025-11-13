@@ -86,6 +86,9 @@ public class TechnicalStaffController extends HttpServlet {
 		String assignmentIdParam = req.getParameter("assignmentId");
 		String status = req.getParameter("status");
 		String summary = req.getParameter("summary");
+		String cancelReason = req.getParameter("cancelReason"); 
+		boolean cancelledByWarranty = "invalid_warranty".equals(cancelReason);
+
 		if (assignmentIdParam == null || status == null) {
 			resp.sendRedirect("technical-issues");
 			return;
@@ -116,11 +119,15 @@ public class TechnicalStaffController extends HttpServlet {
 				return;
 			}
 			summary = summary.trim();
+			
+			if ("cancelled".equals(status)) {
+		        assignment.setCancelledByWarranty(cancelledByWarranty);
+		    }
 		} else {
 			summary = null;
 		}
 
-		boolean updated = taskDetailDao.updateAssignmentStatus(assignmentId, staff.getId(), status, summary);
+		boolean updated = taskDetailDao.updateAssignmentStatus(assignmentId, staff.getId(), status, summary, cancelledByWarranty);
 		if (updated) {
 			syncIssueStatus(assignment.getTaskId(), assignment.getCustomerIssueId(), status, staff.getId());
 			resp.sendRedirect("technical-issues?updated=1");
@@ -157,8 +164,7 @@ public class TechnicalStaffController extends HttpServlet {
 		if ("cancelled".equalsIgnoreCase(latestStatus)) {
 			for (TaskDetail detail : details) {
 				if (detail.getTechnicalStaffId() != initiatingStaffId && !"cancelled".equalsIgnoreCase(detail.getStatus())) {
-					
-					taskDetailDao.updateAssignmentStatus(detail.getId(), detail.getTechnicalStaffId(), "cancelled", null);
+					taskDetailDao.updateAssignmentStatus(detail.getId(), detail.getTechnicalStaffId(), "cancelled", null, false);
 				}
 			}
 			issueDao.updateSupportStatus(issueId, "cancelled");
@@ -183,7 +189,7 @@ public class TechnicalStaffController extends HttpServlet {
 
 		if (allCompleted) {
 			issueDao.updateSupportStatus(issueId, "completed");
-			return "tech_in_progress";
+			return "completed";
 		} else if (anyInProgress) {
 			issueDao.updateSupportStatus(issueId, "tech_in_progress");
 			return "tech_in_progress";

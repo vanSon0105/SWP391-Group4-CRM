@@ -252,6 +252,10 @@
     .availability-form button.busy-action {
         background: linear-gradient(90deg, #f97316, #fb7185);
     }
+    
+    #cancel-reason-container {
+    display: none;
+	}
 </style>
 </head>
 
@@ -389,6 +393,10 @@
             <h2>Nhập tóm tắt công việc</h2>
             <p id="summary-modal-message" style="margin:0; color:#475569; font-size:14px;"></p>
             <textarea id="summary-modal-textarea" placeholder="Ghi lại những hạng mục đã xử lý hoặc lý do hủy..."></textarea>
+            <div id="cancel-reason-container">
+            	<input type="checkbox" id="invalid-warranty" name="cancelReason" value="invalid_warranty">
+    			<label for="invalid-warranty">Tem bảo hành không hợp lệ</label>	
+            </div>
             <div class="summary-modal-actions">
                 <button type="button" class="btn-secondary" id="summary-modal-cancel">Hủy</button>
                 <button type="button" id="summary-modal-confirm">Xác nhận</button>
@@ -437,6 +445,12 @@
                             ? 'Nhập tóm tắt những hạng mục đã sửa trước khi hoàn tất.'
                             : 'Nhập tóm tắt những hạng mục hoặc lý do trước khi hủy.';
                         modalOverlay.classList.remove('hidden');
+                        var cancelReasonContainer = document.getElementById('cancel-reason-container');
+                        if (status === 'cancelled') {
+                            cancelReasonContainer.style.display = 'block';
+                        } else {
+                            cancelReasonContainer.style.display = 'none';
+                        }
                         setTimeout(function () {
                             modalTextarea.focus();
                             modalTextarea.select();
@@ -458,6 +472,16 @@
                 }
                 var summaryInput = activeForm.querySelector('input[name="summary"]');
                 summaryInput.value = summaryText;
+                
+                var cancelReasonCheckbox = document.getElementById('invalid-warranty');
+                var hiddenCancelReason = activeForm.querySelector('input[name="cancelReasonHidden"]');
+                if (!hiddenCancelReason) {
+                    hiddenCancelReason = document.createElement('input');
+                    hiddenCancelReason.type = 'hidden';
+                    hiddenCancelReason.name = 'cancelReason';
+                    activeForm.appendChild(hiddenCancelReason);
+                }
+                hiddenCancelReason.value = cancelReasonCheckbox.checked ? cancelReasonCheckbox.value : '';
                 modalOverlay.classList.add('hidden');
                 activeForm.submit();
                 activeForm = null;

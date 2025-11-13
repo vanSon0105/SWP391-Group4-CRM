@@ -2,6 +2,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -24,23 +25,6 @@ body.home-page {
 }
 .owned-device-page {
 	padding: 36px 40px;
-}
-
-.page-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 16px;
-}
-
-.page-header h1 {
-	margin: 0;
-	color: #0f172a;
-}
-
-.page-actions {
-	display: flex;
-	gap: 10px;
 }
 
 .btn-outline {
@@ -248,6 +232,12 @@ body.home-page {
     color: black;
     cursor: pointer;
 }
+
+.filter-form{
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
 </style>
 </head>
 <body class="home-page">
@@ -275,6 +265,18 @@ body.home-page {
 		</div>
 	</div>
 	
+	<c:set var="hasFilter" value="${not empty filterKeyword}" />
+	<form class="filter-form" action="my-devices" method="get">
+		<div class="filter-group">
+			<label for="keyword" class="filter-label">Tìm theo tên hoặc serial</label>
+			<input class="filter-select" id="keyword" name="keyword" type="search" placeholder="Nhập tên thiết bị hoặc serial..."
+				   value="${fn:escapeXml(filterKeyword)}">
+		</div>
+		<div style="margin-top: 15px;">
+			<button type="submit" class="btn btn-outline">Tìm kiếm</button>
+			<a href="my-devices" class="btn btn-outline">Xóa lọc</a>
+		</div>
+	</form>
 	<c:choose>
 		<c:when test="${not empty ownedDevices}">
 			<table class="device-table">
@@ -413,9 +415,15 @@ body.home-page {
 			
 			<c:if test="${totalPages > 1}">
 				<div class="pagination-pills">
+					<c:url var="prevUrl" value="my-devices">
+						<c:param name="page" value="${currentPage - 1}" />
+						<c:if test="${not empty filterKeyword}">
+							<c:param name="keyword" value="${filterKeyword}" />
+						</c:if>
+					</c:url>
 					<c:choose>
 						<c:when test="${currentPage > 1}">
-							<a href="my-devices?page=${currentPage - 1}">&#10094;</a>
+							<a href="${prevUrl}">&#10094;</a>
 						</c:when>
 						<c:otherwise>
 							<a class="disabled">&#10094;</a>
@@ -423,12 +431,24 @@ body.home-page {
 					</c:choose>
 					
 					<c:forEach var="i" begin="1" end="${totalPages}">
-						<a href="my-devices?page=${i}" class="${i == currentPage ? 'active' : ''}">${i}</a>
+						<c:url var="pageUrl" value="my-devices">
+							<c:param name="page" value="${i}" />
+							<c:if test="${not empty filterKeyword}">
+								<c:param name="keyword" value="${filterKeyword}" />
+							</c:if>
+						</c:url>
+						<a href="${pageUrl}" class="${i == currentPage ? 'active' : ''}">${i}</a>
 					</c:forEach>
 					
+					<c:url var="nextUrl" value="my-devices">
+						<c:param name="page" value="${currentPage + 1}" />
+						<c:if test="${not empty filterKeyword}">
+							<c:param name="keyword" value="${filterKeyword}" />
+						</c:if>
+					</c:url>
 					<c:choose>
 						<c:when test="${currentPage < totalPages}">
-							<a href="my-devices?page=${currentPage + 1}">&#10095;</a>
+							<a href="${nextUrl}">&#10095;</a>
 						</c:when>
 						<c:otherwise>
 							<a class="disabled">&#10095;</a>

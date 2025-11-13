@@ -12,22 +12,30 @@
 
 <style>
 body.home-page {
-	background: #f5f6fa;
+    display: flex;
+    flex-direction: column;
 }
 
 .home-page main {
-	padding: 36px 40px !important;
+	min-width: 1100px;
+    flex: 1;
+	margin: 40px auto;
+	background: #fff;
+	padding: 32px !important;
+	border-radius: 12px;
+	box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
 }
 
-.order-header {
+.page-header {
 	display: flex;
 	justify-content: space-between;
-	align-items: center;
+	align-items: flex-start;
+	gap: 16px;
 }
 
-.order-header h1 {
+.page-header h1 {
 	margin: 0;
-	color: #1f2d3d;
+	color: #0f172a;
 }
 
 table {
@@ -190,8 +198,10 @@ tr:hover {
 	<jsp:include page="../common/header.jsp"></jsp:include>
 
 	<main>
-		<div class="order-header">
+		<div class="page-header">
+		<div>
 			<h1>Thanh toán khiếu nại</h1>
+		</div>
 		</div>
 
 		<form method="get" class="filter-form">

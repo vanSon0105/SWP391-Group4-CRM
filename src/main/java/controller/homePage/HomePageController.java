@@ -33,6 +33,14 @@ public class HomePageController extends HttpServlet {
 	}
 	
 	private void listDevices(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession(false);
+		if (session != null) {
+			Boolean cartJustAdded = (Boolean) session.getAttribute("cartJustAdded");
+			if (Boolean.TRUE.equals(cartJustAdded)) {
+				req.setAttribute("cartJustAdded", true);
+				session.removeAttribute("cartJustAdded");
+			}
+		}
 		//Banner Devices
 		List<Device> getBannerList = dao.getBannerDevices();
 		

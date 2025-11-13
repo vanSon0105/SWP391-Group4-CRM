@@ -8,13 +8,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
+    <style>
+    	.alert-banner{
+			max-width: 1150px;
+			margin: 0 auto;
+			padding: 14px 18px;
+			border-radius: 14px;
+			font-weight: 600;
+			background-color: #fee2e2;
+			color: #b91c1c;
+		}
+    </style>
 </head>
 <body class="cart-page">
     <jsp:include page="../common/header.jsp"></jsp:include>
     <main>
         <section class="cart-wrapper">
         	<c:if test="${not empty cartErrorMessage}">
-        		<div style="margin-bottom:16px; padding:12px 16px; border-radius:12px; background:#fee2e2; color:#b91c1c; font-weight:500;">
+        		<div class="alert-banner">
         			${cartErrorMessage}
         		</div>
         	</c:if>

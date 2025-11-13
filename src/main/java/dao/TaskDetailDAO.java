@@ -139,36 +139,52 @@ public class TaskDetailDAO extends DBContext {
 		return null;
 	}
 
-	public boolean updateAssignmentStatus(int detailId, int staffId, String status, String summary) {
-		String sql = "UPDATE task_details SET status = ?, note = ? WHERE id = ? AND technical_staff_id = ?";
-		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setString(1, status);
-			if (summary != null) {
-				ps.setString(2, summary);
-			} else {
-				ps.setNull(2, Types.VARCHAR);
-			}
-			ps.setInt(3, detailId);
-			ps.setInt(4, staffId);
-			return ps.executeUpdate() > 0;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return false;
+	public boolean updateAssignmentStatus(int detailId, int staffId, String status, String summary, Boolean cancelledByWarranty) {
+	    String sql = "UPDATE task_details SET status = ?, note = ?, cancelled_by_warranty = ? WHERE id = ? AND technical_staff_id = ?";
+	    try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, status);
+	        if (summary != null) {
+	            ps.setString(2, summary);
+	        } else {
+	            ps.setNull(2, Types.VARCHAR);
+	        }
+	        if (cancelledByWarranty != null) {
+	            ps.setBoolean(3, cancelledByWarranty);
+	        } else {
+	            ps.setNull(3, Types.BOOLEAN);
+	        }
+	        ps.setInt(4, detailId);
+	        ps.setInt(5, staffId);
+	        return ps.executeUpdate() > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
+
 
 	public List<TaskDetail> getTaskDetail(int taskId) {
 		List<TaskDetail> list = new ArrayList<>();
-		String sql = "select * from task_details where task_id = ?";
+		String sql = "SELECT td.*, t.customer_issue_id\r\n"
+				+ "FROM task_details td\r\n"
+				+ "JOIN tasks t ON td.task_id = t.id\r\n"
+				+ "WHERE td.task_id = ?\r\n"
+				+ "";
 
 		try (Connection conn = getConnection(); PreparedStatement pre = conn.prepareStatement(sql)) {
 			pre.setInt(1, taskId);
 			ResultSet rs = pre.executeQuery();
 
 			while (rs.next()) {
-				list.add(new TaskDetail(rs.getInt("id"), rs.getInt("task_id"), rs.getInt("technical_staff_id"),
-						rs.getTimestamp("assigned_at"), rs.getTimestamp("deadline"), rs.getString("status"),
-						rs.getString("note")));
+				list.add(new TaskDetail(rs.getInt("id"),
+						rs.getInt("task_id"),
+						rs.getInt("technical_staff_id"),
+						rs.getTimestamp("assigned_at"),
+						rs.getTimestamp("deadline"),
+						rs.getString("status"),
+						rs.getString("note"),
+						rs.getBoolean("cancelled_by_warranty"),
+						rs.getInt("customer_issue_id")));
 			}
 
 		} catch (Exception e) {

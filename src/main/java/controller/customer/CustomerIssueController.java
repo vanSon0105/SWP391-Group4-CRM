@@ -119,6 +119,11 @@ public class CustomerIssueController extends HttpServlet {
 		}
 		String warrantyCardIdParam = req.getParameter("warrantyCardId");
 		String issueType = req.getParameter("issueType");
+		
+		if ("external-repair".equalsIgnoreCase(issueType)) {
+			resp.sendRedirect("external-repair");
+			return;
+		}
 
 		int warrantyId = 0;
 		if (warrantyCardIdParam != null && !warrantyCardIdParam.trim().isEmpty()) {

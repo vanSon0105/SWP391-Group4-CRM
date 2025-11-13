@@ -3,28 +3,56 @@ package model;
 import java.sql.Timestamp;
 
 public class TaskDetail {
-    private int id;
-    private int taskId;
-    private int technicalStaffId;
-    private Integer assignedBy;      
-    private Timestamp assignedAt;
-    private Timestamp deadline;
-    private String status;
+	private int id;
+	private int taskId;
+	private int technicalStaffId;
+	private Integer assignedBy;
+	private Timestamp assignedAt;
+	private Timestamp deadline;
+	private String status;
 
-    private String staffName;
-    private String staffEmail;
-    private String taskTitle;
-    private String taskDescription;
-    private Integer customerIssueId;
-    private String issueCode;
-    private String issueTitle;                 
-    private String note;
-    private Timestamp updatedAt;
-    private String technicalStaffName; 
-    private String assignedByName;   
-    private String support_status;
+	private String staffName;
+	private String staffEmail;
+	private String taskTitle;
+	private String taskDescription;
+	private Integer customerIssueId;
+	private String issueCode;
+	private String issueTitle;
+	private String note;
+	private Timestamp updatedAt;
+	private String technicalStaffName;
+	private String assignedByName;
+	private String support_status;
+	private boolean cancelledByWarranty;
+	private int warrantyCardId;
+	private WarrantyCard warrantyCard;
 
-    public TaskDetail() {}
+	public WarrantyCard getWarrantyCard() {
+		return warrantyCard;
+	}
+
+	public void setWarrantyCard(WarrantyCard wc) {
+		this.warrantyCard = wc;
+	}
+
+	public int getWarrantyCardId() {
+		return warrantyCardId;
+	}
+
+	public void setWarrantyCardId(int warrantyCardId) {
+		this.warrantyCardId = warrantyCardId;
+	}
+
+	public boolean isCancelledByWarranty() {
+		return cancelledByWarranty;
+	}
+
+	public void setCancelledByWarranty(boolean cancelledByWarranty) {
+		this.cancelledByWarranty = cancelledByWarranty;
+	}
+
+	public TaskDetail() {
+	}
 
 	public TaskDetail(int id, int taskId, int technicalStaffId, Integer assignedBy, Timestamp assignedAt,
 			Timestamp deadline, String status, String staffName, String staffEmail, String taskTitle,
@@ -79,9 +107,9 @@ public class TaskDetail {
 		this.deadline = deadline;
 		this.status = status;
 	}
-	
-	public TaskDetail(int id, int taskId, int technicalStaffId, Timestamp assignedAt, Timestamp deadline,
-			String status, String note) {
+
+	public TaskDetail(int id, int taskId, int technicalStaffId, Timestamp assignedAt, Timestamp deadline, String status,
+			String note, boolean cancelledByWarranty) {
 		super();
 		this.id = id;
 		this.taskId = taskId;
@@ -90,8 +118,22 @@ public class TaskDetail {
 		this.deadline = deadline;
 		this.status = status;
 		this.note = note;
+		this.cancelledByWarranty = cancelledByWarranty;
 	}
 
+	public TaskDetail(int id, int taskId, int technicalStaffId, Timestamp assignedAt, Timestamp deadline, String status,
+			String note, boolean cancelledByWarranty, int warrantyCardId) {
+		super();
+		this.id = id;
+		this.taskId = taskId;
+		this.technicalStaffId = technicalStaffId;
+		this.assignedAt = assignedAt;
+		this.deadline = deadline;
+		this.status = status;
+		this.note = note;
+		this.cancelledByWarranty = cancelledByWarranty;
+		this.warrantyCardId = warrantyCardId;
+	}
 
 	public int getId() {
 		return id;
@@ -117,198 +159,132 @@ public class TaskDetail {
 		this.taskId = taskId;
 	}
 
-
-
 	public int getTechnicalStaffId() {
 		return technicalStaffId;
 	}
-
-
 
 	public void setTechnicalStaffId(int technicalStaffId) {
 		this.technicalStaffId = technicalStaffId;
 	}
 
-
-
 	public Integer getAssignedBy() {
 		return assignedBy;
 	}
-
-
 
 	public void setAssignedBy(Integer assignedBy) {
 		this.assignedBy = assignedBy;
 	}
 
-
-
 	public Timestamp getAssignedAt() {
 		return assignedAt;
 	}
-
-
 
 	public void setAssignedAt(Timestamp assignedAt) {
 		this.assignedAt = assignedAt;
 	}
 
-
-
 	public Timestamp getDeadline() {
 		return deadline;
 	}
-
-
 
 	public void setDeadline(Timestamp deadline) {
 		this.deadline = deadline;
 	}
 
-
-
 	public String getStatus() {
 		return status;
 	}
-
-
 
 	public void setStatus(String status) {
 		this.status = status;
 	}
 
-
-
 	public String getStaffName() {
 		return staffName;
 	}
-
-
 
 	public void setStaffName(String staffName) {
 		this.staffName = staffName;
 	}
 
-
-
 	public String getStaffEmail() {
 		return staffEmail;
 	}
-
-
 
 	public void setStaffEmail(String staffEmail) {
 		this.staffEmail = staffEmail;
 	}
 
-
-
 	public String getTaskTitle() {
 		return taskTitle;
 	}
-
-
 
 	public void setTaskTitle(String taskTitle) {
 		this.taskTitle = taskTitle;
 	}
 
-
-
 	public String getTaskDescription() {
 		return taskDescription;
 	}
-
-
 
 	public void setTaskDescription(String taskDescription) {
 		this.taskDescription = taskDescription;
 	}
 
-
-
 	public Integer getCustomerIssueId() {
 		return customerIssueId;
 	}
-
-
 
 	public void setCustomerIssueId(Integer customerIssueId) {
 		this.customerIssueId = customerIssueId;
 	}
 
-
-
 	public String getIssueCode() {
 		return issueCode;
 	}
-
-
 
 	public void setIssueCode(String issueCode) {
 		this.issueCode = issueCode;
 	}
 
-
-
 	public String getIssueTitle() {
 		return issueTitle;
 	}
-
-
 
 	public void setIssueTitle(String issueTitle) {
 		this.issueTitle = issueTitle;
 	}
 
-
 	public String getNote() {
 		return note;
 	}
-
-
 
 	public void setNote(String note) {
 		this.note = note;
 	}
 
-
-
 	public Timestamp getUpdatedAt() {
 		return updatedAt;
 	}
-
-
 
 	public void setUpdatedAt(Timestamp updatedAt) {
 		this.updatedAt = updatedAt;
 	}
 
-
-
 	public String getTechnicalStaffName() {
 		return technicalStaffName;
 	}
-
-
 
 	public void setTechnicalStaffName(String technicalStaffName) {
 		this.technicalStaffName = technicalStaffName;
 	}
 
-
-
 	public String getAssignedByName() {
 		return assignedByName;
 	}
 
-
-
 	public void setAssignedByName(String assignedByName) {
 		this.assignedByName = assignedByName;
 	}
-	
-	
-
 
 }

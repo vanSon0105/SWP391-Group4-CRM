@@ -168,7 +168,7 @@ public class PaymentController extends HttpServlet {
 				int paymentId = Integer.parseInt(id);
 				paymentDao.updateStatus(paymentId, "failed");
 				orderDao.updateOrderStatus(orderDao.getOrderByPaymentId(paymentId), "cancelled");
-				sendMess(req, "success", "Đã từ chối thanh toán #" + paymentId);
+				sendMess(req, "failed", "Đã từ chối thanh toán #" + paymentId);
 			} else {
 				int paymentId = Integer.parseInt(id);
 				paymentDao.updateStatus(paymentId, action);

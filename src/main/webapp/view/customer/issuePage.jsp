@@ -8,27 +8,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechShop</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
+        body.home-page {
+		    display: flex;
+		    flex-direction: column;
+		}
+		
+		.home-page main {
+			min-width: 1100px;
+		    flex: 1;
+			margin: 40px auto;
+			background: #fff;
+			padding: 32px !important;
+			border-radius: 12px;
+			box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
+		}
 
         .issue-container {
-        	display: flex;
-		    flex: 1;
-		    width: 720px;
+        	width: 100%;
 		    margin: 40px auto;
-		    background: #fff;
 		    padding: 32px;
-		    border-radius: 12px;
-		    box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
-		    justify-content: center;
-		    align-items: center;
-		    flex-direction: column;
         }
 
         h1 {
@@ -121,9 +119,9 @@
             pointer-events: none;
         }
 
-        .btn {
+        .actions .btn {
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 8px !important;
             border: none;
             cursor: pointer;
             font-weight: 600;
@@ -133,11 +131,11 @@
         .btn-secondary {
             background: #eceff4;
             color: #1f2d3d;
+            transition: transform 0.5s ease;
         }
-
-        .btn-primary {
-            background: #2563eb;
-            color: #fff;
+        
+        .btn-secondary:hover{
+        	transform: scale(1.1);
         }
 
         .alert {
@@ -170,6 +168,7 @@
 </head>
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
+	<main>
     <div class="issue-container">
 		<c:if test="${not empty list}">
         <h1>Gửi yêu cầu hỗ trợ</h1>
@@ -224,6 +223,11 @@
                             <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
                 			Sửa chữa
                         </option>
+                        
+                        <option value="repair"
+                            <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
+                			Sửa chữa
+                        </option>
                     </select>
             </div>
 
@@ -244,7 +248,8 @@
 
             <div class="actions">
                 <a class="btn btn-secondary" href="issue">Hủy </a>
-                <button type="submit" class="btn btn-primary">Gửi</button>
+                <button type="submit" class="btn order-btn">Gửi</button>
+          		<a href="external-repair" class="btn order-btn">Sửa ngoài trung tâm</a>
             </div>
         </form>
         </c:if>
@@ -252,6 +257,7 @@
         	<div style="text-align: center;">Tài khoản của bạn hiện không có thiết bị bảo hành/sửa chữa. Vui lòng mua hàng!</div>
         </c:if>
     </div>
+    </main>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
 </body>
 
