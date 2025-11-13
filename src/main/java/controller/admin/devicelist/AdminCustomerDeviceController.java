@@ -52,10 +52,6 @@ public class AdminCustomerDeviceController extends HttpServlet {
                 request.setAttribute("error", "ID khách hàng không hợp lệ!");
             }
         }
-
-        // debug
-        System.out.println("Number of customers: " + users.size());
-        System.out.println("CustomerIdStr: " + customerIdStr);
         if (devices != null) System.out.println("Devices count: " + devices.size());
 
         request.getRequestDispatcher("/view/admin/device/customer-device.jsp").forward(request, response);

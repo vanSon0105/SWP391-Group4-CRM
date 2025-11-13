@@ -16,7 +16,7 @@ body.home-page {
 }
 
 .home-page main {
-	min-width: 1200px;
+	min-width: 1100px;
     flex: 1;
 	margin: 40px auto;
 	background: #fff;

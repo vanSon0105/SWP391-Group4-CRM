@@ -10,10 +10,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TechShop</title>
 
-<link rel="stylesheet"
-	href="${pageContext.request.contextPath}/assets/css/admin.css">
-
-<link rel="stylesheet"
+<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin.css">
+	<link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
 	integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw=="
 	crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -80,20 +78,13 @@ th, td {
     align-items: center;
 }
 
-.alert-banner{
-	max-width: 1150px;
-	margin: 0 auto 16px;
-	padding: 14px 18px;
-	border-radius: 14px;
-	font-weight: 600;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	gap: 12px;
-}
 .alert-banner.success{
 	background: rgba(34,197,94,.12);
 	color: #166534;
+}
+.alert-banner.failed{
+	background-color: #fee2e2;
+	color: #b91c1c;
 }
 .alert-banner.error{
 	background: rgba(248,113,113,.12);
@@ -109,12 +100,6 @@ th, td {
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<jsp:include page="../common/sidebar.jsp"></jsp:include>
 	<main class="sidebar-main">
-		<c:if test="${not empty paymentMessage}">
-			<div class="alert-banner ${paymentMessageType}">
-				<span>${paymentMessage}</span>
-				<button type="button" class="btn device-btn" onclick="this.parentElement.style.display='none'">Close</button>
-			</div>
-		</c:if>
 		<section class="panel">
 			<div class="filters">
 				<form style="width: 100%; display: flex; gap: 30px; justify-content: center;" action="payment-list" method="get">
@@ -159,6 +144,11 @@ th, td {
 			</div>
 		</section>
 		<section class="panel" id="table-panel">
+			<c:if test="${not empty paymentMessage}">
+				<div class="alert-banner ${paymentMessageType}">
+					${paymentMessage}
+				</div>
+			</c:if>
 			<div style="display: flex;justify-content: space-between;align-items: center;margin-bottom: 20px;">
 				<h2>Danh sách thanh toán</h2>			
 			</div>
@@ -168,14 +158,14 @@ th, td {
 
 						<tr>
 							<th>ID</th>
-							<th>FullName</th>
-							<th>Phone</th>
-							<th>Address</th>
-							<th>DeliveryTime</th>
-							<th>Status</th>
-							<th>CreatedAt</th>
-							<th>PaidAt</th>
-							<th>Action</th>
+							<th>Họ tên</th>
+							<th>Số điện thoại</th>
+							<th>Địa chỉ</th>
+							<th>Thời gian giao</th>
+							<th>Trạng thái</th>
+							<th>Ngày tạo</th>
+							<th>Ngày thanh toán</th>
+							<th>Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -186,7 +176,15 @@ th, td {
 									<td>${p.fullName}</td>
 									<td>${p.phone}</td>
 									<td>${p.address}</td>
-									<td>${p.deliveryTime}</td>
+									<td>
+										<c:choose>
+											<c:when test="${p.deliveryTime} == 'working_hours'">Trong giờ hành chính</c:when>
+											<c:when test="${p.deliveryTime} == 'evening'">Tối (18:00 - 21:00)</c:when>
+											<c:otherwise>
+												Cuối tuần
+											</c:otherwise>
+									   </c:choose>
+									</td>
 									<td><c:choose>
 											<c:when test="${p.status == 'pending'}">
 												<span class="status pending">Đang chờ</span>
@@ -225,7 +223,6 @@ th, td {
 
 					</tbody>
 				</table>
-				
 				<p style="margin-top:12px; color:#6b7280; text-align: center;">Tổng số thanh toán: <strong>${totalPayments}</strong></p>
 			</div>
 			</section>

@@ -59,13 +59,21 @@
 	        color: #92400e;
 	        font-weight: 600;
 	    }
+	    
+	    .panel-left{
+	    	display: flex;
+		    justify-content: space-between;
+		    flex-direction: column;
+		    justify-content: space-between;
+		    height: 100%;
+	    }
     </style>
 </head>
 <body class="shop-page">
 <jsp:include page="../common/header.jsp"></jsp:include>
 <section class="main-content">
     <div class="panel">
-        <div style="display:grid; gap:12px; margin-left:18px">
+        <div class="panel-left">
             <p><strong>Chủ tài khoản:</strong> Phạm Ngọc Hiếu</p>
             <p><strong>Số tài khoản:</strong> 0989136435</p>
             <p><strong>Ngân hàng:</strong> MB Bank</p>
@@ -103,22 +111,22 @@
             <c:choose>
                 <c:when test="${bankingContext == 'issue'}">
                 	<div class="form-actions" style="flex-wrap: nowrap;">
-	                    <a href="<%=request.getContextPath()%>/issue"><i class="fa-solid fa-caret-left"></i>
+	                    <a href="<%=request.getContextPath()%>/issue">
 	                        Quay lại danh sách yêu cầu
 	                    </a>
 	                    <a class="back-to-home"
 	                       href="create-issue">
-	                        <i class="fa-solid fa-life-ring"></i> Cần hỗ trợ thêm
+	                        Cần hỗ trợ thêm
 	                    </a>
                     </div>
                 </c:when>
                 <c:otherwise>
                 	<div class="form-actions" style="flex-wrap: nowrap;">
-	                    <a href="<%=request.getContextPath()%>/order-tracking"><i class="fa-solid fa-caret-left"></i>
+	                    <a href="<%=request.getContextPath()%>/order-tracking">
 	                        Tình trạng thanh toán
 	                    </a>
 	                    <a class="back-to-home" href="<%=request.getContextPath()%>/">
-	                        <i class="fa-solid fa-arrow-left"></i> Về trang chủ
+	                        Về trang chủ
 	                    </a>
                 	</div>
                 </c:otherwise>

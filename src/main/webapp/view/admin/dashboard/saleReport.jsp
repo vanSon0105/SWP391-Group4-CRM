@@ -36,7 +36,7 @@
 
         <section class="panel">
             <h2>Biểu đồ doanh thu & lợi nhuận</h2>
-            <div class="trend-board">
+            <div>
                 <div class="trend-chart">
                     <canvas id="revenueChart"></canvas>
                 </div>

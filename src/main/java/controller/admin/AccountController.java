@@ -384,18 +384,21 @@ public class AccountController extends HttpServlet {
             User targetUser = userDAO.getUserById(id);
             if (targetUser == null) {
                 request.setAttribute("mess", "Người dùng không tồn tại!");
+                request.setAttribute("type", "failed");
                 listAllUsers(request, response, currentUser);
                 return;
             }
 
             if (currentUser.getId() == targetUser.getId()) {
                 request.setAttribute("mess", "Bạn không thể khóa chính mình!");
+                request.setAttribute("type", "failed");
                 listAllUsers(request, response, currentUser);
                 return;
             }
 
             if (currentUser.getRoleId() == 1 && targetUser.getRoleId() == 1) {
                 request.setAttribute("mess", "Admin không thể khóa admin khác!");
+                request.setAttribute("type", "failed");
                 listAllUsers(request, response, currentUser);
                 return;
             }
@@ -403,8 +406,10 @@ public class AccountController extends HttpServlet {
             boolean success = userDAO.softDeleteUser(id);
             if (success) {
                 request.setAttribute("mess", "Đã khóa người dùng thành công!");
+                request.setAttribute("type", "success");
             } else {
                 request.setAttribute("mess", "Không thể khóa người dùng!");
+                request.setAttribute("type", "failed");
             }
 
             listAllUsers(request, response, currentUser);
@@ -413,6 +418,7 @@ public class AccountController extends HttpServlet {
             e.printStackTrace();
             User currentUser = (User) request.getSession().getAttribute("account");
             request.setAttribute("mess", "Đã xảy ra lỗi trong quá trình khóa người dùng!");
+            request.setAttribute("type", "failed");
             listAllUsers(request, response, currentUser);
         }
     }
@@ -424,8 +430,10 @@ public class AccountController extends HttpServlet {
 
         if (success) {
             request.setAttribute("mess", "Đã mở khóa tài khoản thành công!");
+            request.setAttribute("type", "success");
         } else {
             request.setAttribute("mess", "Không thể mở khóa tài khoản!");
+            request.setAttribute("type", "failed");
         }
 
         HttpSession session = request.getSession(false);

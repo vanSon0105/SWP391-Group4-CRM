@@ -10,32 +10,36 @@
 <title>TechShop</title>
 <style>
     body.home-page {
-      display: flex;
-      flex-direction: column;
-      background: radial-gradient(circle at top, #f0f9ff, #fff7ed 45%, #fef2f2);
-    }
-
-    .home-page main {
+	    display: flex;
+	    flex-direction: column;
+	}
+	
+	.home-page main {
+		min-width: 1100px;
 	    flex: 1;
-	    margin: 40px auto;
-	    background: #fff;
-	    padding: 32px !important;
-	    border-radius: 12px;
-	    box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
-    }
-
-    .issue-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      gap: 45px;
-    }
-
-    .issue-header h1 {
-      margin: 0;
-      color: #1f2d3d;
-    }
+		margin: 40px auto;
+		background: #fff;
+		padding: 32px !important;
+		border-radius: 12px;
+		box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
+	}
+    
+    .page-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 16px;
+	}
+	
+	.page-header h1 {
+		margin: 0;
+		color: #0f172a;
+	}
+	
+	.page-actions {
+		display: flex;
+		gap: 10px;
+	}
 
     .alert {
       padding: 12px 16px;
@@ -209,7 +213,7 @@
     }
 
     .link-button {
-        border-radius: 5px;
+        border-radius: 10px;
 	    background: #ffd7d7;
 	    border: 1px solid red;
 	    color: #dc2626;
@@ -303,7 +307,8 @@
       grid-column: 1 / -1;
     }
     
-    .action .btn {
+    .action .btn,
+    .page-actions .btn{
 		border-radius: 5px !important;
 	}	
 </style>
@@ -311,11 +316,13 @@
 <body class="home-page">
 	<jsp:include page="../common/header.jsp"></jsp:include>
 	<main>
-		<div class="issue-header">
-			<h1>Yêu cầu hỗ trợ của tôi</h1>
-			<div class="action">
-			<a class="btn order-btn" href="create-issue">Gửi yêu cầu mới</a>
-			<a class="btn order-btn" href="my-devices">Thiết bị đã mua</a>
+		<div class="page-header">
+			<div>
+				<h1>Yêu cầu hỗ trợ của tôi</h1>
+			</div>
+			<div class="page-actions">
+				<a class="btn order-btn" href="create-issue">Gửi yêu cầu mới</a>
+				<a class="btn order-btn" href="my-devices">Thiết bị đã mua</a>
 			</div>
 		</div>
 
@@ -375,7 +382,7 @@
                     <c:set var="payment" value="${issuePayments[s.id]}" />
                     <tr>
                         <td>${s.issueCode}</td>
-                        <td>${s.title}</td>
+                        <td class="short-text">${s.title}</td>
                         <td>
                             <fmt:formatDate value="${s.createdAt}" pattern="dd/MM/yyyy HH:mm" />
                         </td>
