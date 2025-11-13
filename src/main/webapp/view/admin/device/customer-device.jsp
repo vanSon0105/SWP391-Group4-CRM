@@ -51,49 +51,54 @@
             </div>
         </section>
 
-		<c:if test="${not empty selectedCustomer}">
-	        <section class="panel" style="margin-top: 30px;">
-	            <h2>Thiết bị của ${selectedCustomer.fullName}</h2>
-	            <div class="table-wrapper">
-	                <table class="device-table">
-	                    <thead>
-	                        <tr>
-	                            <th>Mã Seri</th>
-	                            <th>Tên thiết bị</th>
-	                            <th>Trạng thái kho</th>
-	                            <th>Bảo hành</th>
-	                            <th>Vấn đề</th>
-	                        </tr>
-	                    </thead>
-	                    <tbody>
-	                        <c:forEach var="device" items="${devices}">
-	                            <tr>
-	                                <td>${device.serialNumber}</td>
-	                                <td>${device.deviceName}</td>
-	                                <td>${device.status}</td>
-	                                <td>
-	                                    <c:if test="${device.hasWarranty}">
-	                                       <a href="${pageContext.request.contextPath}/warranty-details?id=${device.warrantyCardId}" class="btn device-btn">Xem</a>
-	                                    </c:if>
-	                                    <c:if test="${!device.hasWarranty}">
-	                                        N/A
-	                                    </c:if>
-	                                </td>
-	                                <td>
-	                                    <c:if test="${device.hasIssue}">
-	                                        <a href="admin-issue-detail?id=${device.issueId}" class="btn device-btn">Xem</a>
-	                                    </c:if>
-	                                    <c:if test="${!device.hasIssue}">
-	                                        Không có
-	                                    </c:if>
-	                                </td>
-	                            </tr>
-	                        </c:forEach>
-	                    </tbody>
-	                </table>
-	            </div>
-	        </section>
-       	</c:if>
+        <c:if test="${not empty selectedCustomer}">
+        <section class="panel" style="margin-top: 30px;">
+            <h2>Thiết bị của ${selectedCustomer.fullName}</h2>
+            <div class="table-wrapper">
+                <table class="device-table">
+                    <thead>
+                        <tr>
+                            <th>Mã Seri</th>
+                            <th>Tên thiết bị</th>
+                            <th>Trạng thái kho</th>
+                            <th>Bảo hành</th>
+                            <th>Vấn đề</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="device" items="${devices}">
+                            <tr>
+                                <td>${device.serialNumber}</td>
+                                <td>${device.deviceName}</td>
+                                <td>
+    							<c:choose>   
+        							<c:when test="${device.status == 'sold'}">Đã bán</c:when>
+        							
+   								 </c:choose>
+								</td>
+                                <td>
+                                    <c:if test="${device.hasWarranty}">
+                                       <a href="${pageContext.request.contextPath}/warranty-details?id=${device.warrantyCardId}" class="btn device-btn">Xem</a>
+                                    </c:if>
+                                    <c:if test="${!device.hasWarranty}">
+                                        N/A
+                                    </c:if>
+                                </td>
+                                <td>
+                                    <c:if test="${device.hasIssue}">
+                                        <a href="admin-issue-detail?id=${device.issueId}" class="btn device-btn">Xem</a>
+                                    </c:if>
+                                    <c:if test="${!device.hasIssue}">
+                                        Không có
+                                    </c:if>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        </c:if>
     </main>
 </body>
 </html>

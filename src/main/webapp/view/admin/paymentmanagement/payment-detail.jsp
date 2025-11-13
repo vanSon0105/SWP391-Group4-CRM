@@ -95,10 +95,15 @@
 			</div>
 			
 			<div class="small-box">
-				<strong>Thời gian giao hàng:</strong>
-				<c:out
-					value="${payment.deliveryTime}" />
-			</div>
+    <strong>Thời gian giao hàng:</strong>
+    <c:choose>
+        <c:when test="${payment.deliveryTime == 'working_hours'}">Giờ hành chính</c:when>
+        <c:when test="${payment.deliveryTime == 'weekend'}">Cuối tuần</c:when>
+        <c:when test="${payment.deliveryTime == 'anytime'}">Bất kỳ thời gian nào</c:when>
+        <c:otherwise>Không xác định</c:otherwise>
+    </c:choose>
+</div>
+
 			
 			<div class="small-box">
 				<strong>Địa chỉ:</strong>
@@ -131,39 +136,62 @@
 		</div>
 	
 		<div style="margin-top:20px;">
-			<h2>Danh sách thiết bị trong đơn hàng</h2>
-			<div class="table-wrapper">
-				<table class="device-table">
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Tên thiết bị</th>
-							<th>Số lượng</th>
-							<th>Giá</th>
-							<th>Serial ID</th>
-							<th>Warranty Card ID</th>
-						</tr>
-					</thead>
-					<tbody>
-						<c:forEach var="d" items="${details}">
-							<tr>
-								<td>${d.id}</td>
-								<td>${d.deviceName}</td>
-								<td>${d.quantity}</td>
-								<td><fmt:formatNumber value="${d.price}" type="currency" currencySymbol="₫"/></td>
-								<td>${d.deviceSerialId}</td>
-								<td>${d.warrantyCardId}</td>
-							</tr>
-						</c:forEach>
-						<c:if test="${empty details}">
-							<tr>
-								<td colspan="6" style="text-align:center;">Không có thiết bị nào trong đơn hàng này.</td>
-							</tr>
-						</c:if>
-					</tbody>
-				</table>
-			</div>
-		</div>
+    <h2>Danh sách thiết bị trong đơn hàng</h2>
+    <div class="table-wrapper">
+        <table class="device-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên thiết bị</th>
+                    <th>Số lượng</th>
+                    <th>Giá</th>
+                    <th>Serial ID</th>
+                    <th>Warranty Card ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="d" items="${details}">
+                    <tr>
+    <td>${d.id}</td>
+    <td>${d.deviceName}</td>
+    <td>${d.quantity}</td>
+    <td><fmt:formatNumber value="${d.price}" type="currency" currencySymbol="₫"/></td>
+    
+    <td>
+    <c:choose>
+        <c:when test="${payment.status == 'success'}">
+            ${d.deviceSerialId}
+        </c:when>
+        <c:otherwise>
+            Chưa có thông tin
+        </c:otherwise>
+    </c:choose>
+</td>
+
+<td>
+    <c:choose>
+        <c:when test="${payment.status == 'success'}">
+            ${d.warrantyCardId}
+        </c:when>
+        <c:otherwise>
+            Chưa có thông tin
+        </c:otherwise>
+    </c:choose>
+</td>
+
+</tr>
+                </c:forEach>
+
+                <c:if test="${empty details}">
+                    <tr>
+                        <td colspan="6" style="text-align:center;">Không có thiết bị nào trong đơn hàng này.</td>
+                    </tr>
+                </c:if>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 	</section>
 </main>
 </body>

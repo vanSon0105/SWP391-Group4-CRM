@@ -1,5 +1,8 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OrderDetail {
     private int id;              
     private int orderId;        
@@ -9,7 +12,9 @@ public class OrderDetail {
     private double price;        
     private int discount;
     private int deviceSerialId;  
-    private int warrantyCardId; 
+    private int warrantyCardId;
+    private List<Integer> serialIds = new ArrayList<>();
+    private List<Integer> warrantyIds = new ArrayList<>();
 
     public OrderDetail() {}
 
@@ -64,4 +69,20 @@ public class OrderDetail {
                 + ", price=" + price + ", discount=" + discount
                 + ", deviceSerialId=" + deviceSerialId + ", warrantyCardId=" + warrantyCardId + "]";
     }
+
+	public List<Integer> getSerialIds() {
+		return serialIds;
+	}
+
+	public void setSerialIds(List<Integer> serialIds) {
+		this.serialIds = serialIds;
+	}
+
+	public List<Integer> getWarrantyIds() {
+		return warrantyIds;
+	}
+
+	public void setWarrantyIds(List<Integer> warrantyIds) {
+		this.warrantyIds = warrantyIds;
+	}
 }

@@ -48,4 +48,29 @@ public class Issue {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	
+	public String getStatusVN() {
+	    if (status == null) return "";
+
+	    switch (status) {
+	        case "new": return "Mới";
+	        case "in_progress": return "Đang xử lý";
+	        case "awaiting_customer": return "Chờ khách hàng";
+	        case "submitted": return "Đã gửi";
+	        case "manager_review": return "Chờ duyệt quản lý";
+	        case "manager_approved": return "Quản lý đã duyệt";
+	        case "manager_rejected": return "Quản lý từ chối";
+	        case "task_created": return "Đã tạo công việc";
+	        case "tech_in_progress": return "Kỹ thuật đang xử lý";
+	        case "customer_cancelled": return "Khách hàng hủy";
+	        case "completed": return "Hoàn thành";
+	        case "create_payment": return "Tạo thanh toán";
+	        case "waiting_payment": return "Chờ thanh toán";
+	        case "waiting_confirm": return "Chờ xác nhận";
+	        case "resolved": return "Đã giải quyết";
+	        default: return status; 
+	    }
+	}
+	
+	
 }
