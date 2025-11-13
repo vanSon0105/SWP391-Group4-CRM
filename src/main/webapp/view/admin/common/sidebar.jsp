@@ -63,9 +63,7 @@
         <c:if test="${hasTaskArea}">
             <details class="sidebar-group">
                 <summary>Nhiệm vụ</summary>
-                <c:if test="${permissions.contains('Quản Lí Nhiệm Vụ')}">
-                    <a href="task-list">Danh sách nhiệm vụ</a>
-                </c:if>
+                <a href="task-list">Danh sách nhiệm vụ</a>
                 <c:if test="${permissions.contains('Trang Quản Lí Kỹ Thuật')}">
                     <a href="staff-list">Danh sách nhân viên kỹ thuật</a>
                     <a href="manager-issues">Nhiệm vụ cần giao</a>

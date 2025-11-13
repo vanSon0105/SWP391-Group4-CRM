@@ -178,6 +178,7 @@ public class CartController extends HttpServlet {
 			return;
 		}
 		cdao.addDeviceToCart(userId, deviceId);
+		session.setAttribute("cartJustAdded", true);
 		resp.sendRedirect("home");
 	}
 	

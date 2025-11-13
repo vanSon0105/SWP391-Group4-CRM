@@ -2196,3 +2196,39 @@ body.shop-page.account-page {
     border-color: #2563eb;
     box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
+
+.page-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 16px;
+}
+
+.page-header h1 {
+	margin: 0;
+	color: #0f172a;
+}
+
+.page-actions {
+	display: flex;
+	gap: 10px;
+}
+
+.alert-banner{
+	max-width: max-content;
+    margin: 0 auto;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.short-text {
+	 max-width: 320px;
+	 white-space: nowrap;
+	 overflow: hidden;
+	 text-overflow: ellipsis;
+}

@@ -527,6 +527,117 @@
 		</section>
     </main>
 	<jsp:include page="../common/footer.jsp"></jsp:include>
+	<c:if test="${cartJustAdded}">
+		<style>
+			.cart-modal {
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.45);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 9999;
+				opacity: 0;
+				transition: opacity 0.25s ease;
+				pointer-events: none;
+			}
+			.cart-modal.show {
+				opacity: 1;
+				pointer-events: auto;
+			}
+			.cart-modal-content {
+				background: #fff;
+				padding: 28px 32px;
+				border-radius: 16px;
+				box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
+				text-align: center;
+				max-width: 420px;
+				width: 92%;
+				position: relative;
+				animation: modalSlide 0.35s ease;
+			}
+			.cart-modal-close {
+				position: absolute;
+			    top: -5px;
+			    right: 9px;
+			    border: none;
+			    background: transparent;
+			    font-size: 3.5rem;
+			    color: #94a3b8;
+			    cursor: pointer;
+			}
+			.cart-modal-close:hover {
+				color: #0f172a;
+			}
+			.cart-modal h4 {
+				margin-bottom: 8px;
+				font-size: 1.25rem;
+			}
+			.cart-modal p {
+				padding: 10px;
+			    border-radius: 999px;
+			    background: rgba(34, 197, 94, .12);
+			    color: #166534;
+			    margin-bottom: 18px;
+			}
+			.cart-modal .cart-modal-actions {
+				display: flex;
+				gap: 10px;
+				justify-content: center;
+				flex-wrap: wrap;
+			}
+			.cart-modal .cart-modal-actions a {
+				padding: 10px 18px;
+				border-radius: 999px;
+				border: none;
+				font-weight: 600;
+				text-decoration: none;
+			}
+			.cart-modal .cart-modal-actions .ghost {
+				background: #e2e8f0;
+				color: #0f172a;
+			}
+			@keyframes modalSlide {
+				from {
+					transform: translateY(15px);
+					opacity: 0;
+				}
+				to {
+					transform: translateY(0);
+					opacity: 1;
+				}
+			}
+		</style>
+		<div class="cart-modal show" id="cartSuccessModal">
+			<div class="cart-modal-content">
+				<button type="button" class="cart-modal-close" data-close="true">&times;</button>
+				<h4>Đã thêm vào giỏ hàng</h4>
+				<p>Thiết bị của bạn đã được thêm vào giỏ hàng thành công.</p>
+				<div class="cart-modal-actions">
+					<a href="cart" class="btn order-btn">Xem giỏ hàng</a>
+					<a href="home" class="btn order-btn ghost" data-close="true">Tiếp tục mua sắm</a>
+				</div>
+			</div>
+		</div>
+		<script>
+			(function() {
+				const modal = document.getElementById('cartSuccessModal');
+				if (!modal) return;
+				const hideModal = () => {
+					modal.classList.remove('show');
+					setTimeout(() => {
+						modal.style.display = 'none';
+					}, 250);
+				};
+				modal.addEventListener('click', (e) => {
+					if (e.target === modal || e.target.hasAttribute('data-close')) {
+						hideModal();
+					}
+				});
+				setTimeout(hideModal, 2000);
+			})();
+		</script>
+	</c:if>
 </body>
 
 </html>

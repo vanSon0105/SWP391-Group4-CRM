@@ -41,7 +41,7 @@ public class CreateImportExportOrderController extends HttpServlet {
         request.setAttribute("userList", userList);
         request.setAttribute("now", new java.util.Date());
 
-        request.getRequestDispatcher("/view/transaction/createTransaction.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/transaction/createTransaction.jsp").forward(request, response);
     }
 
     @Override

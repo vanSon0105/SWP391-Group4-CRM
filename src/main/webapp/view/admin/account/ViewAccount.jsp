@@ -102,6 +102,15 @@
 	    pointer-events: none;
 	    opacity: 0.5;
 	}
+	
+	.alert-banner.success{
+		background: rgba(34,197,94,.12);
+		color: #166534;
+	}
+	.alert-banner.failed{
+		background-color: #fee2e2;
+		color: #b91c1c;
+	}
 </style>
 </head>
 <body class="management-page device-management">
@@ -145,7 +154,9 @@
         	<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2>Danh sách tài khoản</h2>
                 <c:if test="${not empty mess}">
-                	<span style="color: red; font-size: 1.5rem;">${mess}</span>	
+	                <div class="alert-banner ${type}">
+						${mess}
+					</div>
                 </c:if>
         	</div>
 

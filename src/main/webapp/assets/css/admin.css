@@ -865,3 +865,15 @@ body.sidebar-collapsed .management-page.device-management .sidebar-main {
 	pointer-events: none;
 	opacity: 0.5;
 }
+
+.alert-banner{
+	max-width: max-content;
+    margin: 0 auto;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}

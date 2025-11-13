@@ -31,13 +31,16 @@ public class CustomerOwnedDeviceController extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
+        String keyword = req.getParameter("keyword");
+        
 		int page = parseIntOrDefault(req.getParameter("page"), 1);
 		if (page < 1) {
 			page = 1;
 		}
 		
-		int totalDeviceModels = customerIssueDAO.countOwnedDeviceModels(user.getId());
-		int totalPages = (int) Math.ceil(totalDeviceModels / (double) PAGE_SIZE);
+		int filteredDeviceModels = customerIssueDAO.countOwnedDeviceModels(user.getId(), keyword);
+		int totalDeviceModels = customerIssueDAO.countOwnedDeviceModels(user.getId(), null);
+		int totalPages = (int) Math.ceil(filteredDeviceModels / (double) PAGE_SIZE);
 		if (totalPages == 0) {
 			totalPages = 1;
 		}
@@ -46,7 +49,7 @@ public class CustomerOwnedDeviceController extends HttpServlet {
 		}
 		int offset = (page - 1) * PAGE_SIZE;
 		
-		List<CustomerOwnedDevice> ownedDevices = customerIssueDAO.getOwnedDevicesByCustomer(user.getId(), offset, PAGE_SIZE);
+		List<CustomerOwnedDevice> ownedDevices = customerIssueDAO.getOwnedDevicesByCustomer(user.getId(), offset, PAGE_SIZE, keyword);
 		
 		List<Integer> warrantyCardIds = new ArrayList<>();
 		for (CustomerOwnedDevice device : ownedDevices) {

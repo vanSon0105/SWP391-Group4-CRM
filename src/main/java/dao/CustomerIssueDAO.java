@@ -2,8 +2,6 @@ package dao;
 
 import java.util.*;
 import java.sql.*;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 import model.CustomerDevice;
 import model.CustomerIssue;
@@ -30,41 +28,53 @@ public class CustomerIssueDAO extends DBContext {
 	}
 	
 	public String getSupportStatus(int taskDetailId) {
-		String sql = "SELECT ci.support_status FROM customer_issues ci\r\n"
-				+ "JOIN tasks t ON t.customer_issue_id = ci.id\r\n"
-				+ "JOIN task_details td ON td.task_id = t.id\r\n"
-				+ "WHERE td.task_id = ?;";
-		try {
-			Connection conn = getConnection();
-			PreparedStatement pre = conn.prepareStatement(sql);
-			ResultSet rs = pre.executeQuery();
-			if (rs.next()) {
-	            return rs.getString("support_status");
+	    String sql = "SELECT ci.support_status FROM customer_issues ci "
+	            + "JOIN tasks t ON t.customer_issue_id = ci.id "
+	            + "JOIN task_details td ON td.task_id = t.id "
+	            + "WHERE td.id = ?";
+	    
+	    try (Connection conn = getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql)) {
+	        
+	        pre.setInt(1, taskDetailId);
+	        
+	        try (ResultSet rs = pre.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getString("support_status");
+	            }
 	        }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return null;
 	}
 
 	public List<CustomerDevice> getCustomerDevices(int customerId) {
-		List<CustomerDevice> list = new ArrayList<>();
-		String sql = "SELECT wc.id AS warranty_id, d.name AS device_name, ds.serial_no " + "FROM warranty_cards wc "
-				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id " + "JOIN devices d ON d.id = ds.device_id "
-				+ "WHERE wc.customer_id = ? " + "ORDER BY wc.start_at DESC";
-		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, customerId);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				int warrantyId = rs.getInt("warranty_id");
-				boolean active = hasActiveIssue(warrantyId);
-				list.add(
-						new CustomerDevice(warrantyId, rs.getString("device_name"), rs.getString("serial_no"), active));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return list;
+	    List<CustomerDevice> list = new ArrayList<>();
+	    String sql = "SELECT wc.id AS warranty_id, d.name AS device_name, ds.serial_no, "
+	            + " EXISTS (SELECT 1 FROM customer_issues ci "
+	            + "         WHERE ci.warranty_card_id = wc.id "
+	            + "         AND ci.support_status NOT IN ('resolved', 'customer_cancelled')) AS has_active_issue "
+	            + "FROM warranty_cards wc "
+	            + "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+	            + "JOIN devices d ON d.id = ds.device_id "
+	            + "WHERE wc.customer_id = ? "
+	            + "ORDER BY wc.start_at DESC";
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        
+	        ps.setInt(1, customerId);
+	        ResultSet rs = ps.executeQuery();
+	        while (rs.next()) {
+	            boolean active = rs.getBoolean("has_active_issue");
+	            list.add(
+	                    new CustomerDevice(rs.getInt("warranty_id"), rs.getString("device_name"), rs.getString("serial_no"), active));
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return list;
 	}
 
 	public List<CustomerIssue> getIssuesByUserId(int id) {
@@ -324,35 +334,195 @@ public class CustomerIssueDAO extends DBContext {
 	    return list;
 	}
 	
-	public List<CustomerOwnedDevice> getOwnedDevicesByCustomer(int customerId, int offset, int limit) {
-		if (limit <= 0) {
-			return fetchOwnedDevices(customerId, null);
-		}
-		List<Integer> deviceIds = fetchPagedDeviceIds(customerId, offset, limit);
-		if (deviceIds.isEmpty()) {
-			return Collections.emptyList();
-		}
-		return fetchOwnedDevices(customerId, deviceIds);
+	public List<CustomerOwnedDevice> getOwnedDevicesByCustomer(int customerId, int offset, int limit,
+	        String keyword) {
+	    
+	    if (limit <= 0) {
+	        return Collections.emptyList();
+	    }
+	    
+	    // --- BƯỚC 1: Lấy danh sách ID thiết bị (Pagination) ---
+	    List<Integer> deviceIds = new ArrayList<>();
+	    List<Object> params = new ArrayList<>(); // Lưu tham số keyword nếu có
+	    
+	    StringBuilder idSql = new StringBuilder("SELECT d.id "
+	            + "FROM warranty_cards wc "
+	            + "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+	            + "JOIN devices d ON d.id = ds.device_id "
+	            + "WHERE wc.customer_id = ? ");
+
+	    if (keyword != null && !keyword.isEmpty()) {
+	        idSql.append("AND (LOWER(d.name) LIKE ? OR LOWER(ds.serial_no) LIKE ?) ");
+	        String like = "%" + keyword.toLowerCase() + "%";
+	        params.add(like);
+	        params.add(like);
+	    }
+	    idSql.append("GROUP BY d.id ORDER BY MAX(wc.start_at) DESC, d.name ASC LIMIT ? OFFSET ?");
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(idSql.toString())) {
+	        
+	        int idx = 1;
+	        ps.setInt(idx++, customerId);
+	        
+	        for (Object param : params) {
+	            if (param instanceof String) {
+	                ps.setString(idx++, (String) param);
+	            }
+	        }
+	        
+	        ps.setInt(idx++, limit);
+	        ps.setInt(idx, offset);
+	        
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                deviceIds.add(rs.getInt(1));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    if (deviceIds.isEmpty()) {
+	        return Collections.emptyList();
+	    }
+
+	    // --- BƯỚC 2: Lấy chi tiết units (serials) cho các ID đã tìm được ---
+	    // Sử dụng List thay vì Map
+	    List<CustomerOwnedDevice> resultList = new ArrayList<>();
+	    CustomerOwnedDevice currentSummary = null; // Biến tạm để theo dõi model hiện tại
+
+	    String placeholders = String.join(",", Collections.nCopies(deviceIds.size(), "?"));
+	    
+	    StringBuilder detailSql = new StringBuilder("SELECT d.id AS device_id, d.name AS device_name, d.image_url, "
+	            + "wc.id AS warranty_id, wc.start_at, wc.end_at, ds.serial_no, "
+	            + "TIMESTAMPDIFF(DAY, wc.start_at, NOW()) AS days_since_purchase, "
+	            + "latest_issue.id AS issue_id, latest_issue.issue_code, latest_issue.support_status "
+	            + "FROM warranty_cards wc "
+	            + "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+	            + "JOIN devices d ON d.id = ds.device_id "
+	            + "LEFT JOIN ( "
+	            + "    SELECT ci1.* FROM customer_issues ci1 "
+	            + "    JOIN ( "
+	            + "        SELECT warranty_card_id, MAX(created_at) AS latest_created "
+	            + "        FROM customer_issues "
+	            + "        GROUP BY warranty_card_id "
+	            + "    ) latest ON latest.warranty_card_id = ci1.warranty_card_id "
+	            + "        AND latest.latest_created = ci1.created_at "
+	            + ") latest_issue ON latest_issue.warranty_card_id = wc.id "
+	            + "WHERE wc.customer_id = ? "
+	            + "AND d.id IN (" + placeholders + ") "
+	            // Quan trọng: ORDER BY FIELD giúp gom nhóm các dòng cùng device_id lại gần nhau
+	            + "ORDER BY FIELD(d.id, " + placeholders + "), wc.start_at DESC");
+
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(detailSql.toString())) {
+	        
+	        int idx = 1;
+	        ps.setInt(idx++, customerId);
+	        
+	        // Tham số cho mệnh đề IN (...)
+	        for (Integer id : deviceIds) {
+	            ps.setInt(idx++, id);
+	        }
+	        
+	        // Tham số cho mệnh đề ORDER BY FIELD(...)
+	        for (Integer id : deviceIds) {
+	            ps.setInt(idx++, id);
+	        }
+	        
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                int deviceId = rs.getInt("device_id");
+
+	                // Logic thay thế Map: Kiểm tra xem có chuyển sang thiết bị mới chưa
+	                // Vì đã ORDER BY device_id, nên các dòng cùng ID sẽ nằm liền nhau
+	                if (currentSummary == null || currentSummary.getDeviceId() != deviceId) {
+	                    currentSummary = new CustomerOwnedDevice();
+	                    currentSummary.setDeviceId(deviceId);
+	                    currentSummary.setDeviceName(rs.getString("device_name"));
+	                    currentSummary.setImageUrl(rs.getString("image_url"));
+	                    
+	                    // Thêm model mới vào danh sách kết quả
+	                    resultList.add(currentSummary);
+	                }
+
+	                // --- Xử lý thông tin từng Unit (Serial/Thẻ bảo hành) ---
+	                CustomerOwnedDeviceUnit unit = new CustomerOwnedDeviceUnit();
+	                unit.setWarrantyCardId(rs.getInt("warranty_id"));
+	                unit.setSerialNo(rs.getString("serial_no"));
+	                unit.setPurchaseDate(rs.getTimestamp("start_at"));
+	                unit.setWarrantyEnd(rs.getTimestamp("end_at"));
+	                unit.setDaysSincePurchase(rs.getLong("days_since_purchase"));
+
+	                Integer issueId = (Integer) rs.getObject("issue_id");
+	                boolean hasIssue = issueId != null;
+	                unit.setHasIssue(hasIssue);
+	                
+	                if (hasIssue) {
+	                    unit.setLatestIssueId(issueId);
+	                    unit.setLatestIssueCode(rs.getString("issue_code"));
+	                    unit.setLatestIssueStatus(rs.getString("support_status"));
+	                    currentSummary.incrementUnitsWithIssue();
+	                }
+
+	                // Thêm unit vào model hiện tại
+	                currentSummary.getUnits().add(unit);
+	                currentSummary.setTotalUnits(currentSummary.getUnits().size());
+
+	                // Cập nhật ngày mua gần nhất của model này
+	                Timestamp purchaseDate = unit.getPurchaseDate();
+	                if (purchaseDate != null) {
+	                    Timestamp latestPurchase = currentSummary.getLatestPurchaseAt();
+	                    if (latestPurchase == null || purchaseDate.after(latestPurchase)) {
+	                        currentSummary.setLatestPurchaseAt(purchaseDate);
+	                        currentSummary.setDaysSinceLatestPurchase(unit.getDaysSincePurchase());
+	                    }
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return resultList;
 	}
 	
-	public int countOwnedDeviceModels(int customerId) {
-		String sql = "SELECT COUNT(DISTINCT d.id) FROM warranty_cards wc "
-				+ "JOIN device_serials ds ON ds.id = wc.device_serial_id "
-				+ "JOIN devices d ON d.id = ds.device_id "
-				+ "WHERE wc.customer_id = ?";
-		try (Connection conn = getConnection();
-			 PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setInt(1, customerId);
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					return rs.getInt(1);
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return 0;
-	}
+    public int countOwnedDeviceModels(int customerId, String keyword) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT d.id) FROM warranty_cards wc "
+                + "JOIN device_serials ds ON ds.id = wc.device_serial_id "
+                + "JOIN devices d ON d.id = ds.device_id "
+                + "WHERE wc.customer_id = ? ");
+        
+        List<String> params = new ArrayList<>();
+        
+        if (keyword != null && !keyword.isEmpty()) {
+            sql.append("AND (LOWER(d.name) LIKE ? OR LOWER(ds.serial_no) LIKE ?) ");
+            String like = "%" + keyword.toLowerCase() + "%";
+            params.add(like);
+            params.add(like);
+        }
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            
+            int idx = 1;
+            ps.setInt(idx++, customerId);
+            
+            for (String param : params) {
+                ps.setString(idx++, param);
+            }
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 	
 	public int countOwnedUnits(int customerId) {
 		String sql = "SELECT COUNT(*) FROM warranty_cards WHERE customer_id = ?";

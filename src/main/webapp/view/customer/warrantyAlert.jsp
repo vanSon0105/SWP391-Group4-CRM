@@ -11,6 +11,11 @@
 <link rel="stylesheet" href="assets/css/style.css" />
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/assets/css/shop.css">
 <style>
+:root {
+	--danger: #dc2626;
+	--success: #16a34a;
+	--warning: #f59e0b;
+}
 body.home-page {
     display: flex;
     flex-direction: column;
@@ -24,43 +29,6 @@ body.home-page {
 	padding: 32px !important;
 	border-radius: 12px;
 	box-shadow: 0 8px 24px rgba(31, 45, 61, 0.1);
-}
-.page-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 16px;
-}
-
-.page-header h1 {
-	margin: 0;
-	color: #0f172a;
-}
-
-.btn {
-	padding: 10px 18px;
-	background-color: var(--primary);
-	color: #fff;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	font-weight: 600;
-	font-size: 14px;
-	transition: background-color 0.2s ease, transform 0.1s ease;
-	text-decoration: none;
-}
-
-.btn:hover {
-	background-color: var(--primary-hover);
-	transform: translateY(-1px);
-}
-
-.btn-reset {
-	background-color: var(--secondary);
-}
-
-.btn-reset:hover {
-	background-color: #4b5563;
 }
 
 table {
@@ -176,7 +144,7 @@ tr:last-child td {
 		
 		<div>
 			<c:if test="${empty list}">
-				<p>Không có thẻ bảo hành nào sắp hết hạn.</p>
+				<p style="text-align: center;">Không có thẻ bảo hành nào sắp hết hạn</p>
 			</c:if>
 			<c:if test="${not empty list}">
 				<table>
@@ -189,7 +157,6 @@ tr:last-child td {
 							<th>Ngày kết thúc</th>
 							<th>Số ngày còn lại</th>
 							<th>Trạng Thái</th>
-							<th>Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -219,36 +186,22 @@ tr:last-child td {
 											<c:otherwise>${daysRem} ngày</c:otherwise>
 										</c:choose>
 								</span></td>
-								<td><span class="${statusClass}"> <c:choose>
+								<td>
+									<span class="${statusClass}">
+										<c:choose>
 											<c:when test="${daysRem le 0}">Hết hạn</c:when>
+											<c:when test="${daysRem le 30}">Sắp hết hạn</c:when>
 											<c:otherwise>Còn hạn</c:otherwise>
 										</c:choose>
-								</span></td>
-								<td><c:choose>
-										<c:when test="${daysRem le 0}">
-											<span class="btn btn-danger disabled">Liên hệ trung
-												tâm</span>
-										</c:when>
-										<c:when test="${daysRem lt 15}">
-											<a href="issue?warrantyCardId=${w.id}"
-												class="btn btn-warning">Gửi yêu cầu hỗ trợ</a>
-										</c:when>
-										<c:when test="${daysRem le 30}">
-											<a href="renew?warrantyCardId=${w.id}"
-												class="btn btn-success">Gia hạn bảo hành</a>
-										</c:when>
-										<c:otherwise>
-											<span class="btn btn-secondary disabled">Đang hoạt
-												động</span>
-										</c:otherwise>
-									</c:choose></td>
+									</span>
+								</td>
 							</tr>
 						</c:forEach>
 					</tbody>
 				</table>
 
 				<c:if test="${totalPages > 1}">
-					<div class="pagination-pills">
+					<div class="pagination-pills" style="margin-top: 20px;">
 						<c:choose>
 							<c:when test="${currentPage > 1}">
 								<c:url var="prevUrl" value="warranty-alert">

@@ -137,7 +137,7 @@ public class PaymentDAO extends DBContext {
 	            + "od.quantity, od.price, ods.device_serial_id, wc.id AS warranty_card_id "
 	            + "FROM order_details od "
 	            + "JOIN devices d ON od.device_id = d.id "
-	            + "JOIN order_detail_serials ods ON od.id = ods.order_detail_id "
+	            + "LEFT JOIN order_detail_serials ods ON od.id = ods.order_detail_id "
 	            + "LEFT JOIN warranty_cards wc ON ods.device_serial_id = wc.device_serial_id "
 	            + "WHERE od.order_id = ?";
 	    try (Connection conn = DBContext.getConnection();

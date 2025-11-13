@@ -118,7 +118,7 @@ body .panel h2 {
 			<div class="device-toolbar">
 				<div class="device-toolbar-actions">
 					<a class="btn btn-add" href="task-form"> <i
-						class="fa-solid fa-plus"></i> <span>Thêm task</span>
+						class="fa-solid fa-plus"></i> <span>Thêm nhiệm vụ</span>
 					</a>
 				</div>
 
