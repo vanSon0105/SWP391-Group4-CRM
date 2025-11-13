@@ -168,7 +168,11 @@
                                 <form method="post" action="permission-management">
                                     <input type="hidden" name="action" value="updateRole">
                                     <input type="hidden" name="roleId" value="${selectedRole.id}">
-                                    <div class="permission-grid">
+                                    <div class="permission-grid" data-permission-group="role-permissions">
+                                        <label class="permission-chip select-all">
+                                            <input type="checkbox" data-select-all="role-permissions">
+                                            <span>Chọn tất cả</span>
+                                        </label>
                                         <c:forEach var="permission" items="${allPermissions}">
                                             <label class="permission-chip">
                                                 <input type="checkbox" name="permissionIds" value="${permission.id}"
@@ -188,5 +192,19 @@
             </c:choose>
         </section>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('[data-select-all]').forEach(function (toggle) {
+                const target = toggle.getAttribute('data-select-all');
+                const container = document.querySelector('[data-permission-group=\"' + target + '\"]');
+                if (!container) return;
+                toggle.addEventListener('change', function () {
+                    container.querySelectorAll('input[type=\"checkbox\"][name=\"permissionIds\"]').forEach(function (cb) {
+                        cb.checked = toggle.checked;
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 </html>

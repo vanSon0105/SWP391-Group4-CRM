@@ -36,6 +36,15 @@
             margin-top: 0;
             color: #0f172a;
         }
+        
+        .alert-info {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            background: #e0f2fe;
+            color: #0c4a6e;
+            font-size: 1.4rem;
+        }
 
         .meta {
             font-size: 14px;
@@ -191,6 +200,12 @@
                 <label>Tổng hợp/Ghi chú</label>
                 <textarea disabled>${issueDetail.summary}</textarea>
             </c:if>
+            
+            <c:if test="${empty warrantyInfo && not empty warrantyNotice}">
+		        <div class="alert-info">
+		            ${warrantyNotice}
+		        </div>
+		    </c:if>
             
 
             <div class="actions">

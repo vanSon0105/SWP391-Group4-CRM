@@ -27,6 +27,20 @@ public class CustomerIssueDAO extends DBContext {
 		return list;
 	}
 	
+	public Integer findLatestIssueIdForCustomer(int customerId) {
+		String sql = "SELECT id FROM customer_issues WHERE customer_id = ? ORDER BY created_at DESC, id DESC LIMIT 1";
+		try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setInt(1, customerId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getInt("id");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public String getSupportStatus(int taskDetailId) {
 	    String sql = "SELECT ci.support_status FROM customer_issues ci "
 	            + "JOIN tasks t ON t.customer_issue_id = ci.id "
