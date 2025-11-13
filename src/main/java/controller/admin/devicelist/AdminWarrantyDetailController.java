@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.devicelist;
 
 import dao.DeviceDAO;
 import dao.WarrantyCardDAO;
@@ -10,7 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 
-@WebServlet("/warranty-detail")
+@WebServlet("/warranty-details")
 public class AdminWarrantyDetailController extends HttpServlet {
 
     @Override

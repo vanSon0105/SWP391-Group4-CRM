@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.devicelist;
 
 import dao.UserDAO;
 import dao.DeviceDAO;
@@ -20,7 +20,7 @@ public class AdminCustomerDeviceController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
     	
-    	User currentUser = AuthorizationUtils.requirePermission(request, response, "CUSTOMER_DEVICE");
+    	User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Thiết Bị");
         if (currentUser == null) {
             return; 
         }

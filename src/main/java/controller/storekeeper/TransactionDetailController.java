@@ -71,6 +71,6 @@ public class TransactionDetailController extends HttpServlet {
         transaction.setDetails(mergedDetails);
 
         request.setAttribute("transaction", transaction);
-        request.getRequestDispatcher("/view/transaction/viewTransaction.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/transaction/viewTransaction.jsp").forward(request, response);
     }
 }

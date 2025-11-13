@@ -35,7 +35,7 @@ public class WarrantyAlertController extends HttpServlet {
 		String sortOrder = req.getParameter("sortOrder");
 		String pageParam = req.getParameter("page");
 
-		int days = 30;
+		int days = 365;
 		if (daysParam != null) {
 			try {
 				days = Integer.parseInt(daysParam);
@@ -90,7 +90,7 @@ public class WarrantyAlertController extends HttpServlet {
 		req.setAttribute("currentPage", currentPage);
 		req.setAttribute("totalPages", totalPages);
 
-		req.getRequestDispatcher("view/customer/warrantyAlert.jsp").forward(req, resp);
+		req.getRequestDispatcher("/view/customer/warrantyAlert.jsp").forward(req, resp);
 	}
 
 	@Override

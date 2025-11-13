@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.warrantylist;
 
 import dao.WarrantyCardDAO;
 import model.WarrantyCard;
@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(urlPatterns = {"/admin/warranty/list"})
+@WebServlet(urlPatterns = {"/warranty-list"})
 public class DeviceWarrantyListController extends HttpServlet {
 
     private static final int PAGE_SIZE = 10; 

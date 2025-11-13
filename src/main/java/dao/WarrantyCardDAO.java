@@ -222,25 +222,31 @@ public class WarrantyCardDAO extends DBContext{
 	}
 
 	public int countWarranty(String search, String status) {
-        int total = 0;
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) AS total " +
-            " FROM warranty_cards wc " + 
-            " JOIN device_serials ds ON wc.device_serial_id = ds.id " +
-            " JOIN devices d ON ds.device_id = d.id " +
-            " JOIN users u ON wc.customer_id = u.id " +
-            " WHERE 1=1");
+	    int total = 0;
+	    StringBuilder sql = new StringBuilder(
+	        "SELECT COUNT(DISTINCT wc.id) AS total " +
+	        "FROM warranty_cards wc " +
+	        "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
+	        "JOIN devices d ON ds.device_id = d.id " +
+	        "JOIN users u ON wc.customer_id = u.id " +
+	        "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
+	        "WHERE ci.support_status IN (" +
+	        "'new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
+	        "'manager_review','manager_approved','create_payment','waiting_payment'," +
+	        "'waiting_confirm','task_created')"
+	    );
 
-        if (search != null && !search.isEmpty()) {
-            sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
-        }
+	    if (search != null && !search.isEmpty()) {
+	        sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
+	    }
 
-        if (status != null && !status.isEmpty()) {
-            if (status.equals("valid")) {
-                sql.append(" AND wc.end_at >= NOW()");
-            } else if (status.equals("expired")) {
-                sql.append(" AND wc.end_at < NOW()");
-            }
-        }
+	    if (status != null && !status.isEmpty()) {
+	        if (status.equals("valid")) {
+	            sql.append(" AND wc.end_at >= NOW()");
+	        } else if (status.equals("expired")) {
+	            sql.append(" AND wc.end_at < NOW()");
+	        }
+	    }
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {

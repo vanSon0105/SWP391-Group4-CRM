@@ -73,7 +73,7 @@
                                 <td>${device.status}</td>
                                 <td>
                                     <c:if test="${device.hasWarranty}">
-                                       <a href="${pageContext.request.contextPath}/warranty-detail?id=${device.warrantyCardId}" class="btn device-btn">Xem</a>
+                                       <a href="${pageContext.request.contextPath}/warranty-details?id=${device.warrantyCardId}" class="btn device-btn">Xem</a>
                                     </c:if>
                                     <c:if test="${!device.hasWarranty}">
                                         N/A

@@ -37,9 +37,8 @@
         <c:if test="${hasDeviceArea or hasDeviceSeriArea}">
             <details class="sidebar-group">
                 <summary>Thiết bị</summary>
-                <c:if test="${permissions.contains('Quản Lí Thiết Bị')}">
-                    <a href="device-show">Danh sách thiết bị</a>
-                </c:if>
+                <a href="device-show">Danh sách thiết bị</a>
+                <a href="warranty-list">Danh sách thiết bị đang bảo hành</a>
                 <c:if test="${hasDeviceSeriArea}">
                     <a href="de-show">Danh sách thiết bị seri</a>
                 </c:if>
@@ -49,9 +48,7 @@
                 <c:if test="${permissions.contains('Quản Lí Nhà Cung Cấp')}">
                     <a href="supplier">Nhà cung cấp</a>
                 </c:if>
-                <c:if test="${permissions.contains('CUSTOMER_DEVICE')}">
-                    <a href="customer-devices">Thiết bị khách hàng</a>
-                </c:if>
+                <a href="customer-devices">Thiết bị khách hàng</a>
             </details>
         </c:if>
 
