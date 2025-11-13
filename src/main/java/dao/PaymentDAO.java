@@ -133,33 +133,50 @@ public class PaymentDAO extends DBContext {
 	
 	public List<OrderDetail> getOrderDetailsByOrderId(int orderId) {
 	    List<OrderDetail> list = new ArrayList<>();
-	    String sql = "SELECT od.id, od.device_id, d.name AS device_name, "
-	            + "od.quantity, od.price, ods.device_serial_id, wc.id AS warranty_card_id "
-	            + "FROM order_details od "
-	            + "JOIN devices d ON od.device_id = d.id "
-	            + "JOIN order_detail_serials ods ON od.id = ods.order_detail_id "
-	            + "LEFT JOIN warranty_cards wc ON ods.device_serial_id = wc.device_serial_id "
-	            + "WHERE od.order_id = ?";
+	    String sql = "SELECT od.id, od.device_id, d.name AS device_name, " +
+	                 "od.quantity, od.price, " +
+	                 "ods.device_serial_id, wc.id AS warranty_card_id " +
+	                 "FROM order_details od " +
+	                 "JOIN devices d ON od.device_id = d.id " +
+	                 "LEFT JOIN order_detail_serials ods ON od.id = ods.order_detail_id " +
+	                 "LEFT JOIN warranty_cards wc ON ods.device_serial_id = wc.device_serial_id " +
+	                 "WHERE od.order_id = ?";
+
 	    try (Connection conn = DBContext.getConnection();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
 	        ps.setInt(1, orderId);
 	        ResultSet rs = ps.executeQuery();
+
 	        while (rs.next()) {
-	            OrderDetail o = new OrderDetail();
-	            o.setId(rs.getInt("id"));
-	            o.setDeviceId(rs.getInt("device_id"));
-	            o.setDeviceName(rs.getString("device_name"));
-	            o.setQuantity(rs.getInt("quantity"));
-	            o.setPrice(rs.getDouble("price"));
-	            o.setDeviceSerialId(rs.getInt("device_serial_id"));
-	            o.setWarrantyCardId(rs.getInt("warranty_card_id"));
-	            list.add(o);
+	            OrderDetail od = new OrderDetail();
+	            od.setId(rs.getInt("id"));
+	            od.setDeviceId(rs.getInt("device_id"));
+	            od.setDeviceName(rs.getString("device_name"));
+	            od.setQuantity(rs.getInt("quantity"));
+	            od.setPrice(rs.getDouble("price"));
+
+	          
+	            int serialId = rs.getInt("device_serial_id");
+	            if (rs.wasNull()) serialId = -1; 
+	            od.setDeviceSerialId(serialId);
+
+	            int warrantyId = rs.getInt("warranty_card_id");
+	            if (rs.wasNull()) warrantyId = -1;
+	            od.setWarrantyCardId(warrantyId);
+
+	            list.add(od);
 	        }
+
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
+
 	    return list;
 	}
+
+
+
 	
 	public Payment getPaymentById(int id) {
 	    String sql = "SELECT * FROM payments WHERE id = ?";

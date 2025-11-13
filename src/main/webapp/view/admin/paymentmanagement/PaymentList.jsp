@@ -120,14 +120,13 @@ th, td {
 				<form style="width: 100%; display: flex; gap: 30px; justify-content: center;" action="payment-list" method="get">
 					<select class="btn device-btn" id="status" name="status"
 						onchange="this.form.submit()">
-						<option value="" ${empty param.status ? 'selected' : ''}>All
-							status</option>
+						<option value="" ${empty param.status ? 'selected' : ''}>Trạng thái</option>
 						<option value="pending"
-							${param.status == 'pending' ? 'selected' : ''}>Pending</option>
+							${param.status == 'pending' ? 'selected' : ''}>Đang chờ</option>
 						<option value="success"
-							${param.status == 'success' ? 'selected' : ''}>Success</option>
+							${param.status == 'success' ? 'selected' : ''}>Thành công</option>
 						<option value="failed"
-							${param.status == 'failed' ? 'selected' : ''}>Failed</option>
+							${param.status == 'failed' ? 'selected' : ''}>Thất bại</option>
 					</select> 
 					<select class="btn device-btn" id="sortCreatedAt" name="sortCreatedAt"
 						onchange="this.form.submit()">
@@ -152,8 +151,8 @@ th, td {
 					<div>
 
 						<input class="btn device-btn" type="search" name="search"
-							placeholder="Enter keywords to search..." value="${param.search}"/>
-						<button class="btn device-btn" type="submit">Search</button>
+							placeholder="Nhập từ khoá tìm kiếm..." value="${param.search}"/>
+						<button class="btn device-btn" type="submit">Tìm</button>
 					</div>
 				</form>
 			</div>
@@ -168,14 +167,14 @@ th, td {
 
 						<tr>
 							<th>ID</th>
-							<th>FullName</th>
-							<th>Phone</th>
-							<th>Address</th>
-							<th>DeliveryTime</th>
-							<th>Status</th>
-							<th>CreatedAt</th>
-							<th>PaidAt</th>
-							<th>Action</th>
+							<th>Họ tên</th>
+							<th>Số điện thoại</th>
+							<th>Địa chỉ</th>
+							<th>Giờ giao</th>
+							<th>Trạng thái</th>
+							<th>Tạo lúc</th>
+							<th>Thanh toán lúc</th>
+							<th>Hành động</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -186,7 +185,14 @@ th, td {
 									<td>${p.fullName}</td>
 									<td>${p.phone}</td>
 									<td>${p.address}</td>
-									<td>${p.deliveryTime}</td>
+									<td>
+    								<c:choose>
+      								<c:when test="${p.deliveryTime == 'working_hours'}">Giờ hành chính</c:when>
+       								<c:when test="${p.deliveryTime == 'weekend'}">Cuối tuần</c:when>
+       								<c:when test="${p.deliveryTime == 'anytime'}">Bất kỳ thời gian nào</c:when>
+        							<c:otherwise>Không xác định</c:otherwise>
+   									 </c:choose>
+									</td>
 									<td><c:choose>
 											<c:when test="${p.status == 'pending'}">
 												<span class="status pending">Đang chờ</span>

@@ -70,7 +70,12 @@
                             <tr>
                                 <td>${device.serialNumber}</td>
                                 <td>${device.deviceName}</td>
-                                <td>${device.status}</td>
+                                <td>
+    							<c:choose>   
+        							<c:when test="${device.status == 'sold'}">Đã bán</c:when>
+        							
+   								 </c:choose>
+								</td>
                                 <td>
                                     <c:if test="${device.hasWarranty}">
                                        <a href="${pageContext.request.contextPath}/warranty-details?id=${device.warrantyCardId}" class="btn device-btn">Xem</a>
