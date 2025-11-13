@@ -82,6 +82,7 @@ CREATE TABLE warranty_cards(
     customer_id INT NOT NULL,
     start_at TIMESTAMP,
     end_at TIMESTAMP,
+    is_cancelled TINYINT(1) DEFAULT 0,
     foreign key (device_serial_id) references device_serials(id),
     foreign key (customer_id) references users(id)
 );
@@ -156,6 +157,7 @@ CREATE TABLE task_details (
   assigned_at timestamp default current_timestamp,
   deadline timestamp,
   note TEXT,
+  cancelled_by_warranty TINYINT(1) DEFAULT 0,
   status ENUM('pending','in_progress','completed','cancelled') DEFAULT 'pending',
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   foreign key (task_id) references tasks(id),
@@ -468,10 +470,3 @@ INSERT INTO role_permission (role_id, permission_id) VALUES (4, 13), (4, 10);
 INSERT INTO role_permission (role_id, permission_id) VALUES (5, 11), (5, 12), (5, 3), (5, 16), (5, 10), (5, 20), (5, 21), (5, 22), (5, 23);
 -- Customer
 INSERT INTO role_permission (role_id, permission_id) VALUES (6, 9), (6, 17), (6, 10);
-
-
-
-
-
-
-
