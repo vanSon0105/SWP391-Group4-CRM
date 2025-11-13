@@ -15,6 +15,7 @@
 		
 		.home-page main {
 			min-width: 1100px;
+			max-width: 1200px;
 		    flex: 1;
 			margin: 40px auto;
 			background: #fff;
@@ -27,6 +28,16 @@
         	width: 100%;
 		    margin: 40px auto;
 		    padding: 32px;
+        }
+        
+        .alert-actions{
+        	display: flex;
+		    width: 100%;
+		    margin: 40px auto;
+		    padding: 32px;
+		    flex-direction: column;
+		    justify-content: center;
+		    align-items: center;
         }
 
         h1 {
@@ -254,7 +265,10 @@
         </form>
         </c:if>
         <c:if test="${empty list}">
-        	<div style="text-align: center;">Tài khoản của bạn hiện không có thiết bị bảo hành/sửa chữa. Vui lòng mua hàng!</div>
+	        <div class="alert-actions">
+	        	<div style="width: 70%; text-align: center;">Tài khoản của bạn hiện không có thiết bị bảo hành/sửa chữa. Vui lòng mua hàng! Hoặc gửi yêu cầu với thiết bị ngoài cửa hàng</div>
+	        	<a style="border-radius: 10px; margin-top: 20px;" href="external-repair" class="btn order-btn">Sửa ngoài trung tâm</a>
+	        </div>
         </c:if>
     </div>
     </main>
