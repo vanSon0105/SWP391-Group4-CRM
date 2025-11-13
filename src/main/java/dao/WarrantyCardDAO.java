@@ -150,20 +150,22 @@ public class WarrantyCardDAO extends DBContext{
 	public List<WarrantyCard> getWarrantyList(String search, String status, int offset, int limit) {
 	    List<WarrantyCard> list = new ArrayList<>();
 	    StringBuilder sql = new StringBuilder(
-	        "SELECT wc.id AS warrantyId, wc.start_at, wc.end_at, " +
-	        "ds.id AS deviceSerialId, ds.serial_no, ds.device_id, " +
-	        "d.name AS deviceName, " +
-	        "u.id AS customerId, u.full_name AS customerName " +
-	        "FROM warranty_cards wc " +
-	        "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
-	        "JOIN devices d ON ds.device_id = d.id " +
-	        "JOIN users u ON wc.customer_id = u.id " +
-	        "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
-	        "WHERE ci.support_status IN (" +
-	        "'new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
-	        "'manager_review','manager_approved','create_payment','waiting_payment'," +
-	        "'waiting_confirm','task_created')" 
-	    );
+	    	    "SELECT wc.id AS warrantyId, wc.start_at, wc.end_at, " +
+	    	    "ds.id AS deviceSerialId, ds.serial_no, ds.device_id, " +
+	    	    "d.name AS deviceName, " +
+	    	    "u.id AS customerId, u.full_name AS customerName " +
+	    	    "FROM warranty_cards wc " +
+	    	    "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
+	    	    "JOIN devices d ON ds.device_id = d.id " +
+	    	    "JOIN users u ON wc.customer_id = u.id " +
+	    	    "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
+	    	    "WHERE ci.support_status IN ('new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
+	    	    "'manager_review','manager_approved','create_payment','waiting_payment','waiting_confirm','task_created') " +
+	    	    "AND ci.issue_type = 'warranty' " +
+	    	    "AND wc.is_cancelled = 0"
+	    	);
+
+
 
 	    if (search != null && !search.isEmpty()) {
 	        sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
@@ -224,17 +226,19 @@ public class WarrantyCardDAO extends DBContext{
 	public int countWarranty(String search, String status) {
 	    int total = 0;
 	    StringBuilder sql = new StringBuilder(
-	        "SELECT COUNT(DISTINCT wc.id) AS total " +
-	        "FROM warranty_cards wc " +
-	        "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
-	        "JOIN devices d ON ds.device_id = d.id " +
-	        "JOIN users u ON wc.customer_id = u.id " +
-	        "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
-	        "WHERE ci.support_status IN (" +
-	        "'new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
-	        "'manager_review','manager_approved','create_payment','waiting_payment'," +
-	        "'waiting_confirm','task_created')"
-	    );
+	    	    "SELECT COUNT(DISTINCT wc.id) AS total " +
+	    	    "FROM warranty_cards wc " +
+	    	    "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
+	    	    "JOIN devices d ON ds.device_id = d.id " +
+	    	    "JOIN users u ON wc.customer_id = u.id " +
+	    	    "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
+	    	    "WHERE ci.support_status IN ('new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
+	    	    "'manager_review','manager_approved','create_payment','waiting_payment','waiting_confirm','task_created') " +
+	    	    "AND ci.issue_type = 'warranty' " +
+	    	    "AND wc.is_cancelled = 0"
+	    	);
+
+
 
 	    if (search != null && !search.isEmpty()) {
 	        sql.append(" AND (d.name LIKE ? OR ds.serial_no LIKE ? OR u.full_name LIKE ?)");
