@@ -29,6 +29,7 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 24px;
+      gap: 45px;
     }
 
     .issue-header h1 {

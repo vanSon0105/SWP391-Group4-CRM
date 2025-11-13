@@ -77,6 +77,6 @@ public class TransactionListController extends HttpServlet {
         request.setAttribute("statusFilter", statusFilter != null ? statusFilter : "");
         request.setAttribute("keyword", keyword != null ? keyword : "");
 
-        request.getRequestDispatcher("/view/transaction/listTransaction.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/admin/transaction/listTransaction.jsp").forward(request, response);
     }
 }

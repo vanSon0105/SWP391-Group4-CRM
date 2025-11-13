@@ -37,7 +37,7 @@
 	<main class="sidebar-main">
 
 		<section class="panel">
-			<a class="btn device-btn" href="${pageContext.request.contextPath}/admin/warranty/list"> <i
+			<a class="btn device-btn" href="warranty-list"> <i
 				class="fa-solid fa-arrow-left"></i> Quay lại danh sách
 			</a>
 		</section>

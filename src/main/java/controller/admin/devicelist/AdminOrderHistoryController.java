@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.devicelist;
 
 import dao.OrderDAO;
 import model.OrderHistory;

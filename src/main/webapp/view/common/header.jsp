@@ -29,6 +29,7 @@
                             <a href="${pageContext.request.contextPath}/customer/issue-payments">Danh sách thanh toán khiếu nại</a>
                             <a href="${pageContext.request.contextPath}/issue">Lịch sử yêu cầu</a>
                             <a href="${pageContext.request.contextPath}/my-devices">Thiết bị đã mua</a>
+                            <a href="${pageContext.request.contextPath}/warranty-alert">Hạn bảo hành các thiết bị</a>
                             <c:if test="${sessionScope.account != null}">
                                 <form action="${pageContext.request.contextPath}/logout" method="post" style="display:inline;">
                                     <button type="submit" class="order-btn logout-btn">

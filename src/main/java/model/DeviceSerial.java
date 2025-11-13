@@ -97,19 +97,4 @@ public class DeviceSerial {
 		return "DeviceSerial [id=" + id + ", device_id=" + device_id + ", serial_no=" + serial_no + ", status=" + stock_status
 				+ ", import_date=" + import_date + "]";
 	}
-
-	public String getDeviceName() {
-		return deviceName;
-	}
-
-	public void setDeviceName(String deviceName) {
-		this.deviceName = deviceName;
-	}
-
-	
-
-	
-	
-	
-	
 }

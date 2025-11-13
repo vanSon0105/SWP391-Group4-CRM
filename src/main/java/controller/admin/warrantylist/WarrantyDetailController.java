@@ -1,4 +1,4 @@
-package controller.admin;
+package controller.admin.warrantylist;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
