@@ -353,6 +353,7 @@ public class UserDAO extends DBContext{
                 u.setBirthday(rs.getTimestamp("birthday"));
                 u.setGender(rs.getString("gender"));
                 u.setPassword(rs.getString("password"));
+                u.setPermissionOver(rs.getBoolean("permission_over"));
                 return u;
             }
         } catch (SQLException e) {
@@ -545,198 +546,223 @@ public class UserDAO extends DBContext{
         }
     }
 
-public boolean activateUser(int id) {
-        String sql = "UPDATE users SET status = 'active' WHERE id = ?";
-        try (Connection conn = DBContext.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-public boolean isEmailOfUser(String email, int userId) {
-    String sql = "SELECT COUNT(*) FROM Users WHERE email = ? AND id = ?";
-    try (Connection conn = getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, email);
-        ps.setInt(2, userId);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            return rs.getInt(1) > 0;
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return false;
-}
-
-public boolean updateUserPassword(User user) {
-    String sql = "UPDATE users SET password = ? WHERE id = ?";
-    try (Connection conn = DBContext.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, user.getPassword());
-        ps.setInt(2, user.getId());
-        int rows = ps.executeUpdate();
-        System.out.println("[DEBUG] Rows updated: " + rows);
-        return rows > 0;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
-    }
-}
-
-public User getUserByEmail(String email) {
-    User user = null;
-    String sql = "SELECT * FROM Users WHERE email = ?";
-    try (Connection conn = DBContext.getConnection();
-         PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, email);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            user = new User();
-            user.setId(rs.getInt("id"));
-            user.setFullName(rs.getString("full_name"));
-            user.setEmail(rs.getString("email"));
-            user.setPassword(rs.getString("password"));
-            user.setAvailable(rs.getBoolean("is_available"));
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return user;
-}
-
-public List<User> getTechnicalStaff(String search, String status, int offset, int limit) {
-    List<User> list = new ArrayList<>();
-    StringBuilder sql = new StringBuilder("SELECT id, username, full_name, email, is_available FROM users WHERE role_id = 3");
-
-    if (search != null && !search.trim().isEmpty()) {
-        sql.append(" AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)");
-    }
-
-    if ("available".equals(status)) {
-        sql.append(" AND is_available = 1");
-    } else if ("busy".equals(status)) {
-        sql.append(" AND is_available = 0");
-    }
-
-    sql.append(" ORDER BY id ASC LIMIT ? OFFSET ?");
-
-    try (Connection conn = DBContext.getConnection();
-         PreparedStatement pre = conn.prepareStatement(sql.toString())) {
-
-        int index = 1;
-        if (search != null && !search.trim().isEmpty()) {
-            String s = "%" + search.trim() + "%";
-            pre.setString(index++, s);
-            pre.setString(index++, s);
-            pre.setString(index++, s);
-        }
-        pre.setInt(index++, limit);
-        pre.setInt(index, offset);
-
-        ResultSet rs = pre.executeQuery();
-        while (rs.next()) {
-            User u = new User();
-            u.setId(rs.getInt("id"));
-            u.setUsername(rs.getString("username"));
-            u.setFullName(rs.getString("full_name"));
-            u.setEmail(rs.getString("email"));
-            u.setAvailable(rs.getBoolean("is_available"));
-            list.add(u);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return list;
-}
-
-public int countTechnicalStaff(String search, String status) {
-    int count = 0;
-    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users WHERE role_id = 3");
-
-    if (search != null && !search.trim().isEmpty()) {
-        sql.append(" AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)");
-    }
-
-    if ("available".equals(status)) {
-        sql.append(" AND is_available = 1");
-    } else if ("busy".equals(status)) {
-        sql.append(" AND is_available = 0");
-    }
-
-    try (Connection conn = DBContext.getConnection();
-         PreparedStatement pre = conn.prepareStatement(sql.toString())) {
-
-        int index = 1;
-        if (search != null && !search.trim().isEmpty()) {
-            String s = "%" + search.trim() + "%";
-            pre.setString(index++, s);
-            pre.setString(index++, s);
-            pre.setString(index++, s);
-        }
-
-        ResultSet rs = pre.executeQuery();
-        if (rs.next()) {
-            count = rs.getInt(1);
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return count;
-}
-
-public User getTechnicalStaffById(int staffId) {
-    User user = null;
-    String sql = "SELECT id, username, full_name, email, is_available " +
-                 "FROM users WHERE role_id = 3 AND id = ?";
-
-    try (Connection conn = DBContext.getConnection();
-         PreparedStatement pre = conn.prepareStatement(sql)) {
-
-        pre.setInt(1, staffId);
-        ResultSet rs = pre.executeQuery();
-
-        if (rs.next()) {
-            user = new User();
-            user.setId(rs.getInt("id"));
-            user.setUsername(rs.getString("username"));
-            user.setFullName(rs.getString("full_name"));
-            user.setEmail(rs.getString("email"));
-            user.setAvailable(rs.getBoolean("is_available"));
-        }
-
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return user;
-}
-
-public List<User> getAllCustomers() {
-    List<User> list = new ArrayList<>();
-    String sql = "SELECT id, full_name, email, phone FROM users " +
-                 "WHERE role_id = (SELECT id FROM roles WHERE role_name = 'Customer')";
-    try (Connection con = DBContext.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-        while (rs.next()) {
-            User u = new User();
-            u.setId(rs.getInt("id"));
-            u.setFullName(rs.getString("full_name"));
-            u.setEmail(rs.getString("email"));
-            u.setPhone(rs.getString("phone"));
-            list.add(u);
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-    return list;
-}
+	public boolean activateUser(int id) {
+	        String sql = "UPDATE users SET status = 'active' WHERE id = ?";
+	        try (Connection conn = DBContext.getConnection();
+	             PreparedStatement ps = conn.prepareStatement(sql)) {
+	            ps.setInt(1, id);
+	            return ps.executeUpdate() > 0;
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	            return false;
+	        }
+	    }
+	
+	public boolean isEmailOfUser(String email, int userId) {
+	    String sql = "SELECT COUNT(*) FROM Users WHERE email = ? AND id = ?";
+	    try (Connection conn = getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, email);
+	        ps.setInt(2, userId);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return rs.getInt(1) > 0;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+	
+	public boolean updateUserPassword(User user) {
+	    String sql = "UPDATE users SET password = ? WHERE id = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, user.getPassword());
+	        ps.setInt(2, user.getId());
+	        int rows = ps.executeUpdate();
+	        System.out.println("[DEBUG] Rows updated: " + rows);
+	        return rows > 0;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	public User getUserByEmail(String email) {
+	    User user = null;
+	    String sql = "SELECT * FROM Users WHERE email = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, email);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            user = new User();
+	            user.setId(rs.getInt("id"));
+	            user.setFullName(rs.getString("full_name"));
+	            user.setEmail(rs.getString("email"));
+	            user.setPassword(rs.getString("password"));
+	            user.setAvailable(rs.getBoolean("is_available"));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return user;
+	}
+	
+	public List<User> getTechnicalStaff(String search, String status, int offset, int limit) {
+	    List<User> list = new ArrayList<>();
+	    StringBuilder sql = new StringBuilder("SELECT id, username, full_name, email, is_available FROM users WHERE role_id = 3");
+	
+	    if (search != null && !search.trim().isEmpty()) {
+	        sql.append(" AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)");
+	    }
+	
+	    if ("available".equals(status)) {
+	        sql.append(" AND is_available = 1");
+	    } else if ("busy".equals(status)) {
+	        sql.append(" AND is_available = 0");
+	    }
+	
+	    sql.append(" ORDER BY id ASC LIMIT ? OFFSET ?");
+	
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql.toString())) {
+	
+	        int index = 1;
+	        if (search != null && !search.trim().isEmpty()) {
+	            String s = "%" + search.trim() + "%";
+	            pre.setString(index++, s);
+	            pre.setString(index++, s);
+	            pre.setString(index++, s);
+	        }
+	        pre.setInt(index++, limit);
+	        pre.setInt(index, offset);
+	
+	        ResultSet rs = pre.executeQuery();
+	        while (rs.next()) {
+	            User u = new User();
+	            u.setId(rs.getInt("id"));
+	            u.setUsername(rs.getString("username"));
+	            u.setFullName(rs.getString("full_name"));
+	            u.setEmail(rs.getString("email"));
+	            u.setAvailable(rs.getBoolean("is_available"));
+	            list.add(u);
+	        }
+	
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
+	public int countTechnicalStaff(String search, String status) {
+	    int count = 0;
+	    StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM users WHERE role_id = 3");
+	
+	    if (search != null && !search.trim().isEmpty()) {
+	        sql.append(" AND (username LIKE ? OR full_name LIKE ? OR email LIKE ?)");
+	    }
+	
+	    if ("available".equals(status)) {
+	        sql.append(" AND is_available = 1");
+	    } else if ("busy".equals(status)) {
+	        sql.append(" AND is_available = 0");
+	    }
+	
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql.toString())) {
+	
+	        int index = 1;
+	        if (search != null && !search.trim().isEmpty()) {
+	            String s = "%" + search.trim() + "%";
+	            pre.setString(index++, s);
+	            pre.setString(index++, s);
+	            pre.setString(index++, s);
+	        }
+	
+	        ResultSet rs = pre.executeQuery();
+	        if (rs.next()) {
+	            count = rs.getInt(1);
+	        }
+	
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return count;
+	}
+	
+	public User getTechnicalStaffById(int staffId) {
+	    User user = null;
+	    String sql = "SELECT id, username, full_name, email, is_available " +
+	                 "FROM users WHERE role_id = 3 AND id = ?";
+	
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement pre = conn.prepareStatement(sql)) {
+	
+	        pre.setInt(1, staffId);
+	        ResultSet rs = pre.executeQuery();
+	
+	        if (rs.next()) {
+	            user = new User();
+	            user.setId(rs.getInt("id"));
+	            user.setUsername(rs.getString("username"));
+	            user.setFullName(rs.getString("full_name"));
+	            user.setEmail(rs.getString("email"));
+	            user.setAvailable(rs.getBoolean("is_available"));
+	        }
+	
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return user;
+	}
+	
+	public List<User> getAllCustomers() {
+	    List<User> list = new ArrayList<>();
+	    String sql = "SELECT id, full_name, email, phone FROM users " +
+	                 "WHERE role_id = (SELECT id FROM roles WHERE role_name = 'Customer')";
+	    try (Connection con = DBContext.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+	        while (rs.next()) {
+	            User u = new User();
+	            u.setId(rs.getInt("id"));
+	            u.setFullName(rs.getString("full_name"));
+	            u.setEmail(rs.getString("email"));
+	            u.setPhone(rs.getString("phone"));
+	            list.add(u);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return list;
+	}
+	
+	public void markUserAsPermissionOverride(int userId) {
+	    String sql = "UPDATE users SET permission_over = TRUE WHERE id = ?";
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setInt(1, userId);
+	        ps.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	public void resetPermissionOverrideForRole(int roleId) {
+	    String sql = "UPDATE users SET permission_over = FALSE WHERE role_id = ?";
+	    
+	    try (Connection conn = DBContext.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+	        
+	        ps.setInt(1, roleId);
+	        ps.executeUpdate();
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 
 
     

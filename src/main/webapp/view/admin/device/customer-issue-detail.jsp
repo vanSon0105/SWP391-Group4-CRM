@@ -91,7 +91,6 @@
                 <p><b>Tên thiết bị:</b> ${issue.deviceSerial.deviceName}</p>
                 <p><b>Mô tả vấn đề:</b> ${issue.description}</p>
                 <p><b>Ngày tạo:</b> ${issue.createdAt}</p>
-                <p><b>Trạng thái:</b>
 				<p><b>Trạng thái:</b> ${issue.statusVN}</p>
 </p>
             </div>

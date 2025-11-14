@@ -57,11 +57,11 @@
 								<td>${task.description}</td>
 							</tr>
 							<tr>
-								<th>Manager ID</th>
+								<th>ID quản lí</th>
 								<td>${task.managerId}</td>
 							</tr>
 							<tr>
-								<th>Customer Issue ID</th>
+								<th>ID vấn đề</th>
 								<td>${task.customerIssueId}</td>
 							</tr>
 							<tr>
@@ -158,7 +158,8 @@
 												onclick="return confirm('Bạn có chắc muốn hủy giao nhiệm vụ cho nhân viên này không?');">
 												Hủy giao</button>
 										</form>
-									</c:if> <c:if
+									</c:if> 
+									<%-- <c:if
 										test="${td.status == 'cancelled' && td.cancelledByWarranty && td.warrantyCard != null && !td.warrantyCard.isCancelled}">
 										<form action="task-detail" method="post">
 											<input type="hidden" name="action" value="cancelWarranty" />
@@ -169,7 +170,8 @@
 												onclick="return confirm('Bạn có chắc muốn hủy bảo hành cho sản phẩm thuộc nhiệm vụ này không?');">
 												Hủy bảo hành</button>
 										</form>
-									</c:if></td>
+									</c:if>--%>
+									</td>
 
 
 							</tr>

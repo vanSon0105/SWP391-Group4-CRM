@@ -8,6 +8,7 @@ import java.util.*;
 import model.Category;
 import model.Device;
 import model.DeviceSerial;
+import model.DeviceSerialLookup;
 
 
 public class DeviceSerialDAO extends dal.DBContext {
@@ -330,6 +331,140 @@ public class DeviceSerialDAO extends dal.DBContext {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    
+    public List<DeviceSerialLookup> searchSerialLookups(String keyword, int offset, int limit) {
+        List<DeviceSerialLookup> results = new ArrayList<>();
+        String trimmed = (keyword != null) ? keyword.trim() : null;
+        boolean hasKeyword = trimmed != null && !trimmed.isEmpty();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ")
+           .append("ds.id AS serial_id, ds.serial_no, ds.stock_status, ds.status AS serial_status, ds.import_date, ")
+           .append("d.id AS device_id, d.name AS device_name, c.category_name, d.price, d.warrantyMonth, ")
+           .append("o.id AS order_id, o.status AS order_status, o.date AS order_date, ")
+           .append("u.id AS customer_id, u.full_name AS customer_name, u.email AS customer_email, u.phone AS customer_phone, ")
+           .append("wc.id AS warranty_card_id, wc.start_at AS warranty_start_at, wc.end_at AS warranty_end_at, ")
+           .append("wc.is_cancelled AS warranty_cancelled ")
+           .append("FROM device_serials ds ")
+           .append("JOIN devices d ON ds.device_id = d.id ")
+           .append("LEFT JOIN categories c ON d.category_id = c.id ")
+           .append("LEFT JOIN order_detail_serials ods ON ods.device_serial_id = ds.id ")
+           .append("LEFT JOIN order_details od ON ods.order_detail_id = od.id ")
+           .append("LEFT JOIN orders o ON od.order_id = o.id ")
+           .append("LEFT JOIN users u ON o.customer_id = u.id ")
+           .append("LEFT JOIN warranty_cards wc ON wc.device_serial_id = ds.id ")
+           .append("WHERE 1 = 1 ");
+
+        if (hasKeyword) {
+            sql.append("AND (ds.serial_no LIKE ? OR d.name LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?) ");
+        }
+
+        sql.append("ORDER BY ds.import_date DESC, ds.id DESC LIMIT ?, ?;");
+
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (hasKeyword) {
+                String likeKeyword = "%" + trimmed + "%";
+                ps.setString(idx++, likeKeyword);
+                ps.setString(idx++, likeKeyword);
+                ps.setString(idx++, likeKeyword);
+                ps.setString(idx++, likeKeyword);
+            }
+            ps.setInt(idx++, offset);
+            ps.setInt(idx, limit);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    DeviceSerialLookup lookup = new DeviceSerialLookup();
+                    lookup.setSerialId(rs.getInt("serial_id"));
+                    lookup.setSerialNo(rs.getString("serial_no"));
+                    lookup.setStockStatus(rs.getString("stock_status"));
+                    lookup.setSerialStatus(rs.getString("serial_status"));
+                    lookup.setImportDate(rs.getTimestamp("import_date"));
+
+                    lookup.setDeviceId(rs.getInt("device_id"));
+                    lookup.setDeviceName(rs.getString("device_name"));
+                    lookup.setCategoryName(rs.getString("category_name"));
+                    lookup.setDevicePrice(rs.getBigDecimal("price"));
+                    Object monthObj = rs.getObject("warrantyMonth");
+                    if (monthObj != null) {
+                        lookup.setWarrantyMonth(rs.getInt("warrantyMonth"));
+                    }
+
+                    Object orderIdObj = rs.getObject("order_id");
+                    if (orderIdObj != null) {
+                        lookup.setOrderId(rs.getInt("order_id"));
+                    }
+                    lookup.setOrderStatus(rs.getString("order_status"));
+                    lookup.setOrderDate(rs.getTimestamp("order_date"));
+
+                    Object customerIdObj = rs.getObject("customer_id");
+                    if (customerIdObj != null) {
+                        lookup.setCustomerId(rs.getInt("customer_id"));
+                    }
+                    lookup.setCustomerName(rs.getString("customer_name"));
+                    lookup.setCustomerEmail(rs.getString("customer_email"));
+                    lookup.setCustomerPhone(rs.getString("customer_phone"));
+
+                    Object warrantyIdObj = rs.getObject("warranty_card_id");
+                    if (warrantyIdObj != null) {
+                        lookup.setWarrantyCardId(rs.getInt("warranty_card_id"));
+                    }
+                    lookup.setWarrantyStartAt(rs.getTimestamp("warranty_start_at"));
+                    lookup.setWarrantyEndAt(rs.getTimestamp("warranty_end_at"));
+                    Object cancelledObj = rs.getObject("warranty_cancelled");
+                    if (cancelledObj != null) {
+                        lookup.setWarrantyCancelled(rs.getBoolean("warranty_cancelled"));
+                    }
+
+                    results.add(lookup);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return results;
+    }
+
+    public int countSerialLookups(String keyword) {
+        String trimmed = (keyword != null) ? keyword.trim() : null;
+        boolean hasKeyword = trimmed != null && !trimmed.isEmpty();
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT COUNT(*) FROM device_serials ds ")
+           .append("JOIN devices d ON ds.device_id = d.id ")
+           .append("LEFT JOIN order_detail_serials ods ON ods.device_serial_id = ds.id ")
+           .append("LEFT JOIN order_details od ON ods.order_detail_id = od.id ")
+           .append("LEFT JOIN orders o ON od.order_id = o.id ")
+           .append("LEFT JOIN users u ON o.customer_id = u.id ")
+           .append("WHERE 1 = 1 ");
+
+        if (hasKeyword) {
+            sql.append("AND (ds.serial_no LIKE ? OR d.name LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?)");
+        }
+
+        try (Connection connection = getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            int idx = 1;
+            if (hasKeyword) {
+                String likeKeyword = "%" + trimmed + "%";
+                ps.setString(idx++, likeKeyword);
+                ps.setString(idx++, likeKeyword);
+                ps.setString(idx++, likeKeyword);
+                ps.setString(idx++, likeKeyword);
+            }
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

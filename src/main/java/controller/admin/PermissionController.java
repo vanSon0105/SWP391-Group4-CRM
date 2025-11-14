@@ -91,7 +91,7 @@ public class PermissionController extends HttpServlet {
         request.setAttribute("assignedPermissionIds", assignedPermissionIds);
         request.getRequestDispatcher("/view/admin/permission/role.jsp").forward(request, response);
     }
-
+    
     private void showUserPermissions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Role> roles = roleDAO.getAllRoles();
         String keyword = trimToNull(request.getParameter("keyword"));
@@ -114,27 +114,41 @@ public class PermissionController extends HttpServlet {
         }
 
         List<Permission> allPermissions = permissionDAO.getAllPermissions();
-        List<Integer> userPermissionIds = selectedUser != null
-                ? new ArrayList<>(permissionDAO.getPermissionIdsByUser(selectedUser.getId()))
-                : Collections.emptyList();
-        List<Integer> inheritedPermissionIds = selectedUser != null
-                ? new ArrayList<>(permissionDAO.getPermissionIdsByRole(selectedUser.getRoleId()))
-                : Collections.emptyList();
+        Set<Integer> effectivePermissionIds; 
+        Set<Integer> inheritedPermissionIds; 
+
+        if (selectedUser != null) {
+            inheritedPermissionIds = permissionDAO.getPermissionIdsByRole(selectedUser.getRoleId());
+
+            if (selectedUser.isPermissionOver()) {
+                effectivePermissionIds = permissionDAO.getPermissionIdsByUser(selectedUser.getId());
+            } else {
+                effectivePermissionIds = inheritedPermissionIds;
+            }
+        } else {
+            effectivePermissionIds = Collections.emptySet();
+            inheritedPermissionIds = Collections.emptySet();
+        }
 
         request.setAttribute("roles", roles);
         request.setAttribute("users", userOptions);
         request.setAttribute("selectedUser", selectedUser);
         request.setAttribute("allPermissions", allPermissions);
-        request.setAttribute("userPermissionIds", userPermissionIds);
+        request.setAttribute("userPermissionIds", effectivePermissionIds); 
         request.setAttribute("inheritedPermissionIds", inheritedPermissionIds);
         request.setAttribute("keyword", keyword);
         request.setAttribute("filterRoleId", filterRoleId);
-
         request.getRequestDispatcher("/view/admin/permission/user.jsp").forward(request, response);
     }
 
     private void handleRoleUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        int roleId = parseId(request.getParameter("roleId"));
+    	int roleId = parseId(request.getParameter("roleId"));
+    	User superUser = userDAO.getUserById(1);
+        if (superUser != null && superUser.getRoleId() == roleId) {
+            setFlash(request, "Không thể cập nhật quyền cho vai trò của Admin.", "error");
+            response.sendRedirect("permission-management?roleId=" + roleId);
+            return;
+        }
         String[] permissionValues = request.getParameterValues("permissionIds");
         List<Integer> permissionIds = toIntegerList(permissionValues);
 
@@ -146,6 +160,14 @@ public class PermissionController extends HttpServlet {
 
         boolean success = permissionDAO.replaceRolePermissions(roleId, permissionIds);
         if (success) {
+        	HttpSession session = request.getSession(false);
+        	userDAO.resetPermissionOverrideForRole(roleId);
+            if (session != null) {
+                User current = (User) session.getAttribute(AuthorizationUtils.SESSION_ACCOUNT);
+                if (current != null && current.getRoleId() == roleId) {
+                    AuthorizationUtils.reloadPermissions(session, current.getId());
+                }
+            }
             setFlash(request, "Đã cập nhật quyền cho vai trò", "success");
         } else {
             setFlash(request, "Không thể cập nhật quyền. Vui lòng thử lại", "error");
@@ -155,6 +177,13 @@ public class PermissionController extends HttpServlet {
 
     private void handleUserUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException {
         int userId = parseId(request.getParameter("userId"));
+        User superUser = userDAO.getUserById(1);
+        if (superUser != null && superUser.getRoleId() == userId) {
+            setFlash(request, "Không thể cập nhật quyền cho vai trò của Admin.", "error");
+            response.sendRedirect("permission-management?roleId=" + userId);
+            return;
+        }
+        
         String[] permissionValues = request.getParameterValues("permissionIds");
         List<Integer> permissionIds = toIntegerList(permissionValues);
 
@@ -166,7 +195,8 @@ public class PermissionController extends HttpServlet {
 
         boolean success = permissionDAO.replaceUserPermissions(userId, permissionIds);
         if (success) {
-        	HttpSession session = request.getSession(false);
+            userDAO.markUserAsPermissionOverride(userId);
+            HttpSession session = request.getSession(false);
             if (session != null) {
                 User current = (User) session.getAttribute(AuthorizationUtils.SESSION_ACCOUNT);
                 if (current != null && current.getId() == userId) {

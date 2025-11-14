@@ -244,17 +244,17 @@
                                     <c:forEach var="permission" items="${allPermissions}">
                                         <c:set var="inherited" value="${inheritedPermissionIds != null && inheritedPermissionIds.contains(permission.id)}" />
                                         <c:set var="direct" value="${userPermissionIds != null && userPermissionIds.contains(permission.id)}" />
-                                        <div class="permission-card ${inherited ? 'inherited' : ''}">
-                                            <strong>${permission.name}</strong>
-                                            <label>
-                                                <input type="checkbox" name="permissionIds" value="${permission.id}"
-                                                       <c:if test="${direct || inherited}">checked</c:if>>
-                                                Cấp riêng
-                                            </label>
-                                            <c:if test="${inherited}">
-                                                <small>Đã được cấp từ vai trò</small>
-                                            </c:if>
-                                        </div>
+										<div class="permission-card ${inherited ? 'inherited' : ''}">
+										    <strong>${permission.name}</strong>
+										    <label>
+										        <input type="checkbox" name="permissionIds" value="${permission.id}"
+										               <c:if test="${direct}">checked</c:if>>
+										        Cấp riêng
+										    </label>
+										    <c:if test="${inherited}">
+										        <small>Đã được cấp từ vai trò</small>
+										    </c:if>
+										</div>
                                     </c:forEach>
                                 </div>
                                 <div class="permission-actions">

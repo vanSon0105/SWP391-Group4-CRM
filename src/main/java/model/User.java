@@ -19,6 +19,7 @@ public class User {
     private Timestamp lastLoginAt;
     private boolean usernameChanged;
     private boolean available;
+    private boolean permissionOver;
 
     public User() {}
 
@@ -36,6 +37,15 @@ public class User {
     
     public boolean isAvailable() {
 		return available;
+	}
+    
+
+	public boolean isPermissionOver() {
+		return permissionOver;
+	}
+
+	public void setPermissionOver(boolean permissionOver) {
+		this.permissionOver = permissionOver;
 	}
 
 	public void setAvailable(boolean available) {

@@ -130,8 +130,8 @@
 						<table class="device-table">
 							<thead>
 								<tr>
-									<th>ID Payment</th>
-									<th>Issue ID</th>
+									<th>ID thanh toán</th>
+									<th>ID vấn đề</th>
 									<th>Người nhận</th>
 									<th>Điện thoại</th>
 									<th>Địa chỉ</th>

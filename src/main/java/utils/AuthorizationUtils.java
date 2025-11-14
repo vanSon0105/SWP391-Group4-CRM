@@ -22,13 +22,25 @@ public class AuthorizationUtils {
     private AuthorizationUtils() {
     }
 
-    public static Set<String> ensurePermissionsLoaded(HttpSession session, int userId) {
+    public static Set<String> ensurePermissionsLoaded(HttpSession session, User user) {
         Set<String> permissions = (Set<String>) session.getAttribute(SESSION_PERMISSIONS);
         if (permissions == null) {
-            permissions = new HashSet<>(PERMISSION_DAO.getPermissionsForUser(userId));
+            User freshUser = USER_DAO.getUserById(user.getId());
+            permissions = calculateEffectivePermissions(freshUser);
             session.setAttribute(SESSION_PERMISSIONS, permissions);
         }
         return permissions;
+    }
+    
+    private static Set<String> calculateEffectivePermissions(User user) {
+        if (user == null) {
+            return Collections.emptySet();
+        }
+        if (user.isPermissionOver()) {
+            return PERMISSION_DAO.getDirectPermissionNamesByUser(user.getId());
+        } else {
+            return PERMISSION_DAO.getPermissionNamesByRole(user.getRoleId());
+        }
     }
 
     public static Set<String> getPermissions(HttpSession session) {
@@ -57,24 +69,24 @@ public class AuthorizationUtils {
             return null;
         }
         
-        String status = USER_DAO.getUserStatus(user.getId());
-        if (status == null) {
-            status = user.getStatus();
-        } else if (user.getStatus() == null || !status.equals(user.getStatus())) {
-            user.setStatus(status);
-            session.setAttribute(SESSION_ACCOUNT, user);
-        }
-
-        if (status == null || !"active".equalsIgnoreCase(status)) {
-            clearPermissions(session);
-            session.removeAttribute(SESSION_ACCOUNT);
-            session.setAttribute("loginAlertType", "error");
-            session.setAttribute("loginAlertMessage", "Tài khoản của bạn đã bị khóa.");
-            response.sendRedirect("login");
-            return null;
-        }
-
-        Set<String> permissions = ensurePermissionsLoaded(session, user.getId());
+         String status = USER_DAO.getUserStatus(user.getId());
+         if (status == null) {
+             status = user.getStatus();
+         } else if (user.getStatus() == null || !status.equals(user.getStatus())) {
+             user.setStatus(status);
+             session.setAttribute(SESSION_ACCOUNT, user);
+         }
+         if (status == null || !"active".equalsIgnoreCase(status)) {
+             clearPermissions(session);
+             session.removeAttribute(SESSION_ACCOUNT);
+             session.setAttribute("loginAlertType", "error");
+             session.setAttribute("loginAlertMessage", "Tài khoản của bạn đã bị khóa.");
+             response.sendRedirect("login");
+             return null;
+         }
+         
+        Set<String> permissions = ensurePermissionsLoaded(session, user);
+        
         boolean hasPermission = false;
         for (String permission : requiredPermissions) {
             if (permissions.contains(permission)) {
@@ -102,7 +114,13 @@ public class AuthorizationUtils {
         if (session == null) {
             return;
         }
-        session.setAttribute(SESSION_PERMISSIONS, new HashSet<>(PERMISSION_DAO.getPermissionsForUser(userId)));
+        User user = USER_DAO.getUserById(userId);
+        if (user == null) {
+            clearPermissions(session);
+            return;
+        }
+        Set<String> effectivePermissions = calculateEffectivePermissions(user);
+        storePermissions(session, effectivePermissions);
     }
 
     public static void clearPermissions(HttpSession session) {

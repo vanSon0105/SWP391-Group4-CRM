@@ -393,10 +393,10 @@
             <h2>Nhập tóm tắt công việc</h2>
             <p id="summary-modal-message" style="margin:0; color:#475569; font-size:14px;"></p>
             <textarea id="summary-modal-textarea" placeholder="Ghi lại những hạng mục đã xử lý hoặc lý do hủy..."></textarea>
-            <div id="cancel-reason-container">
+            <%-- <div id="cancel-reason-container">
             	<input type="checkbox" id="invalid-warranty" name="cancelReason" value="invalid_warranty">
     			<label for="invalid-warranty">Tem bảo hành không hợp lệ</label>	
-            </div>
+            </div>--%>
             <div class="summary-modal-actions">
                 <button type="button" class="btn-secondary" id="summary-modal-cancel">Hủy</button>
                 <button type="button" id="summary-modal-confirm">Xác nhận</button>

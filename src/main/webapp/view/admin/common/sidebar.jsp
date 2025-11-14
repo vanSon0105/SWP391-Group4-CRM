@@ -18,6 +18,7 @@
     </div>
     <nav class="sidebar-nav">
         <c:set var="hasDashboard" value="${permissions != null && permissions.contains('Trang Admin')}"/>
+        <c:set var="hasPermissionboard" value="${permissions != null && permissions.contains('Quản Lí Quyền')}"/>
         <c:set var="hasDeviceArea" value="${permissions != null && permissions.contains('Quản Lí Thiết Bị')}"/>
         <c:set var="hasDeviceSeriArea" value="${permissions != null && permissions.contains('Quản Lí Seri')}"/>
         <c:set var="hasAccountArea" value="${permissions != null && permissions.contains('Quản Lí Tài Khoản')}"/>
@@ -39,6 +40,7 @@
                 <summary>Thiết bị</summary>
                 <a href="device-show">Danh sách thiết bị</a>
                 <a href="warranty-list">Danh sách thiết bị đang bảo hành</a>
+                <a href="device-serial-search">Tra cứu seri</a>
                 <c:if test="${hasDeviceSeriArea}">
                     <a href="de-show">Danh sách thiết bị seri</a>
                 </c:if>
@@ -52,24 +54,26 @@
             </details>
         </c:if>
 
-        <c:if test="${hasAccountArea}">
-            <details class="sidebar-group">
-                <summary>Người dùng</summary>
-                <a href="account">Tài khoản</a>
-                <a href="permission-management">Phân quyền</a>
-            </details>
-        </c:if>
+        <details class="sidebar-group">
+            <summary>Người dùng</summary>
+    		<c:if test="${hasAccountArea}">
+            	<a href="account">Tài khoản</a>
+    		</c:if>
+            <c:if test="${permissions.contains('Quản Lí Quyền')}">
+            	<a href="permission-management">Phân quyền</a>
+            </c:if>
+        </details>
 
-        <c:if test="${hasTaskArea}">
-            <details class="sidebar-group">
-                <summary>Nhiệm vụ</summary>
-                <a href="task-list">Danh sách nhiệm vụ</a>
-                <c:if test="${permissions.contains('Trang Quản Lí Kỹ Thuật')}">
-                    <a href="staff-list">Danh sách nhân viên kỹ thuật</a>
-                    <a href="manager-issues">Nhiệm vụ cần giao</a>
-                </c:if>
-            </details>
-        </c:if>
+        <details class="sidebar-group">
+            <summary>Nhiệm vụ</summary>
+    		<c:if test="${hasTaskArea}">
+            	<a href="task-list">Danh sách nhiệm vụ</a>
+    		</c:if>
+            <c:if test="${permissions.contains('Trang Quản Lí Kỹ Thuật')}">
+                <a href="staff-list">Danh sách nhân viên kỹ thuật</a>
+                <a href="manager-issues">Nhiệm vụ cần giao</a>
+            </c:if>
+        </details>
 
         <c:if test="${hasPaymentArea}">
             <details class="sidebar-group">

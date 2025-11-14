@@ -103,7 +103,7 @@ public class LoginController extends HttpServlet {
 
     	userDAO.updateLastLoginAt(user.getId());
     	session.setAttribute("account", user);
-    	AuthorizationUtils.storePermissions(session, permissionDAO.getPermissionsForUser(user.getId()));
-    	response.sendRedirect("home");
+    	AuthorizationUtils.reloadPermissions(session, user.getId());
+        response.sendRedirect("home");
     }
 }

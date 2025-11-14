@@ -24,6 +24,7 @@ CREATE TABLE users (
   username_changed BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_login_at TIMESTAMP,
+  permission_over boolean default false,
   FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
@@ -324,21 +325,21 @@ INSERT INTO roles (role_name, description) VALUES
 
 
 INSERT INTO `users` VALUES 
-(1,'admin01','$2a$12$VtfCsGI2a1szKsECzdKMvuSB1qNm9cj3p27bOwRbkh7cfGr/pwXZ.','admin@example.com',NULL,'System Admin','0901234567','other',NULL,1,'active',1,0,'2025-11-10 19:11:45','2025-11-12 11:16:40'),
-(2,'manager01','$2a$12$BM7JVY7D0r21mzY1s4hM9OP7Lstu991E7K38ZHfy4TuZGepBHrh1G','manager@example.com',NULL,'Van Son','0902345678','other',NULL,2,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:56:17'),
-(3,'techstaff01','$2a$12$UiSPhKWnuo/ZXSYZBDetWeoimiKI.Pun.2/A95jXSp60OSbUVLJ8e','staff01@example.com',NULL,'Duc Nguyen','0903456789','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:21:41'),
-(4,'techstaff02','$2a$12$Ap8Qjy/Xe4.52NYXwXAFX.vx8aFOaBfSEjDxfpD0IhahEoyo11CQ.','staff02@example.com',NULL,'Duc Nguye','0903456786','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:21:49'),
-(5,'techstaff03','$2a$12$dC1TT3giLVoetO4tat5Y6OMOnrmjtM/WFsB16JblhPds7FxJMoBrC','staff03@example.com',NULL,'Duc Nguy','0903456787','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:54:55'),
-(6,'techstaff04','$2a$12$6qXyxasPHFJ9bgiyBSHsd.LHAvSJKu03fTNrQ5qu..0A5WnI6CJa.','staff04@example.com',NULL,'Duc Ngu','0903456788','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:55:23'),
-(7,'spstaff01','$2a$12$pPL6YWGicOyM1dplPd.IsuSq/do3GHFp8Uc9CoYrzINBqPmeW28jW','spstaff01@example.com',NULL,'Xuan Bac','0904567890','other',NULL,4,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:21:16'),
-(8,'storekeeper01','$2a$12$CXARlFxOA7k6kGotYsPpf./AlU3WxZf9kx79m060b.eMBjZa238Se','storekeeper@example.com',NULL,'Hai Dang','0905678901','other',NULL,5,'active',1,0,'2025-11-10 19:11:45','2025-11-12 05:13:43'),
-(9,'customer01','$2a$12$bpQYKe3icKVM6AJw3M.iA.fGXr.AbOb.Dmc0ZuhRLl72CaYkBTa8O','customer01@example.com',NULL,'Hieu Pham','0906789012','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-12 18:16:51'),
-(10,'customer02','$2a$12$CQw4YUO3m4aTAXw.YwTcEu38z9/bnXxmcCNDVorLWBe4P0aPyyTKG','customer02@example.com',NULL,'Customer','0907890123','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:57:19'),
-(11,'customer03','$2a$12$1O3iiQUBTirexaraQ0EI/.tvhpu2hZR1Vyw5S9oquxHcZq/KnGsjS','customer03@example.com',NULL,'Nguyen An','0908000003','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:57:48'),
-(12,'customer04','$2a$12$G8n3a0YMwq9/kSNwW3vLjeSUz8j9YyAcIu8c8oAJYh.dYHCSh8bYy','customer04@example.com',NULL,'Tran Binh','0908000004','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:58:12'),
-(13,'customer05','$2a$12$eNCqEKqgrGkQD5Pm/7yAt.I1YJZxxAJcvypYAhQLpxBpICe2OBXHO','customer05@example.com',NULL,'Le Chi','0908000005','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:58:43'),
-(14,'customer06','$2a$12$D9wiBHN3V8/SjXNGL9MB3OZl0nXboOUBMSQT8ijpmgIfvmbxDZ8W2','customer06@example.com',NULL,'Pham Duong','0908000006','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:07:18'),
-(15,'customer07','$2a$12$icmy/A/Ys2R58i4igtBkJeRb6JLA57eklFjbt5Iig4kLSRpsXe9pm','customer07@example.com',NULL,'Hoai Giang','0908000007','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:07:45');
+(1,'admin01','$2a$12$VtfCsGI2a1szKsECzdKMvuSB1qNm9cj3p27bOwRbkh7cfGr/pwXZ.','admin@example.com',NULL,'System Admin','0901234567','other',NULL,1,'active',1,0,'2025-11-10 19:11:45','2025-11-12 11:16:40', false),
+(2,'manager01','$2a$12$BM7JVY7D0r21mzY1s4hM9OP7Lstu991E7K38ZHfy4TuZGepBHrh1G','manager@example.com',NULL,'Van Son','0902345678','other',NULL,2,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:56:17', false),
+(3,'techstaff01','$2a$12$UiSPhKWnuo/ZXSYZBDetWeoimiKI.Pun.2/A95jXSp60OSbUVLJ8e','staff01@example.com',NULL,'Duc Nguyen','0903456789','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:21:41', false),
+(4,'techstaff02','$2a$12$Ap8Qjy/Xe4.52NYXwXAFX.vx8aFOaBfSEjDxfpD0IhahEoyo11CQ.','staff02@example.com',NULL,'Duc Nguye','0903456786','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:21:49', false),
+(5,'techstaff03','$2a$12$dC1TT3giLVoetO4tat5Y6OMOnrmjtM/WFsB16JblhPds7FxJMoBrC','staff03@example.com',NULL,'Duc Nguy','0903456787','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:54:55', false),
+(6,'techstaff04','$2a$12$6qXyxasPHFJ9bgiyBSHsd.LHAvSJKu03fTNrQ5qu..0A5WnI6CJa.','staff04@example.com',NULL,'Duc Ngu','0903456788','other',NULL,3,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:55:23', false),
+(7,'spstaff01','$2a$12$pPL6YWGicOyM1dplPd.IsuSq/do3GHFp8Uc9CoYrzINBqPmeW28jW','spstaff01@example.com',NULL,'Xuan Bac','0904567890','other',NULL,4,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:21:16', false),
+(8,'storekeeper01','$2a$12$CXARlFxOA7k6kGotYsPpf./AlU3WxZf9kx79m060b.eMBjZa238Se','storekeeper@example.com',NULL,'Hai Dang','0905678901','other',NULL,5,'active',1,0,'2025-11-10 19:11:45','2025-11-12 05:13:43', false),
+(9,'customer01','$2a$12$bpQYKe3icKVM6AJw3M.iA.fGXr.AbOb.Dmc0ZuhRLl72CaYkBTa8O','customer01@example.com',NULL,'Hieu Pham','0906789012','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-12 18:16:51', false),
+(10,'customer02','$2a$12$CQw4YUO3m4aTAXw.YwTcEu38z9/bnXxmcCNDVorLWBe4P0aPyyTKG','customer02@example.com',NULL,'Customer','0907890123','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:57:19', false),
+(11,'customer03','$2a$12$1O3iiQUBTirexaraQ0EI/.tvhpu2hZR1Vyw5S9oquxHcZq/KnGsjS','customer03@example.com',NULL,'Nguyen An','0908000003','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:57:48', false),
+(12,'customer04','$2a$12$G8n3a0YMwq9/kSNwW3vLjeSUz8j9YyAcIu8c8oAJYh.dYHCSh8bYy','customer04@example.com',NULL,'Tran Binh','0908000004','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:58:12', false),
+(13,'customer05','$2a$12$eNCqEKqgrGkQD5Pm/7yAt.I1YJZxxAJcvypYAhQLpxBpICe2OBXHO','customer05@example.com',NULL,'Le Chi','0908000005','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 19:58:43', false),
+(14,'customer06','$2a$12$D9wiBHN3V8/SjXNGL9MB3OZl0nXboOUBMSQT8ijpmgIfvmbxDZ8W2','customer06@example.com',NULL,'Pham Duong','0908000006','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:07:18', false),
+(15,'customer07','$2a$12$icmy/A/Ys2R58i4igtBkJeRb6JLA57eklFjbt5Iig4kLSRpsXe9pm','customer07@example.com',NULL,'Hoai Giang','0908000007','other',NULL,6,'active',1,0,'2025-11-10 19:11:45','2025-11-10 20:07:45', false);
 
 
 
@@ -457,8 +458,7 @@ INSERT INTO permissions (id, permission_name) VALUES
 (14, 'Trang Nhân Viên Kỹ Thuật'), (15, 'Trang Quản Lí Kỹ Thuật'), (16, 'Quản Lí Seri'), (17, 'Gửi Vấn Đề'), (18, 'Quản Lí Quyền'), (19, 'Trang Admin'), (20, 'Quản Lí Giá'), (21, 'Xem Seri'),
 (22, 'Quản Lí Giá Thiết Bị'), (23, 'Xem Thiết Bị'), (24, 'Quản Lí Bảo Hành');
 
-INSERT INTO role_permission (role_id, permission_id) VALUES (1, 1), (1, 2), (1, 3), (1, 4),
-(1, 5), (1, 6), (1, 7), (1, 8), (1, 9), (1, 10), (1, 16), (1, 17), (1, 18), (1, 19), (1, 21), (1, 23), (1, 24);
+INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
 
 -- Manager 
 INSERT INTO role_permission (role_id, permission_id) VALUES (2, 7), (2, 8), (2, 15), (2, 10);

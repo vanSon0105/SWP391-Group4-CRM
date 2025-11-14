@@ -35,6 +35,25 @@ public class PermissionDAO {
         return permissions;
     }
     
+    public Integer getPermissionIdByName(String permissionName) {
+        if (permissionName == null) {
+            return null;
+        }
+        String sql = "SELECT id FROM permissions WHERE permission_name = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, permissionName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("id");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
     public Permission createPermission(String permissionName) {
         String trimmedName = permissionName != null ? permissionName.trim() : null;
         if (trimmedName == null || trimmedName.isEmpty()) {
@@ -59,30 +78,38 @@ public class PermissionDAO {
         return null;
     }
             
-    public Set<String> getPermissionsForUser(int userId) {
-    	String sql = "SELECT p.permission_name\n"
-                + "FROM permissions p\n"
-                + "INNER JOIN role_permission rp ON rp.permission_id = p.id\n"
-                + "INNER JOIN users u ON u.role_id = rp.role_id\n"
-                + "WHERE u.id = ?\n"
-                + "UNION\n"
-                + "SELECT p.permission_name\n"
-                + "FROM permissions p\n"
-                + "INNER JOIN user_permission up ON up.permission_id = p.id\n"
-                + "WHERE up.user_id = ?";
+    public Set<String> getPermissionNamesByRole(int roleId) {
+        String sql = "SELECT p.permission_name "
+                   + "FROM permissions p "
+                   + "INNER JOIN role_permission rp ON rp.permission_id = p.id "
+                   + "WHERE rp.role_id = ?";
         Set<String> permissions = new HashSet<>();
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, userId);
-            ps.setInt(2, userId);
-
+            ps.setInt(1, roleId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    String permission = rs.getString("permission_name");
-                    if (permission != null) {
-                        permissions.add(permission);
-                    }
+                    permissions.add(rs.getString("permission_name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return permissions;
+    }
+    
+    public Set<String> getDirectPermissionNamesByUser(int userId) {
+        String sql = "SELECT p.permission_name "
+                   + "FROM permissions p "
+                   + "INNER JOIN user_permission up ON up.permission_id = p.id "
+                   + "WHERE up.user_id = ?";
+        Set<String> permissions = new HashSet<>();
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    permissions.add(rs.getString("permission_name"));
                 }
             }
         } catch (SQLException e) {
@@ -230,6 +257,71 @@ public class PermissionDAO {
             }
         }
         return new ArrayList<>(unique);
+    }
+    
+    public boolean existsUserWithPermissionExcludingRole(int permissionId, int roleId) {
+        String sql = "SELECT 1 FROM users u "
+                + "WHERE u.status = 'active' AND ("
+                + " (u.role_id <> ? AND ("
+                + "     EXISTS (SELECT 1 FROM role_permission rp WHERE rp.role_id = u.role_id AND rp.permission_id = ?)"
+                + "     OR EXISTS (SELECT 1 FROM user_permission up WHERE up.user_id = u.id AND up.permission_id = ?)"
+                + " ))"
+                + " OR (u.role_id = ? AND EXISTS (SELECT 1 FROM user_permission up WHERE up.user_id = u.id AND up.permission_id = ?))"
+                + ") LIMIT 1";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, roleId);
+            ps.setInt(2, permissionId);
+            ps.setInt(3, permissionId);
+            ps.setInt(4, roleId);
+            ps.setInt(5, permissionId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean existsUserWithPermissionExcludingUser(int permissionId, int userId) {
+        String sql = "SELECT 1 FROM users u "
+                + "WHERE u.status = 'active' AND u.id <> ? AND ("
+                + "    EXISTS (SELECT 1 FROM role_permission rp WHERE rp.role_id = u.role_id AND rp.permission_id = ?)"
+                + "    OR EXISTS (SELECT 1 FROM user_permission up WHERE up.user_id = u.id AND up.permission_id = ?)"
+                + ") LIMIT 1";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.setInt(2, permissionId);
+            ps.setInt(3, permissionId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String roleSql = "SELECT 1 FROM users u "
+                + "JOIN role_permission rp ON rp.role_id = u.role_id AND rp.permission_id = ? "
+                + "WHERE u.id = ? AND u.status = 'active' LIMIT 1";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(roleSql)) {
+            ps.setInt(1, permissionId);
+            ps.setInt(2, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
 
