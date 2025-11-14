@@ -67,11 +67,11 @@
 					<table class="device-table">
 						<tbody>
 							<tr>
-								<th>ID Payment</th>
+								<th>Mã thanh toán</th>
 								<td>${payment.id}</td>
 							</tr>
 							<tr>
-								<th>Issue ID</th>
+								<th>Mã yêu cầu</th>
 								<td>${payment.issueId}</td>
 							</tr>
 							<tr>

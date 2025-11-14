@@ -147,7 +147,7 @@ body .panel h2 {
 		<section class="panel" id="table-panel">
 			<div
 				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-				<h2>Danh sách task</h2>
+				<h2>Danh sách nhiệm vụ</h2>
 
 				<c:if test="${not empty param.message}">
 					<div class="message">${param.message}</div>
@@ -165,8 +165,8 @@ body .panel h2 {
 								<th>ID</th>
 								<th>Tiêu đề</th>
 								<th>Mô tả</th>
-								<th>ManagerID</th>
-								<th>CustomerIssueID</th>
+								<th>Mã quản lý</th>
+								<th>Mã yêu cầu</th>
 								<th>Trạng thái</th>
 								<th>Hành động</th>
 							</tr>

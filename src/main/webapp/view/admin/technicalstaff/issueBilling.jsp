@@ -109,7 +109,7 @@
 	<div class="wrapper">
 		<h1>Tạo bill thanh toán</h1>
 		<div class="meta">
-			<div><strong>Mã issue:</strong> ${issue.issueCode}</div>
+			<div><strong>Mã yêu cầu:</strong> ${issue.issueCode}</div>
 			<div><strong>Tiêu đề:</strong> ${issue.title}</div>
 			<c:if test="${not empty payment}">
 				<div><strong>Trạng thái bill hiện tại:</strong> ${payment.status}</div>
