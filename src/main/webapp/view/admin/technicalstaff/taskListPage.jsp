@@ -316,7 +316,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Task</th>
+                            <th>Nhiệm vụ</th>
                             <th>Yêu cầu</th>
                             <th>Deadline</th>
                             <th>Trạng thái</th>

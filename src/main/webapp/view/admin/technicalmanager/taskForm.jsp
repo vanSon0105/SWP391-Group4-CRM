@@ -137,7 +137,7 @@ small {
 								${issue.title}</option>
 						</c:forEach>
 					</select> 
-					
+					<small>${errorIssue}</small>
 					<%-- 
 					<label>Hạn hoàn thành</label> <input type="date" name="deadline"
 						min="<%= java.time.LocalDate.now() %>"

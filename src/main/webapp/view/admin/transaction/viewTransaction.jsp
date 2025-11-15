@@ -34,7 +34,7 @@
 }
 
 .detail-panel .info div.small-box { 
-    flex: 1 1 180px;  /* nhỏ gọn */
+    flex: 1 1 180px;  
     background: #f9f9f9; 
     padding: 10px 12px; 
     border-radius: 8px; 

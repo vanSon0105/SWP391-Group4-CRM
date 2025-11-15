@@ -277,8 +277,8 @@
             <c:if test="${not empty issueDetail}">
                 <c:set var="issue" value="${issueDetail}" />
                 <section class="issue-card">
-                    <div class="section-title">Thông tin Issue liên quan</div>
-                    <p><strong>Mã issue:</strong> ${issue.issueCode}</p>
+                    <div class="section-title">Thông tin yêu cầu liên quan</div>
+                    <p><strong>Mã yêu cầu:</strong> ${issue.issueCode}</p>
                     <p><strong>Tiêu đề:</strong> ${issue.title}</p>
                     <p><strong>Mô tả:</strong> <br>${issue.description}</p>
                     <p><strong>Trạng thái hỗ trợ:</strong>
