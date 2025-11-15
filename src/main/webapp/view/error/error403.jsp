@@ -15,7 +15,7 @@
     <div class="card">
         <h1>403</h1>
         <h2>Bạn không có quyền truy cập</h2>
-        <p>Tài khoản của bạn chưa được cấp quyền hoặc liên kết yêu cầu xác thực đặc biệt. Vui lòng đăng nhập đúng vai trò hoặc liên hệ hotline 1900 8888.</p>
+        <p>Tài khoản của bạn chưa được cấp quyền hoặc liên kết yêu cầu xác thực đặc biệt. Vui lòng đăng nhập đúng vai trò</p>
         <div class="error-actions">
             <a class="btn order-btn" href="javascript:history.back()">Quay lại</a>
             <a class="btn order-btn" href="login">Đăng nhập lại</a>

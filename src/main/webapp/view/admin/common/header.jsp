@@ -25,7 +25,7 @@
        		<p class="page-breadcrumb">Admin / <c:out value="${currentPageTitle}" /></p>
        		<strong class="page-title"><c:out value="${currentPageTitle}" /></strong>
        	</div>
-       	<form class="quick-search" action="search" method="get">
+       	<form class="quick-search" action="${pageContext.request.contextPath}/admin-quick-search" method="get">
        		<label class="sr-only" for="topbar-search">Tìm kiếm</label>
        		<input id="topbar-search" name="q" type="search" placeholder="Tìm nhanh thiết bị, đơn hàng..." />
        		<button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>

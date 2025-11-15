@@ -15,7 +15,7 @@
     <div class="card">
         <h1>500</h1>
         <h2>Oops! Máy chủ đang gặp sự cố</h2>
-        <p>Shop88 đã ghi nhận lỗi hệ thống và đang khắc phục. Hãy thử lại sau vài phút hoặc quay lại trang chủ để tiếp tục mua sắm</p>
+        <p>TechShop đã ghi nhận lỗi hệ thống và đang khắc phục. Hãy thử lại sau vài phút hoặc quay lại trang chủ để tiếp tục mua sắm</p>
         <div class="error-actions">
             <a class="btn order-btn" href="javascript:history.back()">Quay lại</a>
 	        <a class="btn order-btn" href="${pageContext.request.contextPath}/home">Home</a>
