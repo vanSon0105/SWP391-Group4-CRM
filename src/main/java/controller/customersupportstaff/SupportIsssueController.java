@@ -50,11 +50,6 @@ public class SupportIsssueController extends HttpServlet {
 			return;
 		}
 		
-//		if ("updateStatus".equalsIgnoreCase(action)) {
-//			updateStatusIssue(req, resp, staff);
-//			return;
-//		}
-		
 		List<CustomerIssue> newIssues = iDao.getUnassignedIssues();
 		List<CustomerIssue> myIssues = iDao.getIssuesAssignedToStaff(staff.getId());
 		List<CustomerIssue> managerReviewIssues = iDao.getIssuesBySupportStatuses(new String[] { "manager_review", "submitted" });

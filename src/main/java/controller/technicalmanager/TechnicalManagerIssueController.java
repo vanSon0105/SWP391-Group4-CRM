@@ -112,10 +112,23 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		}
 
 		CustomerIssue issue = iDao.getIssueById(issueId);
-		if (issue != null && issue.getWarrantyCardId() > 0) {
+		if (issue == null) {
+			resp.sendRedirect("manager-issues?notfound=1");
+			return;
+		}
+
+		if (issue.getWarrantyCardId() > 0) {
 			WarrantyCard warranty = wDao.getById(issue.getWarrantyCardId());
 			req.setAttribute("warrantyInfo", warranty);
 			req.setAttribute("currentDate", new java.util.Date());
+		} else {
+			String notice;
+			if ("repair".equalsIgnoreCase(issue.getIssueType())) {
+				notice = "Yêu cầu sửa chữa ngoài cửa hàng không có thẻ bảo hành để đối chiếu";
+			} else {
+				notice = "Không tìm thấy thẻ bảo hành gắn với yêu cầu này";
+			}
+			req.setAttribute("warrantyNotice", notice);
 		}
 
 		showReview(req, resp);

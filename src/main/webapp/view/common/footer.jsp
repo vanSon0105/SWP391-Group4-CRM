@@ -6,9 +6,9 @@
     <div class="container">
         <div class="footer-body">
             <section class="footer-left">
-                <h2 class="footer-title">Sign up for our new devices</h2>
+                <h2 class="footer-title">Đăng kí để nhận sản phẩm mới</h2>
                 <div class="footer-input-form"><input type="email" class="footer-input"
-                        placeholder="Enter your email">
+                        placeholder="Nhập email của bạn">
                     <a href="#1">
                         <svg xmlns="http://www.w3.org/2000/svg" width="28" height="18" viewBox="0 0 28 18"
                             fill="none">
@@ -27,32 +27,31 @@
             </section>
             <section class="footer-right">
                 <ul>
-                    <h4 class="footer-title-right">Pages</h4>
+                    <h4 class="footer-title-right">Thông báo</h4>
                     <li><a href="#1">Home</a></li>
-                    <li><a href="#1">About</a></li>
-                    <li><a href="#1">Blog</a></li>
-                    <li><a href="#1">Blog Post</a></li>
+                    <li><a href="#1">Sản phẩm mới</a></li>
+                    <li><a href="#1">Sản phẩm nổi bật</a></li>
+                    <li><a href="#1">Sản phẩm ưa thích</a></li>
                 </ul>
                 <ul>
-                    <h4 class="footer-title-right">Devices</h4>
+                    <h4 class="footer-title-right">Thiết bị</h4>
                     <li><a href="#1">Home</a></li>
-                    <li><a href="#1">About</a></li>
-                    <li><a href="#1">Blog</a></li>
-                    <li><a href="#1">Blog Post</a></li>
+                    <li><a href="#1">Về chúng tôi</a></li>
+                    <li><a href="#1">Bài viết</a></li>
                 </ul>
                 <ul>
-                    <h4 class="footer-title-right">Overview</h4>
-                    <li><a href="#1">Home1</a></li>
-                    <li><a href="#1">Home2</a></li>
-                    <li><a href="#1">Home3</a></li>
-                    <li><a href="#1">Pricing1</a></li>
+                    <h4 class="footer-title-right">Tổng quan</h4>
+                    <li><a href="#1">Home</a></li>
+                    <li><a href="#1">Giỏ hàng</a></li>
+                    <li><a href="#1">Trang thiết bị</a></li>
+                    <li><a href="#1">Giá</a></li>
                 </ul>
                 <ul>
-                    <h4 class="footer-title-right">About Us</h4>
+                    <h4 class="footer-title-right">Về chúng tôi</h4>
                     <li><a href="#1">Team</a></li>
-                    <li><a href="#1">Investors</a></li>
-                    <li><a href="#1">Blog</a></li>
-                    <li><a href="#1">Press</a></li>
+                    <li><a href="#1">Đội ngũ</a></li>
+                    <li><a href="#1">Bài viết</a></li>
+                    <li><a href="#1">Nổi bật</a></li>
                 </ul>
             </section>
         </div>

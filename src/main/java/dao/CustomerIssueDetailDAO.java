@@ -24,7 +24,11 @@ public class CustomerIssueDetailDAO extends DBContext {
 				 c.setCustomerFullName(rs.getString("customer_full_name"));
 				 c.setContactEmail(rs.getString("contact_email"));
 				 c.setContactPhone(rs.getString("contact_phone"));
-				 c.setDeviceSerial(serialNo);
+				 String storedSerial = rs.getString("device_serial");
+				 if (storedSerial == null || storedSerial.trim().isEmpty()) {
+					 storedSerial = serialNo;
+				 }
+				 c.setDeviceSerial(storedSerial);
 				 c.setSummary(rs.getString("summary"));
 				 c.setForwardToManager(rs.getBoolean("forward_to_manager"));
 				 c.setCreatedAt(rs.getTimestamp("created_at"));

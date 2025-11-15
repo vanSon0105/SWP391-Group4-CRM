@@ -151,7 +151,7 @@ tr:last-child td {
 					<thead>
 						<tr>
 							<th>STT</th>
-							<th>Tên Device</th>
+							<th>Tên thiết bị</th>
 							<th>Mã serial</th>
 							<th>Ngày bắt đầu</th>
 							<th>Ngày kết thúc</th>

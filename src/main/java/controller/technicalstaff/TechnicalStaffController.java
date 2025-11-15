@@ -167,7 +167,7 @@ public class TechnicalStaffController extends HttpServlet {
 					taskDetailDao.updateAssignmentStatus(detail.getId(), detail.getTechnicalStaffId(), "cancelled", null, false);
 				}
 			}
-			issueDao.updateSupportStatus(issueId, "cancelled");
+			boolean c = issueDao.updateSupportStatus(issueId, "cancelled");
 			return "cancelled";
 		}
 

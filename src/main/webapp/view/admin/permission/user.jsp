@@ -25,6 +25,11 @@
             gap: 8px;
         }
         
+        .permission-chip.select-all {
+            border: 1px dashed #cbd5f5;
+            background: #f8fafc;
+        }
+        
         .user-layout {
             display: grid;
             grid-template-columns: 300px 1fr;
@@ -231,21 +236,25 @@
                             <form method="post" action="permission-user">
                                 <input type="hidden" name="action" value="updateUser">
                                 <input type="hidden" name="userId" value="${selectedUser.id}">
-                                <div class="permission-grid">
+                                <div class="permission-grid" data-permission-group="user-permissions">
+                                    <label class="permission-chip select-all">
+                                        <input type="checkbox" data-select-all="user-permissions">
+                                        <span>Chọn tất cả</span>
+                                    </label>
                                     <c:forEach var="permission" items="${allPermissions}">
                                         <c:set var="inherited" value="${inheritedPermissionIds != null && inheritedPermissionIds.contains(permission.id)}" />
                                         <c:set var="direct" value="${userPermissionIds != null && userPermissionIds.contains(permission.id)}" />
-                                        <div class="permission-card ${inherited ? 'inherited' : ''}">
-                                            <strong>${permission.name}</strong>
-                                            <label>
-                                                <input type="checkbox" name="permissionIds" value="${permission.id}"
-                                                       <c:if test="${direct || inherited}">checked</c:if>>
-                                                Cấp riêng
-                                            </label>
-                                            <c:if test="${inherited}">
-                                                <small>Đã được cấp từ vai trò</small>
-                                            </c:if>
-                                        </div>
+										<div class="permission-card ${inherited ? 'inherited' : ''}">
+										    <strong>${permission.name}</strong>
+										    <label>
+										        <input type="checkbox" name="permissionIds" value="${permission.id}"
+										               <c:if test="${direct}">checked</c:if>>
+										        Cấp riêng
+										    </label>
+										    <c:if test="${inherited}">
+										        <small>Đã được cấp từ vai trò</small>
+										    </c:if>
+										</div>
                                     </c:forEach>
                                 </div>
                                 <div class="permission-actions">
@@ -258,5 +267,6 @@
             </div>
         </section>
     </main>
+    
 </body>
 </html>

@@ -107,6 +107,11 @@
       background: #fee2e2;
       color: #b91c1c;
     }
+    
+    .status-cancelled {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
 
     .status-in_progress {
       background: #dbeafe;
@@ -403,6 +408,7 @@
                                     <c:when test="${status == 'completed'}">Xử lí xong vấn đề</c:when>
                                     <c:when test="${status == 'waiting_confirm'}">Chờ admin xác nhận</c:when>
                                     <c:when test="${status == 'resolved'}">Đã hoàn tất</c:when>
+                                    <c:when test="${status == 'cancelled'}">Bị từ chối</c:when>
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
                             </span>
@@ -534,6 +540,7 @@
                                     <c:when test="${issueDetail.supportStatus == 'create_payment'}">Nhân viên đang xử lí</c:when>
                                     <c:when test="${issueDetail.supportStatus == 'completed'}">Xử lí xong vấn đề</c:when>
                                     <c:when test="${issueDetail.supportStatus == 'resolved'}">Đã hoàn tất</c:when>
+                                    <c:when test="${issueDetail.supportStatus == 'cancelled'}">Bị từ chối</c:when>
                                     <c:otherwise>Tiếp nhận mới</c:otherwise>
                                 </c:choose>
                             </span>

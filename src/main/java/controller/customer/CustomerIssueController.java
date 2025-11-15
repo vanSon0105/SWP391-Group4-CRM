@@ -178,9 +178,11 @@ public class CustomerIssueController extends HttpServlet {
 		if (d == null) {
 			d = new CustomerIssueDetail();
 		}
+		applyAccountDefaults(d, customer);
 
 		req.setAttribute("issue", issue);
 		req.setAttribute("form", d);
+		req.setAttribute("issueDetail", d);
 		req.getRequestDispatcher("view/customer/issueDetailPage.jsp").forward(req, resp);
 	}
 	
@@ -225,7 +227,12 @@ public class CustomerIssueController extends HttpServlet {
 		int staffId = issue.getSupportStaffId();
 		if (staffId == 0) {
 			req.setAttribute("error", "Yêu cầu chưa được nhân viên hỗ trợ tiếp nhận. Vui lòng thử lại sau.");
-			req.setAttribute("issueDetail", dDao.getByIssueId(issueId, serialNo));
+			CustomerIssueDetail pending = dDao.getByIssueId(issueId, serialNo);
+			if (pending == null) {
+				pending = new CustomerIssueDetail();
+			}
+			applyAccountDefaults(pending, customer);
+			req.setAttribute("issueDetail", pending);
 			req.getRequestDispatcher("view/customer/issueDetailPage.jsp").forward(req, resp);
 			return;
 		}
@@ -247,6 +254,7 @@ public class CustomerIssueController extends HttpServlet {
 			c.setContactPhone(contactPhone);
 			c.setDeviceSerial(deviceSerial);
 			c.setSummary(summary);
+			applyAccountDefaults(c, customer);
 			req.setAttribute("issueDetail", c);
 			req.getRequestDispatcher("view/customer/issueDetailForm.jsp").forward(req, resp);
 			return;
@@ -651,6 +659,25 @@ public class CustomerIssueController extends HttpServlet {
 		default:
 			return false;
 		}
+	}
+	
+	private void applyAccountDefaults(CustomerIssueDetail detail, User customer) {
+		if (detail == null || customer == null) {
+			return;
+		}
+		if (!hasText(detail.getCustomerFullName())) {
+			detail.setCustomerFullName(customer.getFullName());
+		}
+		if (!hasText(detail.getContactEmail())) {
+			detail.setContactEmail(customer.getEmail());
+		}
+		if (!hasText(detail.getContactPhone())) {
+			detail.setContactPhone(customer.getPhone());
+		}
+	}
+
+	private boolean hasText(String value) {
+		return value != null && !value.trim().isEmpty();
 	}
 	
 }

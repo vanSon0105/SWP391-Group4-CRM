@@ -234,11 +234,6 @@
                             <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
                 			Sửa chữa
                         </option>
-                        
-                        <option value="repair"
-                            <c:if test="${selectedIssueType eq 'warranty'}">checked</c:if>>
-                			Sửa chữa
-                        </option>
                     </select>
             </div>
 

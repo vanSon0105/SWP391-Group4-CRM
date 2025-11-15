@@ -42,7 +42,7 @@
 						<thead>
 							<tr>
 								<th>ID</th>
-								<th>Username</th>
+								<th>Tên tài khoản</th>
 								<th>Họ tên</th>
 								<th>Email</th>
 								<th>Trạng thái</th>

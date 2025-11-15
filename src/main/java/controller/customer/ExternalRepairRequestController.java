@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import dao.CustomerIssueDAO;
+import dao.CustomerIssueDetailDAO;
 import dao.DeviceDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.CustomerIssueDetail;
 import model.Device;
 import model.User;
 import utils.AuthorizationUtils;
@@ -23,6 +25,7 @@ public class ExternalRepairRequestController extends HttpServlet {
 	private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{9,11}$");
 	private static final Pattern EMAIL_PATTERN = Pattern
 			.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+	private final CustomerIssueDetailDAO issueDetailDao = new CustomerIssueDetailDAO();
 
 	private final CustomerIssueDAO issueDao = new CustomerIssueDAO();
 	private final DeviceDAO deviceDao = new DeviceDAO();
@@ -125,6 +128,26 @@ public class ExternalRepairRequestController extends HttpServlet {
 			req.setAttribute("formError", "Không thể gửi yêu cầu. Vui lòng thử lại sau");
 			req.getRequestDispatcher("view/customer/externalRepairRequest.jsp").forward(req, resp);
 			return;
+		}
+		
+		Integer issueId = issueDao.findLatestIssueIdForCustomer(customer.getId());
+		if (issueId != null) {
+			CustomerIssueDetail detail = new CustomerIssueDetail();
+			detail.setIssueId(issueId);
+			detail.setSupportStaffId(customer.getId());
+			detail.setCustomerFullName(contactName);
+			detail.setContactEmail(contactEmail);
+			detail.setContactPhone(contactPhone);
+			detail.setDeviceSerial(serial);
+			String detailSummary = desc;
+			if (dropoffNote != null && !dropoffNote.isEmpty()) {
+				detailSummary = (detailSummary != null && !detailSummary.isEmpty())
+						? detailSummary + " | Ghi chú: " + dropoffNote
+						: dropoffNote;
+			}
+			detail.setSummary(detailSummary);
+			detail.setForwardToManager(false);
+			issueDetailDao.saveIssueDetail(detail);
 		}
 
 		resp.sendRedirect("issue?created=1");
