@@ -146,7 +146,7 @@
                     <th>Số lượng</th>
                     <th>Giá</th>
                     <th>Serial ID</th>
-                    <th>Warranty Card ID</th>
+                    <th>Mã bảo hành</th>
                 </tr>
             </thead>
             <tbody>

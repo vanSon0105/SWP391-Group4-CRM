@@ -57,11 +57,11 @@
 								<td>${task.description}</td>
 							</tr>
 							<tr>
-								<th>ID quản lí</th>
+								<th>Mã quản lý</th>
 								<td>${task.managerId}</td>
 							</tr>
 							<tr>
-								<th>ID vấn đề</th>
+								<th>Mã yêu cầu</th>
 								<td>${task.customerIssueId}</td>
 							</tr>
 							<tr>
@@ -102,10 +102,10 @@
 		</section>
 
 		<section class="panel">
-			<h3 style="margin-bottom: 10px;">Danh sách Staff đã được giao</h3>
+			<h3 style="margin-bottom: 10px;">Danh sách nhân viên đã được giao</h3>
 
 			<c:if test="${empty listTaskDetail}">
-				<p style="text-align: center; padding: 10px;">Task này chưa được
+				<p style="text-align: center; padding: 10px;">Nhiệm này chưa được
 					giao cho ai.</p>
 			</c:if>
 
@@ -114,7 +114,7 @@
 					<thead>
 						<tr>
 							<th>ID</th>
-							<th>Staff ID</th>
+							<th>Mã nhân viên</th>
 							<th>Giao vào</th>
 							<th>Hạn</th>
 							<th>Trạng thái</th>

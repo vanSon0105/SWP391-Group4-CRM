@@ -200,8 +200,8 @@ body .panel h2 {
 								<th>ID</th>
 								<th>Tiêu đề</th>
 								<th>Mô tả</th>
-								<th>ID quản lí</th>
-								<th>ID vấn đề</th>
+								<th>Mã quản lý</th>
+								<th>Mã yêu cầu</th>
 								<th>Trạng thái</th>
 								<th>Hành động</th>
 							</tr>

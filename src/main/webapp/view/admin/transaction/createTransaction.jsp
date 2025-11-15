@@ -33,11 +33,11 @@ h2 {
 section.panel {
 	background: #ffffff;
 	padding: 30px 25px;
-	border: 1px solid #d1d5db; /* Vuông, nhẹ */
-	border-radius: 0; /* Vuông hẳn */
+	border: 1px solid #d1d5db; 
+	border-radius: 0; 
 	max-width: 850px;
 	margin: 25px auto;
-	box-shadow: none; /* Không bóng */
+	box-shadow: none; 
 }
 
 .device-form label {
@@ -54,7 +54,7 @@ section.panel {
 	border: 1px solid #9ca3af;
 	background-color: #f9fafb;
 	font-size: 14px;
-	border-radius: 0; /* Vuông hẳn */
+	border-radius: 0; 
 	box-sizing: border-box;
 }
 
