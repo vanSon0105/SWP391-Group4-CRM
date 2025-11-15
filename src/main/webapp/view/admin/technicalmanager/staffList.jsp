@@ -88,7 +88,7 @@
 				</c:if>
 
 				<c:if test="${empty staffList}">
-					<p style="text-align: center;">Không tìm thấy staff</p>
+					<p style="text-align: center;">Không tìm thấy nhân viên kỹ thuật</p>
 				</c:if>
 			</div>
 		</section>
