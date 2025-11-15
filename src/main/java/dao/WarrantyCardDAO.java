@@ -153,7 +153,8 @@ public class WarrantyCardDAO extends DBContext{
 	    	    "SELECT wc.id AS warrantyId, wc.start_at, wc.end_at, " +
 	    	    "ds.id AS deviceSerialId, ds.serial_no, ds.device_id, " +
 	    	    "d.name AS deviceName, " +
-	    	    "u.id AS customerId, u.full_name AS customerName " +
+	    	    "u.id AS customerId, u.full_name AS customerName, " +
+	    	    "ci.issue_type " +
 	    	    "FROM warranty_cards wc " +
 	    	    "JOIN device_serials ds ON wc.device_serial_id = ds.id " +
 	    	    "JOIN devices d ON ds.device_id = d.id " +
@@ -173,9 +174,9 @@ public class WarrantyCardDAO extends DBContext{
 
 	    if (status != null && !status.isEmpty()) {
 	        if (status.equals("valid")) {
-	            sql.append(" AND wc.end_at >= NOW()");
+	        	sql.append(" AND ci.issue_type = 'warranty'");
 	        } else if (status.equals("expired")) {
-	            sql.append(" AND wc.end_at < NOW()");
+	        	sql.append(" AND ci.issue_type = 'repair'");
 	        }
 	    }
 
@@ -213,6 +214,7 @@ public class WarrantyCardDAO extends DBContext{
 	            wc.setCustomer(c);
 	            wc.setStart_at(rs.getTimestamp("start_at"));
 	            wc.setEnd_at(rs.getTimestamp("end_at"));
+	            wc.setIssueType(rs.getString("issue_type"));
 
 	            list.add(wc);
 	        }
@@ -234,7 +236,6 @@ public class WarrantyCardDAO extends DBContext{
 	    	    "JOIN customer_issues ci ON ci.warranty_card_id = wc.id " +
 	    	    "WHERE ci.support_status IN ('new','in_progress','awaiting_customer','tech_in_progress','submitted'," +
 	    	    "'manager_review','manager_approved','create_payment','waiting_payment','waiting_confirm','task_created') " +
-	    	    "AND ci.issue_type = 'warranty' " +
 	    	    "AND wc.is_cancelled = 0"
 	    	);
 
@@ -246,9 +247,9 @@ public class WarrantyCardDAO extends DBContext{
 
 	    if (status != null && !status.isEmpty()) {
 	        if (status.equals("valid")) {
-	            sql.append(" AND wc.end_at >= NOW()");
+	        	sql.append(" AND ci.issue_type = 'warranty'");
 	        } else if (status.equals("expired")) {
-	            sql.append(" AND wc.end_at < NOW()");
+	        	sql.append(" AND ci.issue_type = 'repair'");
 	        }
 	    }
 

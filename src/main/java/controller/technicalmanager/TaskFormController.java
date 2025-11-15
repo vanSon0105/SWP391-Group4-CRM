@@ -149,7 +149,13 @@ public class TaskFormController extends HttpServlet {
 			String customerIssueIdStr = request.getParameter("customerIssueId");
 			int customerIssueId;
 			try {
-				customerIssueId = Integer.parseInt(customerIssueIdStr);
+				if (customerIssueIdStr != null) {
+					customerIssueId = Integer.parseInt(customerIssueIdStr);
+				} else {
+					request.setAttribute("errorIssue", "Không được để trống trường này");
+					forwardToForm(request, res);
+					return;
+				}
 			} catch (NumberFormatException ex) {
 				res.sendRedirect("task-list?created=0");
 				return;

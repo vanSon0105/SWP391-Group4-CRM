@@ -15,6 +15,16 @@ public class WarrantyCard {
 	private String assignedByName;
 	private String handledByName;
 	private boolean isCancelled;
+	private String issueType;
+
+	public String getIssueType() {
+		return issueType;
+	}
+
+	public void setIssueType(String issueType) {
+		this.issueType = issueType;
+	}
+
 	
 	public boolean getIsCancelled() {
 		return isCancelled;
