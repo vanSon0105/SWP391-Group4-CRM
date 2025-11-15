@@ -101,7 +101,7 @@ public class CustomerIssueDAO extends DBContext {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
 						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback")));
+						rs.getString("issue_type"), rs.getString("feedback"), rs.getString("manager_reason")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -145,7 +145,7 @@ public class CustomerIssueDAO extends DBContext {
 				return new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
 						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback"));
+						rs.getString("issue_type"), rs.getString("feedback"), rs.getString("manager_reason"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -162,7 +162,7 @@ public class CustomerIssueDAO extends DBContext {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
 						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback")));
+						rs.getString("issue_type"), rs.getString("feedback"), rs.getString("manager_reason")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -180,7 +180,7 @@ public class CustomerIssueDAO extends DBContext {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
 						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback")));
+						rs.getString("issue_type"), rs.getString("feedback"), rs.getString("manager_reason")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -237,7 +237,7 @@ public class CustomerIssueDAO extends DBContext {
 				list.add(new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"), rs.getString("issue_code"),
 						rs.getString("title"), rs.getString("description"), rs.getInt("warranty_card_id"),
 						rs.getTimestamp("created_at"), rs.getInt("support_staff_id"), rs.getString("support_status"),
-						rs.getString("issue_type"), rs.getString("feedback")));
+						rs.getString("issue_type"), rs.getString("feedback"), rs.getString("manager_reason")));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -696,7 +696,7 @@ public class CustomerIssueDAO extends DBContext {
 		String placeholders = String.join(",", Collections.nCopies(warrantyCardIds.size(), "?"));
 		String sql = "SELECT ci.id, ci.customer_id, ci.issue_code, ci.title, ci.description, "
 				+ "ci.warranty_card_id, ci.created_at, ci.support_staff_id, ci.support_status, "
-				+ "ci.issue_type, ci.feedback, u.full_name AS support_staff_name "
+				+ "ci.issue_type, ci.feedback, ci.manager_reason, u.full_name AS support_staff_name "
 				+ "FROM customer_issues ci "
 				+ "LEFT JOIN users u ON ci.support_staff_id = u.id "
 				+ "WHERE ci.warranty_card_id IN (" + placeholders + ") "
@@ -712,7 +712,8 @@ public class CustomerIssueDAO extends DBContext {
 				CustomerIssue issue = new CustomerIssue(rs.getInt("id"), rs.getInt("customer_id"),
 						rs.getString("issue_code"), rs.getString("title"), rs.getString("description"),
 						rs.getInt("warranty_card_id"), rs.getTimestamp("created_at"), rs.getInt("support_staff_id"),
-						rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback"));
+						rs.getString("support_status"), rs.getString("issue_type"), rs.getString("feedback"),
+						rs.getString("manager_reason"));
 				issue.setSupportStaffName(rs.getString("support_staff_name"));
 				list.add(issue);
 			}
@@ -720,6 +721,22 @@ public class CustomerIssueDAO extends DBContext {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public boolean updateManagerReason(int issueId, String reason) {
+		String sql = "UPDATE customer_issues SET manager_reason = ? WHERE id = ?";
+		try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql)) {
+			if (reason == null) {
+				ps.setNull(1, Types.VARCHAR);
+			} else {
+				ps.setString(1, reason);
+			}
+			ps.setInt(2, issueId);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 

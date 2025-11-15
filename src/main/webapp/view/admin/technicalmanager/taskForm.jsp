@@ -93,9 +93,13 @@
 	background-color: #1e40af;
 }
 
-small {
+small {	
 	color: #dc2626;
 	font-size: 13px;
+}
+
+.topbar-right form{
+	width: 0% !important;
 }
 </style>
 </head>
@@ -111,9 +115,9 @@ small {
 					<div class="notice">
 						Yêu cầu này vừa được phê duyệt để tạo task. Vui lòng kiểm tra lại
 						thông tin trước khi giao kỹ thuật.
-						<c:if test="${not empty currentIssue.feedback}">
+						<c:if test="${not empty currentIssue.managerReason}">
 							<br />
-							<strong>Lý do quản lý ghi chú:</strong> ${currentIssue.feedback}
+							<strong>Lý do quản lý ghi chú:</strong> ${currentIssue.managerReason}
                         </c:if>
 					</div>
 				</c:if>
@@ -124,11 +128,17 @@ small {
 					<c:if test="${fromReviewNotice}">
 						<input type="hidden" name="fromReview" value="1" />
 					</c:if>
-					<input type="hidden" name="id" value="${task.id}" /> <label>Tiêu
-						đề</label> <input type="text" name="title" value="${task.title}"
-						maxlength="100" required /> <small>${errorTitle}</small> <label>Mô
-						tả</label> <input type="text" name="description"
-						value="${task.description}" maxlength="500" /> <small>${errorDescription}</small>
+					<input type="hidden" name="id" value="${task.id}" /> 
+					<label>Tiêu đề</label> 
+					
+					<input type="text" name="title" value="${task.title}"
+						maxlength="100" required />
+					<small>${errorTitle}</small> 
+					
+					<label>Mô tả</label> 
+					<input type="text" name="description"
+						value="${task.description}" maxlength="500" />
+					<small>${errorDescription}</small>
 
 					<label>Vấn đề của khách hàng</label> <select name="customerIssueId">
 						<c:forEach var="issue" items="${customerIssues}">

@@ -2,6 +2,7 @@ package controller.customer;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import dao.CustomerIssueDAO;
@@ -25,13 +26,17 @@ import utils.AuthorizationUtils;
 
 @WebServlet({"/issue", "/create-issue", "/issue-fill", "/issue-detail", "/issue-feedback", "/issue-pay"})
 public class CustomerIssueController extends HttpServlet {
-	private CustomerIssueDAO ciDao = new CustomerIssueDAO();
-	private CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
-	private DeviceSerialDAO dsDao = new DeviceSerialDAO();
-	private TaskDetailDAO tdDao = new TaskDetailDAO();
-	private IssuePaymentDAO paymentDao = new IssuePaymentDAO();
+	private final CustomerIssueDAO ciDao = new CustomerIssueDAO();
+	private final CustomerIssueDetailDAO dDao = new CustomerIssueDetailDAO();
+	private final DeviceSerialDAO dsDao = new DeviceSerialDAO();
+	private final TaskDetailDAO tdDao = new TaskDetailDAO();
+	private final IssuePaymentDAO paymentDao = new IssuePaymentDAO();
 	final int ADDRESS_MAX_LENGTH = 255;
 	final int NOTE_MAX_LENGTH = 500;
+	private static final Pattern PHONE_PATTERN = Pattern.compile("^[0-9]{9,11}$");
+	private static final Pattern EMAIL_PATTERN = Pattern
+			.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+	private static final int NAME_MAX = 100;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -243,8 +248,8 @@ public class CustomerIssueController extends HttpServlet {
 		String deviceSerial = req.getParameter("deviceSerial");
 		String summary = req.getParameter("summary");
 
-		if (customerName == null || customerName.trim().isEmpty()) {
-			req.setAttribute("error", "Vui lòng nhập họ tên khách hàng.");
+		if (customerName == null || customerName.trim().isEmpty() || customerName.length() > NAME_MAX) {
+			req.setAttribute("error", "Vui lòng nhập họ tên khách hàng và ít hơn 100 ký tự");
 			CustomerIssueDetail c = dDao.getByIssueId(issueId, serialNo);
 			if (c == null) {
 				c = new CustomerIssueDetail();
@@ -269,7 +274,6 @@ public class CustomerIssueController extends HttpServlet {
 		d.setDeviceSerial(deviceSerial != null ? deviceSerial.trim() : null);
 		d.setSummary(summary != null ? summary.trim() : null);
 		d.setForwardToManager(false);
-
 		dDao.saveIssueDetail(d);
 		ciDao.updateSupportStatus(issueId, staffId, "in_progress");
 

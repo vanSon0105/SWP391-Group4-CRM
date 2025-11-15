@@ -14,6 +14,7 @@ public class CustomerIssue {
 	private String supportStatus;
 	private String feedback;
 	private String supportStaffName;
+	private String managerReason;
 	
 	public CustomerIssue() {}
 	
@@ -49,7 +50,8 @@ public class CustomerIssue {
 	
 	
 	public CustomerIssue(int id, int customerId, String issueCode, String title, String description, int warrantyCardId,
-			Timestamp createdAt, int supportStaffId, String supportStatus,String issueType, String feedback) {
+			Timestamp createdAt, int supportStaffId, String supportStatus,String issueType, String feedback,
+			String managerReason) {
 		this.id = id;
 		this.customerId = customerId;
 		this.issueCode = issueCode;
@@ -61,6 +63,7 @@ public class CustomerIssue {
 		this.supportStaffId = supportStaffId;
 		this.supportStatus = supportStatus;
 		this.feedback = feedback;
+		this.managerReason = managerReason;
 	}
 
 	public String getFeedback() {
@@ -78,6 +81,14 @@ public class CustomerIssue {
 	
 	public String getSupportStaffName() {
 		return supportStaffName;
+	}
+	
+	public String getManagerReason() {
+		return managerReason;
+	}
+
+	public void setManagerReason(String managerReason) {
+		this.managerReason = managerReason;
 	}
 
 	public void setSupportStaffName(String supportStaffName) {

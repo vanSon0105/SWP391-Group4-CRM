@@ -473,6 +473,7 @@
                 var summaryInput = activeForm.querySelector('input[name="summary"]');
                 summaryInput.value = summaryText;
                 
+                <%--
                 var cancelReasonCheckbox = document.getElementById('invalid-warranty');
                 var hiddenCancelReason = activeForm.querySelector('input[name="cancelReasonHidden"]');
                 if (!hiddenCancelReason) {
@@ -482,6 +483,7 @@
                     activeForm.appendChild(hiddenCancelReason);
                 }
                 hiddenCancelReason.value = cancelReasonCheckbox.checked ? cancelReasonCheckbox.value : '';
+                --%>
                 modalOverlay.classList.add('hidden');
                 activeForm.submit();
                 activeForm = null;

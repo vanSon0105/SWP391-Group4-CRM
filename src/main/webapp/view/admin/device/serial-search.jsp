@@ -87,10 +87,6 @@
         .serial-lookup-page .pagination-pills {
             justify-content: center;
         }
-        
-        button i {
-        	left: 35px !important;
-        }
     </style>
 </head>
 <body class="management-page device-management serial-lookup-page">

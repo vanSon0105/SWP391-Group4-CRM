@@ -478,7 +478,16 @@
 				            </div>
 				            <div class="task-detail-item">
 				                <strong>Trạng thái:</strong>
-				                <span>${taskDetail.status}</span>
+				                <span class="status-pill status-${status}">
+				                	<c:choose>
+										<c:when test="${taskDetail.status == 'in_progress'}">Đang xử lí</c:when>
+										<c:when test="${taskDetail.status == 'completed'}">Đã hoàn thành</c:when>
+										<c:when test="${taskDetail.status == 'pending'}">Đang chờ</c:when>
+										<c:otherwise>
+											Đã hủy
+										</c:otherwise>
+									   </c:choose>
+				                </span>
 				            </div>
 				            <div class="task-detail-item">
 				                <strong>Nhân viên kỹ thuật:</strong>
@@ -554,8 +563,8 @@
 				            </div>
 				            
 				            <div class="task-detail-item">
-				                <strong>Lí do: </strong>
-				                <span>${issueDetail.feedback}</span>
+				                <strong>Lí do từ chối: </strong>
+				                <span>${issueDetail.managerReason}</span>
 				            </div>
 				            
 				            <div class="task-detail-item">

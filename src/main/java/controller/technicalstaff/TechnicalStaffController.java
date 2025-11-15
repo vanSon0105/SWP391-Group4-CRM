@@ -6,6 +6,7 @@ import java.util.List;
 
 import dao.CustomerIssueDAO;
 import dao.IssuePaymentDAO;
+import dao.TaskDAO;
 import dao.TaskDetailDAO;
 import dao.UserDAO;
 import jakarta.servlet.ServletException;
@@ -16,6 +17,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.CustomerIssue;
 import model.IssuePayment;
+import model.Task;
 import model.TaskDetail;
 import model.User;
 import utils.AuthorizationUtils;
@@ -23,6 +25,7 @@ import utils.AuthorizationUtils;
 @WebServlet(urlPatterns = { "/technical-issues" })
 public class TechnicalStaffController extends HttpServlet {
 	private TaskDetailDAO taskDetailDao = new TaskDetailDAO();
+	private TaskDAO taskDao = new TaskDAO();
 	private CustomerIssueDAO issueDao = new CustomerIssueDAO();
 	private UserDAO userDao = new UserDAO();
 	private IssuePaymentDAO paymentDao = new IssuePaymentDAO();
@@ -214,12 +217,15 @@ public class TechnicalStaffController extends HttpServlet {
 			return;
 		}
 		
+		Task t = taskDao.getTaskById(detail.getTaskId());
+		
 		List<TaskDetail> teammates = taskDetailDao.getStaffInfoWithTaskDetailId(detail.getTaskId());
 		CustomerIssue issue = null;
 		if (detail.getCustomerIssueId() != null) {
 			issue = issueDao.getIssueById(detail.getCustomerIssueId());
 		}
 		
+		req.setAttribute("task", t);
 		req.setAttribute("assignmentDetail", detail);
 		req.setAttribute("teamAssignments", teammates);
 		req.setAttribute("issueDetail", issue);

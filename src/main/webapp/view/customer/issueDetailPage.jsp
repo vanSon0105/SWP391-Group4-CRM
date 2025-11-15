@@ -10,7 +10,6 @@
     <title>TechShop</title>
     <style>
         body {
-            font-family: 'Segoe UI', sans-serif;
             background: #f5f6fa;
             margin: 0;
             padding: 40px 24px;
@@ -104,6 +103,16 @@
             background: #fef3c7;
             color: #92400e;
         }
+        
+        #summary{
+        	padding: 10px;
+        }
+        
+        .field-error {
+            color: #dc2626;
+            font-size: 13px;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body class="home-page">
@@ -117,9 +126,9 @@
                 Tiêu đề: <strong>${issue.title}</strong>
             </div>
             
-            <c:if test="${not empty issue.feedback}">
+            <c:if test="${not empty issue.managerReason}">
                 <div class="alert alert-warning">
-                    Ghi chú từ quản lý: ${issue.feedback}
+                    Ghi chú từ quản lý: ${issue.managerReason}
                 </div>
             </c:if>
 
@@ -132,13 +141,22 @@
 
                 <label for="customerName">Họ và tên *</label>
                 <input type="text" id="customerName" name="customerName" value="${issueDetail.customerFullName}" required>
-
+				<c:if test="${not empty errorContactEmail}">
+                    <div class="field-error">${errorName}</div>
+                </c:if>
+				
                 <label for="contactEmail">Email liên hệ</label>
                 <input type="text" id="contactEmail" name="contactEmail" value="${issueDetail.contactEmail}">
-
+				<c:if test="${not empty errorContactEmail}">
+                    <div class="field-error">${errorContactEmail}</div>
+                </c:if>
+                
                 <label for="contactPhone">Số điện thoại</label>
                 <input type="text" id="contactPhone" name="contactPhone" value="${issueDetail.contactPhone}">
-
+				<c:if test="${not empty errorContactPhone}">
+                    <div class="field-error">${errorContactPhone}</div>
+                </c:if>
+                
                 <label for="deviceSerial">Serial thiết bị (nếu có)</label>
                 <input type="text" id="deviceSerial" name="deviceSerial" value="${issueDetail.deviceSerial}">
 

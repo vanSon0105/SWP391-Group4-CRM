@@ -23,7 +23,7 @@ public class DeviceSerialSearchController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        User currentUser = AuthorizationUtils.requirePermission(request, response, "Quản Lí Seri", "Quản Lí Thiết Bị");
+        User currentUser = AuthorizationUtils.requirePermission(request, response, "Tra Cứu Seri");
         if (currentUser == null) {
             return;
         }

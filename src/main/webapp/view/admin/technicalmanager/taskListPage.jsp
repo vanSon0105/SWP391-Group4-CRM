@@ -108,6 +108,15 @@ body .panel h2 {
     justify-content: flex-end;
     gap: 12px;
 }
+
+.alert-banner.success{
+	background: rgba(34,197,94,.12);
+	color: #166534;
+}
+.alert-banner.failed{
+	background-color: #fee2e2;
+	color: #b91c1c;
+}
 </style>
 </head>
 <body class="management-page device-management">
@@ -145,9 +154,35 @@ body .panel h2 {
 		</section>
 
 		<section class="panel" id="table-panel">
+			
+			<c:if test="${param.created == '1'}">
+				<div class="alert-banner success">
+					Tạo nhiệm vụ thành công
+				</div>
+			</c:if>
+			
+			<c:if test="${param.updated == '1'}">
+				<div class="alert-banner success">
+					Cập nhật nhiệm vụ thành công
+				</div>
+			</c:if>
+			
+			<c:if test="${param.created == '0'}">
+				<div class="alert-banner failed">
+					Không thể tạo nhiệm vụ. Vui lòng thử lại
+				</div>
+			</c:if>
+			
+			<c:if test="${param.updated == '0'}">
+				<div class="alert-banner success">
+					Cập nhật nhiệm vụ thất bại. Vui lòng thử lại
+				</div>
+			</c:if>
+			
+			
 			<div
 				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-				<h2>Danh sách task</h2>
+				<h2>Danh sách nhiệm vụ</h2>
 
 				<c:if test="${not empty param.message}">
 					<div class="message">${param.message}</div>

@@ -132,6 +132,7 @@ CREATE TABLE customer_issues (
   warranty_card_id INT,
   support_staff_id INT,
   feedback TEXT,
+  manager_reason TEXT,
   support_status ENUM('new','in_progress','awaiting_customer','submitted','manager_review','manager_approved','manager_rejected','task_created', 'cancelled', 'tech_in_progress', 'customer_cancelled', 'completed', 'create_payment', 'waiting_payment', 'waiting_confirm', 'resolved') DEFAULT 'new',
   created_at TIMESTAMP default current_timestamp,
   foreign key (customer_id) references users(id),
@@ -456,7 +457,7 @@ INSERT INTO permissions (id, permission_name) VALUES
 (1, 'Quản Lí Tài Khoản'), (2, 'Quản Lí Thiết Bị'), (3, 'Quản Lí Nhà Cung Cấp'), (4, 'Quản Lí Danh Mục'), (5, 'Quản Lí Thanh Toán'), (6, 'Quản Lí Đặt Hàng'),
 (7, 'Quản Lí Vấn Đề'), (8, 'Quản Lí Nhiệm Vụ'), (9, 'Quản Lí Giỏ Hàng'), (10, 'Quản Lí Hồ Sơ'), (11, 'Quản Lí Nhập/Xuất'), (12, 'Quản Lí Giao Dịch'), (13, 'Trang Nhân Viên Hỗ Trợ'),
 (14, 'Trang Nhân Viên Kỹ Thuật'), (15, 'Trang Quản Lí Kỹ Thuật'), (16, 'Quản Lí Seri'), (17, 'Gửi Vấn Đề'), (18, 'Quản Lí Quyền'), (19, 'Trang Admin'), (20, 'Quản Lí Giá'), (21, 'Xem Seri'),
-(22, 'Quản Lí Giá Thiết Bị'), (23, 'Xem Thiết Bị'), (24, 'Quản Lí Bảo Hành');
+(22, 'Quản Lí Giá Thiết Bị'), (23, 'Xem Thiết Bị'), (24, 'Quản Lí Bảo Hành'), (25, 'Tra Cứu Seri');
 
 INSERT INTO role_permission (role_id, permission_id) SELECT 1, id FROM permissions;
 
