@@ -8,6 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import dao.TaskDetailDAO;
 import dao.TaskDAO;
 import dao.UserDAO;
@@ -153,18 +156,12 @@ public class TaskFormController extends HttpServlet {
 					return;
 				}
 			} catch (NumberFormatException ex) {
-				res.sendRedirect("task-list?invalid=1");
+				res.sendRedirect("task-list?created=0");
 				return;
 			}
-
-//			Set<Integer> selectedStaffs = extractStaffIds(request.getParameterValues("technicalStaffIds"));
+			
 			request.setAttribute("selectedIssueId", customerIssueId);
-//			request.setAttribute("assignedStaffIds", selectedStaffs);
-
-//			Timestamp deadline = null;
-//			String deadlineStr = request.getParameter("deadline");
-//			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
-
+			
 			int managerId = manager.getId();
 			Timestamp now = new Timestamp(System.currentTimeMillis());
 
@@ -187,29 +184,6 @@ public class TaskFormController extends HttpServlet {
 				return;
 			}
 
-//			if (deadline.before(now) || deadline.equals(now)) {
-//				request.setAttribute("errorDeadline", "Deadline phải hơn ngày hôm nay");
-//				forwardToForm(request, res);
-//				return;
-//			}
-
-//			for (Integer staffId : selectedStaffs) {
-//				if (!userDao.isTechnicalStaffAvailable(staffId)) {
-//					request.setAttribute("errorStaffAvailability",
-//							"Kỹ thuật viên " + resolveStaffLabel(staffId) + " đang bận.");
-//					forwardToForm(request, res);
-//					return;
-//				}
-//				int activeTasks = taskDetailDao.countActiveTasksForStaff(staffId);
-//				if (activeTasks >= MAX_ACTIVE_TASKS_PER_STAFF) {
-//					request.setAttribute("errorStaffLimit",
-//							"Technical staff " + resolveStaffLabel(staffId) + " đã nhận đủ "
-//									+ MAX_ACTIVE_TASKS_PER_STAFF + " tasks");
-//					forwardToForm(request, res);
-//					return;
-//				}
-//			}
-
 			Task task = new Task();
 			task.setTitle(title);
 			task.setDescription(description);
@@ -218,18 +192,12 @@ public class TaskFormController extends HttpServlet {
 
 			int taskId = taskDao.addNewTask(task);
 			if (taskId <= 0) {
-				request.setAttribute("errorGeneral", "Không thể tạo task. Vui lòng thử lại");
-				forwardToForm(request, res);
+				res.sendRedirect("task-list?created=0");
 				return;
 			}
 
 			issueDao.updateSupportStatus(customerIssueId, "task_created");
-
-//			for (Integer staffId : selectedStaffs) {
-//				taskDetailDao.insertStaffToTask(taskId, staffId, deadline);
-//			}
-
-			res.sendRedirect("assign-task");
+			res.sendRedirect("task-list?created=1");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -250,11 +218,10 @@ public class TaskFormController extends HttpServlet {
 
 			int managerId = manager.getId();
 			Timestamp deadline = null;
-			String deadlineStr = req.getParameter("deadline");
-			deadline = Timestamp.valueOf(deadlineStr + " 00:00:00");
-
-			if (title == null || title.trim().isEmpty()) {
-				req.setAttribute("errorTitle", "Không được để trống trường này");
+			try {
+				deadline = parseDeadline(req.getParameter("deadline"));
+			} catch (IllegalArgumentException ex) {
+				req.setAttribute("errorDeadline", "Ngày deadline không hợp lệ");
 				forwardToForm(req, res);
 				return;
 			}
@@ -300,7 +267,7 @@ public class TaskFormController extends HttpServlet {
 
 			taskDetailDao.updateDeadlineForTask(taskId, deadline);
 
-			res.sendRedirect("task-list");
+			res.sendRedirect("task-list?updated=1");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -355,6 +322,22 @@ public class TaskFormController extends HttpServlet {
 		String fromReview = request.getParameter("fromReview");
 		if (fromReview != null && ("1".equals(fromReview) || "true".equalsIgnoreCase(fromReview))) {
 			request.setAttribute("fromReviewNotice", Boolean.TRUE);
+		}
+	}
+	
+	private Timestamp parseDeadline(String deadlineStr) {
+		if (deadlineStr == null) {
+			return null;
+		}
+		String trimmed = deadlineStr.trim();
+		if (trimmed.isEmpty()) {
+			return null;
+		}
+		try {
+			LocalDate date = LocalDate.parse(trimmed);
+			return Timestamp.valueOf(date.atStartOfDay());
+		} catch (DateTimeParseException ex) {
+			throw new IllegalArgumentException("Định dạng deadline không đúng", ex);
 		}
 	}
 

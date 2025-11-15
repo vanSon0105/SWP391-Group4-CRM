@@ -166,7 +166,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 		req.setAttribute("issue", issue);
 		req.setAttribute("issueDetail", d);
 		if (req.getAttribute("rejectReasonDraft") == null) {
-			req.setAttribute("rejectReasonDraft", issue.getFeedback());
+			req.setAttribute("rejectReasonDraft", issue.getManagerReason());
 		}
 		req.getRequestDispatcher("view/admin/technicalmanager/issueReviewPage.jsp").forward(req, resp);
 	}
@@ -178,7 +178,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 			return;
 		}
 
-		iDao.updateFeedback(issueId, null);
+		iDao.updateManagerReason(issueId, null);
 		iDao.updateSupportStatus(issueId, "manager_approved");
 		resp.sendRedirect("task-form?issueId=" + issue.getId());
 	}
@@ -190,8 +190,8 @@ public class TechnicalManagerIssueController extends HttpServlet {
 			return;
 		}
 		String reason = req.getParameter("rejectReason");
-		String feedBack = reason != null ? reason.trim() : null;
-		if (feedBack == null || feedBack.isEmpty()) {
+		String managerReason = reason != null ? reason.trim() : null;
+		if (managerReason == null || managerReason.isEmpty()) {
 			req.setAttribute("errorRejectReason", "Vui lòng nhập lý do từ chối.");
 			req.setAttribute("rejectReasonDraft", reason);
 			req.setAttribute("issueId", issueId);
@@ -199,7 +199,7 @@ public class TechnicalManagerIssueController extends HttpServlet {
 			return;
 		}
 
-		iDao.updateFeedback(issueId, feedBack);
+		iDao.updateManagerReason(issueId, managerReason);
 		iDao.updateSupportStatus(issueId, "manager_rejected");
 		resp.sendRedirect("manager-issues?rejected=1");
 	}

@@ -19,21 +19,31 @@
         </section>
         <section class="panel">
             <h3>Thiết bị</h3>
-            <c:choose>
-                <c:when test="${empty deviceResults}">
-                    <p>Không có thiết bị phù hợp.</p>
-                </c:when>
-                <c:otherwise>
-                    <ul>
-                        <c:forEach var="device" items="${deviceResults}">
-                            <li>
-                                <strong><c:out value="${device.name}" /></strong>
-                                <a href="device-view?id=${device.id}">Xem chi tiết</a>
-                            </li>
-                        </c:forEach>
-                    </ul>
-                </c:otherwise>
-            </c:choose>
+	            <c:choose>
+	                <c:when test="${empty deviceResults}">
+	                    <p>Không có thiết bị phù hợp.</p>
+	                </c:when>
+	                <c:otherwise>
+			            <div class="table-wrapper">
+			            	<table class="device-table">
+			            		<thead>
+			            			<tr>
+			            				<th>Tên thiết bị</th>
+			            				<th>Hành động</th>
+			                    	</tr>
+			                    </thead>
+			                    <tbody>
+		                    		<c:forEach var="device" items="${deviceResults}"> 
+				                    	<tr>
+			                                <td><c:out value="${device.name}" /></td>
+			                                <td><a class="btn device-btn" href="device-view?id=${device.id}">Xem chi tiết</a></td>
+				                    	</tr>
+			                        </c:forEach>
+			                    </tbody>
+	                    	</table>
+			            </div>
+	                </c:otherwise>
+	            </c:choose>
         </section>
         <section class="panel">
             <h3>Người dùng</h3>
@@ -42,15 +52,26 @@
                     <p>Không có người dùng phù hợp.</p>
                 </c:when>
                 <c:otherwise>
-                    <ul>
-                        <c:forEach var="user" items="${userResults}">
-                            <li>
-                                <strong><c:out value="${user.fullName != null ? user.fullName : user.username}" /></strong>
-                                <span>- <c:out value="${user.email}" /></span>
-                                <a href="permission-user?userId=${user.id}">Phân quyền</a>
-                            </li>
-                        </c:forEach>
-                    </ul>
+                	<div class="table-wrapper">
+		            	<table class="device-table">
+		            		<thead>
+		            			<tr>
+		            				<th>Tên người dùng</th>
+		            				<th>Email</th>
+		            				<th>Hành động</th>
+		                    	</tr>
+		                    </thead>
+		                    <tbody>
+	                    		<c:forEach var="user" items="${userResults}">
+			                    	<tr>
+		                                <td><c:out value="${user.fullName != null ? user.fullName : user.username}" /></td>
+		                                <td><c:out value="${user.email}" /></td>
+		                                <td><a class="btn device-btn" href="permission-user?userId=${user.id}">Phân quyền</a></td>
+			                    	</tr>
+		                        </c:forEach>
+		                    </tbody>
+                    	</table>
+		            </div>
                 </c:otherwise>
             </c:choose>
         </section>
@@ -61,8 +82,24 @@
                     <p>Không có đơn trùng khớp mã.</p>
                 </c:when>
                 <c:otherwise>
-                    <p>Đơn #${orderResult.id} của khách #${orderResult.customerId}</p>
-                    <a href="order-history-detail?id=${orderResult.id}">Xem chi tiết đơn</a>
+                	<div class="table-wrapper">
+		            	<table class="device-table">
+		            		<thead>
+		            			<tr>
+		            				<th>Đơn hàng</th>
+		            				<th>Hành động</th>
+		                    	</tr>
+		                    </thead>
+		                    <tbody>
+	                    		<c:forEach var="user" items="${userResults}">
+			                    	<tr>
+		                                <td>Đơn #${orderResult.id} của khách #${orderResult.customerId}</td>
+		                                <td><a class="btn device-btn" href="order-history-detail?id=${orderResult.id}">Xem chi tiết đơn</a></td>
+			                    	</tr>
+		                        </c:forEach>
+		                    </tbody>
+                    	</table>
+		            </div>
                 </c:otherwise>
             </c:choose>
         </section>

@@ -255,6 +255,13 @@
 	                        <p>${issue.feedback}</p>
 	                    </div>
                     </c:if>
+                    
+                    <c:if test="${not empty issue.managerReason}">
+		                <div class="readonly-block">
+	                        <h3>Lý do bị từ chối</h3>
+	                        <p>${issue.managerReason}</p>
+	                    </div>
+                    </c:if>
 	                
 	                <c:if test="${empty taskDetail}">
 	                	<div style="margin-top: 20px;" class="alert">Yêu cầu chưa được tạo task!</div>
@@ -290,8 +297,8 @@
 		            
 		            <c:if test="${managerRejected}">
 					    <div class="alert alert-warning">Quản lý kỹ thuật đã từ chối yêu cầu. Bạn hãy bổ sung thông tin và gửi lại
-					        <c:if test="${not empty issue.feedback}">
-					            <br/>Lý do: ${issue.feedback}
+					        <c:if test="${not empty issue.managerReason}">
+					            <br/>Lý do: ${issue.managerReason}
 					        </c:if>
 					    </div>
 					</c:if>

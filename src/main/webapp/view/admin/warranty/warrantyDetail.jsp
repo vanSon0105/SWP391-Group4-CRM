@@ -99,7 +99,7 @@
 			</c:if>
 		</section>
 		<section class="panel">
-			<h3>Lịch sử bảo hành</h3>
+			<h3>Lịch sử bảo hành, sửa chữa</h3>
 
 			<c:if test="${empty warrantyHistory}">
 				<p style="text-align: center; padding: 10px;">Chưa có lịch sử

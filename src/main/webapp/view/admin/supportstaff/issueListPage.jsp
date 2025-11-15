@@ -369,9 +369,6 @@
                                                 <c:otherwise>Chưa tiếp nhận</c:otherwise>
                                             </c:choose>
                                         </span>
-                                        <c:if test="${status == 'manager_rejected' && not empty issue.feedback}">
-	                                        <div class="reason-note">Ly do: ${issue.feedback}</div>
-	                                    </c:if>
                                     </td>
                                     <td>
                                         <fmt:formatDate value="${issue.createdAt}"

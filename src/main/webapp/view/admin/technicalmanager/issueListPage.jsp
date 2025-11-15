@@ -247,7 +247,7 @@
                                      <td>${issue.issueCode}</td>
                                      <td>${issue.title}</td>
                                      <td>${issue.customerId}</td>
-                                     <td>${empty issue.feedback ? '-' : issue.feedback}</td>
+                                     <td>${empty issue.managerReason ? '-' : issue.managerReason}</td>
                                      <td>
                                      	<span class="badge badge-manager_rejected">
 	                                         <c:choose>

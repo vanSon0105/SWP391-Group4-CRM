@@ -271,14 +271,26 @@
                             </c:choose>
                         </span>
                     </div>
+                    
+                    <div class="info-item">
+                        <span>Ghi chú quản lí</span>
+                        <span>
+                            <c:choose>
+                                <c:when test="${not empty task.description}">
+                                    ${task.description}
+                                </c:when>
+                                <c:otherwise>Chưa cập nhật</c:otherwise>
+                            </c:choose>
+                        </span>
+                    </div>
                 </div>
             </section>
 
             <c:if test="${not empty issueDetail}">
                 <c:set var="issue" value="${issueDetail}" />
                 <section class="issue-card">
-                    <div class="section-title">Thông tin yêu cầu liên quan</div>
-                    <p><strong>Mã yêu cầu:</strong> ${issue.issueCode}</p>
+                    <div class="section-title">Thông tin vấn đề liên quan</div>
+                    <p><strong>Mã issue:</strong> ${issue.issueCode}</p>
                     <p><strong>Tiêu đề:</strong> ${issue.title}</p>
                     <p><strong>Mô tả:</strong> <br>${issue.description}</p>
                     <p><strong>Trạng thái hỗ trợ:</strong>
@@ -290,7 +302,12 @@
                              <c:otherwise>Đang xử lý</c:otherwise>
                          </c:choose>
                     </p>
-                    <p><strong>Loại yêu cầu:</strong> ${issue.issueType}</p>
+                    <p><strong>Loại yêu cầu:</strong>
+                    	<c:choose>
+                             <c:when test="${issue.issueType == 'warranty'}">Bảo hành</c:when>
+                             <c:otherwise>Sửa chữa</c:otherwise>
+                         </c:choose>
+                    </p>
                 </section>
             </c:if>
 
