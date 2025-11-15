@@ -15,7 +15,16 @@ public class WarrantyCard {
 	private String assignedByName;
 	private String handledByName;
 	private boolean isCancelled;
-	
+	private String issueType;
+
+	public String getIssueType() {
+		return issueType;
+	}
+
+	public void setIssueType(String issueType) {
+		this.issueType = issueType;
+	}
+
 	public boolean getIsCancelled() {
 		return isCancelled;
 	}
@@ -39,7 +48,6 @@ public class WarrantyCard {
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
 	}
-	
 
 	public String getAssignedByName() {
 		return assignedByName;
@@ -65,8 +73,9 @@ public class WarrantyCard {
 		this.daysRemaining = daysRemaining;
 	}
 
-	public WarrantyCard() {}
-	
+	public WarrantyCard() {
+	}
+
 	public WarrantyCard(int id, int deviceSerialId, int customerId, Timestamp start_at, Timestamp end_at) {
 		super();
 		this.id = id;
@@ -76,8 +85,6 @@ public class WarrantyCard {
 		this.end_at = end_at;
 	}
 
-
-
 	public WarrantyCard(int id, DeviceSerial device_serial, Customer customer, Timestamp start_at, Timestamp end_at) {
 		super();
 		this.id = id;
@@ -86,8 +93,6 @@ public class WarrantyCard {
 		this.start_at = start_at;
 		this.end_at = end_at;
 	}
-	
-	
 
 	public WarrantyCard(int id, int deviceSerialId, int customerId, Timestamp start_at, Timestamp end_at,
 			boolean isCancelled) {
@@ -98,6 +103,30 @@ public class WarrantyCard {
 		this.start_at = start_at;
 		this.end_at = end_at;
 		this.isCancelled = isCancelled;
+	}
+	
+
+	public WarrantyCard(int id, DeviceSerial device_serial, Customer customer, Timestamp start_at, Timestamp end_at,
+			String issueType) {
+		super();
+		this.id = id;
+		this.device_serial = device_serial;
+		this.customer = customer;
+		this.start_at = start_at;
+		this.end_at = end_at;
+		this.issueType = issueType;
+	}
+
+	public WarrantyCard(int id, int deviceSerialId, int customerId, Timestamp start_at, Timestamp end_at,
+			boolean isCancelled, String issueType) {
+		super();
+		this.id = id;
+		this.deviceSerialId = deviceSerialId;
+		this.customerId = customerId;
+		this.start_at = start_at;
+		this.end_at = end_at;
+		this.isCancelled = isCancelled;
+		this.issueType = issueType;
 	}
 
 	public int getId() {
@@ -147,12 +176,12 @@ public class WarrantyCard {
 	public void setEnd_at(Timestamp end_at) {
 		this.end_at = end_at;
 	}
-	
+
 	public String getWarrantyStatus() {
-	    if (end_at == null) {
-	        return "Hết hạn"; 
-	    }
-	    return end_at.after(new java.util.Date()) ? "Còn hạn" : "Hết hạn";
+		if (end_at == null) {
+			return "Hết hạn";
+		}
+		return end_at.after(new java.util.Date()) ? "Còn hạn" : "Hết hạn";
 	}
 
 	@Override
@@ -162,6 +191,5 @@ public class WarrantyCard {
 				+ start_at + ", end_at=" + end_at + ", daysRemaining=" + daysRemaining + ", assignedByName="
 				+ assignedByName + ", handledByName=" + handledByName + ", isCancelled=" + isCancelled + "]";
 	}
-	
-	
+
 }

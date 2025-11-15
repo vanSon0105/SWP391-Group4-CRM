@@ -23,12 +23,10 @@
 				method="get" style="margin-top: 10px">
 				<select class="btn device-btn" name="status"
 					onchange="this.form.submit()">
-					<option value="" ${empty param.status ? 'selected' : ''}>Tất
-						cả</option>
-					<option value="valid" ${param.status=='valid' ? 'selected' : ''}>Còn
-						hạn</option>
+					<option value="" ${empty param.status ? 'selected' : ''}>Tất cả</option>
+					<option value="valid" ${param.status=='valid' ? 'selected' : ''}>Bảo hành</option>
 					<option value="expired"
-						${param.status=='expired' ? 'selected' : ''}>Hết hạn</option>
+						${param.status=='expired' ? 'selected' : ''}>Sửa chữa</option>
 				</select> <input class="btn device-btn" type="search" name="search"
 					placeholder="Tìm theo tên thiết bị hoặc khách hàng..."
 					value="${param.search}" />
@@ -37,7 +35,7 @@
 		</section>
 
 		<section class="panel" id="table-panel">
-			<h2>Danh sách thiết bị bảo hành</h2>
+			<h2>Danh sách thiết bị bảo hành/sửa chữa</h2>
 			<div class="table-wrapper">
 				<c:if test="${not empty warrantyList}">
 					<table class="device-table">
@@ -46,7 +44,7 @@
 								<th>Tên thiết bị</th>
 								<th>Serial</th>
 								<th>Khách hàng</th>
-								<th>Trạng thái bảo hành</th>
+								<th>Loại yêu cầu</th>
 								<th>Ngày hết hạn</th>
 								<th>Hành động</th>
 							</tr>
@@ -57,15 +55,13 @@
 									<td>${item.device_serial.deviceName}</td>
 									<td>${item.device_serial.serial_no}</td>
 									<td>${item.customer.full_name}</td>
-									<td><c:set var="wStatus" value="${item.warrantyStatus}" />
+									<td><c:set var="issueType" value="${item.issueType}" />
 										<c:choose>
-											<c:when test="${wStatus == 'Còn hạn'}">
-												<span style="color: #10b981; font-weight: 700">Còn
-													hạn</span>
+											<c:when test="${issueType == 'warranty'}">
+												<span style="color: #10b981; font-weight: 700">Bảo hành</span>
 											</c:when>
 											<c:otherwise>
-												<span style="color: #ef4444; font-weight: 700">Hết
-													hạn</span>
+												<span style="color: #ef4444; font-weight: 700">Sửa chữa</span>
 											</c:otherwise>
 										</c:choose></td>
 									<td><fmt:formatDate value="${item.end_at}"
