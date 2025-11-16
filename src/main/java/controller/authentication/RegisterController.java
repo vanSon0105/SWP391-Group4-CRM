@@ -18,7 +18,7 @@ public class RegisterController extends HttpServlet {
 
         if (session.getAttribute("tempUser") == null) {
             session.setAttribute("error", "Bạn phải xác thực email trước khi đăng ký!");
-            resp.sendRedirect(req.getContextPath() + "/view/authentication/register.jsp"); 
+            req.getRequestDispatcher("/view/authentication/register.jsp").forward(req, resp);
             return;
         }
 
@@ -28,8 +28,6 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession();
-
-     
         if (session.getAttribute("tempUser") == null) {
             session.setAttribute("error", "Bạn phải xác thực email trước khi đăng ký!");
             resp.sendRedirect(req.getContextPath() + "/view/authentication/verifyRegisterOTP.jsp");

@@ -30,11 +30,10 @@ public class CreateImportExportOrderController extends HttpServlet {
         List<Device> deviceList = deviceDAO.getAllDevices();
         List<Supplier> supplierList = supplierDAO.getAllSuppliers();
         List<User> userList = userDAO.getAllUsers();
-
-        for (Device d : deviceList) {
-            Inventory inv = inventoryDAO.getInventoryByDevice(d.getId());
-            d.setCurrentStock(inv != null ? inv.getQuantity() : 0);
-        }
+		 for (Device d : deviceList) {
+			 int totalStock = inventoryDAO.getTotalStockByDevice(d.getId());
+             d.setCurrentStock(totalStock);
+		 }
 
         request.setAttribute("deviceList", deviceList);
         request.setAttribute("supplierList", supplierList);

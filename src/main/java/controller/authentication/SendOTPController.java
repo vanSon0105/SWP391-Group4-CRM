@@ -3,6 +3,7 @@ package controller.authentication;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import dao.UserDAO;
 import model.User;
@@ -26,6 +27,8 @@ import jakarta.mail.internet.MimeMessage;
 public class SendOTPController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private UserDAO userDAO = new UserDAO();
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,3}$";
+    private static final String PHONE_REGEX = "^0[35789]\\d{8}$";
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -33,9 +36,19 @@ public class SendOTPController extends HttpServlet {
 
         String action = request.getParameter("action"); 
         String email = request.getParameter("email");
+        
+        if (email != null) {
+            email = email.trim();
+        }
 
         if (email == null || email.trim().isEmpty()) {
             request.setAttribute("error", "Vui lòng nhập email!");
+            forward(request, response, action);
+            return;
+        }
+        
+        if (!validateInput(email, EMAIL_REGEX)) {
+            request.setAttribute("error", "Định dạng email không hợp lệ!");
             forward(request, response, action);
             return;
         }
@@ -60,8 +73,32 @@ public class SendOTPController extends HttpServlet {
             String username = request.getParameter("username");
             String phone = request.getParameter("phone");
             String password = request.getParameter("password");
+            
+            if (name != null) name = name.trim();
+            if (username != null) username = username.trim();
+            if (phone != null) phone = phone.trim();
 
-            if(password == null || password.isEmpty()) {
+            if (name == null || name.isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập họ tên!");
+                forward(request, response, action);
+                return;
+            }
+            if (username == null || username.isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập tên đăng nhập!");
+                forward(request, response, action);
+                return;
+            }
+            if (phone == null || phone.isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập số điện thoại!");
+                forward(request, response, action);
+                return;
+            }
+            if (!validateInput(phone, PHONE_REGEX)) {
+                request.setAttribute("error", "Số điện thoại không hợp lệ! (Phải là 10 số)");
+                forward(request, response, action);
+                return;
+            }
+            if (password == null || password.isEmpty()) {
                 request.setAttribute("error", "Mật khẩu không được để trống!");
                 forward(request, response, action);
                 return;
@@ -120,7 +157,7 @@ public class SendOTPController extends HttpServlet {
               
                 session.setAttribute("otpPurpose", "reset");
 
-                message.setSubject("NovaCare - Mã OTP đặt lại mật khẩu");
+                message.setSubject("TechShop - Mã OTP đặt lại mật khẩu");
                 message.setText("Xin chào " + user.getFullName() + ",\nMã OTP đặt lại mật khẩu: " + otp
                         + "\nMã này có hiệu lực trong 5 phút.\n\nTrân trọng,\nNovaCare");
 
@@ -144,5 +181,12 @@ public class SendOTPController extends HttpServlet {
         } else {
             request.getRequestDispatcher("/view/authentication/forgot-password.jsp").forward(request, response);
         }
+    }
+    
+    private boolean validateInput(String input, String regex) {
+        if (input == null) {
+            return false;
+        }
+        return Pattern.matches(regex, input);
     }
 }

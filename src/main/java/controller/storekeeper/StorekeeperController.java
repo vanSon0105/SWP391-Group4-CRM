@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import model.Category;
 import model.Device;
 import model.DeviceSerial;
+import model.Inventory;
 import model.SupplierDetail;
 import model.Transaction;
 import model.TransactionDetail;
@@ -23,6 +24,7 @@ import com.mysql.cj.Session;
 import dao.CategoryDAO;
 import dao.DeviceDAO;
 import dao.DeviceSerialDAO;
+import dao.InventoryDAO;
 import dao.SupplierDAO;
 import dao.SupplierDetailDAO;
 import dao.TransactionDAO;
@@ -42,6 +44,7 @@ public class StorekeeperController extends HttpServlet {
 	private final TransactionDetailDAO transactionDetailDAO = new TransactionDetailDAO();
 	private final SupplierDAO supplierDao = new SupplierDAO();
 	private final SupplierDetailDAO supplierDetailDao = new SupplierDetailDAO();
+	private final InventoryDAO inventoryDAO = new InventoryDAO();
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String path = request.getServletPath();
@@ -226,6 +229,18 @@ public class StorekeeperController extends HttpServlet {
 			s.setAttribute("mess", "Thêm seri thất bại");
 		} else {
 			s.setAttribute("mess", "Thêm seri thành công");
+			int storekeeperId = u.getId();
+            Inventory inv = inventoryDAO.getInventoryByDeviceAndStorekeeper(id, storekeeperId);
+            
+            if (inv == null) {
+                Inventory newInv = new Inventory();
+                newInv.setDeviceId(id);
+                newInv.setStorekeeperId(storekeeperId);
+                newInv.setQuantity(quantity);
+                inventoryDAO.addInventory(newInv);
+            } else {
+                inventoryDAO.adjustQuantity(id, storekeeperId, quantity);
+            }
 			recordManualImport(u.getId(), supplierId, id, quantity);
 		}
 		response.sendRedirect("des-show?id="+id);

@@ -25,6 +25,17 @@ public class LoginController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     	String path = req.getServletPath();
     	HttpSession session = req.getSession();
+    	Object successMessage = session.getAttribute("success");
+        if (successMessage != null) {
+            req.setAttribute("success", successMessage);
+            session.removeAttribute("success");
+        }
+
+        Object errorMessage = session.getAttribute("error");
+        if (errorMessage != null) {
+            req.setAttribute("error", errorMessage);
+            session.removeAttribute("error");
+        }
     	
     	if ("/logout".equals(path)) {
     		logoutPage(req, resp);

@@ -75,4 +75,20 @@ public class InventoryDAO extends DBContext {
             e.printStackTrace();
         }
     }
+    
+    public int getTotalStockByDevice(int deviceId) {
+        String sql = "SELECT SUM(quantity) FROM inventories WHERE device_id = ?";
+        try (Connection conn = DBContext.getConnection(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, deviceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1); 
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 }

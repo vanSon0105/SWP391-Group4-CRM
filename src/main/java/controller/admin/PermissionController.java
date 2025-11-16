@@ -250,16 +250,16 @@ public class PermissionController extends HttpServlet {
     private void handleCreatePermission(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String permissionName = trimToNull(request.getParameter("permissionName"));
         if (permissionName == null) {
-            setFlash(request, "Permission name must not be empty.", "error");
+            setFlash(request, "Tên quyền không được để trống", "error");
             response.sendRedirect("permission-management");
             return;
         }
 
         Permission created = permissionDAO.createPermission(permissionName);
         if (created == null) {
-            setFlash(request, "Unable to create permission. It might already exist.", "error");
+            setFlash(request, "Không thể tạo quyền. Quyền đã tồn tại.", "error");
         } else {
-            setFlash(request, "Created permission: " + created.getName(), "success");
+            setFlash(request, "Đã tạo quyền: " + created.getName(), "success");
         }
         response.sendRedirect("permission-management");
     }
