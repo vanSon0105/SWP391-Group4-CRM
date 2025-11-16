@@ -104,8 +104,12 @@
     <section class="card" style="margin: auto 0;">
         <h1>Đăng nhập TechShop</h1>
         <p>Truy cập đơn hàng, bảo hành, lịch sửa chữa và ưu đãi dành riêng cho bạn.</p>
-        <c:if test="${sessionScope.mss != null}">
+        <c:if test="${mss != null}">
 		    <p style="color:green;">${sessionScope.mss}</p>
+		</c:if>
+		
+		<c:if test="${success != null}">
+		    <p style="color:green;">${success}</p>
 		</c:if>
         
         <form action="login" method="post">
@@ -121,7 +125,6 @@
 
             <div class="links">
                  <a href="forgot-password">Quên mật khẩu?</a>
-    			<a href="register">Đăng ký tài khoản</a>
             </div>
 
             <button type="submit">Đăng nhập</button>

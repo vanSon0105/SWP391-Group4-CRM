@@ -254,23 +254,6 @@ public class SupportIsssueController extends HttpServlet {
 		resp.sendRedirect("support-issues?saved=1");
 	}
 	
-//	private void updateStatusIssue(HttpServletRequest req, HttpServletResponse resp, User staff) throws IOException, ServletException {
-//		String issueIdParam = req.getParameter("id");
-//		if (issueIdParam == null) {
-//			resp.sendRedirect("support-issues");
-//			return;
-//		}
-//
-//		int issueId;
-//        try {
-//            issueId = Integer.parseInt(issueIdParam);
-//        } catch (NumberFormatException ex) {
-//            resp.sendRedirect("support-issues?notfound=1");
-//            return;
-//        }
-//		iDao.updateSupportStatus(issueId, "resolved");
-//		resp.sendRedirect("support-issues?saved=2");
-//	}
 	
 	private void openPaymentForCustomer(HttpServletRequest req, HttpServletResponse resp, User staff) throws IOException {
 		String issueIdParam = req.getParameter("issueId");
